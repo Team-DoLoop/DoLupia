@@ -40,12 +40,78 @@ AProjectDCharacter::AProjectDCharacter()
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	InteractionCheckFrequency = 0.1f;
+	InteractionCheckDistance = 225.0f;
+
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
+void AProjectDCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AProjectDCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
+	{
+		PerformInteractionCheck();
+	}
+}
+
+void AProjectDCharacter::PerformInteractionCheck()
+{
+	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();
+
+	const FVector& TraceStart {GetPawnViewLocation()};
+	const FVector& TraceEnd{TraceStart + (GetViewRotation().Vector() * InteractionCheckDistance)};
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	FHitResult TraceHit;
+
+	if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+	{
+		if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			const float Distance = (TraceStart - TraceHit.ImpactPoint).Size();
+
+			if(TraceHit.GetActor() != InteractionData.CurrentInteractable && Distance <= InteractionCheckDistance)
+			{
+				FoundInteractable(TraceHit.GetActor());
+				return;
+			}
+
+			if (TraceHit.GetActor() == InteractionData.CurrentInteractable)
+			{
+				return;
+			}
+		}
+	}
+
+	NoInteractionableFound();
+}
+
+void AProjectDCharacter::FoundInteractable(AActor* NewInteractable)
+{
+}
+
+void AProjectDCharacter::NoInteractionableFound()
+{
+}
+
+void AProjectDCharacter::BeginInteract()
+{
+}
+
+void AProjectDCharacter::EndInteract()
+{
+}
+
+void AProjectDCharacter::Interact()
+{
 }
