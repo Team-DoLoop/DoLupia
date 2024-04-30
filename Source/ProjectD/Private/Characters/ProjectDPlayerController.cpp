@@ -1,11 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ProjectDPlayerController.h"
+#include "Characters/ProjectDPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
-#include "ProjectDCharacter.h"
+#include "Characters/ProjectDCharacter.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"

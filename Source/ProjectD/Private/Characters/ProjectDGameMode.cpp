@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ProjectDGameMode.h"
-#include "ProjectDPlayerController.h"
-#include "ProjectDCharacter.h"
+#include "Characters/ProjectDGameMode.h"
+#include "Characters/ProjectDPlayerController.h"
+#include "Characters/ProjectDCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AProjectDGameMode::AProjectDGameMode()
