@@ -7,6 +7,9 @@
 #include "Interfaces/InteractionInterface.h"
 #include "ProjectDCharacter.generated.h"
 
+class ADoLupiaHUD;
+class UInventoryComponent;
+
 USTRUCT()
 struct FInteractionData
 {
@@ -27,6 +30,8 @@ class AProjectDCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	friend class AProjectDPlayerController;
+
 public:
 	AProjectDCharacter();
 
@@ -38,10 +43,19 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
+	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(TimerHandle_Interaction); }
+
+	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory; };
+
+	void UpdateInteractionWidget() const;;
+
 protected:
 	virtual void BeginPlay() override;;
 
 private:
+	UPROPERTY()
+	ADoLupiaHUD* HUD;
+
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
@@ -53,6 +67,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
 	TScriptInterface<class IInteractionInterface> TargetInteractable;
 
+	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
+	UInventoryComponent* PlayerInventory;
+
 	float InteractionCheckFrequency;
 
 	float InteractionCheckDistance;
@@ -61,12 +78,14 @@ private:
 
 	FInteractionData InteractionData;
 
+protected:
 	void PerformInteractionCheck();
 	void FoundInteractable(AActor* NewInteractable);
 	void NoInteractionableFound();
 	void BeginInteract();
 	void EndInteract();
 	void Interact();
+	void ToggleMenu() const;
 
 };
 

@@ -53,6 +53,14 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AProjectDPlayerController::OnTouchTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AProjectDPlayerController::OnTouchReleased);
+
+
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AProjectDPlayerController::BeginInteract);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::EndInteract);
+
+		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
+		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Canceled, this, &AProjectDPlayerController::ToggleMenu);
+
 	}
 	else
 	{
@@ -122,4 +130,30 @@ void AProjectDPlayerController::OnTouchReleased()
 {
 	bIsTouch = false;
 	OnSetDestinationReleased();
+}
+
+void AProjectDPlayerController::BeginInteract()
+{
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if (ControlledCharacter)
+		ControlledCharacter->BeginInteract();
+		
+}
+
+void AProjectDPlayerController::EndInteract()
+{
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if(ControlledCharacter)
+		ControlledCharacter->EndInteract();
+
+}
+
+void AProjectDPlayerController::ToggleMenu()
+{
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if (ControlledCharacter)
+		ControlledCharacter->ToggleMenu();
 }

@@ -104,9 +104,6 @@ struct FItemData : public FTableRowBase
 	FName ID;
 
 	UPROPERTY(EditAnywhere, Category = "Item Data")
-	EItemType test;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
 	EItemType ItemType;
 
 	UPROPERTY(EditAnywhere, Category = "Item Data")

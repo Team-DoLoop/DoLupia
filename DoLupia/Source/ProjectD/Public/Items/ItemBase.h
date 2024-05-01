@@ -6,6 +6,8 @@
 #include "Data/ItemDataStructs.h"
 #include "ItemBase.generated.h"
 
+class UInventoryComponent;
+
 /**
  * 
  */
@@ -14,34 +16,9 @@ class PROJECTD_API UItemBase : public UObject
 {
 	GENERATED_BODY()
 
-protected:
-	//UPROPERTY()
-	//UInventoryComponent* OwningInventory;
+	friend class UInventoryComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Item Data", meta= (UIMin=1, UIMax=100))
-	int32 Quantity;	// 인벤토리 최대치
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FName ID;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	EItemType ItemType;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	EItemQuality ItemQuality;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemStatistics ItemStatistics;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemTextData TextData;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemNumericData NumericData;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemAssetData AssetData;
-
+public:
 	UItemBase();
 
 	UItemBase* CreateItemCopy() const;
@@ -61,9 +38,61 @@ protected:
 	UFUNCTION(Category = "Item")
 	virtual void Use(class AProjectDCharacter* Character);
 
+	FORCEINLINE void SetID(FName _ID) { ID = _ID; }
+	FORCEINLINE void SetItemType(EItemType _ItemType) { ItemType = _ItemType; }
+	FORCEINLINE void SetItemQuality(EItemQuality _ItemQuality) { ItemQuality = _ItemQuality; }
+	FORCEINLINE void SetItemStatistics(FItemStatistics _ItemStatistics) { ItemStatistics = _ItemStatistics; }
+	FORCEINLINE void SetTextData(FItemTextData _TextData) { TextData = _TextData; }
+	FORCEINLINE void SetNumericData(FItemNumericData _NumericData) { NumericData = _NumericData; }
+	FORCEINLINE void SetAssetData(FItemAssetData _AssetData) { AssetData = _AssetData; }
+
+	FORCEINLINE const FName& GetID() const { return ID; }
+	FORCEINLINE const EItemType& GetItemType() const { return ItemType; }
+	FORCEINLINE int32 GetQuantity() const { return Quantity; } 
+	FORCEINLINE const EItemQuality& GetItemQuality() const { return ItemQuality; }
+	FORCEINLINE const FItemStatistics& GetItemStatistics() const { return ItemStatistics; }
+	FORCEINLINE const FItemTextData& GetTextData() const { return TextData; }
+	FORCEINLINE FItemNumericData& GetNumericData() { return NumericData; }
+	FORCEINLINE const FItemAssetData& GetAssetData() const { return AssetData; }
+
 protected:
 	bool operator==(const FName& OtherID) const
 	{
-		return ID == OtherID;
+		return this->ID == OtherID;
 	}
+
+protected:
+	UPROPERTY()
+	UInventoryComponent* OwningInventory;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	int32 Quantity;	// 인벤토리 최대치
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	FName ID;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	EItemType ItemType;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	EItemQuality ItemQuality;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	FItemStatistics ItemStatistics;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	FItemTextData TextData;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	FItemNumericData NumericData;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	FItemAssetData AssetData;
+
+	bool bIsCopy;
+	bool bIsPickup;
+
+private:
+	void ResetItemFlags();
+
 };
