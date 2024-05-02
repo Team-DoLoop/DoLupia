@@ -25,7 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere) //expose on spawn ¾ÈµÊ
 	FString QuestID;
 
 	UPROPERTY()
