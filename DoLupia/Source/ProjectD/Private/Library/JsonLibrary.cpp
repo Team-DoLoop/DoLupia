@@ -29,7 +29,7 @@ FString UJsonLibrary::JsonParse(const FString& data)
 			//FString title = TEXT("CON_TITLE");
 			//FString addr = TEXT("CON_ADDRESS");
 			UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *title, *addr)
-				result.Append(FString::Printf(TEXT("title : %s / address : %s\n"), *title, *addr));
+			result.Append(FString::Printf(TEXT("title : %s / address : %s\n"), *title, *addr));
 		}
 
 	}
