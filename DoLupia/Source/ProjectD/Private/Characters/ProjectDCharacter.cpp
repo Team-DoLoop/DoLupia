@@ -54,6 +54,8 @@ AProjectDCharacter::AProjectDCharacter()
 
 	BaseEyeHeight = 74.f;
 
+	PlayerQuest = CreateDefaultSubobject<UQuestGiver>(TEXT("PlayerQuest"));
+
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
