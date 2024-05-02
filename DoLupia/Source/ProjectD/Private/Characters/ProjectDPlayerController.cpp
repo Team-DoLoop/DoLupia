@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
+#include "Characters/PlayerFSMComp.h"
+#include "Characters/PlayerStateBase.h"
 #include "Engine/LocalPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -99,10 +101,16 @@ void AProjectDPlayerController::OnSetDestinationTriggered()
 	
 	// Move towards mouse pointer or touch
 	APawn* ControlledPawn = GetPawn();
+
+	// switch player state
+	AProjectDCharacter* player = Cast<AProjectDCharacter>(GetCharacter());
+	
 	if (ControlledPawn != nullptr)
 	{
 		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
+			
+		if(player != nullptr) player->PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
 	}
 }
 

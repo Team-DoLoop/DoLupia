@@ -6,6 +6,7 @@
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/PlayerFSMComp.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InventoryComponent.h"
@@ -45,6 +46,11 @@ AProjectDCharacter::AProjectDCharacter()
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Create Player State
+	PlayerFSM = CreateDefaultSubobject<UPlayerFSMComp>(TEXT("PlayerFSM"));
+	
+
+	
 	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("PlayerInventory"));
 	PlayerInventory->SetSlotsCapacity(20);
 	PlayerInventory->SetWeightCapacity(50.0f);

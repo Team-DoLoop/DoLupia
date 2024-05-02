@@ -87,5 +87,12 @@ protected:
 	void Interact();
 	void ToggleMenu() const;
 
+
+	// <---------------------- Player State ---------------------->
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	class UPlayerFSMComp* PlayerFSM;
+
+public:
 };
 

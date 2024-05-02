@@ -17,10 +17,9 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 UCLASS()
 class AProjectDPlayerController : public APlayerController
 {
-
 	GENERATED_BODY()
 
-	friend class AProjectDCharacter;
+	friend class UPlayerFSMComp;
 
 public:
 	AProjectDPlayerController();
@@ -68,6 +67,7 @@ protected:
 	void OnSetDestinationReleased();
 	void OnTouchTriggered();
 	void OnTouchReleased();
+
 
 private:
 	FVector CachedDestination;
