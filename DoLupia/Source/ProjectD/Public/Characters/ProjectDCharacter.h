@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/InteractionInterface.h"
+#include "Quest/QuestGiver.h"
 #include "ProjectDCharacter.generated.h"
 
 class ADoLupiaHUD;
@@ -47,6 +48,8 @@ public:
 
 	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory; };
 
+	FORCEINLINE UQuestGiver* GetQuestGiver() const { return PlayerQuest; };
+
 	void UpdateInteractionWidget() const;;
 
 protected:
@@ -69,6 +72,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
 	UInventoryComponent* PlayerInventory;
+
+	UPROPERTY(VisibleAnywhere, Category = "Character | Quest")
+	UQuestGiver* PlayerQuest;
 
 	float InteractionCheckFrequency;
 
