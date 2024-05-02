@@ -36,8 +36,8 @@ AProjectDCharacter::AProjectDCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 800.f;
-	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+	CameraBoom->TargetArmLength = 1500.f;
+	CameraBoom->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
 	// Create a camera...
@@ -151,7 +151,7 @@ void AProjectDCharacter::NoInteractionableFound()
 			TargetInteractable->EndFocus();
 		}
 
-		// HUD¿¡ Interaction widgetÀ» ¼û±âÀÚ
+		// HUDï¿½ï¿½ Interaction widgetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		HUD->HideInteractionWidget();
 
 		InteractionData.CurrentInteractable = nullptr;
@@ -161,7 +161,7 @@ void AProjectDCharacter::NoInteractionableFound()
 
 void AProjectDCharacter::BeginInteract()
 {
-	// »óÈ£ÀÛ¿ëÀ» ½ÃÀÛÇÑ ÀÌÈÄ »óÈ£ÀÛ¿ë °¡´É »óÅÂ¿¡ ¾Æ¹«°Íµµ º¯°æµÇÁö ¾Ê¾Ò´ÂÁö È®ÀÎÇÏ¼¼¿ä.
+	// ï¿½ï¿½È£ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½Æ¹ï¿½ï¿½Íµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
 	PerformInteractionCheck();
 
 	if (InteractionData.CurrentInteractable)
