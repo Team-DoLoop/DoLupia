@@ -4,6 +4,8 @@
 #include "Characters/Components/PlayerAttackComp.h"
 
 #include "EnhancedInputComponent.h"
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerFSMComp.h"
 
 // Sets default values for this component's properties
 UPlayerAttackComp::UPlayerAttackComp()
@@ -22,7 +24,9 @@ void UPlayerAttackComp::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	Player = Cast<AProjectDCharacter>(GetOwner());
+	if(!Player) return;
+	PlayerFSMComp = Player->GetPlayerFSMComp();
 }
 
 
@@ -34,15 +38,9 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
-void UPlayerAttackComp::SetUpInput(UEnhancedInputComponent* input)
+void UPlayerAttackComp::Attack()
 {
-	if(input == nullptr) return;
-
-	input->BindAction(iaAttack, ETriggerEvent::Started, this, &UPlayerAttackComp::Attack);
-}
-
-void UPlayerAttackComp::Attack(const FInputActionValue& value)
-{
-	
+	if(!PlayerFSMComp) return;
+	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 }
 

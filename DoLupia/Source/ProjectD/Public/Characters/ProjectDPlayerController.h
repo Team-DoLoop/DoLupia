@@ -21,9 +21,19 @@ class AProjectDPlayerController : public APlayerController
 
 	friend class UPlayerFSMComp;
 
+protected:
+	// To add mapping context
+	virtual void BeginPlay();
+	
 public:
 	AProjectDPlayerController();
 
+
+	
+	// <---------------------- Input ---------------------->
+private:
+
+public:
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
@@ -61,9 +71,6 @@ protected:
 
 	virtual void SetupInputComponent() override;
 	
-	// To add mapping context
-	virtual void BeginPlay();
-
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();
 	void OnSetDestinationTriggered();
@@ -71,20 +78,42 @@ protected:
 	void OnTouchTriggered();
 	void OnTouchReleased();
 
+	
 
+	// <---------------------- Move ---------------------->
 private:
 	FVector CachedDestination;
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
 
+
+	
+	// <---------------------- UI ---------------------->
+private:
+	void ToggleMenu();
+
+
+	
+	// <---------------------- Interaction ---------------------->
 private:
 	void BeginInteract();
 	void EndInteract();
-	void ToggleMenu();
+
+
+
+	// <---------------------- Attack ---------------------->
+private:
 	void Aim();
 	void StopAiming();
-	 
+
+protected:
+	void Attack();
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AttackAction;
+
 };
 
 

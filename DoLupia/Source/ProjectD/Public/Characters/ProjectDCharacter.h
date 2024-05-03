@@ -79,6 +79,7 @@ private:
 protected:
 	
 public:
+	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
 
 	
 

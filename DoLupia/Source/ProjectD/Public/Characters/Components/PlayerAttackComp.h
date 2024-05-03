@@ -12,11 +12,17 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UPlayerAttackComp : public UActorComponent
 {
 	GENERATED_BODY()
-
+	
+	friend class AProjectDPlayerController;
+	
 public:	
 	// Sets default values for this component's properties
 	UPlayerAttackComp();
 
+private:
+	class AProjectDCharacter* Player;
+	class UPlayerFSMComp* PlayerFSMComp;
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -24,14 +30,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	virtual void SetUpInput(class UEnhancedInputComponent* input);
+
+	
 
 	// <---------------------- Attack ---------------------->
 private:
-	UPROPERTY(EditDefaultsOnly)
-	class UInputAction* iaAttack;
 
-	void Attack(const FInputActionValue& value);
+protected:
+	void Attack();
 	
 public:
 

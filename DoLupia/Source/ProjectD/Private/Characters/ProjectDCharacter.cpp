@@ -110,7 +110,7 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	}
 }
 
-// <---------------------- UI ---------------------->
+	// <---------------------- UI ---------------------->
 void AProjectDCharacter::ToggleMenu()
 {
 	HUD->ToggleMenu();
@@ -119,7 +119,7 @@ void AProjectDCharacter::ToggleMenu()
 		StopAiming();
 }
 
-// <---------------------- Attack ---------------------->
+	// <---------------------- Attack ---------------------->
 void AProjectDCharacter::Aim()
 {
 	// ���� ���� ������ ������ �ʾҴٸ� ������ ����.
@@ -164,7 +164,7 @@ void AProjectDCharacter::CameraTimelineEnd()
 }
 
 
-// <---------------------- Interaction ---------------------->
+	// <---------------------- Interaction ---------------------->
 void AProjectDCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();
@@ -317,7 +317,7 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	}
 }
 
-// <---------------------- Item ---------------------->
+	// <---------------------- Item ---------------------->
 void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
 	if(PlayerInventory->FindMatchItem(ItemToDrop))

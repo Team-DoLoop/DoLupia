@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Characters/PlayerStateBase.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Engine/LocalPlayer.h"
 
@@ -29,6 +30,9 @@ void AProjectDPlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 }
+
+
+// <---------------------- Input ---------------------->
 
 void AProjectDPlayerController::SetupInputComponent()
 {
@@ -66,13 +70,17 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
 
 		// Attack
-		
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Attack);
+
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
+
+
+// <---------------------- Move ---------------------->
 
 void AProjectDPlayerController::OnInputStarted()
 {
@@ -144,6 +152,20 @@ void AProjectDPlayerController::OnTouchReleased()
 	OnSetDestinationReleased();
 }
 
+
+// <---------------------- UI ---------------------->
+
+void AProjectDPlayerController::ToggleMenu()
+{
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if (ControlledCharacter)
+		ControlledCharacter->ToggleMenu();
+}
+
+
+// <---------------------- Interaction ---------------------->
+
 void AProjectDPlayerController::BeginInteract()
 {
 	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
@@ -162,14 +184,9 @@ void AProjectDPlayerController::EndInteract()
 
 }
 
-void AProjectDPlayerController::ToggleMenu()
-{
-	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
 
-	if (ControlledCharacter)
-		ControlledCharacter->ToggleMenu();
-}
 
+// <---------------------- Attack ---------------------->
 
 void AProjectDPlayerController::Aim()
 {
@@ -187,4 +204,14 @@ void AProjectDPlayerController::StopAiming()
 	if (ControlledCharacter)
 		ControlledCharacter->StopAiming();
 
+}
+
+void AProjectDPlayerController::Attack()
+{
+	StopMovement();
+	
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if(ControlledCharacter)
+		ControlledCharacter->attackComp->Attack();
 }
