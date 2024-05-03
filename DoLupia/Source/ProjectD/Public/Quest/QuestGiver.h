@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,7 +10,7 @@
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROJECTD_API UQuestGiver : public UActorComponent
+class PROJECTD_API UQuestGiver : public UActorComponent, public IQuestInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -33,10 +33,11 @@ protected:
 	UFUNCTION()
 	void DisplayQuest();
 
-	//virtual FString InteractWith();
-
 	UPROPERTY()
 	class AProjectDCharacter* MyPlayerCharacter;
 	UPROPERTY()
 	class AProjectDGameMode* MyGameMode;
+
+	UFUNCTION(BlueprintCallable)
+	virtual FString InteractWith() override;
 };

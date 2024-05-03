@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Quest/QuestGiver.h"
@@ -7,7 +7,8 @@
 #include "Characters/ProjectDGameMode.h"
 #include "Engine/DataTable.h"
 #include "Kismet/GameplayStatics.h"
-#include "UObject/ConstructorHelpers.h"
+#include "Quest/QuestLogComponent.h"
+#include "Quest/Struct_QuestSystem.h"
 
 // Sets default values for this component's properties
 UQuestGiver::UQuestGiver()
@@ -16,28 +17,28 @@ UQuestGiver::UQuestGiver()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// µ¥ÀÌÅÍ Å×ÀÌºí ·Îµå
+	// ë°ì´í„° í…Œì´ë¸” ë¡œë“œ
 	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(
 		UDataTable::StaticClass(),
 		nullptr,
-		TEXT("/Game/QuestSystem/QuestDataTable.QuestDataTable")
-	));
+		TEXT( "/Game/QuestSystem/QuestData.QuestData") ));
+
 	if (DataTable)
 	{
-		// µ¥ÀÌÅÍ Å×ÀÌºíÀÌ ¼º°øÀûÀ¸·Î ·ÎµåµÈ °æ¿ì ÀÛ¾÷ ¼öÇà
-		QuestData.DataTable = DataTable;  // µ¥ÀÌÅÍ Å×ÀÌºí ¼³Á¤
-		//QuestData.RowName = FName("DefaultRow");  // Çà ÀÌ¸§ ¼³Á¤
+		// ë°ì´í„° í…Œì´ë¸”ì´ ì„±ê³µì ìœ¼ë¡œ ë¡œë“œëœ ê²½ìš° ì‘ì—… ìˆ˜í–‰
+		QuestData.DataTable = DataTable;  // ë°ì´í„° í…Œì´ë¸” ì„¤ì •
+		//QuestData.RowName = FName("DefaultRow");  // í–‰ ì´ë¦„ ì„¤ì •
 	}
 	else
 	{
-		// ·Îµå ½ÇÆĞ ½Ã Ã³¸®
+		// ë¡œë“œ ì‹¤íŒ¨ ì‹œ ì²˜ë¦¬
 		UE_LOG(LogTemp, Error, TEXT("Data table not found!"));
 	}
 
 	UWorld* World = GetWorld();
 	if (!World) return;
 
-	// ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ¸¦ °¡Á®¿É´Ï´Ù.
+	// í”Œë ˆì´ì–´ ìºë¦­í„°ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
 	MyPlayerCharacter = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(World, 0));
 
 	MyGameMode = Cast<AProjectDGameMode>(UGameplayStatics::GetGameMode(World));
@@ -65,12 +66,25 @@ void UQuestGiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 void UQuestGiver::DisplayQuest()
 {
 
+	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+
+	if(Row)
+	{
+		Row->QuestName;
+		GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , Row->QuestName );  // 5ì´ˆê°„ ë¹¨ê°„ìƒ‰ìœ¼ë¡œ í‘œì‹œ
+	}
 }
 
-/*FString UQuestGiver::InteractWith()
+FString UQuestGiver::InteractWith()
 {
-	auto QuestComponent = MyPlayerCharacter->GetComponentByClass(UQuestGiver::StaticClass());
-
-	//QuestComponent->QueryActiveQuest()
+	auto QuestComponent = Cast<UQuestLogComponent>(MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass()));
+	if(!QuestComponent->QueryActiveQuest(QuestData.RowName))
+	{
+		DisplayQuest();
+		return GetOwner()->GetName();
+	}else
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , TEXT("Already on Quest") );
+		return GetOwner()->GetName();
+	}
 }
-*/

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -36,6 +36,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UEditableText* edit_sendText;
+
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UTextBlock* txt_chatbot;
 
 
 };
