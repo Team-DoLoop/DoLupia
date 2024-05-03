@@ -37,4 +37,7 @@ protected:
 	class AProjectDCharacter* MyPlayerCharacter;
 	UPROPERTY()
 	class AProjectDGameMode* MyGameMode;
+
+	UFUNCTION(BlueprintCallable)
+	virtual FString InteractWith() override;
 };

@@ -36,5 +36,5 @@ public:
 
 	virtual FString InteractWith() override;
 
-
+	virtual void LookAt() override; 
 };

@@ -7,8 +7,8 @@
 #include "Characters/ProjectDGameMode.h"
 #include "Engine/DataTable.h"
 #include "Kismet/GameplayStatics.h"
+#include "Quest/QuestLogComponent.h"
 #include "Quest/Struct_QuestSystem.h"
-#include "UObject/ConstructorHelpers.h"
 
 // Sets default values for this component's properties
 UQuestGiver::UQuestGiver()
@@ -21,8 +21,8 @@ UQuestGiver::UQuestGiver()
 	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(
 		UDataTable::StaticClass(),
 		nullptr,
-		TEXT("/Game/QuestSystem/QuestDataTable.QuestDataTable")
-	));
+		TEXT( "/Game/QuestSystem/QuestData.QuestData") ));
+
 	if (DataTable)
 	{
 		// 데이터 테이블이 성공적으로 로드된 경우 작업 수행
@@ -75,10 +75,16 @@ void UQuestGiver::DisplayQuest()
 	}
 }
 
-/*FString UQuestGiver::InteractWith()
+FString UQuestGiver::InteractWith()
 {
-	auto QuestComponent = MyPlayerCharacter->GetComponentByClass(UQuestGiver::StaticClass());
-
-	//QuestComponent->QueryActiveQuest()
+	auto QuestComponent = Cast<UQuestLogComponent>(MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass()));
+	if(!QuestComponent->QueryActiveQuest(QuestData.RowName))
+	{
+		DisplayQuest();
+		return GetOwner()->GetName();
+	}else
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , TEXT("Already on Quest") );
+		return GetOwner()->GetName();
+	}
 }
-*/

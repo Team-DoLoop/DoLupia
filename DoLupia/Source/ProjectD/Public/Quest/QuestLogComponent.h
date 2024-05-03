@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -27,25 +27,25 @@ public:
 
 public:
 	UPROPERTY()
-	TArray<FString> CurrentActiveQuests;
+	TArray<FName> CurrentActiveQuests;
 
 	UPROPERTY()
-	TArray<FString> CompletedQuests;
+	TArray<FName> CompletedQuests;
 
 	UPROPERTY()
-	FString CurrentTrackedQuest;
+	FName CurrentTrackedQuest;
 
 	UPROPERTY()
 	TArray<AQuest_Base*> CurrentQuest;
 
 	UFUNCTION()
-	void AddNewQuest(FString QuestID);
+	void AddNewQuest(FName QuestID);
 
 	//UFUNCTION()
-	//void CompleteQuest(); ∫∏ªÛ¡Ÿ∂ß æµ «‘ºˆ
+	//void CompleteQuest(); Î≥¥ÏÉÅÏ§ÑÎïå Ïì∏ Ìï®Ïàò
 
 	UFUNCTION()
-	bool QueryActiveQuest(FString QuestID);
+	bool QueryActiveQuest(FName QuestID);
 
 	//UFUNCTION()
 	//void TrackQuest();

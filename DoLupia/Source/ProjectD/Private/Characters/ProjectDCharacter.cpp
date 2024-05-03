@@ -18,6 +18,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Quest/QuestLogComponent.h"
+#include "Quest/TestNPCCharacter.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -69,6 +70,7 @@ AProjectDCharacter::AProjectDCharacter()
 	BaseEyeHeight = 76.f;
 
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
+	QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -166,6 +168,9 @@ void AProjectDCharacter::PerformInteractionCheck()
 
 		if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
 		{
+			FString name = TraceHit.GetActor()->GetName();
+			UE_LOG( LogTemp , Error , TEXT( "%s" ) , *name );
+
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
 			{
 
@@ -179,17 +184,27 @@ void AProjectDCharacter::PerformInteractionCheck()
 				{
 					return;
 				}
-			}else if(TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
+			}
+			else
+			{
+				LookAtActor = nullptr;
+				UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
+			}
+			//NPC 인식
+			if(TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass()))
 			{
 				LookAtActor = TraceHit.GetActor();
-
+				
+				ATestNPCCharacter* SpecificActor = Cast<ATestNPCCharacter>( LookAtActor );
+				if (SpecificActor)
+				{
+					UE_LOG( LogTemp , Error , TEXT( "LookatActor : Interface found" ) );
+					SpecificActor->LookAt(); // 인터페이스 메서드 호출
+				}
 			}else
 			{
 				LookAtActor = nullptr;
-				if (QuestInteractable != nullptr)
-				{
-					QuestInteractable->LookAt();
-				}
+				UE_LOG( LogTemp , Error , TEXT( "LookatActor : nullptr" ) );
 			}
 		}else
 		{
@@ -268,9 +283,24 @@ void AProjectDCharacter::BeginInteract()
 		}
 	}
 	//퀘스트 액터 확인 코드
-	if(IsValid(LookAtActor))
+	if (IsValid( LookAtActor ))
 	{
-		OnObjectiveIDCalled.Broadcast(QuestInteractable->InteractWith());
+		if (LookAtActor->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() )) // 인터페이스 구현 여부 확인
+		{
+			// 액터에서 인터페이스 인스턴스를 얻습니다.
+			IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( LookAtActor );
+			if (QuestInterface)
+			{
+				// 인터페이스 메서드 호출
+				QuestInterface->InteractWith();
+				UE_LOG( LogTemp , Log , TEXT( "InteractWith() called on LookAtActor" ) );
+
+				// 특정 아이디 또는 기타 데이터를 얻습니다.
+				FString ActorObjectID = LookAtActor->GetFName().ToString();
+
+				OnObjectiveIDCalled.Broadcast( ActorObjectID ); // 이 이벤트로 브로드캐스트
+			}
+		}
 	}
 }
 
