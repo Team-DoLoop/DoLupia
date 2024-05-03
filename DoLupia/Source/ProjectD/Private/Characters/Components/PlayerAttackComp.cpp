@@ -38,10 +38,10 @@ void UPlayerAttackComp::SetUpInput(UEnhancedInputComponent* input)
 {
 	if(input == nullptr) return;
 
-	input->BindAction(iaAttack, ETriggerEvent::Started, this, &UPlayerAttackComp::OnIaAttack);
+	input->BindAction(iaAttack, ETriggerEvent::Started, this, &UPlayerAttackComp::Attack);
 }
 
-void UPlayerAttackComp::OnIaAttack(const FInputActionValue& value)
+void UPlayerAttackComp::Attack(const FInputActionValue& value)
 {
 	
 }

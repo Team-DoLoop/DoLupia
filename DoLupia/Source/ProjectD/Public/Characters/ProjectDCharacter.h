@@ -96,6 +96,9 @@ public:
 	
 	// <---------------------- Attack ---------------------->
 private:
+	UPROPERTY(EditDefaultsOnly)
+	class UPlayerAttackComp* attackComp;
+	
 	// 타일라인 변수들 카메라 이동 변수 -> 특수 스킬 사용 시 줌인 기능
 	UPROPERTY(VisibleAnywhere, Category = "Character | Camera")
 	FVector DefaultCameraLocation;

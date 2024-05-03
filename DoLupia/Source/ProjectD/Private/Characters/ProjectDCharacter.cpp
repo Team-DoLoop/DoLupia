@@ -10,8 +10,10 @@
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Components/TimelineComponent.h"
+#include "Elements/Framework/TypedElementQueryBuilder.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -30,6 +32,9 @@ AProjectDCharacter::AProjectDCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
+	// Player Settings
+	BaseEyeHeight = 76.f;
+	
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
@@ -53,21 +58,23 @@ AProjectDCharacter::AProjectDCharacter()
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-	// Create Player State
+	
+	// State
 	PlayerFSM = CreateDefaultSubobject<UPlayerFSMComp>(TEXT("PlayerFSM"));
-	
 
+	// Attack
+	attackComp = CreateDefaultSubobject<UPlayerAttackComp>(TEXT("AttackComp"));
 	
+	// Inventory
 	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("PlayerInventory"));
 	PlayerInventory->SetSlotsCapacity(20);
 	PlayerInventory->SetWeightCapacity(50.0f);
 
+	// Interaction
 	InteractionCheckFrequency = 0.1f;
 	InteractionCheckDistance = 225.0f;
-
-	BaseEyeHeight = 76.f;
-
+	
+	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
 
 	// Activate ticking in order to update the cursor every frame.
@@ -103,6 +110,16 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	}
 }
 
+// <---------------------- UI ---------------------->
+void AProjectDCharacter::ToggleMenu()
+{
+	HUD->ToggleMenu();
+
+	if(HUD->IsMenuVisible())
+		StopAiming();
+}
+
+// <---------------------- Attack ---------------------->
 void AProjectDCharacter::Aim()
 {
 	// ���� ���� ������ ������ �ʾҴٸ� ������ ����.
@@ -146,6 +163,8 @@ void AProjectDCharacter::CameraTimelineEnd()
 	}
 }
 
+
+// <---------------------- Interaction ---------------------->
 void AProjectDCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();
@@ -290,14 +309,6 @@ void AProjectDCharacter::Interact()
 	}
 }
 
-void AProjectDCharacter::ToggleMenu()
-{
-	HUD->ToggleMenu();
-
-	if(HUD->IsMenuVisible())
-		StopAiming();
-}
-
 void AProjectDCharacter::UpdateInteractionWidget() const
 {
 	if (IsValid(TargetInteractable.GetObject()))
@@ -306,6 +317,7 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	}
 }
 
+// <---------------------- Item ---------------------->
 void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
 	if(PlayerInventory->FindMatchItem(ItemToDrop))
