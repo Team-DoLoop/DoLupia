@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,12 +17,11 @@ class PROJECTD_API UInventoryTooltip : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
-	virtual void NativeConstruct() override;
-
 public:
 	const UInventoryItemSlot* GetInventoryItemSlotBeingHovered() const { return InventoryItemSlotBeingHovered; };
 	void SetInventoryItemSlotBeingHovered(UInventoryItemSlot* NewInventoryItemSlotBeingHovered)  { InventoryItemSlotBeingHovered = NewInventoryItemSlotBeingHovered; };
+
+	void SetupTooltip();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -54,5 +53,6 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* StackWeight;
+
 	
 };

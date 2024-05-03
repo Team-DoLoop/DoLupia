@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UserInterface/Inventory/InventoryTooltip.h"
@@ -7,63 +7,81 @@
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "Items/ItemBase.h"
 
-void UInventoryTooltip::NativeConstruct()
+
+void UInventoryTooltip::SetupTooltip()
 {
-	Super::NativeConstruct();
+	UItemBase* ItemBeingHovered = InventoryItemSlotBeingHovered->GetItemReference();
 
-	const UItemBase* ItemBeingHovered = InventoryItemSlotBeingHovered->GetItemReference();
+	EItemType MyItemType = ItemBeingHovered->GetItemType();
 
-	switch (ItemBeingHovered->GetItemType())
+	switch (MyItemType)
 	{
-	case EItemType::Armor: 
+	case EItemType::Armor:
 		break;
 	case EItemType::Weapon:
 		break;
-	case EItemType::Shield: 
+	case EItemType::Shield:
 		break;
-	case EItemType::Spell: 
+	case EItemType::Spell:
 		break;
 	case EItemType::Consumable:
-		ItemType->SetText(FText::FromString("Consumable"));
-		DamageValue->SetVisibility(ESlateVisibility::Collapsed);
-		ArmorRating->SetVisibility(ESlateVisibility::Collapsed);
-		SellValue->SetVisibility(ESlateVisibility::Collapsed);
+		if(!ItemType)
+		{
+			check(false);
+		}
+
+		ItemType->SetText( FText::FromString( "Consumable" ) );
+		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
+		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
+		SellValue->SetVisibility( ESlateVisibility::Collapsed );
 
 		break;
-	case EItemType::Quest: 
+	case EItemType::Quest:
 		break;
 	case EItemType::Mundane:
-		ItemType->SetText(FText::FromString("Mundane"));
-		DamageValue->SetVisibility(ESlateVisibility::Collapsed);
-		ArmorRating->SetVisibility(ESlateVisibility::Collapsed);
-		UsageText->SetVisibility(ESlateVisibility::Collapsed);
-		SellValue->SetVisibility(ESlateVisibility::Collapsed);
+		if (!ItemType)
+		{
+			check( false );
+		}
+
+		ItemType->SetText( FText::FromString( "Mundane" ) );
+		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
+		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
+		UsageText->SetVisibility( ESlateVisibility::Collapsed );
+		SellValue->SetVisibility( ESlateVisibility::Collapsed );
 		break;
-	default: ;
+	default:;
 	}
 
 	const FItemTextData& TextData = ItemBeingHovered->GetTextData();
 	const FItemStatistics& ItemStatistics = ItemBeingHovered->GetItemStatistics();
-	const FItemNumericData& NumericData = InventoryItemSlotBeingHovered->GetItemReference()->GetNumericData();
+	const FItemNumericData& NumericData = ItemBeingHovered->GetNumericData();
 
-	ItemName->SetText(TextData.Name);
-	DamageValue->SetText(FText::AsNumber(ItemStatistics.DamageValue));
-	ArmorRating->SetText(FText::AsNumber(ItemStatistics.ArmorRating));
-	UsageText->SetText(TextData.UsageText);
-	ItemDescription->SetText(TextData.Description);
-	SellValue->SetText(FText::AsNumber(ItemStatistics.SellValue));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *TextData.Name.ToString())
+	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *FText::AsNumber( ItemStatistics.DamageValue ).ToString() );
+	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *FText::AsNumber( ItemStatistics.ArmorRating ).ToString() );
+	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *TextData.UsageText.ToString() );
+	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *TextData.UsageText.ToString() );
 
-	const FString& WeightInfo = { "Weight : " + FString::SanitizeFloat(ItemBeingHovered->GetItemStackWeight())};
 
-	StackWeight->SetText(FText::FromString(WeightInfo));
+	ItemName->SetText( TextData.Name );
+	DamageValue->SetText( FText::AsNumber( ItemStatistics.DamageValue ) );
+	ArmorRating->SetText( FText::AsNumber( ItemStatistics.ArmorRating ) );
+	UsageText->SetText( TextData.UsageText );
+	ItemDescription->SetText( TextData.Description );
+	SellValue->SetText( FText::AsNumber( ItemStatistics.SellValue ) );
 
-	if(NumericData.bIsStackable)
+	const FString& WeightInfo = { "Weight : " + FString::SanitizeFloat( ItemBeingHovered->GetItemStackWeight() ) };
+
+	StackWeight->SetText( FText::FromString( WeightInfo ) );
+
+	if (NumericData.bIsStackable)
 	{
-		const FString& StackInfo = { "Max stack size : " + FString::FromInt(NumericData.MaxStackSize) };
-		MaxStackSize->SetText(FText::FromString(StackInfo));
+		const FString& StackInfo = { "Max stack size : " + FString::FromInt( NumericData.MaxStackSize ) };
+		MaxStackSize->SetText( FText::FromString( StackInfo ) );
 	}
 	else
 	{
-		MaxStackSize->SetVisibility(ESlateVisibility::Collapsed);
+		MaxStackSize->SetVisibility( ESlateVisibility::Collapsed );
 	}
 }

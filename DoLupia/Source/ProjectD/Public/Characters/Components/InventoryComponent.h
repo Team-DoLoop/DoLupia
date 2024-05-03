@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,6 +10,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 class UItemBase;
+class UInventoryItemSlot;
 
 UENUM(BlueprintType)
 enum class EItemAddResult : uint8
@@ -31,13 +32,13 @@ struct FItemAddResult
 	{};
 
 
-	// ÀÎº¥Åä¸®¿¡ Ãß°¡µÈ ½ÇÁ¦ Ç°¸ñ ±İ¾×
+	// ì¸ë²¤í† ë¦¬ì— ì¶”ê°€ëœ ì‹¤ì œ í’ˆëª© ê¸ˆì•¡
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
 	int32 ActualAmountAdded;
-	// Ç×¸ñ Ãß°¡ ÀÛ¾÷ÀÇ Á¾·á »óÅÂ¸¦ ³ªÅ¸³»´Â ¿­°ÅÇü
+	// í•­ëª© ì¶”ê°€ ì‘ì—…ì˜ ì¢…ë£Œ ìƒíƒœë¥¼ ë‚˜íƒ€ë‚´ëŠ” ì—´ê±°í˜•
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
 	EItemAddResult OperationResult;
-	// °á°ú¿Í ÇÔ²² Àü´ŞµÉ ¼ö ÀÖ´Â Á¤º¸ ¸Ş½ÃÁö
+	// ê²°ê³¼ì™€ í•¨ê»˜ ì „ë‹¬ë  ìˆ˜ ìˆëŠ” ì •ë³´ ë©”ì‹œì§€
 	UPROPERTY(BlueprintReadOnly, Category = "Item Add Result")
 	FText ResultMessage;
 
@@ -83,6 +84,8 @@ public:
 	UFUNCTION(Category = "Inventory")
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
 
+	UFUNCTION( Category = "Inventory" )
+	const int32 FindEmptyItemIndex() const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindMatchItem(UItemBase* ItemIn) const;
 	UFUNCTION(Category = "Inventory")
@@ -97,6 +100,8 @@ public:
 	UFUNCTION(Category = "Inventory")
 	void SplitExistingStack(UItemBase* ItemIn, const int32 AmountToSplit);
 
+	void SwapInventory(UInventoryItemSlot* Sour, UInventoryItemSlot* Dest);
+
 	// getters
 	UFUNCTION(Category = "Inventory")
 	FORCEINLINE float GetInventoryTotalWeight() const { return InventoryTotalWeight; };
@@ -107,13 +112,16 @@ public:
 	UFUNCTION(Category = "Inventory")
 	FORCEINLINE TArray<UItemBase*> GetInventoryContents() const { return InventoryContents; };
 
+
 	// setters
 	UFUNCTION(Category = "Inventory")
 	FORCEINLINE void SetSlotsCapacity(const int32 NewSlotCapacity) { InventorySlotsCapacity = NewSlotCapacity; };
 	UFUNCTION(Category = "Inventory")
 	FORCEINLINE void SetWeightCapacity(const float NewWeightCapacity) { InventoryWeightCapacity = NewWeightCapacity;};
+	UFUNCTION( Category = "Inventory" )
+	FORCEINLINE void AddInventoryContents(UItemBase* AddNewItem) { InventoryContents.Add( AddNewItem ); };
 
-	// ÀÎº¥Åä¸® ¾÷µ¥ÀÌÆ® µ¨¸®°ÔÀÌÆ®
+	// ì¸ë²¤í† ë¦¬ ì—…ë°ì´íŠ¸ ë¸ë¦¬ê²Œì´íŠ¸
 	FOnInventoryUpdated OnInventoryUpdated;
 
 protected:
@@ -124,7 +132,7 @@ protected:
 	int32 CalculateWeightAddAmount(UItemBase* ItemIn, int32 RequestedAddAmount);
 	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount);
 
-	void AddNewItem(UItemBase* Item, const int32 AmountToAdd);
+	void AddNewItem(UItemBase* Item, const int32 AmountToAdd, const int32 InputItemIndex);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")

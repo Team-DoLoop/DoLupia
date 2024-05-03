@@ -1,8 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 
+#include "Characters/Components/InventoryComponent.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -17,49 +18,14 @@ void UInventoryItemSlot::NativeOnInitialized()
 
 	if(ToolTipFactory)
 	{
-		UInventoryTooltip* Tooltip = CreateWidget<UInventoryTooltip>(this, ToolTipFactory);
+		Tooltip = CreateWidget<UInventoryTooltip>(this, ToolTipFactory);
 		Tooltip->SetInventoryItemSlotBeingHovered(this);
-		SetToolTip(Tooltip);
 	}
 }
 
 void UInventoryItemSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	if(ItemReference)
-	{
-		switch (ItemReference->GetItemQuality())
-		{
-		case EItemQuality::Shoddy:
-			ItemBorder->SetBrushColor(FLinearColor::Gray);
-			break;
-		case EItemQuality::Common:
-			ItemBorder->SetBrushColor(FLinearColor::White);
-			break;
-		case EItemQuality::Quality:
-			ItemBorder->SetBrushColor(FLinearColor(0.0f, 0.51f, 0.169f));
-			break;
-		case EItemQuality::Masterwork:
-			ItemBorder->SetBrushColor(FLinearColor(0.0f, 0.4f, 0.75f));
-			break;
-		case EItemQuality::Grandmaster:
-			ItemBorder->SetBrushColor(FLinearColor(1.0f, 0.45f, 0.0f)); // orange
-			break;
-		default: ;
-		}
-
-		ItemIcon->SetBrushFromTexture(ItemReference->GetAssetData().Icon);
-
-		if(ItemReference->GetNumericData().bIsStackable)
-		{
-			ItemQuantity->SetText(FText::AsNumber(ItemReference->GetQuantity()));
-		}
-		else
-		{
-			ItemQuantity->SetVisibility(ESlateVisibility::Collapsed);
-		}
-	}
 }
 
 FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -71,7 +37,7 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 		return Reply.Handled().DetectDrag(TakeWidget(), EKeys::LeftMouseButton);
 	}
 
-	// ��Ŭ�� ����
+	// 우클릭 예정
 	
 	return Reply.Unhandled();
 }
@@ -81,7 +47,7 @@ void UInventoryItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
-	if(DragItemVisualFactory)
+	if(DragItemVisualFactory && ItemReference)
 	{
 		const TObjectPtr<UDragItemVisual> DragItemVisual = CreateWidget<UDragItemVisual>(this, DragItemVisualFactory);
 		DragItemVisual->GetItemIcon()->SetBrushFromTexture(ItemReference->GetAssetData().Icon);
@@ -94,9 +60,10 @@ void UInventoryItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const
 		UItemDragDropOperation* DragItemOperation = NewObject<UItemDragDropOperation>();
 		DragItemOperation->SetSourceItem(ItemReference);
 		DragItemOperation->SetSourceInventory(ItemReference->GetOwningInventory());
+		DragItemOperation->SetInventoryItemSlot(this);
 
 		DragItemOperation->DefaultDragVisual = DragItemVisual;
-		DragItemOperation->Pivot = EDragPivot::TopLeft;
+		DragItemOperation->Pivot = EDragPivot::CenterLeft;
 
 		OutOperation = DragItemOperation;
 	}
@@ -110,5 +77,110 @@ void UInventoryItemSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 bool UInventoryItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>( InOperation );
+
+	// 플레이어가 아이템을 드래그 앤 드랍 할 수 있도록 설정
+	UInventoryItemSlot* InventoryItemSlot = ItemDragDrop->GetInventoryItemSlot();
+	UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
+	if (ItemBase)
+	{
+		if(ItemBase == this->ItemReference)
+			return false;
+
+		UInventoryComponent* InventoryComponent = ItemBase->GetOwningInventory();
+		InventoryComponent->SwapInventory(InventoryItemSlot, this);
+
+		if (this->ItemReference)
+		{
+			InventoryItemSlot->SetItemReference( this->ItemReference );
+			this->ItemReference = ItemBase;
+
+			InventoryItemSlot->GetToolTip()->SetupTooltip();
+			InventoryItemSlot->RefreshItemSlot();
+
+			this->Tooltip->SetupTooltip();
+			this->RefreshItemSlot();
+		}
+		else
+		{
+			InventoryItemSlot->SetItemReference( this->ItemReference );
+			this->ItemReference = ItemBase;
+
+			this->Tooltip->SetupTooltip();
+			this->RefreshItemSlot();
+
+			InventoryItemSlot->ResetItemSlot();
+		}
+
+
+
+
+		return true;
+
+	}
+
+	return false;
+
+	//return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+}
+
+void UInventoryItemSlot::RefreshItemSlot()
+{
+	if (ItemReference)
+	{
+		if(!Tooltip)
+		{
+			Tooltip = CreateWidget<UInventoryTooltip>( this , ToolTipFactory );
+			UE_LOG(LogTemp, Error, TEXT("UInventoryItemSlot::RefreshItemSlot : Tooltip error"));
+		}
+			
+			
+		SetToolTip( Tooltip );
+
+
+		switch (ItemReference->GetItemQuality())
+		{
+		case EItemQuality::Shoddy:
+			ItemBorder->SetBrushColor( FLinearColor::Gray );
+			break;
+		case EItemQuality::Common:
+			ItemBorder->SetBrushColor( FLinearColor::White );
+			break;
+		case EItemQuality::Quality:
+			ItemBorder->SetBrushColor( FLinearColor( 0.0f , 0.51f , 0.169f ) );
+			break;
+		case EItemQuality::Masterwork:
+			ItemBorder->SetBrushColor( FLinearColor( 0.0f , 0.4f , 0.75f ) );
+			break;
+		case EItemQuality::Grandmaster:
+			ItemBorder->SetBrushColor( FLinearColor( 1.0f , 0.45f , 0.0f ) ); // orange
+			break;
+		default:;
+		}
+
+		ItemIcon->SetBrushFromTexture( ItemReference->GetAssetData().Icon );
+
+		if (ItemReference->GetNumericData().bIsStackable)
+		{
+			ItemQuantity->SetVisibility( ESlateVisibility::Visible );
+			ItemQuantity->SetText( FText::AsNumber( ItemReference->GetQuantity() ) );
+			UE_LOG(LogTemp, Warning, TEXT( "UInventoryItemSlot::RefreshItemSlot() : %s" ) , *FText::AsNumber( ItemReference->GetQuantity()).ToString());
+
+		}
+		else
+		{
+			ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
+		}
+	}
+}
+
+void UInventoryItemSlot::ResetItemSlot()
+{
+	if (ItemReference)
+		ItemReference = nullptr;
+
+	SetToolTip(nullptr);
+	ItemBorder->SetBrushColor( FLinearColor::White );
+	ItemIcon->SetBrushFromTexture( nullptr );
+	ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 }

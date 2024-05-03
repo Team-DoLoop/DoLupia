@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "MainMenu.generated.h"
 
 class AProjectDCharacter;
-
+class UInventoryPannel;
 /**
  * 
  */
@@ -16,6 +16,9 @@ class PROJECTD_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 
+
+public:
+	FORCEINLINE UInventoryPannel* GetInventoryPanel() const { return InventoryPanel; };
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -26,6 +29,9 @@ protected:
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
 protected:
+	UPROPERTY(meta=(BindWidget))
+	UInventoryPannel* InventoryPanel;
+
 	UPROPERTY()
 	AProjectDCharacter* PlayerCharacter;
 

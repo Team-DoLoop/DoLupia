@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,11 +22,21 @@ class PROJECTD_API UInventoryItemSlot : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	FORCEINLINE void SetItemReference(UItemBase* ItemIn) { ItemReference = ItemIn; };
-	FORCEINLINE UItemBase* GetItemReference() const { return ItemReference; };
+	// setter
+	FORCEINLINE void SetItemReference(UItemBase* ItemIn) { ItemReference = ItemIn; }
+	FORCEINLINE void SetSlotIndex(int32 NewSlotIndex) { SlotIndex = NewSlotIndex; }
+
+	// getter
+	FORCEINLINE UItemBase* GetItemReference() const { return ItemReference; }
+	FORCEINLINE UInventoryTooltip* GetToolTip() const { return Tooltip; }
+	FORCEINLINE int32 GetSlotIndex() const { return SlotIndex; }
+
+	void RefreshItemSlot();
+	void ResetItemSlot();
 
 protected:
 	virtual void NativeOnInitialized() override;
+	
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
@@ -51,5 +61,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot", meta = (BindWidget))
 	UTextBlock* ItemQuantity;
+
+	int32 SlotIndex;
+
+	TObjectPtr<UInventoryTooltip> Tooltip;
 
 };

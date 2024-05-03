@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -31,6 +31,7 @@ public:
 	void UpdateInteractionWidget(const FInteractableData* InteractableData) const;
 
 	FORCEINLINE bool IsMenuVisible() const { return bISMenuVisible; }
+	FORCEINLINE UMainMenu* GetMainMeun() const { return MainMenuWidget; }
 
 protected:
 	virtual void BeginPlay() override;

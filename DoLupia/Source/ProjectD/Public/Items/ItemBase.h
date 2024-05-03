@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -47,9 +47,9 @@ public:
 	FORCEINLINE void SetAssetData(FItemAssetData _AssetData) { AssetData = _AssetData; }
 
 	FORCEINLINE const FName& GetID() const { return ID; }
-	FORCEINLINE const EItemType& GetItemType() const { return ItemType; }
+	FORCEINLINE EItemType GetItemType() { return ItemType; }
 	FORCEINLINE int32 GetQuantity() const { return Quantity; } 
-	FORCEINLINE const EItemQuality& GetItemQuality() const { return ItemQuality; }
+	FORCEINLINE EItemQuality GetItemQuality() const { return ItemQuality; }
 	FORCEINLINE const FItemStatistics& GetItemStatistics() const { return ItemStatistics; }
 	FORCEINLINE const FItemTextData& GetTextData() const { return TextData; }
 	FORCEINLINE FItemNumericData& GetNumericData() { return NumericData; }
@@ -69,7 +69,7 @@ protected:
 	UInventoryComponent* OwningInventory;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
-	int32 Quantity;	// �κ��丮 �ִ�ġ
+	int32 Quantity;	// 인벤토리 최대치
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FName ID;
