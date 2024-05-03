@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Library/JsonLibrary.h"
 
@@ -6,17 +6,17 @@ FString UJsonLibrary::JsonParse(const FString& data)
 {
 	FString result;
 
-	// Json Reader ¸¦ ¸¸µç´Ù.
+	// Json Reader ë¥¼ ë§Œë“ ë‹¤.
 	TSharedRef<TJsonReader<TCHAR>> reader = TJsonReaderFactory<TCHAR>::Create(data);
 
-	// Json Object ¸¦ ¸¸µç´Ù.
+	// Json Object ë¥¼ ë§Œë“ ë‹¤.
 	TSharedPtr<FJsonObject> obj = MakeShareable(new FJsonObject());
 
-	// ÇØµ¶(Deserialize)À» ÇÑ´Ù.
+	// í•´ë…(Deserialize)ì„ í•œë‹¤.
 	if (FJsonSerializer::Deserialize(reader, obj))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TEST1"))
-			auto response = obj->GetObjectField(TEXT("response"));
+		/*
+		auto response = obj->GetObjectField(TEXT("response"));
 		auto body = response->GetObjectField(TEXT("body"));
 		auto items = body->GetObjectField(TEXT("items"));
 
@@ -31,6 +31,27 @@ FString UJsonLibrary::JsonParse(const FString& data)
 			UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *title, *addr)
 			result.Append(FString::Printf(TEXT("title : %s / address : %s\n"), *title, *addr));
 		}
+		*/
+
+		auto responses = obj->GetArrayField( TEXT( "response" ) );
+
+		for (const auto& response : responses)
+		{
+			auto contentArray = response->AsObject()->GetArrayField( TEXT( "content" ) );
+			for (const auto& content : contentArray)
+			{
+				UE_LOG( LogTemp, Warning, TEXT("string : [%s]"), *content->AsString() )
+				if (content->Type == EJson::String)
+				{
+					FString contentString = content->AsString();
+					result += FString::Printf( TEXT( "content : %s\n" ) , *contentString );
+				}
+				else
+				{
+					UE_LOG( LogJson , Warning , TEXT( "Field content is not a string" ) );
+				}
+			}
+		}
 
 	}
 
@@ -40,40 +61,40 @@ FString UJsonLibrary::JsonParse(const FString& data)
 
 FString UJsonLibrary::MapToJson(const TMap<FString, FString>& map)
 {
-	// JsonObj ¸¦ »ı¼º
+	// JsonObj ë¥¼ ìƒì„±
 	TSharedPtr<FJsonObject> Jsonobj = MakeShareable(new FJsonObject());
 
-	// map ÀÇ ³»¿ëÀ» JsonObj¿¡ ´ãÀ½
+	// map ì˜ ë‚´ìš©ì„ JsonObjì— ë‹´ìŒ
 	//for(TPair<FString, FString> pair : map)
-	for (auto& pair : map)			//¸Ş¸ğ¸®¸¦ »õ·Î »ç¿ëÇÏÁö ¾ÊÀ½ [&-> ¿øº»À» »ç¿ëÇÏ°Ú´Ù.]
+	for (auto& pair : map)			//ë©”ëª¨ë¦¬ë¥¼ ìƒˆë¡œ ì‚¬ìš©í•˜ì§€ ì•ŠìŒ [&-> ì›ë³¸ì„ ì‚¬ìš©í•˜ê² ë‹¤.]
 	{
 		Jsonobj->SetStringField(pair.Key, pair.Value);
 	}
 
-	// JsonObj¸¦ encoding( = Serialize) ÇÏ°í ½Í´Ù.
+	// JsonObjë¥¼ encoding( = Serialize) í•˜ê³  ì‹¶ë‹¤.
 	FString jsonData;
 	auto writer = TJsonWriterFactory<TCHAR>::Create(&jsonData);
 
 	FJsonSerializer::Serialize(Jsonobj.ToSharedRef(), writer);
 
-	// ±×°ÍÀ» ¹İÈ¯ÇÏ°í ½Í´Ù.
+	// ê·¸ê²ƒì„ ë°˜í™˜í•˜ê³  ì‹¶ë‹¤.
 	return  jsonData;
 }
 
 bool UJsonLibrary::SaveJson(const FString& filename, const FString& json)
 {
-	//ÆÄÀÏ ¸Å´ÏÀú¸¦ °¡Á®¿À°í ½Í´Ù.
+	//íŒŒì¼ ë§¤ë‹ˆì €ë¥¼ ê°€ì ¸ì˜¤ê³  ì‹¶ë‹¤.
 	FPlatformFileManager& fileManager = FPlatformFileManager::Get();
 	IPlatformFile& platformfile = fileManager.GetPlatformFile();
 
-	//¸¸¾à ÁöÁ¤µÈ Æú´õ°¡ ¾øÀ¸¸é ÇØ´ç Æú´õ¸¦ ¸¸µç´Ù.
+	//ë§Œì•½ ì§€ì •ëœ í´ë”ê°€ ì—†ìœ¼ë©´ í•´ë‹¹ í´ë”ë¥¼ ë§Œë“ ë‹¤.
 	FString directoryPath = FPaths::ProjectContentDir() + "jsonData";
 	if (false == platformfile.DirectoryExists(*directoryPath))
 	{
 		platformfile.CreateDirectory(*directoryPath);
 	}
 
-	//json¹®ÀÚ¿­À» ÆÄÀÏ·Î ÀúÀåÇÑ´Ù.
+	//jsonë¬¸ìì—´ì„ íŒŒì¼ë¡œ ì €ì¥í•œë‹¤.
 	FString fullPath = directoryPath + "/" + filename;
 	//UE_LOG(LogTemp, Warning, TEXT("%s"), fullPath);
 

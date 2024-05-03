@@ -5,6 +5,7 @@
 #include "Components/EditableText.h"
 #include "Interfaces/IHttpResponse.h"
 #include "HttpModule.h"
+#include "Components/TextBlock.h"
 #include "Library/JsonLibrary.h"
 
 void UAITestWidget::NativeConstruct()
@@ -36,7 +37,7 @@ void UAITestWidget::SendImgaiSV()
 
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
-	FString fullURL = "http://127.0.0.1:8000/imgai";
+	FString fullURL = "http://127.0.0.1:8000/imageAI";
 	//ReqDataPost(fullURL, sendJson);
 }
 
@@ -73,7 +74,10 @@ void UAITestWidget::ResDataPost(FHttpRequestPtr Request, FHttpResponsePtr Respon
 	if (bConnectedSuccessfully)
 	{
 		FString result = Response->GetContentAsString();
+
+		//result = UJsonLibrary::JsonParse(result);
 		UE_LOG(LogTemp, Warning, TEXT("result : [%s]"), *result)
+		txt_chatbot->SetText( FText::FromString( result ) );
 
 	}
 	else
