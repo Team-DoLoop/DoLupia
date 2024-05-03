@@ -56,6 +56,7 @@ private:
 	EPlayerState CurrentState = EPlayerState::IDLE;
 
 public:
+	FORCEINLINE EPlayerState GetCurrentState() const { return CurrentState; }
 	void CheckState(EPlayerState _state);
 	void ChangePlayerState(EPlayerState _state);
 
