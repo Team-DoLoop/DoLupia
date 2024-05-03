@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ï»¿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -52,7 +52,6 @@ public:
 
 	FORCEINLINE UQuestGiver* GetQuestGiver() const { return PlayerQuest; };
 
-	void UpdateInteractionWidget() const;;
 	void UpdateInteractionWidget() const;
 
 	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
@@ -81,13 +80,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Quest")
 	UQuestGiver* PlayerQuest;
 
-	// ÀÎÅÍ·º¼Ç º¯¼öµé
+	// ì¸í„°ë ‰ì…˜ ë³€ìˆ˜ë“¤
 	float InteractionCheckFrequency;
 	float InteractionCheckDistance;
 	FTimerHandle TimerHandle_Interaction;
 	FInteractionData InteractionData;
 
-	// Å¸ÀÏ¶óÀÎ º¯¼öµé Ä«¸Ş¶ó ÀÌµ¿ º¯¼ö -> Æ¯¼ö ½ºÅ³ »ç¿ë ½Ã ÁÜÀÎ ±â´É
+	// íƒ€ì¼ë¼ì¸ ë³€ìˆ˜ë“¤ ì¹´ë©”ë¼ ì´ë™ ë³€ìˆ˜ -> íŠ¹ìˆ˜ ìŠ¤í‚¬ ì‚¬ìš© ì‹œ ì¤Œì¸ ê¸°ëŠ¥
 	UPROPERTY(VisibleAnywhere, Category = "Character | Camera")
 	FVector DefaultCameraLocation;
 	UPROPERTY(VisibleAnywhere, Category = "Character | Camera")
