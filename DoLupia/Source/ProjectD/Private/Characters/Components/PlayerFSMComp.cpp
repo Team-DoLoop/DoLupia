@@ -50,9 +50,23 @@ void UPlayerFSMComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 	if(PlayerMovement == nullptr) return;
 
-	if(CurrentState == EPlayerState::MOVE && (PlayerMovement->GetCurrentAcceleration() == FVector(0))&& UKismetMathLibrary::VSizeXY(PlayerMovement->Velocity)<= 3.0f)
+	CheckState(CurrentState);
+}
+
+void UPlayerFSMComp::CheckState(EPlayerState _state)
+{
+	switch (_state)
 	{
-		ChangePlayerState(EPlayerState::IDLE);
+	case EPlayerState::IDLE:				return;
+	case EPlayerState::MOVE:	TickMove();	return;
+		
+	case EPlayerState::ATTACK:				return;
+	case EPlayerState::DAMAGE:				return;
+	case EPlayerState::EVASION:				return;
+
+	case EPlayerState::TALK_NPC:			return;
+		
+	case EPlayerState::DIE:					return;
 	}
 }
 
@@ -62,5 +76,13 @@ void UPlayerFSMComp::ChangePlayerState(EPlayerState _state)
 	
 	CurrentState = _state;
 	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("ChangePlayerState : %s"), *UEnum::GetValueAsName(_state).ToString());
+}
+
+void UPlayerFSMComp::TickMove()
+{
+	if((PlayerMovement->GetCurrentAcceleration() == FVector(0))&& UKismetMathLibrary::VSizeXY(PlayerMovement->Velocity)<= 3.0f)
+	{
+		ChangePlayerState(EPlayerState::IDLE);
+	}
 }
 
