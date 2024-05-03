@@ -11,7 +11,7 @@ ATestNPCCharacter::ATestNPCCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	QuestGiverNPC = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverNPC" ) );
+	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 }
 
 // Called when the game starts or when spawned
@@ -33,5 +33,13 @@ void ATestNPCCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+FString ATestNPCCharacter::InteractWith()
+{
+	IQuestInteractionInterface::InteractWith();
+
+	auto ObjectiveID = QuestGiverComp->InteractWith();
+	return ObjectiveID;
 }
 
