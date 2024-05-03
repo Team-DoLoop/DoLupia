@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "TestNPCCharacter.generated.h"
+
+class UQuestGiver;
 
 UCLASS()
 class PROJECTD_API ATestNPCCharacter : public ACharacter
@@ -25,5 +27,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FORCEINLINE UQuestGiver* GetQuestGiver() const { return QuestGiverNPC; };
+
+	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
+	UQuestGiver* QuestGiverNPC;
 
 };

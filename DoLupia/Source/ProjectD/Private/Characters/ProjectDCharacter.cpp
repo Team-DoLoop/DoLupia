@@ -179,18 +179,22 @@ void AProjectDCharacter::PerformInteractionCheck()
 				{
 					return;
 				}
-			}
-			if(TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
+			}else if(TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
 
 			}else
 			{
 				LookAtActor = nullptr;
-				QuestInteractable->LookAt();
+				if (QuestInteractable != nullptr)
+				{
+					QuestInteractable->LookAt();
+				}
 			}
 		}else
+		{
 			LookAtActor = nullptr;
+		}
 	}
 	NoInteractionableFound();
 }
