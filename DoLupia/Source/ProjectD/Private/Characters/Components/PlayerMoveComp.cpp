@@ -36,7 +36,7 @@ void UPlayerMoveComp::BeginPlay()
 	if(!Player) return;
 
 	PlayerController = Cast<AProjectDPlayerController>(Player->GetController());
-	PlayerFSN = Cast<UPlayerFSMComp>(Player->GetPlayerFSMComp());
+	PlayerFSM = Cast<UPlayerFSMComp>(Player->GetPlayerFSMComp());
 	
 }
 
@@ -85,7 +85,7 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
 			
-		if(Player != nullptr) PlayerFSN->ChangePlayerState(EPlayerState::MOVE);
+		if(Player != nullptr) PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
 	}
 }
 
@@ -104,6 +104,7 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 
 void UPlayerMoveComp::Evasion()
 {
-	
+	if(!PlayerFSM) return;
+	PlayerFSM -> ChangePlayerState(EPlayerState::EVASION);
 }
 

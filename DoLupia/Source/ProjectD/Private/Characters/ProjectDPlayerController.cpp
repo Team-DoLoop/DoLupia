@@ -123,6 +123,8 @@ void AProjectDPlayerController::OnTouchReleased()
 
 void AProjectDPlayerController::Evasion()
 {
+	OnInputStarted();
+	
 	// 회피기
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->Evasion();
@@ -183,7 +185,7 @@ void AProjectDPlayerController::StopAiming()
 
 void AProjectDPlayerController::Attack()
 {
-	StopMovement();
+	OnInputStarted();
 	
 	// AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
 	if(!ControlledCharacter) return;

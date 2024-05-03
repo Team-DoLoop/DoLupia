@@ -37,7 +37,7 @@ private:
 	class AProjectDPlayerController* PlayerController;
 
 	UPROPERTY()
-	class UPlayerFSMComp* PlayerFSN;
+	class UPlayerFSMComp* PlayerFSM;
 	
 protected:
 
