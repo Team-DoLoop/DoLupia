@@ -10,8 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
-#include "Characters/PlayerFSMComp.h"
 #include "Characters/PlayerStateBase.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Engine/LocalPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);

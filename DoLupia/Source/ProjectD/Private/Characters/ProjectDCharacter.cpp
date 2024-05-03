@@ -7,10 +7,10 @@
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
-#include "Characters/PlayerFSMComp.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -105,7 +105,7 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 
 void AProjectDCharacter::Aim()
 {
-	// ╦╦╬Ю ╦чюн ю╖а╛юл дяаЖаЖ ╬й╬р╢ы╦И аэюню╩ гоюз.
+	// О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫й╬р╢ы╦О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫.
 	if(!HUD->IsMenuVisible())
 	{
 		bIsAiming = true;
@@ -118,7 +118,7 @@ void AProjectDCharacter::Aim()
 
 void AProjectDCharacter::StopAiming()
 {
-	// ╦╦╬Ю ╦чюн ю╖а╛юл дяаЖаЖ ╬й╬р╢ы╦И аэюню╩ гоюз.
+	// О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫й╬р╢ы╦О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫.
 	if(bIsAiming)
 	{
 		bIsAiming = false;

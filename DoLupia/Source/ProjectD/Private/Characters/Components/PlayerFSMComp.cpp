@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/PlayerFSMComp.h"
+#include "Characters/Components/PlayerFSMComp.h"
 
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"

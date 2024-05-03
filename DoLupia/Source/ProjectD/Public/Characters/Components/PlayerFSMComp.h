@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayerStateBase.h"
+#include "Characters/PlayerStateBase.h"
 #include "Components/ActorComponent.h"
 #include "PlayerFSMComp.generated.h"
 
