@@ -7,6 +7,8 @@
 #include "PlayerMoveComp.generated.h"
 
 
+class UNiagaraSystem;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UPlayerMoveComp : public UActorComponent
 {
@@ -25,19 +27,55 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
-	// <---------------------- Move ---------------------->
+	
+	// <---------------------- Player ---------------------->
 private:
+	UPROPERTY()
+	class AProjectDCharacter* Player;
 
+	UPROPERTY()
+	class AProjectDPlayerController* PlayerController;
+
+	UPROPERTY()
+	class UPlayerFSMComp* PlayerFSN;
+	
 protected:
 
 public:
+	
+	
+	
+	// <---------------------- Move ---------------------->
+private:
+	FVector CachedDestination;
 
+	// bool bIsTouch; // Is it a touch device
+	float FollowTime; // For how long it has been pressed
+	
+protected:
 
+public:
+	/** FX Class that we will spawn when clicking */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UNiagaraSystem* FXCursor;
+
+	/** Time Threshold to know if it was a short press */
+	// Default = 0.3f
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	float ShortPressThreshold;
+
+	void OnSetDestinationTriggered();
+	void OnSetDestinationReleased();
+
+	
 
 	// <---------------------- Evasion ---------------------->
 private:
 
 protected:
-
+	
 public:
+	void Evasion();
+
+	
 };

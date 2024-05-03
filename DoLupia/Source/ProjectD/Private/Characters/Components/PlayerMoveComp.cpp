@@ -3,6 +3,14 @@
 
 #include "Characters/Components/PlayerMoveComp.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Characters/PlayerStateBase.h"
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/ProjectDPlayerController.h"
+#include "Characters/Components/PlayerFSMComp.h"
+
+class AProjectDCharacter;
 // Sets default values for this component's properties
 UPlayerMoveComp::UPlayerMoveComp()
 {
@@ -11,6 +19,9 @@ UPlayerMoveComp::UPlayerMoveComp()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+
+	CachedDestination = FVector::ZeroVector;
+	FollowTime = 0.f;
 }
 
 
@@ -20,6 +31,12 @@ void UPlayerMoveComp::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+
+	Player = Cast<AProjectDCharacter>(GetOwner());
+	if(!Player) return;
+
+	PlayerController = Cast<AProjectDPlayerController>(Player->GetController());
+	PlayerFSN = Cast<UPlayerFSMComp>(Player->GetPlayerFSMComp());
 	
 }
 
@@ -30,5 +47,63 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UPlayerMoveComp::OnSetDestinationTriggered()
+{
+	if(!Player) return;
+	
+	// We flag that the input is being pressed
+	FollowTime += GetWorld()->GetDeltaSeconds();
+	
+	// We look for the location in the world where the player has pressed the input
+	FHitResult Hit;
+	bool bHitSuccessful = false;
+	/*if (bIsTouch)
+	{
+		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
+	}
+	else
+	{*/
+	bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+	//}
+
+	// If we hit a surface, cache the location
+	if (bHitSuccessful)
+	{
+		CachedDestination = Hit.Location;
+	}
+	
+	// Move towards mouse pointer or touch
+	APawn* ControlledPawn = PlayerController->GetPawn();
+
+	// switch player state
+	// AProjectDCharacter* player = Cast<AProjectDCharacter>(GetCharacter());
+	
+	if (ControlledPawn != nullptr)
+	{
+		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
+			
+		if(Player != nullptr) PlayerFSN->ChangePlayerState(EPlayerState::MOVE);
+	}
+}
+
+void UPlayerMoveComp::OnSetDestinationReleased()
+{
+	// If it was a short press
+	//if (FollowTime <= ShortPressThreshold)
+	{
+		// We move there and spawn some particles
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(PlayerController, CachedDestination);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(PlayerController, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+	}
+
+	FollowTime = 0.f;
+}
+
+void UPlayerMoveComp::Evasion()
+{
+	
 }
 

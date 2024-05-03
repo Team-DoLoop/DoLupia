@@ -20,7 +20,10 @@ public:
 	UPlayerAttackComp();
 
 private:
+	UPROPERTY()
 	class AProjectDCharacter* Player;
+
+	UPROPERTY()
 	class UPlayerFSMComp* PlayerFSMComp;
 	
 protected:

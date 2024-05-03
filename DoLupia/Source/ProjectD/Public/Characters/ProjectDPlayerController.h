@@ -8,7 +8,6 @@
 #include "ProjectDPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
-class UNiagaraSystem;
 class UInputMappingContext;
 class UInputAction;
 
@@ -26,69 +25,66 @@ protected:
 public:
 	AProjectDPlayerController();
 
+	// <---------------------- Not Use ---------------------->
+	/*
+private:
 
+protected:
+	void OnTouchTriggered();
+	void OnTouchReleased();
+	
+public:
+
+
+	// Jump Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* SetDestinationTouchAction;
+	
+*/
+
+
+	// <---------------------- Player ---------------------->
+private:
+	UPROPERTY()
+	class AProjectDCharacter* ControlledCharacter;
+	
+protected:
+
+public:
+
+	
 	
 	// <---------------------- Input ---------------------->
 private:
 
 public:
-	/** Time Threshold to know if it was a short press */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	float ShortPressThreshold;
-
-	/** FX Class that we will spawn when clicking */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UNiagaraSystem* FXCursor;
-
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
-	
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* SetDestinationClickAction;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* SetDestinationTouchAction;
-
-	/* Interaction Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* InteractionAction;
-
-	/* Toggle Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* ToggleAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* AimingAction;
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
+	// uint32 bMoveToMouseCursor : 1;
 
 	virtual void SetupInputComponent() override;
+
+
 	
+	// <---------------------- Move ---------------------->
+private:
+
+protected:
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();
 	void OnSetDestinationTriggered();
 	void OnSetDestinationReleased();
-	void OnTouchTriggered();
-	void OnTouchReleased();
-
 	
-
-	// <---------------------- Move ---------------------->
-private:
-	FVector CachedDestination;
-
-	bool bIsTouch; // Is it a touch device
-	float FollowTime; // For how long it has been pressed
-
-protected:
 	void Evasion();
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* SetDestinationClickAction;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* EvasionAction;
 
@@ -98,12 +94,22 @@ public:
 private:
 	void ToggleMenu();
 
+public:
+	/* Toggle Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ToggleAction;
+	
 
 	
 	// <---------------------- Interaction ---------------------->
 private:
 	void BeginInteract();
 	void EndInteract();
+
+public:
+	/* Interaction Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractionAction;
 
 
 
@@ -118,6 +124,10 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AimingAction;
+
 
 };
 
