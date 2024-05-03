@@ -140,9 +140,99 @@ FItemAddResult UInventoryComponent::HandelNonStackableItems(UItemBase* InputItem
 	(FText::FromString("Successfully added a single {0} to the Inventory."), InputItem->GetTextData().Name));
 }
 
-int32 UInventoryComponent::HandelStackableItems(UItemBase* InputItem, int32 RequestedAddAmount)
+int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 RequestedAddAmount)
 {
-	return 0;
+	// 추가할 아이템의 개수가 0이거나 weight 가 0이라면 return 0;
+	if(RequestedAddAmount <= 0 || FMath::IsNearlyZero(ItemIn->GetItemStackWeight()))
+	{
+		return 0;
+	}
+
+	int32 AmountToDistribute = RequestedAddAmount;
+
+	// 이미 인벤토리에 있는 지 확인하고 없으면 새로 인벤토리에 추가해 넣는다.
+	UItemBase* ExistingItemStack = FindNextPartialStack(ItemIn);
+
+	// 인벤토리가 수용할 수 있을 정도로 다 찰 때 까지 루프를 돌리자.
+	while (ExistingItemStack)
+	{
+		// 아이템의 전체 수량을 반환한다.(기준 min(아이템 최대 개수, 필요한 아이템의개수))
+		const int32 AmountToMakeFullstack = CalculateNumberForFullStack(ExistingItemStack, AmountToDistribute);
+		// 아이템의 무게를 기반해서 아이템을 얼마 넣을 수 있는 지 확인한다.	
+		const int32 WeightLimitAddAmount = CalculateWeightAddAmount(ExistingItemStack, AmountToMakeFullstack);
+
+		// 수량이 남아 있다면?(무게가 존재한다면?)
+		if(WeightLimitAddAmount > 0)
+		{
+			// 기존 수량에서 추가한다.
+			ExistingItemStack->SetQuantity(ExistingItemStack->Quantity + WeightLimitAddAmount);
+			// 기존 무게에서 들어노는 무게와 기존 무게를 더해준다.
+			InventoryTotalWeight += ExistingItemStack->GetItemSingleWeight() * WeightLimitAddAmount;
+
+			// 현재 필요한 아이템 수량 -= 실제로 운반할 수 있는 아이템 수량
+			AmountToDistribute -= WeightLimitAddAmount;
+
+			// 내가 옮긴 아이템 남은 수량으로 바꿔준다.
+			ItemIn->SetQuantity(AmountToDistribute);
+
+			// 만약 최대 무게에 도달하면 루프를 실행할 필요가 없기 때문에 반환한다.
+			if(InventoryTotalWeight >= InventoryWeightCapacity)
+			{
+				OnInventoryUpdated.Broadcast();
+				return RequestedAddAmount - AmountToDistribute;
+			}
+		}
+		else if(WeightLimitAddAmount <= 0)
+		{
+			// 아이템 무게가 존재하지 않고, 아이템 필요 추가량 != 현재 필요한 아이템 수량 이라면
+			if(AmountToDistribute != RequestedAddAmount)
+			{
+				OnInventoryUpdated.Broadcast();
+				return RequestedAddAmount - AmountToDistribute;
+			}
+
+			return 0;
+		}
+
+		// 아이템을 인벤토리에 다 넣었을 경우 들어온다.
+		if(AmountToDistribute <= 0)
+		{
+			OnInventoryUpdated.Broadcast();
+			return RequestedAddAmount;
+		}
+
+		// 아이템이 남아있는 지 체크한다.
+		ExistingItemStack = FindNextItemByID(ItemIn);
+	}
+
+	// partial stack을 찾을 수 없을 때 새로운 스택에 추가한다.
+	if(InventoryContents.Num() + 1 <= InventorySlotsCapacity)
+	{
+		// 아이템의 무게를 기반해서 아이템을 얼마 넣을 수 있는 지 확인한다.
+		const int32 WeightLimitAddAmount = CalculateWeightAddAmount(ItemIn, AmountToDistribute);
+
+		// 아이템 무게가 존재한다면?
+		if(WeightLimitAddAmount >= 0)
+		{
+			// 무게를 기반한 아이템이 만약 현재 필요량보다 작다면
+			// 몇 개 못넣는다..
+			if(WeightLimitAddAmount < AmountToDistribute)
+			{
+				AmountToDistribute -= WeightLimitAddAmount;
+				ItemIn->SetQuantity(AmountToDistribute);
+
+				AddNewItem(ItemIn->CreateItemCopy(), WeightLimitAddAmount);
+				return RequestedAddAmount - AmountToDistribute;
+			}
+
+			// 무게를 비교해서 현재 필요량보다 크다면 모두 넣어주자.
+			AddNewItem(ItemIn, AmountToDistribute);
+			return RequestedAddAmount;
+		}
+	}
+
+	OnInventoryUpdated.Broadcast();
+	return RequestedAddAmount - AmountToDistribute;
 }
 
 FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)

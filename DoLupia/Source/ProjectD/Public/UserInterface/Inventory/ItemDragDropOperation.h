@@ -6,6 +6,9 @@
 #include "Blueprint/DragDropOperation.h"
 #include "ItemDragDropOperation.generated.h"
 
+class UItemBase;
+class UInventoryComponent;
+
 /**
  * 
  */
@@ -13,5 +16,18 @@ UCLASS()
 class PROJECTD_API UItemDragDropOperation : public UDragDropOperation
 {
 	GENERATED_BODY()
-	
+
+public:
+	FORCEINLINE UItemBase* GetSourceItem() const { return SourceItem; };
+	FORCEINLINE UInventoryComponent* GetSourceInventory() const { return SourceInventory; };
+
+	FORCEINLINE void SetSourceItem(UItemBase* NewSourceItem) { SourceItem = NewSourceItem; };
+	FORCEINLINE void SetSourceInventory(UInventoryComponent* NewSourceInventory) { SourceInventory = NewSourceInventory; };
+
+private:
+	UPROPERTY()
+	UItemBase* SourceItem;
+
+	UPROPERTY()
+	UInventoryComponent* SourceInventory;
 };

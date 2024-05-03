@@ -33,7 +33,7 @@ void UInventoryTooltip::NativeConstruct()
 	case EItemType::Quest: 
 		break;
 	case EItemType::Mundane:
-		ItemType->SetText(FText::FromString("Consumable"));
+		ItemType->SetText(FText::FromString("Mundane"));
 		DamageValue->SetVisibility(ESlateVisibility::Collapsed);
 		ArmorRating->SetVisibility(ESlateVisibility::Collapsed);
 		UsageText->SetVisibility(ESlateVisibility::Collapsed);
@@ -52,11 +52,15 @@ void UInventoryTooltip::NativeConstruct()
 	UsageText->SetText(TextData.UsageText);
 	ItemDescription->SetText(TextData.Description);
 	SellValue->SetText(FText::AsNumber(ItemStatistics.SellValue));
-	StackWeight->SetText(FText::AsNumber(ItemBeingHovered->GetItemStackWeight()));
+
+	const FString& WeightInfo = { "Weight : " + FString::SanitizeFloat(ItemBeingHovered->GetItemStackWeight())};
+
+	StackWeight->SetText(FText::FromString(WeightInfo));
 
 	if(NumericData.bIsStackable)
 	{
-		MaxStackSize->SetText(FText::AsNumber(NumericData.MaxStackSize));
+		const FString& StackInfo = { "Max stack size : " + FString::FromInt(NumericData.MaxStackSize) };
+		MaxStackSize->SetText(FText::FromString(StackInfo));
 	}
 	else
 	{

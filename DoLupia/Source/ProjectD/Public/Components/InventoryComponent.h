@@ -120,7 +120,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	FItemAddResult HandelNonStackableItems(UItemBase* InputItem);
-	int32 HandelStackableItems(UItemBase* InputItem, int32 RequestedAddAmount);
+	int32 HandelStackableItems(UItemBase* ItemIn, int32 RequestedAddAmount);
 	int32 CalculateWeightAddAmount(UItemBase* ItemIn, int32 RequestedAddAmount);
 	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount);
 

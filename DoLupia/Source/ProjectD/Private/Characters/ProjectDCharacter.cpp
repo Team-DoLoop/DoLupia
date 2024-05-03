@@ -2,6 +2,7 @@
 // game
 #include "Characters/ProjectDCharacter.h"
 #include "UserInterface/DoLupiaHUD.h"
+#include "World/Pickup.h"
 
 // engine
 #include "UObject/ConstructorHelpers.h"
@@ -9,11 +10,13 @@
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InventoryComponent.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -40,6 +43,11 @@ AProjectDCharacter::AProjectDCharacter()
 	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
+	AimingCameraTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("AimingCameraTimeline"));
+	DefaultCameraLocation = FVector{0.0, 0.0, 0.0};
+	AimingCameraLocation = FVector{0.0, 0.0, 300.0 };
+	CameraBoom->SocketOffset = DefaultCameraLocation;
+
 	// Create a camera...
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -52,7 +60,7 @@ AProjectDCharacter::AProjectDCharacter()
 	InteractionCheckFrequency = 0.1f;
 	InteractionCheckDistance = 225.0f;
 
-	BaseEyeHeight = 74.f;
+	BaseEyeHeight = 76.f;
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -64,7 +72,17 @@ void AProjectDCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	HUD = Cast<ADoLupiaHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	
+
+	FOnTimelineFloat AimLerpAlphaValue;
+	FOnTimelineEvent TimelineFinishedEvent;
+	AimLerpAlphaValue.BindUFunction(this, FName("UpdateCameraTimeline"));
+	TimelineFinishedEvent.BindUFunction(this, FName("CameraTimelineEnd"));
+
+	if(AimingCameraTimeline && AimingCameraCurve)
+	{
+		AimingCameraTimeline->AddInterpFloat(AimingCameraCurve, AimLerpAlphaValue);
+		AimingCameraTimeline->SetTimelineFinishedFunc(TimelineFinishedEvent);
+	}
 }
 
 void AProjectDCharacter::Tick(float DeltaSeconds)
@@ -74,6 +92,49 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
 	{
 		PerformInteractionCheck();
+	}
+}
+
+void AProjectDCharacter::Aim()
+{
+	// 만약 메인 위젯이 켜지지 않았다면 줌인을 하자.
+	if(!HUD->IsMenuVisible())
+	{
+		bIsAiming = true;
+		//GetCharacterMovement()->MaxWalkSpeed = 200.f;
+
+		if(AimingCameraTimeline)
+			AimingCameraTimeline->PlayFromStart();
+	}
+}
+
+void AProjectDCharacter::StopAiming()
+{
+	// 만약 메인 위젯이 켜지지 않았다면 줌인을 하자.
+	if(bIsAiming)
+	{
+		bIsAiming = false;
+		//GetCharacterMovement()->MaxWalkSpeed = 500.f;
+
+		if(AimingCameraTimeline)
+			AimingCameraTimeline->Reverse();
+	}
+}
+
+void AProjectDCharacter::UpdateCameraTimeline(const float TimelineValue) const
+{
+	const FVector CameraLocation = FMath::Lerp(DefaultCameraLocation, AimingCameraLocation, TimelineValue);
+	CameraBoom->SocketOffset = CameraLocation;
+}
+
+void AProjectDCharacter::CameraTimelineEnd()
+{
+	if(AimingCameraTimeline)
+	{
+		if(AimingCameraTimeline->GetPlaybackPosition() != 0.0f)
+		{
+			//HUD->Disp
+		}
 	}
 }
 
@@ -206,9 +267,12 @@ void AProjectDCharacter::Interact()
 	}
 }
 
-void AProjectDCharacter::ToggleMenu() const
+void AProjectDCharacter::ToggleMenu()
 {
 	HUD->ToggleMenu();
+
+	if(HUD->IsMenuVisible())
+		StopAiming();
 }
 
 void AProjectDCharacter::UpdateInteractionWidget() const
@@ -216,5 +280,29 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	if (IsValid(TargetInteractable.GetObject()))
 	{
 		HUD->UpdateInteractionWidget(&TargetInteractable->GetInteractableData());
+	}
+}
+
+void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
+{
+	if(PlayerInventory->FindMatchItem(ItemToDrop))
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.bNoFail = true;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		const FVector& SpawnLocation { GetActorLocation() + (GetActorForwardVector() * 50.f)};
+		const FTransform SpawnTransform(GetActorRotation(), SpawnLocation);
+
+		const int32 RemoveQuantity = PlayerInventory->RemoveAmountOfItem(ItemToDrop, QuantityToDrop);
+
+		APickup* Pickup = GetWorld()->SpawnActor<APickup>(APickup::StaticClass(), SpawnTransform, SpawnParams);
+
+		Pickup->InitializeDrop(ItemToDrop, RemoveQuantity);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item to drop was somehos null"));
 	}
 }
