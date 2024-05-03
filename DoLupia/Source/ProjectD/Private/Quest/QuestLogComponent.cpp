@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Quest/QuestLogComponent.h"
-#include "Quest/Quest_Base.h"  // AQuest_Base »ç¿ë
-#include "Quest/QuestInteractionInterface.h"
+#include "Quest/Quest_Base.h"  // AQuest_Base ì‚¬ìš©
+
 
 // Sets default values for this component's properties
 UQuestLogComponent::UQuestLogComponent()
@@ -33,20 +33,20 @@ void UQuestLogComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
-void UQuestLogComponent::AddNewQuest(FString QuestID)
+void UQuestLogComponent::AddNewQuest(FName QuestID)
 {
 	CurrentActiveQuests.AddUnique(QuestID);
 
-	// ½ºÆù ¾×ÅÍ »ı¼º
+	// ìŠ¤í° ì•¡í„° ìƒì„±
 	AQuest_Base* SpawnedQuest = GetWorld()->SpawnActor<AQuest_Base>(AQuest_Base::StaticClass());
 
-	//ÇöÀç Äù½ºÆ®¿¡ ½ºÆùÇÑ Äù½ºÆ®¸¦ Ãß°¡
+	//í˜„ì¬ í€˜ìŠ¤íŠ¸ì— ìŠ¤í°í•œ í€˜ìŠ¤íŠ¸ë¥¼ ì¶”ê°€
 	CurrentQuest.Add(SpawnedQuest);
 }
 
-bool UQuestLogComponent::QueryActiveQuest(FString QuestID)
+bool UQuestLogComponent::QueryActiveQuest(FName QuestID)
 {
-	//ÇöÀç Äù½ºÆ®¿¡ Æ¯Á¤ Äù½ºÆ® ¾ÆÀÌµğ°¡ ÀÖ´ÂÁö¿¡ ´ëÇÑ bool °ª
+	//í˜„ì¬ í€˜ìŠ¤íŠ¸ì— íŠ¹ì • í€˜ìŠ¤íŠ¸ ì•„ì´ë””ê°€ ìˆëŠ”ì§€ì— ëŒ€í•œ bool ê°’
 	bool QuestExist = CurrentActiveQuests.Contains(QuestID);
 	return QuestExist;
 }
