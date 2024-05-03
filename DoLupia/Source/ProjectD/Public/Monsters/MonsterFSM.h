@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,7 +9,7 @@
 UENUM(BlueprintType)
 enum class EMonsterState : uint8
 {
-	Patorl,
+	Patrol,
 	Move,
     Attack,
     Damage,
@@ -42,7 +42,7 @@ public:
 	void DamageState();
 	void DieState();
 
-	//ÇÃ·¹ÀÌ¾î¸¦ Å¸°ÙÀ¸·Î ¼³Á¤
+	//í”Œë ˆì´ì–´ë¥¼ íƒ€ê²Ÿìœ¼ë¡œ ì„¤ì •
 	UPROPERTY(EditAnywhere)
 	AActor* target;
 
@@ -51,7 +51,17 @@ public:
 
 	FVector TargetVector;
 
-	//ÀÏÁ¤ ¹İ°æ ¾È¿¡ µé¾î¿À¸é ÇÃ·¹ÀÌ¾î¸¦ ÇâÇØ ÀÌµ¿
+	//ì¼ì • ë°˜ê²½ ì•ˆì— ë“¤ì–´ì˜¤ë©´ í”Œë ˆì´ì–´ë¥¼ í–¥í•´ ì´ë™
 	UPROPERTY(EditAnywhere)
-	float TargetRange = 500;
+	float TargetRange = 700;
+
+	//ì¼ì • ë°˜ê²½ ì•ˆì— ë“¤ì–´ì˜¤ë©´ ê³µê²©ëª¨ë“œë¡œ ì „í™˜
+	UPROPERTY( EditAnywhere )
+	float AttackRange = 500;
+
+	void MoveToTarget();
+
+	void TakeDamage();
+
+	float currentTime=0;
 };
