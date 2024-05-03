@@ -3,7 +3,7 @@
 #include "UserInterface/Inventory/InventoryPannel.h"
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "Characters/ProjectDCharacter.h"
-#include "Components/InventoryComponent.h"
+#include "Characters/Components/InventoryComponent.h"
 
 
 #include "Components/TextBlock.h"

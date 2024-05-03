@@ -1,5 +1,5 @@
 
-#include "Components/InventoryComponent.h"
+#include "Characters/Components/InventoryComponent.h"
 
 UInventoryComponent::UInventoryComponent()
 {

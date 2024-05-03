@@ -3,7 +3,7 @@
 #include "World/Pickup.h"
 
 #include "Characters/ProjectDCharacter.h"
-#include "Components/InventoryComponent.h"
+#include "Characters/Components/InventoryComponent.h"
 #include "Items/ItemBase.h"
 
 APickup::APickup()
