@@ -23,6 +23,8 @@ protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 		UDragDropOperation* InOperation) override;
 
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 protected:
 	UPROPERTY()
 	AProjectDCharacter* PlayerCharacter;

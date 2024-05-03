@@ -60,9 +60,10 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AProjectDPlayerController::BeginInteract);
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::EndInteract);
 
-		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
-		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Canceled, this, &AProjectDPlayerController::ToggleMenu);
+		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
+		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
 
+		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
 	}
 	else
 	{
@@ -164,4 +165,23 @@ void AProjectDPlayerController::ToggleMenu()
 
 	if (ControlledCharacter)
 		ControlledCharacter->ToggleMenu();
+}
+
+
+void AProjectDPlayerController::Aim()
+{
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if (ControlledCharacter)
+		ControlledCharacter->Aim();
+
+}
+
+void AProjectDPlayerController::StopAiming()
+{
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	if (ControlledCharacter)
+		ControlledCharacter->StopAiming();
+
 }

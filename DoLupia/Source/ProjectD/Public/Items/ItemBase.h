@@ -55,6 +55,9 @@ public:
 	FORCEINLINE FItemNumericData& GetNumericData() { return NumericData; }
 	FORCEINLINE const FItemAssetData& GetAssetData() const { return AssetData; }
 
+	FORCEINLINE UInventoryComponent* GetOwningInventory() const { return OwningInventory; };
+	FORCEINLINE void SetOwningInventory(UInventoryComponent* NewOwningInventory) { OwningInventory = NewOwningInventory; };
+
 protected:
 	bool operator==(const FName& OtherID) const
 	{

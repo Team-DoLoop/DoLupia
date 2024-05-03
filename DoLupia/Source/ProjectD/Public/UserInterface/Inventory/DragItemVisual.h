@@ -15,8 +15,12 @@ class PROJECTD_API UDragItemVisual : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
+public:
+	FORCEINLINE UBorder* GetItemBorder() const { return ItemBorder; };
+	FORCEINLINE UImage* GetItemIcon() const { return ItemIcon; };
+	FORCEINLINE UTextBlock* GetItemQuantity() const { return ItemQuantity; };
 
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Drag Item Visual", meta = (BindWidget))
 	UBorder* ItemBorder;
 

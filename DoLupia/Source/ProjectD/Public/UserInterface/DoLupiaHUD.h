@@ -30,6 +30,7 @@ public:
 	void HideInteractionWidget() const;
 	void UpdateInteractionWidget(const FInteractableData* InteractableData) const;
 
+	FORCEINLINE bool IsMenuVisible() const { return bISMenuVisible; }
 
 protected:
 	virtual void BeginPlay() override;

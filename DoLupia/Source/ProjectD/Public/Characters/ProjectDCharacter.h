@@ -10,6 +10,8 @@
 
 class ADoLupiaHUD;
 class UInventoryComponent;
+class UItemBase;
+class UTimelineComponent;
 
 USTRUCT()
 struct FInteractionData
@@ -51,6 +53,9 @@ public:
 	FORCEINLINE UQuestGiver* GetQuestGiver() const { return PlayerQuest; };
 
 	void UpdateInteractionWidget() const;;
+	void UpdateInteractionWidget() const;
+
+	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 
 protected:
 	virtual void BeginPlay() override;;
@@ -76,22 +81,40 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Quest")
 	UQuestGiver* PlayerQuest;
 
+	// 인터렉션 변수들
 	float InteractionCheckFrequency;
-
 	float InteractionCheckDistance;
-
 	FTimerHandle TimerHandle_Interaction;
-
 	FInteractionData InteractionData;
 
+	// 타일라인 변수들 카메라 이동 변수 -> 특수 스킬 사용 시 줌인 기능
+	UPROPERTY(VisibleAnywhere, Category = "Character | Camera")
+	FVector DefaultCameraLocation;
+	UPROPERTY(VisibleAnywhere, Category = "Character | Camera")
+	FVector AimingCameraLocation;
+
+	TObjectPtr<UTimelineComponent> AimingCameraTimeline;
+
+	UPROPERTY(EditDefaultsOnly,  Category = "Character | Aim Timeline")
+	UCurveFloat* AimingCameraCurve;
+
+	bool bIsAiming;
+
 protected:
+	void Aim();
+	void StopAiming();
+	UFUNCTION()
+	void UpdateCameraTimeline(const float TimelineValue) const;
+	UFUNCTION()
+	void CameraTimelineEnd();
+
 	void PerformInteractionCheck();
 	void FoundInteractable(AActor* NewInteractable);
 	void NoInteractionableFound();
 	void BeginInteract();
 	void EndInteract();
 	void Interact();
-	void ToggleMenu() const;
+	void ToggleMenu();
 
 
 	// <---------------------- Player State ---------------------->
