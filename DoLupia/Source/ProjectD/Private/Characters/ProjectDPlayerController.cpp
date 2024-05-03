@@ -64,6 +64,9 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
 
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
+
+		// Attack
+		
 	}
 	else
 	{
