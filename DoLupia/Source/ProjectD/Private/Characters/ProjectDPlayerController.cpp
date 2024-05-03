@@ -60,16 +60,19 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AProjectDPlayerController::OnTouchReleased);
 
+		// Evasion
+		EnhancedInputComponent->BindAction(EvasionAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Evasion);
 
+		// Interact
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AProjectDPlayerController::BeginInteract);
 		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::EndInteract);
 
-		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
-		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
-
+		// UI
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
 
 		// Attack
+		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
+		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Attack);
 
 	}
@@ -152,6 +155,15 @@ void AProjectDPlayerController::OnTouchReleased()
 	OnSetDestinationReleased();
 }
 
+
+void AProjectDPlayerController::Evasion()
+{
+	// 회피기
+	AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+
+	//if(ControlledCharacter)
+		
+}
 
 // <---------------------- UI ---------------------->
 

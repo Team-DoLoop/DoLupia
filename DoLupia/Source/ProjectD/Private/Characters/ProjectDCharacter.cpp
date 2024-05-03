@@ -12,6 +12,7 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Characters/Components/PlayerMoveComp.h"
 #include "Components/TimelineComponent.h"
 #include "Elements/Framework/TypedElementQueryBuilder.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -62,6 +63,9 @@ AProjectDCharacter::AProjectDCharacter()
 	// State
 	PlayerFSM = CreateDefaultSubobject<UPlayerFSMComp>(TEXT("PlayerFSM"));
 
+	// Move
+	moveComp = CreateDefaultSubobject<UPlayerMoveComp>(TEXT("moveComp"));
+	
 	// Attack
 	attackComp = CreateDefaultSubobject<UPlayerAttackComp>(TEXT("AttackComp"));
 	

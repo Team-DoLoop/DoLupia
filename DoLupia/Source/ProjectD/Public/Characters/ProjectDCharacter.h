@@ -94,6 +94,17 @@ protected:
 public:
 
 	
+
+	// <---------------------- Move ---------------------->
+private:
+	UPROPERTY(EditDefaultsOnly)
+	class UPlayerMoveComp* moveComp;
+
+protected:
+
+public:
+	
+	
 	
 	// <---------------------- Attack ---------------------->
 private:

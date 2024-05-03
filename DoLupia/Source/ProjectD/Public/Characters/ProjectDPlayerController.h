@@ -19,8 +19,6 @@ class AProjectDPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	friend class UPlayerFSMComp;
-
 protected:
 	// To add mapping context
 	virtual void BeginPlay();
@@ -86,6 +84,13 @@ private:
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+
+protected:
+	void Evasion();
+	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* EvasionAction;
 
 
 	
