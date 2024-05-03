@@ -27,6 +27,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	
 	// <--------------------- Player --------------------->
 private:
 	UPROPERTY()
@@ -46,7 +47,6 @@ private:
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
-
 public:
 
 	
@@ -55,8 +55,23 @@ private:
 	UPROPERTY()
 	EPlayerState CurrentState = EPlayerState::IDLE;
 
+public:
+	void CheckState(EPlayerState _state);
+	void ChangePlayerState(EPlayerState _state);
+
+
+
+	// <--------------------- IDLE --------------------->
+private:
 
 public:
-	void ChangePlayerState(EPlayerState _state);
+	
+
+	// <--------------------- Move --------------------->
+private:
+
+public:
+	void TickMove();
+
 	
 };
