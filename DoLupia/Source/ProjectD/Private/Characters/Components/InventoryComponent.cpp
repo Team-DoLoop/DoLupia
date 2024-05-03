@@ -146,8 +146,9 @@ void UInventoryComponent::SplitExistingStack(UItemBase* ItemIn, const int32 Amou
 
 void UInventoryComponent::SwapInventory(UInventoryItemSlot* Sour, UInventoryItemSlot* Dest)
 {
-	int SourIndex = Sour->GetSlotIndex();
-	int DestIndex = Dest->GetSlotIndex();
+	const int32 SourIndex = Sour->GetSlotIndex();
+	const int32 DestIndex = Dest->GetSlotIndex();
+
 
 	UItemBase* tmp = InventoryContents[DestIndex];
 	InventoryContents[DestIndex] = InventoryContents[SourIndex];
@@ -351,6 +352,7 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 		NewItem = Item->CreateItemCopy();
 	}
 
+
 	NewItem->OwningInventory = this;
 	NewItem->SetQuantity(AmountToAdd);
 
@@ -366,6 +368,6 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 
 
 	InventoryTotalWeight += NewItem->GetItemStackWeight();
-	OnInventoryUpdated.Broadcast();
+	//OnInventoryUpdated.Broadcast();
 }
 

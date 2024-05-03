@@ -25,11 +25,6 @@ void UInventoryTooltip::SetupTooltip()
 	case EItemType::Spell:
 		break;
 	case EItemType::Consumable:
-		if(!ItemType)
-		{
-			check(false);
-		}
-
 		ItemType->SetText( FText::FromString( "Consumable" ) );
 		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
 		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
@@ -39,11 +34,6 @@ void UInventoryTooltip::SetupTooltip()
 	case EItemType::Quest:
 		break;
 	case EItemType::Mundane:
-		if (!ItemType)
-		{
-			check( false );
-		}
-
 		ItemType->SetText( FText::FromString( "Mundane" ) );
 		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
 		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
@@ -56,13 +46,6 @@ void UInventoryTooltip::SetupTooltip()
 	const FItemTextData& TextData = ItemBeingHovered->GetTextData();
 	const FItemStatistics& ItemStatistics = ItemBeingHovered->GetItemStatistics();
 	const FItemNumericData& NumericData = ItemBeingHovered->GetNumericData();
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *TextData.Name.ToString())
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *FText::AsNumber( ItemStatistics.DamageValue ).ToString() );
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *FText::AsNumber( ItemStatistics.ArmorRating ).ToString() );
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *TextData.UsageText.ToString() );
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *TextData.UsageText.ToString() );
-
 
 	ItemName->SetText( TextData.Name );
 	DamageValue->SetText( FText::AsNumber( ItemStatistics.DamageValue ) );
