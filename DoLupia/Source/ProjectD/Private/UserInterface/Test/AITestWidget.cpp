@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UserInterface/Test/AITestWidget.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
 #include "Interfaces/IHttpResponse.h"
 #include "HttpModule.h"
+#include "Components/TextBlock.h"
 #include "Library/JsonLibrary.h"
 
 void UAITestWidget::NativeConstruct()
@@ -24,7 +25,6 @@ void UAITestWidget::SendChatbotSV()
 	FString sendJson = UJsonLibrary::MapToJson(msgData);
 	FString fullURL = "http://127.0.0.1:8000/chat";
 
-
 	// server connect
 	ReqDataPost(fullURL, sendJson);
 }
@@ -37,34 +37,34 @@ void UAITestWidget::SendImgaiSV()
 
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
-	FString fullURL = "http://127.0.0.1:8000/imgai";
-	ReqDataPost(fullURL, sendJson);
+	FString fullURL = "http://127.0.0.1:8000/imageAI";
+	//ReqDataPost(fullURL, sendJson);
 }
 
 void UAITestWidget::ReqDataPost(const FString& url, const FString& msg)
 {
-	// FHTTPModule ∞¥√º∏¶ ∞°¡Æø¿∞Ì ΩÕ¥Ÿ.
+	// FHTTPModule Í∞ùÏ≤¥Î•º Í∞ÄÏ†∏Ïò§Í≥† Ïã∂Îã§.
 	auto& httpModule = FHttpModule::Get();
 
-	// UHTTPRequest ∞¥√º∏¶ ∏∏µÈ∞Ì ΩÕ¥Ÿ.
+	// UHTTPRequest Í∞ùÏ≤¥Î•º ÎßåÎì§Í≥† Ïã∂Îã§.
 	TSharedRef<IHttpRequest> req = httpModule.CreateRequest();
 
-	// url º≥¡§
+	// url ÏÑ§Ï†ï
 	req->SetURL(url);
 
-	// verb º≥¡§ (post)
+	// verb ÏÑ§Ï†ï (post)
 	req->SetVerb(TEXT("POST"));
 
-	// header º≥¡§
+	// header ÏÑ§Ï†ï
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
-	// ∫∏≥æ ¡§∫∏∏¶ ¥„±‚
+	// Î≥¥ÎÇº Ï†ïÎ≥¥Î•º Îã¥Í∏∞
 	req->SetContentAsString(msg);
 
-	// ¿¿¥‰«‘ºˆ µÓ∑œ
+	// ÏùëÎãµÌï®Ïàò Îì±Î°ù
 	req->OnProcessRequestComplete().BindUObject(this, &UAITestWidget::ResDataPost);
 
-	// ø‰√ª Ω««‡
+	// ÏöîÏ≤≠ Ïã§Ìñâ
 	req->ProcessRequest();
 	
 }
@@ -74,7 +74,10 @@ void UAITestWidget::ResDataPost(FHttpRequestPtr Request, FHttpResponsePtr Respon
 	if (bConnectedSuccessfully)
 	{
 		FString result = Response->GetContentAsString();
-		//UE_LOG(LogTemp, Warning, TEXT("result : [%s]"), result)
+
+		//result = UJsonLibrary::JsonParse(result);
+		UE_LOG(LogTemp, Warning, TEXT("result : [%s]"), *result)
+		txt_chatbot->SetText( FText::FromString( result ) );
 
 	}
 	else

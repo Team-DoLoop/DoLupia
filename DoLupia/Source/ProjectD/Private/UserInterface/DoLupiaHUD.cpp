@@ -49,22 +49,20 @@ void ADoLupiaHUD::HideMenu()
 
 void ADoLupiaHUD::ToggleMenu()
 {
-	if(bISMenuVisible)
-	{
-		HideMenu();
-
-		const FInputModeGameOnly InputMode;
-		GetOwningPlayerController()->SetInputMode(InputMode);
-		GetOwningPlayerController()->SetShowMouseCursor(false);
-	}
-	else
+	if(MainMenuWidget->GetVisibility() == ESlateVisibility::Collapsed)
 	{
 		DisPlayMenu();
 
-		const FInputModeGameAndUI InputMode;
-		GetOwningPlayerController()->SetInputMode(InputMode);
+		APlayerController* PlayerController = GetOwningPlayerController();
+		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
+		PlayerController->SetInputMode(InputMode);
 		GetOwningPlayerController()->SetShowMouseCursor(true);
 	}
+	else
+		HideMenu();
+
+	
 }
 
 void ADoLupiaHUD::ShowInteractionWidget() const

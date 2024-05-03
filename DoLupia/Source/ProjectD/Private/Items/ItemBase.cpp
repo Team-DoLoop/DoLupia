@@ -3,7 +3,7 @@
 
 #include "Items/ItemBase.h"
 
-#include "Components/InventoryComponent.h"
+#include "Characters/Components/InventoryComponent.h"
 
 UItemBase::UItemBase() : bIsCopy(false), bIsPickup(false)
 {
@@ -36,7 +36,7 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 {
 	if(NewQuantity != Quantity)
 	{
-		Quantity = FMath::Clamp(NewQuantity, 0, NumericData.bIsStackable ? NumericData.MaxStackSize : 1);
+		Quantity = FMath::Clamp(NewQuantity, 0, this->NumericData.bIsStackable ? this->NumericData.MaxStackSize : 1);
 
 		if(OwningInventory)
 		{
@@ -44,6 +44,10 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 			{
 				OwningInventory->RemoveSingleInstanceOfItem(this);
 			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("ItemBase OwningInventory was null!"));
 		}
 	}
 

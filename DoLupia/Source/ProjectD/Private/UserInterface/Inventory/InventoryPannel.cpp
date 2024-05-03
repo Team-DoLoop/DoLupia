@@ -3,11 +3,12 @@
 #include "UserInterface/Inventory/InventoryPannel.h"
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "Characters/ProjectDCharacter.h"
-#include "Components/InventoryComponent.h"
+#include "Characters/Components/InventoryComponent.h"
 
 
 #include "Components/TextBlock.h"
 #include "Components/WrapBox.h"
+#include "UserInterface/Inventory/ItemDragDropOperation.h"
 
 void UInventoryPannel::NativeOnInitialized()
 {
@@ -30,13 +31,18 @@ void UInventoryPannel::NativeOnInitialized()
 
 void UInventoryPannel::SetInfoText() const
 {
-	WeightInfo->SetText(FText::Format(FText::FromString("{0}/{1}"), 
-		InventoryReference->GetInventoryTotalWeight(), 
-		InventoryReference->GetWeightCapacity()));
+	const FString& WeightInfoValue {
+		FString::SanitizeFloat(InventoryReference->GetInventoryTotalWeight()) + "/" +
+		FString::SanitizeFloat(InventoryReference->GetWeightCapacity())
+	};
 
-	CapacityInfo->SetText(FText::Format(FText::FromString("{0}/{1}"),
-		InventoryReference->GetInventoryContents().Num(),
-		InventoryReference->GetSlotCapacity()));
+	const FString& CapacityInfoValue{
+		FString::SanitizeFloat(InventoryReference->GetInventoryContents().Num()) + "/" +
+		FString::SanitizeFloat(InventoryReference->GetSlotCapacity())
+	};
+
+	WeightInfo->SetText(FText::FromString(WeightInfoValue));
+	CapacityInfo->SetText(FText::FromString(CapacityInfoValue));
 }
 
 void UInventoryPannel::RefreshInventory()
@@ -52,6 +58,8 @@ void UInventoryPannel::RefreshInventory()
 
 			InventoryPanel->AddChildToWrapBox(ItemSlot);
 		}
+
+		SetInfoText();
 	}
 }
 
@@ -59,5 +67,12 @@ void UInventoryPannel::RefreshInventory()
 bool UInventoryPannel::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation);
+
+	if(ItemDragDrop->GetSourceItem() && InventoryReference)
+	{
+		return true;
+	}
+
+	return false;
 }

@@ -3,7 +3,7 @@
 #include "World/Pickup.h"
 
 #include "Characters/ProjectDCharacter.h"
-#include "Components/InventoryComponent.h"
+#include "Characters/Components/InventoryComponent.h"
 #include "Items/ItemBase.h"
 
 APickup::APickup()
@@ -57,6 +57,9 @@ void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int
 		ItemReference->SetNumericData(ItemData->NumericData);
 		ItemReference->SetAssetData(ItemData->AssetData);
 
+		// 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
+		FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
+		ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
 		InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
 
 		PickUpMesh->SetStaticMesh(ItemData->AssetData.Mesh);
@@ -68,8 +71,10 @@ void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int
 void APickup::InitializeDrop(UItemBase* ItemToDrop, const int32 InQuantity)
 {
 	ItemReference = ItemToDrop;
+
 	InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
 	ItemReference->GetNumericData().Weight = ItemToDrop->GetItemSingleWeight();
+	ItemReference->SetOwningInventory(nullptr);
 	PickUpMesh->SetStaticMesh(ItemToDrop->GetAssetData().Mesh);
 	UpdateInteractableData();
 }
