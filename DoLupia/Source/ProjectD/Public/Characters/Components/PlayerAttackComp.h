@@ -31,7 +31,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* iaAttack;
 
-	void OnIaAttack(const FInputActionValue& value);
+	void Attack(const FInputActionValue& value);
 	
 public:
 
