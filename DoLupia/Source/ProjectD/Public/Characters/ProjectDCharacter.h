@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/InteractionInterface.h"
-#include "Quest/QuestGiver.h"
+#include "Quest/QuestInteractionInterface.h"
 #include "ProjectDCharacter.generated.h"
 
 class ADoLupiaHUD;
 class UInventoryComponent;
 class UItemBase;
 class UTimelineComponent;
+class UQuestLogComponent;
 
 USTRUCT()
 struct FInteractionData
@@ -27,6 +28,10 @@ struct FInteractionData
 	float LastInteractionCehckTime;
 	
 };
+
+// Delegate 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnObjectiveIDCalled , FString, ObjectiveID);
+
 
 UCLASS(Blueprintable)
 class AProjectDCharacter : public ACharacter
@@ -50,7 +55,7 @@ public:
 
 	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory; };
 
-	FORCEINLINE UQuestGiver* GetQuestGiver() const { return PlayerQuest; };
+	FORCEINLINE UQuestLogComponent* GetQuestLogComponent() const { return PlayerQuest; };
 
 	void UpdateInteractionWidget() const;
 
@@ -77,8 +82,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Inventory")
 	UInventoryComponent* PlayerInventory;
 
+	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
+	TScriptInterface<class IQuestInteractionInterface> QuestInteractable;
+
 	UPROPERTY(VisibleAnywhere, Category = "Character | Quest")
-	UQuestGiver* PlayerQuest;
+	UQuestLogComponent* PlayerQuest;
 
 	// 인터렉션 변수들
 	float InteractionCheckFrequency;
@@ -98,6 +106,15 @@ private:
 	UCurveFloat* AimingCameraCurve;
 
 	bool bIsAiming;
+
+	// Quest 변수
+	UPROPERTY()
+	AActor* LookAtActor;
+
+public:
+	// Event Dispatcher 선언
+	UPROPERTY( BlueprintAssignable , Category = "Events" )
+	FOnObjectiveIDCalled OnObjectiveIDCalled;
 
 protected:
 	void Aim();

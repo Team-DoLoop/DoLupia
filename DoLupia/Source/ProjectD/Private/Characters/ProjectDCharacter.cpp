@@ -1,4 +1,4 @@
-
+﻿
 // game
 #include "Characters/ProjectDCharacter.h"
 #include "UserInterface/DoLupiaHUD.h"
@@ -17,7 +17,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-
+#include "Quest/QuestLogComponent.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -68,7 +68,7 @@ AProjectDCharacter::AProjectDCharacter()
 
 	BaseEyeHeight = 76.f;
 
-	PlayerQuest = CreateDefaultSubobject<UQuestGiver>(TEXT("PlayerQuest"));
+	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -180,7 +180,17 @@ void AProjectDCharacter::PerformInteractionCheck()
 					return;
 				}
 			}
-		}
+			if(TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
+			{
+				LookAtActor = TraceHit.GetActor();
+
+			}else
+			{
+				LookAtActor = nullptr;
+				QuestInteractable->LookAt();
+			}
+		}else
+			LookAtActor = nullptr;
 	}
 	NoInteractionableFound();
 }
@@ -252,6 +262,11 @@ void AProjectDCharacter::BeginInteract()
 				false);
 			}
 		}
+	}
+	//퀘스트 액터 확인 코드
+	if(IsValid(LookAtActor))
+	{
+		OnObjectiveIDCalled.Broadcast(QuestInteractable->InteractWith());
 	}
 }
 
