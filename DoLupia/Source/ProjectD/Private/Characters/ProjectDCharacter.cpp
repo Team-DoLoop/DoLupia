@@ -128,7 +128,8 @@ void AProjectDCharacter::ToggleMenu()
 	// <---------------------- Attack ---------------------->
 void AProjectDCharacter::Aim()
 {
-	// ���� ���� ������ ������ �ʾҴٸ� ������ ����.
+	// 만약 메인 위젯이 켜지지 않았다면 줌인을 하자.
+
 	if(!HUD->IsMenuVisible())
 	{
 		bIsAiming = true;
@@ -141,7 +142,9 @@ void AProjectDCharacter::Aim()
 
 void AProjectDCharacter::StopAiming()
 {
-	// ���� ���� ������ ������ �ʾҴٸ� ������ ����.
+
+	// 만약 메인 위젯이 켜지지 않았다면 줌인을 하자.
+
 	if(bIsAiming)
 	{
 		bIsAiming = false;
@@ -272,7 +275,7 @@ void AProjectDCharacter::NoInteractionableFound()
 			TargetInteractable->EndFocus();
 		}
 
-		// HUD�� Interaction widget�� ������
+		// HUD占쏙옙 Interaction widget占쏙옙 占쏙옙占쏙옙占쏙옙
 		HUD->HideInteractionWidget();
 
 		InteractionData.CurrentInteractable = nullptr;
@@ -282,7 +285,7 @@ void AProjectDCharacter::NoInteractionableFound()
 
 void AProjectDCharacter::BeginInteract()
 {
-	// ��ȣ�ۿ��� ������ ���� ��ȣ�ۿ� ���� ���¿� �ƹ��͵� ������� �ʾҴ��� Ȯ���ϼ���.
+	// 占쏙옙호占쌜울옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙호占쌜울옙 占쏙옙占쏙옙 占쏙옙占승울옙 占싣뱄옙占싶듸옙 占쏙옙占쏙옙占쏙옙占?占십았댐옙占쏙옙 확占쏙옙占싹쇽옙占쏙옙.
 	PerformInteractionCheck();
 
 	if (InteractionData.CurrentInteractable)

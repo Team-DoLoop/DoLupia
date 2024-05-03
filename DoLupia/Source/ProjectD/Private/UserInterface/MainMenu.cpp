@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UserInterface/MainMenu.h"
 
 #include "Characters/ProjectDCharacter.h"
 #include "Items/ItemBase.h"
+#include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
 
 void UMainMenu::NativeOnInitialized()
@@ -48,10 +49,13 @@ bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 {
 	const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation);
 
-	// ÇÃ·¹ÀÌ¾î°¡ ¾ÆÀÌÅÛÀ» µå·¡±× ¾Ø µå¶ø ÇÒ ¼ö ÀÖµµ·Ï ¼³Á¤
+	// í”Œë ˆì´ì–´ê°€ ì•„ì´í…œì„ ë“œëž˜ê·¸ ì•¤ ë“œëž í•  ìˆ˜ ìžˆë„ë¡ ì„¤ì •
 	UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
 	if(PlayerCharacter && ItemBase)
 	{
+		ItemDragDrop->GetInventoryItemSlot()->ResetItemSlot();
+
+		// ì—¬ê¸°ì„œ ì´ì œ ë“œëž˜ê·¸ ì•¤ ë“œëžë˜ë©´ ì´ˆê¸°í™” ë  ìˆ˜ ìžˆë„ë¡ ì„¤ì •
 		PlayerCharacter->DropItem(ItemBase, ItemBase->GetQuantity());
 		return true;
 	}
