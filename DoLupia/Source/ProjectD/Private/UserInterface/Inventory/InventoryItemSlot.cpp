@@ -82,7 +82,7 @@ bool UInventoryItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDr
 	// 플레이어가 아이템을 드래그 앤 드랍 할 수 있도록 설정
 	UInventoryItemSlot* InventoryItemSlot = ItemDragDrop->GetInventoryItemSlot();
 	UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
-	if (ItemBase)
+	if (ItemBase && !InventoryItemSlot->IsEmpty())
 	{
 		if(ItemBase == this->ItemReference)
 			return false;
@@ -128,6 +128,8 @@ void UInventoryItemSlot::RefreshItemSlot()
 {
 	if (ItemReference)
 	{
+		bIsEmpty = false;
+
 		if(!Tooltip)
 		{
 			Tooltip = CreateWidget<UInventoryTooltip>( this , ToolTipFactory );
@@ -176,11 +178,15 @@ void UInventoryItemSlot::RefreshItemSlot()
 
 void UInventoryItemSlot::ResetItemSlot()
 {
-	if (ItemReference)
-		ItemReference = nullptr;
-
-	SetToolTip(nullptr);
 	ItemBorder->SetBrushColor( FLinearColor::White );
 	ItemIcon->SetBrushFromTexture( nullptr );
 	ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
+
+	bIsEmpty = true;
+
+	SetToolTip( nullptr );
+
+	if (ItemReference)
+		ItemReference = nullptr;
+
 }

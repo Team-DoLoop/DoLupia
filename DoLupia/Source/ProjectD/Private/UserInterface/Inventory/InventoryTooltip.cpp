@@ -12,9 +12,7 @@ void UInventoryTooltip::SetupTooltip()
 {
 	UItemBase* ItemBeingHovered = InventoryItemSlotBeingHovered->GetItemReference();
 
-	EItemType MyItemType = ItemBeingHovered->GetItemType();
-
-	switch (MyItemType)
+	switch (const EItemType& MyItemType = ItemBeingHovered->GetItemType())
 	{
 	case EItemType::Armor:
 		break;
@@ -25,11 +23,6 @@ void UInventoryTooltip::SetupTooltip()
 	case EItemType::Spell:
 		break;
 	case EItemType::Consumable:
-		if(!ItemType)
-		{
-			check(false);
-		}
-
 		ItemType->SetText( FText::FromString( "Consumable" ) );
 		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
 		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
@@ -39,11 +32,6 @@ void UInventoryTooltip::SetupTooltip()
 	case EItemType::Quest:
 		break;
 	case EItemType::Mundane:
-		if (!ItemType)
-		{
-			check( false );
-		}
-
 		ItemType->SetText( FText::FromString( "Mundane" ) );
 		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
 		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
@@ -57,13 +45,6 @@ void UInventoryTooltip::SetupTooltip()
 	const FItemStatistics& ItemStatistics = ItemBeingHovered->GetItemStatistics();
 	const FItemNumericData& NumericData = ItemBeingHovered->GetNumericData();
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *TextData.Name.ToString())
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *FText::AsNumber( ItemStatistics.DamageValue ).ToString() );
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *FText::AsNumber( ItemStatistics.ArmorRating ).ToString() );
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *TextData.UsageText.ToString() );
-	UE_LOG( LogTemp , Warning , TEXT( "%s" ) , *TextData.UsageText.ToString() );
-
-
 	ItemName->SetText( TextData.Name );
 	DamageValue->SetText( FText::AsNumber( ItemStatistics.DamageValue ) );
 	ArmorRating->SetText( FText::AsNumber( ItemStatistics.ArmorRating ) );
@@ -71,7 +52,7 @@ void UInventoryTooltip::SetupTooltip()
 	ItemDescription->SetText( TextData.Description );
 	SellValue->SetText( FText::AsNumber( ItemStatistics.SellValue ) );
 
-	const FString& WeightInfo = { "Weight : " + FString::SanitizeFloat( ItemBeingHovered->GetItemStackWeight() ) };
+	const FString& WeightInfo = { "Weight : " + FString::Printf(TEXT("%.2f"),ItemBeingHovered->GetItemStackWeight())};
 
 	StackWeight->SetText( FText::FromString( WeightInfo ) );
 

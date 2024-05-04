@@ -20,6 +20,14 @@ enum class EItemAddResult : uint8
 	IAR_AllItemAdded UMETA(DisplayName = "All of item added")
 };
 
+UENUM( BlueprintType )
+enum class ESortType : uint8
+{
+	Sort_Name,
+	Sort_Type,
+	Sort_Grade
+};
+
 USTRUCT(BlueprintType)
 struct FItemAddResult
 {
@@ -81,11 +89,14 @@ class PROJECTD_API UInventoryComponent : public UActorComponent
 public:	
 	UInventoryComponent();
 
+	UFUNCTION( Category = "Inventory")
+	void SortItem_Name();
+
 	UFUNCTION(Category = "Inventory")
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
 
 	UFUNCTION( Category = "Inventory" )
-	const int32 FindEmptyItemIndex() const;
+	const int32 FindEmptyItemIndex(int32 FirstIndex = 0) const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindMatchItem(UItemBase* ItemIn) const;
 	UFUNCTION(Category = "Inventory")

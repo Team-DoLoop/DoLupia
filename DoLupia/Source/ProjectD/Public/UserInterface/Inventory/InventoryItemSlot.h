@@ -30,6 +30,8 @@ public:
 	FORCEINLINE UItemBase* GetItemReference() const { return ItemReference; }
 	FORCEINLINE UInventoryTooltip* GetToolTip() const { return Tooltip; }
 	FORCEINLINE int32 GetSlotIndex() const { return SlotIndex; }
+	FORCEINLINE bool IsEmpty() const { return bIsEmpty; }
+
 
 	void RefreshItemSlot();
 	void ResetItemSlot();
@@ -64,6 +66,9 @@ protected:
 
 	int32 SlotIndex;
 
+	bool bIsEmpty = true;
+
+	UPROPERTY()
 	TObjectPtr<UInventoryTooltip> Tooltip;
 
 };
