@@ -1,4 +1,4 @@
-
+ï»¿
 
 #include "World/Pickup.h"
 
@@ -57,7 +57,7 @@ void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int
 		ItemReference->SetNumericData(ItemData->NumericData);
 		ItemReference->SetAssetData(ItemData->AssetData);
 
-		// ¸¸¾à MaxStacksize °¡ 1º¸´Ù ÀÛ´Ù¸é ÀÎº¥Åä¸®¿¡ ½×ÀÌÁö ¾Ê°Ô ÇÑ´Ù.
+		// ë§Œì•½ MaxStacksize ê°€ 1ë³´ë‹¤ ì‘ë‹¤ë©´ ì¸ë²¤í† ë¦¬ì— ìŒ“ì´ì§€ ì•Šê²Œ í•œë‹¤.
 		FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
 		ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
 		InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
@@ -148,8 +148,8 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 				UE_LOG(LogTemp, Warning, TEXT("Player Inventory component is null!"));
 			}
 
-			// ÀÎº¥Åä¸® Ç×¸ñ¿¡ Ãß°¡ÇÑ °á°ú¿¡ µû¶ó
-			// ¾ÆÀÌÅÛÀ» ÆÄ±«ÇÏ°Å³ª Áı¾î°£´Ù.
+			// ì¸ë²¤í† ë¦¬ í•­ëª©ì— ì¶”ê°€í•œ ê²°ê³¼ì— ë”°ë¼
+			// ì•„ì´í…œì„ íŒŒê´´í•˜ê±°ë‚˜ ì§‘ì–´ê°„ë‹¤.
 		}
 		else
 		{

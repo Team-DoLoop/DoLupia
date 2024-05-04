@@ -185,4 +185,8 @@ void UInventoryItemSlot::ResetItemSlot()
 	bIsEmpty = true;
 
 	SetToolTip( nullptr );
+
+	if (ItemReference)
+		ItemReference = nullptr;
+
 }

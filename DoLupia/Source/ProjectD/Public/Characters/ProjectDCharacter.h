@@ -117,6 +117,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Camera")
 	FVector AimingCameraLocation;
 
+	UPROPERTY()
 	TObjectPtr<UTimelineComponent> AimingCameraTimeline;
 
 	UPROPERTY(EditDefaultsOnly,  Category = "Character | Aim Timeline")

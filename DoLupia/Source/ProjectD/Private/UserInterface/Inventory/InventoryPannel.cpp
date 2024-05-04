@@ -4,6 +4,7 @@
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Components/Button.h"
 
 
 #include "Components/TextBlock.h"
@@ -31,16 +32,18 @@ void UInventoryPannel::NativeOnInitialized()
 				RefreshInventory();
 			}
 
-			//InventoryReference->OnInventoryUpdated.AddUObject(this, &UInventoryPannel::SetInfoText);
+			InventoryReference->OnInventoryUpdated.AddUObject(this, &UInventoryPannel::SetInfoText);
 		}
 	}
+
+	SortButton->OnClicked.AddDynamic(this, &UInventoryPannel::SortItem);
 }
 
 
 void UInventoryPannel::SetInfoText() const
 {
 	const FString& WeightInfoValue {
-		FString::SanitizeFloat(InventoryReference->GetInventoryTotalWeight()) + "/" +
+		FString::Printf(TEXT("%.2f"), InventoryReference->GetInventoryTotalWeight()) + "/" +
 		FString::SanitizeFloat(InventoryReference->GetWeightCapacity())
 	};
 
@@ -72,11 +75,6 @@ void UInventoryPannel::RefreshInventory()
 
 			InventoryPanel->AddChildToWrapBox(ItemSlot);
 		}
-
-		//for(UItemBase* const& InventoryItem : InventoryReference->GetInventoryContents())
-		//{
-		//	
-		//}
 	}
 }
 
@@ -85,8 +83,14 @@ void UInventoryPannel::RefreshInventoryPannel(const int32 Index, UItemBase* Item
 	UInventoryItemSlot* ItemSlot = Cast<UInventoryItemSlot>(InventoryPanel->GetChildAt(Index));
 
 	if(!ItemSlot)
-	{
 		check(false);
+
+	if(!ItemIn)
+	{
+		if(ItemSlot->GetItemReference())
+			ItemSlot->ResetItemSlot();
+
+		return;
 	}
 
 	ItemSlot->SetItemReference(ItemIn);
@@ -116,4 +120,31 @@ bool UInventoryPannel::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 	}
 
 	return false;
+}
+
+void UInventoryPannel::SortItem()
+{
+	InventoryReference->SortItem_Name();
+
+	//if (InventoryReference)
+	//{
+	//	ESortType ItemSortType = static_cast<ESortType>(SortType);
+
+	//	switch (ItemSortType)
+	//	{
+	//	case ESortType::Sort_Name:
+	//		InventoryReference->SortItem_Name();
+	//		break;
+	//	case ESortType::Sort_Type:
+
+	//		break;
+	//	case ESortType::Sort_Grade:
+
+	//		break;
+	//	default:;
+	//	}
+	//}
+		
+
+	
 }

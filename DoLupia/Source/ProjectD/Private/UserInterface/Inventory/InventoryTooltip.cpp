@@ -12,9 +12,7 @@ void UInventoryTooltip::SetupTooltip()
 {
 	UItemBase* ItemBeingHovered = InventoryItemSlotBeingHovered->GetItemReference();
 
-	EItemType MyItemType = ItemBeingHovered->GetItemType();
-
-	switch (MyItemType)
+	switch (const EItemType& MyItemType = ItemBeingHovered->GetItemType())
 	{
 	case EItemType::Armor:
 		break;
@@ -54,7 +52,7 @@ void UInventoryTooltip::SetupTooltip()
 	ItemDescription->SetText( TextData.Description );
 	SellValue->SetText( FText::AsNumber( ItemStatistics.SellValue ) );
 
-	const FString& WeightInfo = { "Weight : " + FString::SanitizeFloat( ItemBeingHovered->GetItemStackWeight() ) };
+	const FString& WeightInfo = { "Weight : " + FString::Printf(TEXT("%.2f"),ItemBeingHovered->GetItemStackWeight())};
 
 	StackWeight->SetText( FText::FromString( WeightInfo ) );
 

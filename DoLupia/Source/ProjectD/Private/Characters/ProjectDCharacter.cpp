@@ -178,8 +178,8 @@ void AProjectDCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();
 
-	const FVector& TraceStart {GetPawnViewLocation()};
-	const FVector& ViewVector { GetViewRotation().Vector() };
+	const FVector& TraceStart { GetPawnViewLocation()};
+	const FVector& ViewVector { GetActorForwardVector() };
 	const FVector& TraceEnd{TraceStart + ( ViewVector * InteractionCheckDistance) };
 
 	const double LookDirection {FVector::DotProduct(GetActorForwardVector(), ViewVector)};
@@ -195,7 +195,6 @@ void AProjectDCharacter::PerformInteractionCheck()
 		if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
 		{
 			FString name = TraceHit.GetActor()->GetName();
-			UE_LOG( LogTemp , Error , TEXT( "%s" ) , *name );
 
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
 			{

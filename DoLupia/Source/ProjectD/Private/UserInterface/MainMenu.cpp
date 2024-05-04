@@ -56,6 +56,7 @@ bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 		ItemDragDrop->GetInventoryItemSlot()->ResetItemSlot();
 
 		// 여기서 이제 드래그 앤 드랍되면 초기화 될 수 있도록 설정
+		ItemDragDrop->GetInventoryItemSlot()->SetItemReference(nullptr);
 		PlayerCharacter->DropItem(ItemBase, ItemBase->GetQuantity());
 		return true;
 	}

@@ -36,7 +36,7 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 {
 	if(NewQuantity != Quantity)
 	{
-		Quantity = FMath::Clamp(NewQuantity, 0, this->NumericData.bIsStackable ? this->NumericData.MaxStackSize : 1);
+		Quantity = FMath::Clamp(NewQuantity, 0, this->NumericData.bIsStackable ? NewQuantity : 1);
 
 		if(OwningInventory)
 		{

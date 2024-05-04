@@ -12,6 +12,7 @@ class UInventoryItemSlot;
 class UWrapBox;
 class UTextBlock;
 class UItemBase;
+class UButton;
 
 /**
  * 
@@ -22,9 +23,7 @@ class PROJECTD_API UInventoryPannel : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
 	void RefreshInventory();
-
 	void RefreshInventoryPannel(const int32 Index , UItemBase* ItemIn);
 
 protected:
@@ -42,6 +41,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	UTextBlock* CapacityInfo;
 
+	UPROPERTY( VisibleAnywhere, meta = (BindWidget))
+	UButton* SortButton;
+
 	UPROPERTY()
 	AProjectDCharacter* PlayerCharacter;
 
@@ -50,5 +52,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInventoryItemSlot> InventorySlotFactory;
+
+private:
+	UFUNCTION()
+	void SortItem();
 	
 };
