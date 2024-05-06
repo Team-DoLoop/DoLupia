@@ -37,20 +37,31 @@ void ATestNPCCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 FString ATestNPCCharacter::InteractWith()
 {
-	// Check if QuestGiverComp is valid and implements the interface
-	if (QuestGiverComp && QuestGiverComp->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
-	{
-		// Cast to IQuestInteractionInterface and call the InteractWith() method
-		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( QuestGiverComp );
+    // 먼저 QuestGiverComp가 유효한지 확인
+    if (QuestGiverComp == nullptr)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "QuestGiverComp is null." ) );
+        return FString( TEXT( "QuestGiverComp is null." ) );
+    }
 
-		if (QuestInterface)
-		{
-			// Call the InteractWith() method from the interface
-			return QuestInterface->InteractWith();
-		}
-	}
-	// Return an empty string or an appropriate default value if the interface is not implemented
-	return FString( TEXT( "Invalid QuestGiverComp or Interface not implemented" ) );
+    // QuestGiverComp가 UQuestInteractionInterface를 구현하는지 확인
+    if (!QuestGiverComp->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "QuestGiverComp does not implement UQuestInteractionInterface." ) );
+        return FString( TEXT( "QuestGiverComp does not implement UQuestInteractionInterface." ) );
+    }
+
+    // 인터페이스로 캐스팅 시도
+    IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( QuestGiverComp );
+
+    if (QuestInterface == nullptr)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
+        return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
+    }
+
+    // 인터페이스 메서드 호출
+    return QuestInterface->InteractWith();
 }
 
 void ATestNPCCharacter::LookAt()

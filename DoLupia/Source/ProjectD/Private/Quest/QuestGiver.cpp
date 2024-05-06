@@ -18,10 +18,7 @@ UQuestGiver::UQuestGiver()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// 데이터 테이블 로드
-	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(
-		UDataTable::StaticClass(),
-		nullptr,
-		TEXT( "/Game/QuestSystem/QuestData.QuestData") ));
+    UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestData.QuestData" ) );
 
 	if (DataTable)
 	{
@@ -34,14 +31,6 @@ UQuestGiver::UQuestGiver()
 		// 로드 실패 시 처리
 		UE_LOG(LogTemp, Error, TEXT("Data table not found!"));
 	}
-
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	// 플레이어 캐릭터를 가져옵니다.
-	MyPlayerCharacter = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(World, 0));
-
-	MyGameMode = Cast<AProjectDGameMode>(UGameplayStatics::GetGameMode(World));
 }
 
 
@@ -51,7 +40,13 @@ void UQuestGiver::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    // 플레이어 캐릭터를 가져옵니다.
+    MyPlayerCharacter = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( World , 0 ) );
+
+    MyGameMode = Cast<AProjectDGameMode>( UGameplayStatics::GetGameMode( World ) );
 }
 
 
@@ -63,28 +58,50 @@ void UQuestGiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	// ...
 }
 
-void UQuestGiver::DisplayQuest()
-{
-
-	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
-
-	if(Row)
-	{
-		Row->QuestName;
-		GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , Row->QuestName );  // 5초간 빨간색으로 표시
-	}
-}
-
 FString UQuestGiver::InteractWith()
 {
-	auto QuestComponent = Cast<UQuestLogComponent>(MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass()));
-	if(!QuestComponent->QueryActiveQuest(QuestData.RowName))
-	{
-		DisplayQuest();
-		return GetOwner()->GetName();
-	}else
-	{
-		GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , TEXT("Already on Quest") );
-		return GetOwner()->GetName();
-	}
+    if (MyPlayerCharacter == nullptr)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "MyPlayerCharacter is null." ) );
+        return FString( TEXT( "Invalid MyPlayerCharacter" ) );
+    }
+
+    // 캐스팅이 유효한지 확인
+    auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass() ) );
+    if (QuestComponent == nullptr)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "QuestComponent not found or cast failed." ) );
+        return FString( TEXT( "QuestComponent not found or cast failed." ) );
+    }
+
+    if (!QuestComponent->QueryActiveQuest( QuestData.RowName ))
+    {
+        DisplayQuest();
+        return GetOwner()->GetName();
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , TEXT( "Already on Quest" ) );
+        return GetOwner()->GetName();
+    }
+}
+
+void UQuestGiver::DisplayQuest()
+{
+    if (QuestData.DataTable == nullptr)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "QuestData.DataTable is null." ) );
+        return;
+    }
+
+    FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+
+    if (Row)
+    {
+        GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , Row->QuestName );  // 5초간 빨간색으로 표시
+    }
+    else
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Quest row not found." ) );
+    }
 }
