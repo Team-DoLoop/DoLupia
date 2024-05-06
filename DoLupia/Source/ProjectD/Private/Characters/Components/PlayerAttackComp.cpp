@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
 
 // Sets default values for this component's properties
@@ -27,6 +28,7 @@ void UPlayerAttackComp::BeginPlay()
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	if(!Player) return;
 	PlayerFSMComp = Player->GetPlayerFSMComp();
+	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
 }
 
 
@@ -42,5 +44,8 @@ void UPlayerAttackComp::Attack()
 {
 	if(!PlayerFSMComp) return;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+
+	if(!PlayerAnim) return;
+	PlayerAnim->PlayerAttackAnimation();
 }
 
