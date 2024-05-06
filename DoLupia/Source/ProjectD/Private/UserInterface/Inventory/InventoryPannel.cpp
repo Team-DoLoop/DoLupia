@@ -5,6 +5,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Components/Button.h"
+#include "Components/EditableText.h"
 
 
 #include "Components/TextBlock.h"
@@ -37,6 +38,8 @@ void UInventoryPannel::NativeOnInitialized()
 	}
 
 	SortButton->OnClicked.AddDynamic(this, &UInventoryPannel::SortItem);
+	TestButton->OnClicked.AddDynamic( this , &UInventoryPannel::FindItem );
+	
 }
 
 
@@ -148,3 +151,16 @@ void UInventoryPannel::SortItem()
 
 	
 }
+
+void UInventoryPannel::FindItem()
+{
+	FString TextString = MyTest->GetText().ToString();
+	int32 elem = InventoryReference->GetInventoryItemCount( TextString );
+
+	if(elem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("There are %d %s"), elem , *TextString );
+	}
+}
+
+//
