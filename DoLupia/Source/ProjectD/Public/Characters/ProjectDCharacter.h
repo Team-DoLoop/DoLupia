@@ -71,7 +71,7 @@ public:
 
 	
 	
-	// <---------------------- Player State ---------------------->
+	// <---------------------- Player ---------------------->
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	class UPlayerFSMComp* PlayerFSM;

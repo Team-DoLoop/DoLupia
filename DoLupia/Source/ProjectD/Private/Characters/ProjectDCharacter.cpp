@@ -7,6 +7,7 @@
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Characters/Components/InventoryComponent.h"
@@ -93,7 +94,7 @@ void AProjectDCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	HUD = Cast<ADoLupiaHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-
+	
 	FOnTimelineFloat AimLerpAlphaValue;
 	FOnTimelineEvent TimelineFinishedEvent;
 	AimLerpAlphaValue.BindUFunction(this, FName("UpdateCameraTimeline"));

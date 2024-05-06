@@ -41,4 +41,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;
 
+
+	
+	// <---------------------- Attack ---------------------->
+private:
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* attackMontage;
+	
+	void PlayerAttackAnimation();
+
 };
