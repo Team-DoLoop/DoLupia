@@ -53,7 +53,6 @@ void AMonster::BeginPlay()
 	int yaw = rand() % 360;
 	SetActorRotation( FRotator( 0 , yaw ,0 ) );
 	monsterHPWidget = Cast<UMonsterHPWidget>( healthUI->GetWidget() );
-
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic( this , &AMonster::OnMyCompBeginOverlap );
 }
 
@@ -74,7 +73,7 @@ void AMonster::Tick(float DeltaTime)
 void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//ADamageTestActor* testActor = Cast<ADamageTestActor>( OtherActor )
+
 	//공격 받을 시 OnMyTakeDamage() 호출
 	if(AProjectDCharacter* testActor = Cast<AProjectDCharacter>(OtherActor))
 	{

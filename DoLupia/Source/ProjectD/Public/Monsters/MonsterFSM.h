@@ -38,7 +38,7 @@ public:
 
 	void PatrolState();
 	void MoveState();
-	void AttackState();
+	virtual void AttackState() ;
 	void DamageState();
 	void DieState();
 
