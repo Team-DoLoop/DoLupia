@@ -134,6 +134,7 @@ protected:
 	void CameraTimelineEnd();
 
 public:
+	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 
 
 	

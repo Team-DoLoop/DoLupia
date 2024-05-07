@@ -56,6 +56,15 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* attackMontage;
+
+	UFUNCTION()
+	void AnimNotify_AttackJudgmentStart();
+
+	UFUNCTION()
+	void AnimNotify_AttackJudgmentEnd();
+
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
 	
 	void PlayerAttackAnimation();
 
