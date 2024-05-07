@@ -38,7 +38,7 @@ void AAIMarterialTestActor::Tick(float DeltaTime)
 
 void AAIMarterialTestActor::UpdateActorMaterial()
 {
-    UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("Path/To/Your/Image.png") );
+    UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("D:/Projects/DoLupia/DoLupia/Content/AIImgTxt.png") );
     UMaterialInterface* LoadedMaterial = CreateMaterialFromTexture( LoadedTexture );
     if (LoadedTexture)
     {
