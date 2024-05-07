@@ -16,7 +16,7 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 	{
 		QuestData.DataTable = DataTable;
 	}
-	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
 	if (Row)
 	{
 		if (!Row->QuestName.IsEmpty())
