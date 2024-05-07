@@ -103,7 +103,7 @@ private:
 protected:
 
 public:
-	
+	FORCEINLINE class UPlayerMoveComp* GetPlayerMoveComp() const {return moveComp;}
 	
 	
 	// <---------------------- Attack ---------------------->

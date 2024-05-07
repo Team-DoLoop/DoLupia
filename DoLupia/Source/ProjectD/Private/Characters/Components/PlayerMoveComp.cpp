@@ -8,7 +8,9 @@
 #include "Characters/PlayerStateBase.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Kismet/KismetMathLibrary.h"
 
 class AProjectDCharacter;
 // Sets default values for this component's properties
@@ -37,6 +39,7 @@ void UPlayerMoveComp::BeginPlay()
 
 	PlayerController = Cast<AProjectDPlayerController>(Player->GetController());
 	PlayerFSM = Cast<UPlayerFSMComp>(Player->GetPlayerFSMComp());
+	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
 	
 }
 
@@ -104,7 +107,27 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 
 void UPlayerMoveComp::Evasion()
 {
+	if(!Player || !PlayerController) return;
+	
+	FHitResult Hit;
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	if(bHitSuccessful)
+	{
+		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
+		Player->LaunchCharacter(EvasionVec.GetSafeNormal() * 10000, false, false);
+		Player->SetActorRotation( UKismetMathLibrary::MakeRotFromXZ( EvasionVec , Player->GetActorUpVector() ) );
+	}
+	
 	if(!PlayerFSM) return;
 	PlayerFSM -> ChangePlayerState(EPlayerState::EVASION);
+
+	if(!PlayerAnim) return;
+	PlayerAnim->PlayerEvasionAnimation();
+}
+
+void UPlayerMoveComp::EvasionEnd()
+{
+	if(!PlayerFSM) return;
+	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
 }
 

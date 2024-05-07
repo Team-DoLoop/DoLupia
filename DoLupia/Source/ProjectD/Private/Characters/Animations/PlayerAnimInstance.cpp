@@ -5,6 +5,7 @@
 
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Characters/Components/PlayerMoveComp.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -26,6 +27,23 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Speed = UKismetMathLibrary::VSizeXY(Velocity);
 	
 }
+
+
+// <---------------------- Move ---------------------->
+void UPlayerAnimInstance::AnimNotify_PlayerEvasionEnd()
+{
+	if(!Player) return;
+
+	//UE_LOG(LogTemp, Log, TEXT("Player Evasion End"));
+	Player->GetPlayerMoveComp()->EvasionEnd();
+}
+
+void UPlayerAnimInstance::PlayerEvasionAnimation()
+{
+	if(!evasionMontage) return;
+	Montage_Play(evasionMontage);
+}
+
 
 // <---------------------- Attack ---------------------->
 void UPlayerAnimInstance::PlayerAttackAnimation()

@@ -41,6 +41,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* evasionMontage;
+
+	UFUNCTION()
+	void AnimNotify_PlayerEvasionEnd();
+	
+	void PlayerEvasionAnimation();
 
 	
 	// <---------------------- Attack ---------------------->
