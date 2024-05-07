@@ -24,8 +24,13 @@ public:
 	UFUNCTION()
 	void SendImgaiSV();
 
+	UFUNCTION()
+	void ChangeMaterial();
+
 	void ReqDataPost(const FString& url, const FString& msg);
 	void ResDataPost(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+	void ReqImgPost( const FString& url , const FString& msg );
+	void ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully );
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
@@ -35,10 +40,15 @@ private:
 	class UButton* btn_imgAI;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UButton* btn_MLoad;
+
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UEditableText* edit_sendText;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UTextBlock* txt_chatbot;
 
+	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
+	class UImage* img_aitexture;
 
 };

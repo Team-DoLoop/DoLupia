@@ -82,9 +82,9 @@ void UMonsterFSM::DamageState()
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "UMonsterFSM::DamageState()" ) );
 
 	currentTime += GetWorld()->GetDeltaSeconds();
-	if(currentTime > 1)
+	if(currentTime > 0.7)
 	{
-		state = EMonsterState::Move;
+		state = EMonsterState::Attack;
 		me->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 		currentTime = 0;
 	}
@@ -93,8 +93,16 @@ void UMonsterFSM::DamageState()
 
 void UMonsterFSM::DieState()
 {
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "UMonsterFSM::DieState()" ) );
 	//죽음 애니메이션 끝난 후 destroy
-	//me->Destroy();
+	currentTime+= GetWorld()->GetDeltaSeconds();
+	if(currentTime>4)
+	{
+		//아이템 드랍
+
+		me->Destroy();
+		currentTime = 0;
+	}
 }
 
 void UMonsterFSM::MoveToTarget()
