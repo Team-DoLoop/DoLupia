@@ -46,7 +46,7 @@ protected:
 	void Attack();
 	
 public:
-
+	void AttackEnd();
 	
 	
 };
