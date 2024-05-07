@@ -49,3 +49,9 @@ void UPlayerAttackComp::Attack()
 	PlayerAnim->PlayerAttackAnimation();
 }
 
+void UPlayerAttackComp::AttackEnd()
+{
+	if(!PlayerFSMComp) return;
+	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+}
+

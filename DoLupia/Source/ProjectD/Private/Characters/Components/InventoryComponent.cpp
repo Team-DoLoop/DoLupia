@@ -125,6 +125,7 @@ void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
 	{
 		if (InventoryContents[i] == ItemToRemove)
 		{
+			InventoryCount[ItemToRemove->GetTextData().Name.ToString()] -= ItemToRemove->GetQuantity();
 			InventoryContents[i] = nullptr;
 			return;
 		}
@@ -145,6 +146,7 @@ int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAm
 
 	// 삭제할 양 만큼 인벤토리의 무게를 맞춰준다.
 	InventoryTotalWeight -= ActualAmountToRemove * ItemIn->GetItemSingleWeight();
+	InventoryCount[ItemIn->GetTextData().Name.ToString()] -= DesiredAmountToRemove;
 
 	OnInventoryUpdated.Broadcast();
 
@@ -173,6 +175,16 @@ void UInventoryComponent::SwapInventory(UInventoryItemSlot* Sour, UInventoryItem
 	InventoryContents[DestIndex] = InventoryContents[SourIndex];
 	InventoryContents[SourIndex] = tmp;
 
+}
+
+int32 UInventoryComponent::GetInventoryItemCount(const FString& InKey)
+{
+	const int* ElemPtr = InventoryCount.Find(InKey);
+
+	if(ElemPtr)
+		return *ElemPtr;
+
+	return 0;
 }
 
 FItemAddResult UInventoryComponent::HandelNonStackableItems(UItemBase* InputItem)
@@ -410,6 +422,8 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 		NewItem = Item->CreateItemCopy();
 	}
 
+	
+
 	// InventoryComponent 를 동기화시켜주고, 아이템 수량을 넣어준다.
 	NewItem->OwningInventory = this;
 	NewItem->SetQuantity(AmountToAdd);
@@ -427,6 +441,15 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 
 	// 인벤토리의 무게를 늘려주자.
 	InventoryTotalWeight += NewItem->GetItemStackWeight();
+
+	FString ItemName = Item->GetTextData().Name.ToString();
+	const int* ElemPtr = InventoryCount.Find(ItemName);
+
+	if(ElemPtr)
+		InventoryCount[ItemName] += AmountToAdd;
+	else
+		InventoryCount.Emplace( ItemName, AmountToAdd );
+	
 	//OnInventoryUpdated.Broadcast();
 }
 

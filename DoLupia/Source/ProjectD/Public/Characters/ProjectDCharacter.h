@@ -103,7 +103,7 @@ private:
 protected:
 
 public:
-	
+	FORCEINLINE class UPlayerMoveComp* GetPlayerMoveComp() const {return moveComp;}
 	
 	
 	// <---------------------- Attack ---------------------->
@@ -134,6 +134,7 @@ protected:
 	void CameraTimelineEnd();
 
 public:
+	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 
 
 	

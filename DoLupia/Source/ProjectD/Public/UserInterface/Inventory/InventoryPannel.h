@@ -44,6 +44,12 @@ protected:
 	UPROPERTY( VisibleAnywhere, meta = (BindWidget))
 	UButton* SortButton;
 
+	UPROPERTY( VisibleAnywhere , meta = (BindWidget) )
+	class UEditableText* MyTest;
+
+	UPROPERTY( VisibleAnywhere , meta = (BindWidget) )
+	UButton* TestButton;
+
 	UPROPERTY()
 	AProjectDCharacter* PlayerCharacter;
 
@@ -56,5 +62,8 @@ protected:
 private:
 	UFUNCTION()
 	void SortItem();
+
+	UFUNCTION()
+	void FindItem();
 	
 };

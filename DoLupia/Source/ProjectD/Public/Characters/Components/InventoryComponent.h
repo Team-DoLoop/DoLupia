@@ -122,6 +122,8 @@ public:
 	FORCEINLINE int32 GetSlotCapacity() const { return InventorySlotsCapacity; };
 	UFUNCTION(Category = "Inventory")
 	FORCEINLINE TArray<UItemBase*> GetInventoryContents() const { return InventoryContents; };
+	UFUNCTION(Category = "Inventory")
+	int32 GetInventoryItemCount(const FString& InKey);
 
 
 	// setters
@@ -155,5 +157,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
 	TArray<TObjectPtr<UItemBase>> InventoryContents;
+
+	UPROPERTY(VisibleAnywhere, Category = "Inventory" )
+	TMap<FString, int32> InventoryCount;
+
 		
 };
