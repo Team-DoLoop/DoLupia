@@ -26,6 +26,8 @@ public:
 
 	void ReqDataPost(const FString& url, const FString& msg);
 	void ResDataPost(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+	void ReqImgPost( const FString& url , const FString& msg );
+	void ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully );
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
@@ -40,5 +42,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UTextBlock* txt_chatbot;
 
+	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
+	class UImage* img_aitexture;
 
 };
