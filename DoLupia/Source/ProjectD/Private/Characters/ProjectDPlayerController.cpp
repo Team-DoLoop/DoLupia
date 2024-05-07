@@ -191,4 +191,7 @@ void AProjectDPlayerController::Attack()
 	if(!ControlledCharacter) return;
 	
 	ControlledCharacter->attackComp->Attack();
+
+	// Test
+	ControlledCharacter->TakeDamage(10.0f);
 }
