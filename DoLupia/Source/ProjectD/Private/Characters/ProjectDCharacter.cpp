@@ -223,7 +223,6 @@ void AProjectDCharacter::PerformInteractionCheck()
 				ATestNPCCharacter* SpecificActor = Cast<ATestNPCCharacter>( LookAtActor );
 				if (SpecificActor)
 				{
-					UE_LOG( LogTemp , Error , TEXT( "LookatActor: Interface found" ) );
 					SpecificActor->LookAt(); // 인터페이스 메서드 호출
 				}
 			}
