@@ -38,6 +38,9 @@ private:
 
 	UPROPERTY()
 	class UPlayerFSMComp* PlayerFSM;
+
+	UPROPERTY()
+	class UPlayerAnimInstance* PlayerAnim;
 	
 protected:
 
@@ -76,6 +79,6 @@ protected:
 	
 public:
 	void Evasion();
-
+	void EvasionEnd();
 	
 };
