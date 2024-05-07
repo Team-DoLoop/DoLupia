@@ -25,6 +25,9 @@ private:
 
 	UPROPERTY()
 	class UPlayerFSMComp* PlayerFSMComp;
+
+	UPROPERTY()
+	class UPlayerAnimInstance* PlayerAnim;
 	
 protected:
 	// Called when the game starts

@@ -26,3 +26,10 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Speed = UKismetMathLibrary::VSizeXY(Velocity);
 	
 }
+
+// <---------------------- Attack ---------------------->
+void UPlayerAnimInstance::PlayerAttackAnimation()
+{
+	if(!attackMontage) return;
+	Montage_Play(attackMontage);
+}
