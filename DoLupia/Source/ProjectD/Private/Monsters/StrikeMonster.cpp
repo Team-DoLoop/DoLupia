@@ -3,6 +3,8 @@
 
 #include "Monsters/StrikeMonster.h"
 
+
+
 AStrikeMonster::AStrikeMonster()
 {
 	FName WeaponSocket( TEXT( "hand_rSocket" ) );
@@ -20,9 +22,19 @@ AStrikeMonster::AStrikeMonster()
 
 }
 
-//void AStrikeMonster::AttackState()
-//{
-//	Super::AttackState();
-//	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
-//
-//}
+void AStrikeMonster::BeginPlay()
+{
+	Super::BeginPlay();
+	this->MonsterType= EMonsterType::Strike;
+	//근거리 몬스터 체력 설정
+	this->maxHP = 150;
+	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , this->maxHP );
+}
+
+void AStrikeMonster::AttackState()
+{
+	Super::AttackState();
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
+}
+
+
