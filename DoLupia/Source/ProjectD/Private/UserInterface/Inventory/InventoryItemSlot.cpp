@@ -8,6 +8,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Items/ItemBase.h"
+#include "Items/Sword/LongSword.h"
 #include "UserInterface/Inventory/DragItemVisual.h"
 #include "UserInterface/Inventory/InventoryTooltip.h"
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
@@ -38,6 +39,58 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 	}
 
 	// 우클릭 예정
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		if(ItemReference)
+		{
+
+			UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory();
+
+			switch (ItemReference->GetItemType())
+			{
+			case EItemType::Armor:
+
+				break;
+			case EItemType::Weapon:
+				// 나중에 속성만 바꾸기
+				{
+					FVector SowrdTestLocation = FVector( 1350.0 , 1820.0 , 0.0 );
+
+					ALongSword* LongSwordTest = GetWorld()->SpawnActor<ALongSword>
+					( ALongSword::StaticClass(), SowrdTestLocation,  FRotator::ZeroRotator);
+
+					// 만약 내가 검을 장착하고 있다면?
+						// -> 내가 장착할 검과 현재 장착한 검의 속성만 바꿔주고 적용하기
+
+					// 검을 장착하고 있지 않다면?
+						// -> 장착할 검의 속성을 그대로 넣어주고 인벤토리 아이템을 비워주기
+
+					LongSwordTest->ReceiveItemData(ItemReference);
+					InventoryComponent->ReleaseInventory( ItemReference );
+					ResetItemSlot();
+					
+				}
+
+				break;
+			case EItemType::Shield:
+
+				break;
+			case EItemType::Spell:
+
+				break;
+			case EItemType::Consumable:
+
+				break;
+			case EItemType::Quest:
+
+				break;
+			case EItemType::Mundane:
+
+				break;
+			default: ;
+			}
+		}
+	}
 	
 	return Reply.Unhandled();
 }
