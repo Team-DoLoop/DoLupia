@@ -24,6 +24,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UTexture2D* LoadTextureFromImage( const FString& ImagePath );
+	void SaveTextureToFile( UTexture2D* Texture , const FString& FilePath );
 	UMaterialInterface* CreateMaterialFromTexture( UTexture2D* Texture );
 	void ApplyMaterialToMesh( UMeshComponent* MeshComponent , UMaterialInterface* Material );
 

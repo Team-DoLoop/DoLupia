@@ -2,9 +2,12 @@
 
 
 #include "AI/AIMarterialTestActor.h"
-
+#include "IImageWrapperModule.h"
 #include "Components/BoxComponent.h"
+#include "Engine/Texture2D.h"
+#include "ImageUtils.h"
 #include "Materials/MaterialExpressionTextureSample.h"
+#include "TextureResource.h"
 
 // Sets default values
 AAIMarterialTestActor::AAIMarterialTestActor()
@@ -39,9 +42,11 @@ void AAIMarterialTestActor::Tick(float DeltaTime)
 void AAIMarterialTestActor::UpdateActorMaterial()
 {
     UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::UpdateActorMaterial" ) );
-    UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("D:/Projects/DoLupia/DoLupia/Content/AIImgTxt.png") );
+    //UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("D:/Projects/DoLupia/DoLupia/Content/a.png") );
+    FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
+    UTexture2D* LoadedTexture = LoadTextureFromImage( imgPath );
     UMaterialInterface* LoadedMaterial = CreateMaterialFromTexture( LoadedTexture );
-    if (LoadedTexture)
+    if (LoadedMaterial)
     {
         ApplyMaterialToMesh( meshComp , LoadedMaterial );
     }
@@ -50,11 +55,12 @@ void AAIMarterialTestActor::UpdateActorMaterial()
 
 void AAIMarterialTestActor::ApplyMaterialToMesh(UMeshComponent* MeshComponent, UMaterialInterface* Material)
 {
-	//LoadTextureFromImage()
+    UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::ApplyMaterialToMesh" ) );
 
     // 메쉬에 머티리얼 적용
     if (MeshComponent && Material)
     {
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::ApplyMaterialToMesh - Success" ) );
         MeshComponent->SetMaterial( 0 , Material );
     }
 }
@@ -63,32 +69,65 @@ void AAIMarterialTestActor::ApplyMaterialToMesh(UMeshComponent* MeshComponent, U
 UTexture2D* AAIMarterialTestActor::LoadTextureFromImage(const FString& ImagePath)
 {
     UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadTextureFromImage" ) );
-    // 이미지 로드
-    UTexture2D* LoadedTexture = nullptr;
-    
     TArray<uint8> FileData;
-    if (FFileHelper::LoadFileToArray( FileData , *ImagePath ))
+    if (!FFileHelper::LoadFileToArray( FileData , *ImagePath ))
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadTextureFromImage - Success ImageFileArray" ) );
-        // 이미지 데이터 생성
-        FTexture2DMipMap* Mip = new FTexture2DMipMap();
-        Mip->SizeX = 1024;  // 이미지 너비
-        Mip->SizeY = 1024;  // 이미지 높이
-        Mip->BulkData.Lock( LOCK_READ_WRITE );
-        void* TextureData = Mip->BulkData.Realloc( FileData.Num() );
-        FMemory::Memcpy( TextureData , FileData.GetData() , FileData.Num() );
-        Mip->BulkData.Unlock();
-
-        // 텍스처 생성
-        LoadedTexture = UTexture2D::CreateTransient( Mip->SizeX , Mip->SizeY );
-        LoadedTexture->CompressionSettings = TextureCompressionSettings::TC_Default;
-        LoadedTexture->MipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
-        LoadedTexture->SRGB = 1;
-        LoadedTexture->AddToRoot();
-        LoadedTexture->UpdateResource();
+        UE_LOG( LogTemp , Error , TEXT( "Failed to load image file: %s" ) , *ImagePath );
+        return nullptr;
     }
-    return LoadedTexture;
+
+    // 이미지를 PNG 형식으로 디코딩합니다.
+    IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>( FName( "ImageWrapper" ) );
+    TSharedPtr<IImageWrapper> ImageWrapper = ImageWrapperModule.CreateImageWrapper( EImageFormat::PNG );
+    if (!ImageWrapper.IsValid() || !ImageWrapper->SetCompressed( FileData.GetData() , FileData.Num() ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Failed to decode PNG image: %s" ) , *ImagePath );
+        return nullptr;
+    }
+
+    // 이미지 정보를 가져옵니다.
+    TArray<uint8> RawData ;
+
+    if (!ImageWrapper->GetRaw( ERGBFormat::RGBA , 8 , RawData ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Failed to retrieve image data from PNG: %s" ) , *ImagePath );
+        return nullptr;
+    }
+
+    // 텍스처를 생성합니다.
+    UTexture2D* Texture = UTexture2D::CreateTransient( ImageWrapper->GetWidth() , ImageWrapper->GetHeight() , PF_R8G8B8A8 );
+    if (!Texture)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Failed to create texture." ) );
+        return nullptr;
+    }
+
+    // 텍스처에 이미지 데이터를 씁니다.
+    FUpdateTextureRegion2D UpdateRegion;
+    UpdateRegion.SrcX = 0;
+    UpdateRegion.SrcY = 0;
+    UpdateRegion.DestX = 0;
+    UpdateRegion.DestY = 0;
+    UpdateRegion.Width = ImageWrapper->GetWidth();
+    UpdateRegion.Height = ImageWrapper->GetHeight();
+
+    // 텍스처에 업데이트할 픽셀 데이터를 설정합니다.
+    Texture->UpdateTextureRegions( 0 , 1 , &UpdateRegion , ImageWrapper->GetWidth() * 4 , 4 , RawData.GetData() );
+
+    return Texture;
 }
+
+// 텍스처를 파일로 저장하는 함수
+void AAIMarterialTestActor::SaveTextureToFile( UTexture2D* Texture , const FString& FilePath )
+{
+    if (!Texture)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Invalid texture to save." ) );
+        return;
+    }
+    
+}
+
 
 
 UMaterialInterface* AAIMarterialTestActor::CreateMaterialFromTexture(UTexture2D* Texture)
@@ -97,7 +136,9 @@ UMaterialInterface* AAIMarterialTestActor::CreateMaterialFromTexture(UTexture2D*
 	UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create( MaterialTemplate , nullptr );
     if (Material)
     {
-        Material->SetTextureParameterValue( TEXT( "TextureParam" ) , Texture );
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::CreateMaterialFromTexture - Material Create" ) );
+        //Material->SetTextureParameterValue( TEXT( "Texture" ) , Texture );
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::CreateMaterialFromTexture - Material Setup" ) );
     }
     return Material;
 }

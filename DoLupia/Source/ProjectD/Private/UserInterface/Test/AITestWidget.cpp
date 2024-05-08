@@ -146,7 +146,7 @@ void UAITestWidget::ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Respo
 
 		UE_LOG( LogTemp , Warning , TEXT( "TEST2" ) )
 		//저장한 이미지의 경로를 정하고 싶다
-		FString imgPath = FPaths::ProjectContentDir() + "/AIImgTxt.png";
+		FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *imgPath )
 
 
