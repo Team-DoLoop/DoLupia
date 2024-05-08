@@ -80,5 +80,14 @@ protected:
 public:
 	void Evasion();
 	void EvasionEnd();
+
 	
+
+	// <---------------------- Die ---------------------->
+private:
+
+protected:
+	
+public:
+	void Die();
 };

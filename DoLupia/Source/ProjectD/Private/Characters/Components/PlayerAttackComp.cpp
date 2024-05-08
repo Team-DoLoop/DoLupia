@@ -43,6 +43,8 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 void UPlayerAttackComp::Attack()
 {
 	if(!PlayerFSMComp) return;
+	if(PlayerFSMComp -> GetCurrentState() == EPlayerState::DIE) return;
+	
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
 	if(!PlayerAnim) return;
