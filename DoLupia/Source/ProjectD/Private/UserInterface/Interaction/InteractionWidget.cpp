@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UserInterface/Interaction/InteractionWidget.h"
@@ -39,16 +39,20 @@ void UInteractionWidget::UpdateWidget(const FInteractableData* InteractableData)
 			}
 			break;
 
-		case EInteractableType::NonPlayerCharacter: 
+		case EInteractableType::NonPlayerCharacter:
+
 			break;
 
-		case EInteractableType::Device: 
+		case EInteractableType::Device:
+
 			break;
 
-		case EInteractableType::Toggle: 
+		case EInteractableType::Toggle:
+
 			break;
 
-		case EInteractableType::Container: 
+		case EInteractableType::Container:
+
 			break;
 
 		default: ;
