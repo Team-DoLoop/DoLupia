@@ -31,6 +31,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* sphereComp;
 
+	UPROPERTY( VisibleAnywhere )
+	USkeletalMeshComponent* Wheels;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FSMComponent)
 	class UMonsterFSM* MonsterFSM;
 

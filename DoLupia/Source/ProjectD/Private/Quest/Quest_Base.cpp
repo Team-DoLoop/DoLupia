@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Quest/Quest_Base.h"
@@ -16,6 +16,12 @@ void AQuest_Base::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (!IsValid( PlayerController ))
+	{
+		return;
+	}
+
 }
 
 // Called every frame

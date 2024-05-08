@@ -23,6 +23,20 @@ AMonster::AMonster()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -189), FRotator(0, -90, 0));
 	}
 
+	FName WheelsSocket( TEXT( "WheelsSocket" ) );
+	if (GetMesh()->DoesSocketExist( WheelsSocket ))
+	{
+		Wheels = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "Wheels" ) );
+		static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_WHEELS( TEXT( "/Game/Monsters/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem_Moving_Wheels.SK_Ancient_Golem_Moving_Wheels"  ));
+		if (SK_WHEELS.Succeeded())
+		{
+			Wheels->SetSkeletalMesh( SK_WHEELS.Object );
+		}
+		Wheels->SetupAttachment( GetMesh() , WheelsSocket );
+	}
+
+	
+
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>(TEXT("MonsterFSM"));
 
 	healthUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "healthUI" ) );

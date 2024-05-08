@@ -173,8 +173,24 @@ void AProjectDCharacter::CameraTimelineEnd()
 	}
 }
 
+void AProjectDCharacter::TakeDamage(float Damage)
+{
+	// 데미지 받기
+	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
+}
 
-	// <---------------------- Interaction ---------------------->
+void AProjectDCharacter::ApplyBleedingEffect()
+{
+	
+}
+
+void AProjectDCharacter::ApplyPoisonEffect()
+{
+	
+}
+
+
+// <---------------------- Interaction ---------------------->
 void AProjectDCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();
@@ -223,7 +239,6 @@ void AProjectDCharacter::PerformInteractionCheck()
 				ATestNPCCharacter* SpecificActor = Cast<ATestNPCCharacter>( LookAtActor );
 				if (SpecificActor)
 				{
-					UE_LOG( LogTemp , Error , TEXT( "LookatActor: Interface found" ) );
 					SpecificActor->LookAt(); // 인터페이스 메서드 호출
 				}
 			}
