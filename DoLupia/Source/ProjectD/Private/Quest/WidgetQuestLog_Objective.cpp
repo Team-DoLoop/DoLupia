@@ -1,0 +1,59 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Quest/WidgetQuestLog_Objective.h"
+
+#include "Components/CheckBox.h"
+#include "Components/TextBlock.h"
+
+void UWidgetQuestLog_Objective::NativePreConstruct()
+{
+    Super::NativePreConstruct();
+
+    // ObjectiveData 유효성 검사
+    if (ObjectiveData.ObjectiveID.IsEmpty())
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "ObjectiveData.ObjectiveID is empty." ) );
+        return; // 유효하지 않으면 조기 종료
+    }
+
+    // 포맷된 텍스트 생성
+    FText Template = FText::FromString( "{desc} {current} / {quantity}" );
+
+    FFormatNamedArguments Args;
+    Args.Add( "desc" , FText::FromString( ObjectiveData.Description ) );
+    Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+    Args.Add( "quantity" , FText::AsNumber( ObjectiveData.Quantity ) );
+
+    FText FormattedText = FText::Format( Template , Args );
+
+    // txt_Description 유효성 검사
+    if (txt_Description)
+    {
+        txt_Description->SetText( FormattedText ); // 포맷된 텍스트 설정
+    }
+    else
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "txt_Description is not bound." ) );
+    }
+
+    // check_IsCompleted 유효성 검사 및 초기화
+    if (check_IsCompleted)
+    {
+        check_IsCompleted->SetCheckedState( ECheckBoxState::Unchecked ); // 체크박스 초기화
+    }
+    else
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
+    }
+}
+
+void UWidgetQuestLog_Objective::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
+
+void UWidgetQuestLog_Objective::NativeDestruct()
+{
+	Super::NativeDestruct();
+}

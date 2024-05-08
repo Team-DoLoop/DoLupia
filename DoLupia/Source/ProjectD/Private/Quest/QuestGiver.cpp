@@ -3,12 +3,14 @@
 
 #include "Quest/QuestGiver.h"
 
+#include "Blueprint/UserWidget.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDGameMode.h"
 #include "Engine/DataTable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/QuestLogComponent.h"
 #include "Quest/Struct_QuestSystem.h"
+#include "Quest/WidgetQuestGiver.h"
 
 // Sets default values for this component's properties
 UQuestGiver::UQuestGiver()
@@ -47,6 +49,7 @@ void UQuestGiver::BeginPlay()
     MyPlayerCharacter = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( World , 0 ) );
 
     MyGameMode = Cast<AProjectDGameMode>( UGameplayStatics::GetGameMode( World ) );
+
 }
 
 
@@ -60,12 +63,6 @@ void UQuestGiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 FString UQuestGiver::InteractWith()
 {
-    if (MyPlayerCharacter == nullptr)
-    {
-        UE_LOG( LogTemp , Error , TEXT( "MyPlayerCharacter is null." ) );
-        return FString( TEXT( "Invalid MyPlayerCharacter" ) );
-    }
-
     // 캐스팅이 유효한지 확인
     auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass() ) );
     if (QuestComponent == nullptr)
@@ -88,20 +85,16 @@ FString UQuestGiver::InteractWith()
 
 void UQuestGiver::DisplayQuest()
 {
-    if (QuestData.DataTable == nullptr)
-    {
-        UE_LOG( LogTemp , Error , TEXT( "QuestData.DataTable is null." ) );
-        return;
-    }
-
     FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
 
     if (Row)
     {
-        GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , Row->QuestName );  // 5초간 빨간색으로 표시
-    }
-    else
-    {
-        UE_LOG( LogTemp , Error , TEXT( "Quest row not found." ) );
+		QuestWidget = CreateWidget<UWidgetQuestGiver>( GetWorld() , QuestGiverWidget );
+        if (QuestWidget)
+        {
+	        QuestWidget->QuestDetails = *Row;
+            QuestWidget->QuestID = QuestData.RowName;
+			QuestWidget->AddToViewport(); // 위젯을 화면에 추가
+        }
     }
 }

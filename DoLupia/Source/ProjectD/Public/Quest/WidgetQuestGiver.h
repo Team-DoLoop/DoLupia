@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Struct_QuestSystem.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetQuestGiver.generated.h"
 
+class UWidgetQuestLog_Objective;
+class UVerticalBox;
 /**
  * 
  */
@@ -15,7 +18,12 @@ class PROJECTD_API UWidgetQuestGiver : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+    virtual auto NativePreConstruct() -> void override;
+
     virtual void NativeConstruct() override;
+
+    virtual void NativeDestruct() override;
 
     UFUNCTION()
     void OnAcceptClicked();
@@ -23,8 +31,14 @@ public:
     UFUNCTION()
     void OnDeclineClicked();
 
-    UFUNCTION()
-    void OnMouseChange();
+    UPROPERTY( EditAnywhere ) //expose on spawn
+	FQuestDetails QuestDetails;
+
+    UPROPERTY( EditAnywhere ) //expose on spawn
+	FName QuestID;
+
+    UPROPERTY( meta = (BindWidget) )
+    UVerticalBox* box_Objectives;
 	
 protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
@@ -41,5 +55,8 @@ protected:
 
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
     class UButton* btn_Accept;
+
+    UPROPERTY( EditAnywhere )
+    TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;
 
 };

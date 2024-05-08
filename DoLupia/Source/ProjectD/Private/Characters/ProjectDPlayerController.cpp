@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Characters/ProjectDPlayerController.h"
 #include "GameFramework/Pawn.h"
@@ -15,6 +15,7 @@
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Engine/LocalPlayer.h"
+#include "Quest/WidgetQuestLog.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -72,6 +73,9 @@ void AProjectDPlayerController::SetupInputComponent()
 
 		// UI
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
+
+		//QuestUI
+		EnhancedInputComponent->BindAction( QuestTabAction , ETriggerEvent::Started , this , &AProjectDPlayerController::QuestLogMenu );
 
 		// Attack
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
@@ -191,4 +195,19 @@ void AProjectDPlayerController::Attack()
 	if(!ControlledCharacter) return;
 	
 	ControlledCharacter->attackComp->Attack();
+
+	// Test
+	ControlledCharacter->TakeDamage(10.0f);
+}
+
+// <---------------------- Quest UI ---------------------->
+
+void AProjectDPlayerController::QuestLogMenu()
+{
+	UWidgetQuestLog* QuestWidget = CreateWidget<UWidgetQuestLog>( GetWorld() , QuestLog_Widget );
+
+	if(QuestWidget)
+	{
+		QuestWidget->AddToViewport();
+	}
 }

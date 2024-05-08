@@ -18,13 +18,14 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaTime ) override;
 
-	void ApplyMaterialToMesh( UMeshComponent* MeshComponent , UMaterialInterface* Material );
+	void UpdateActorMaterial();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UTexture2D* LoadTextureFromImage( const FString& ImagePath );
-	//UMaterialInterface* CreateMaterialFromTexture( UTexture2D* Texture );
+	UMaterialInterface* CreateMaterialFromTexture( UTexture2D* Texture );
+	void ApplyMaterialToMesh( UMeshComponent* MeshComponent , UMaterialInterface* Material );
 
 	UPROPERTY( EditDefaultsOnly )
 	class UStaticMeshComponent* meshComp;
@@ -32,6 +33,7 @@ protected:
 	UPROPERTY( EditDefaultsOnly )
 	class UBoxComponent* boxComp;
 
-
+	UPROPERTY( EditAnywhere , Category = "Materials" )
+	UMaterialInterface* MaterialTemplate;
 
 };

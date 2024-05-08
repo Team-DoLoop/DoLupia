@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -10,6 +10,7 @@
 /** Forward declaration to improve compiling times */
 class UInputMappingContext;
 class UInputAction;
+class UWidgetQuestLog;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -128,6 +129,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AimingAction;
 
+
+	// <---------------------- QuestUI ---------------------->
+
+public:
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuestTabAction;
+	
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UWidgetQuestLog> QuestLog_Widget;
+
+private:
+	void QuestLogMenu();
+
+	
 
 };
 

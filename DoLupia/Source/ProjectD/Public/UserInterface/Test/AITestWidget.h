@@ -24,6 +24,9 @@ public:
 	UFUNCTION()
 	void SendImgaiSV();
 
+	UFUNCTION()
+	void ChangeMaterial();
+
 	void ReqDataPost(const FString& url, const FString& msg);
 	void ResDataPost(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void ReqImgPost( const FString& url , const FString& msg );
@@ -35,6 +38,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UButton* btn_imgAI;
+
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UButton* btn_MLoad;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UEditableText* edit_sendText;

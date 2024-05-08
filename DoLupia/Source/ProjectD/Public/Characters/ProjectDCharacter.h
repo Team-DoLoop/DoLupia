@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/DamageInterface.h"
 #include "Interfaces/InteractionInterface.h"
 #include "Quest/QuestInteractionInterface.h"
 #include "ProjectDCharacter.generated.h"
@@ -34,7 +35,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnObjectiveIDCalled , FString, Obj
 
 
 UCLASS(Blueprintable)
-class AProjectDCharacter : public ACharacter
+class AProjectDCharacter : public ACharacter, public IDamageInterface
 {
 	GENERATED_BODY()
 
@@ -133,6 +134,10 @@ protected:
 	UFUNCTION()
 	void CameraTimelineEnd();
 
+	virtual void TakeDamage(float Damage) override;
+	virtual void ApplyBleedingEffect() override;
+	virtual void ApplyPoisonEffect() override;
+	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 

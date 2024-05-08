@@ -36,6 +36,17 @@ void AAIMarterialTestActor::Tick(float DeltaTime)
 
 }
 
+void AAIMarterialTestActor::UpdateActorMaterial()
+{
+    UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("D:/Projects/DoLupia/DoLupia/Content/AIImgTxt.png") );
+    UMaterialInterface* LoadedMaterial = CreateMaterialFromTexture( LoadedTexture );
+    if (LoadedTexture)
+    {
+        ApplyMaterialToMesh( meshComp , LoadedMaterial );
+    }
+
+}
+
 void AAIMarterialTestActor::ApplyMaterialToMesh(UMeshComponent* MeshComponent, UMaterialInterface* Material)
 {
 	//LoadTextureFromImage()
@@ -76,7 +87,7 @@ UTexture2D* AAIMarterialTestActor::LoadTextureFromImage(const FString& ImagePath
     return LoadedTexture;
 }
 
-/*
+
 UMaterialInterface* AAIMarterialTestActor::CreateMaterialFromTexture(UTexture2D* Texture)
 {
 	UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create( MaterialTemplate , nullptr );
@@ -86,7 +97,7 @@ UMaterialInterface* AAIMarterialTestActor::CreateMaterialFromTexture(UTexture2D*
     }
     return Material;
 }
-*/
+
 
 
 

@@ -96,7 +96,9 @@ public:
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
 
 	UFUNCTION( Category = "Inventory" )
-	const int32 FindEmptyItemIndex(int32 FirstIndex = 0) const;
+	void ReleaseInventory(UItemBase* ItemIn) const;
+	UFUNCTION(Category = "Inventory")
+	const int32 FindEmptyItemIndex(int32 FirstIndex = 0, const FString& InKey = "") const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindMatchItem(UItemBase* ItemIn) const;
 	UFUNCTION(Category = "Inventory")

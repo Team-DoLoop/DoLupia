@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Library/JsonLibrary.h"
 #include "ImageUtils.h"
+#include "AI/AIMarterialTestActor.h"
 #include "Components/Image.h"
 
 void UAITestWidget::NativeConstruct()
@@ -16,6 +17,7 @@ void UAITestWidget::NativeConstruct()
 
 	btn_chatbot->OnClicked.AddDynamic(this, &UAITestWidget::SendChatbotSV);
 	btn_imgAI->OnClicked.AddDynamic(this, &UAITestWidget::SendImgaiSV);
+	btn_MLoad->OnClicked.AddDynamic( this , &UAITestWidget::ChangeMaterial );
 }
 
 void UAITestWidget::SendChatbotSV()
@@ -25,7 +27,7 @@ void UAITestWidget::SendChatbotSV()
 	msgData.Add(TEXT("message"), msg);
 
 	FString sendJson = UJsonLibrary::MapToJson(msgData);
-	FString fullURL = "http://127.0.0.1:8000/chat";
+	FString fullURL = "http://192.168.240.75:8000/chat";
 
 	// server connect
 	ReqDataPost(fullURL, sendJson);
@@ -39,8 +41,20 @@ void UAITestWidget::SendImgaiSV()
 
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
-	FString fullURL = "http://127.0.0.1:8000/imageAI";
+	FString fullURL = "http://192.168.240.75:8000/imageAI";
 	ReqImgPost(fullURL, sendJson);
+}
+
+void UAITestWidget::ChangeMaterial()
+{
+	// Find the actor of type AYourActor
+	/*
+	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->();
+	}
+	*/
 }
 
 void UAITestWidget::ReqDataPost(const FString& url, const FString& msg)

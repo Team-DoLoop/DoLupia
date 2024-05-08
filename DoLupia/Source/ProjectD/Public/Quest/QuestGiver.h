@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WidgetQuestGiver.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Quest/QuestInteractionInterface.h"
 #include "QuestGiver.generated.h"
 
+
+class UWidgetQuestGiver;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UQuestGiver : public UActorComponent, public IQuestInteractionInterface
@@ -40,4 +43,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	virtual FString InteractWith() override;
+
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UWidgetQuestGiver> QuestGiverWidget;
+
+	UPROPERTY()
+	UWidgetQuestGiver* QuestWidget;
 };

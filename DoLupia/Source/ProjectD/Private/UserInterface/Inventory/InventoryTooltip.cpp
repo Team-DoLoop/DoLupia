@@ -15,12 +15,16 @@ void UInventoryTooltip::SetupTooltip()
 	switch (const EItemType& MyItemType = ItemBeingHovered->GetItemType())
 	{
 	case EItemType::Armor:
+		ItemType->SetText(FText::FromString("Armor"));
 		break;
 	case EItemType::Weapon:
+		ItemType->SetText(FText::FromString("Weapon"));
 		break;
 	case EItemType::Shield:
+		ItemType->SetText(FText::FromString("Shield"));
 		break;
 	case EItemType::Spell:
+		ItemType->SetText(FText::FromString("Spell"));
 		break;
 	case EItemType::Consumable:
 		ItemType->SetText( FText::FromString( "Consumable" ) );
@@ -51,6 +55,7 @@ void UInventoryTooltip::SetupTooltip()
 	UsageText->SetText( TextData.UsageText );
 	ItemDescription->SetText( TextData.Description );
 	SellValue->SetText( FText::AsNumber( ItemStatistics.SellValue ) );
+
 
 	const FString& WeightInfo = { "Weight : " + FString::Printf(TEXT("%.2f"),ItemBeingHovered->GetItemStackWeight())};
 
