@@ -38,6 +38,7 @@ void AAIMarterialTestActor::Tick(float DeltaTime)
 
 void AAIMarterialTestActor::UpdateActorMaterial()
 {
+    UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::UpdateActorMaterial" ) );
     UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("D:/Projects/DoLupia/DoLupia/Content/AIImgTxt.png") );
     UMaterialInterface* LoadedMaterial = CreateMaterialFromTexture( LoadedTexture );
     if (LoadedTexture)
@@ -61,12 +62,14 @@ void AAIMarterialTestActor::ApplyMaterialToMesh(UMeshComponent* MeshComponent, U
 //받은 AI이미지를 텍스처로 로드
 UTexture2D* AAIMarterialTestActor::LoadTextureFromImage(const FString& ImagePath)
 {
+    UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadTextureFromImage" ) );
     // 이미지 로드
     UTexture2D* LoadedTexture = nullptr;
     
     TArray<uint8> FileData;
     if (FFileHelper::LoadFileToArray( FileData , *ImagePath ))
     {
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadTextureFromImage - Success ImageFileArray" ) );
         // 이미지 데이터 생성
         FTexture2DMipMap* Mip = new FTexture2DMipMap();
         Mip->SizeX = 1024;  // 이미지 너비
@@ -90,6 +93,7 @@ UTexture2D* AAIMarterialTestActor::LoadTextureFromImage(const FString& ImagePath
 
 UMaterialInterface* AAIMarterialTestActor::CreateMaterialFromTexture(UTexture2D* Texture)
 {
+    UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::CreateMaterialFromTexture" ) );
 	UMaterialInstanceDynamic* Material = UMaterialInstanceDynamic::Create( MaterialTemplate , nullptr );
     if (Material)
     {

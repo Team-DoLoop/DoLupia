@@ -48,9 +48,11 @@ void UAITestWidget::SendImgaiSV()
 
 void UAITestWidget::ChangeMaterial()
 {
+	UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial" ) );
 	// Find the actor of type AYourActor
 	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
+		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
 		// Call the function on the actor
 		ActorItr->UpdateActorMaterial();
 		
