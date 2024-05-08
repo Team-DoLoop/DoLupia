@@ -10,6 +10,7 @@
 #include "ImageUtils.h"
 #include "AI/AIMarterialTestActor.h"
 #include "Components/Image.h"
+#include "Engine.h"
 
 void UAITestWidget::NativeConstruct()
 {
@@ -48,13 +49,12 @@ void UAITestWidget::SendImgaiSV()
 void UAITestWidget::ChangeMaterial()
 {
 	// Find the actor of type AYourActor
-	/*
 	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		// Call the function on the actor
-		ActorItr->();
+		ActorItr->UpdateActorMaterial();
+		
 	}
-	*/
 }
 
 void UAITestWidget::ReqDataPost(const FString& url, const FString& msg)
