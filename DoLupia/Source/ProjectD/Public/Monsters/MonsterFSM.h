@@ -36,32 +36,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EMonsterState state;
 
-	void PatrolState();
-	void MoveState();
-	void AttackState();
-	void DamageState();
-	void DieState();
-
-	//플레이어를 타겟으로 설정
-	UPROPERTY(EditAnywhere)
-	AActor* target;
-
 	UPROPERTY(EditAnywhere)
 	class AMonster* me;
 
-	FVector TargetVector;
-
-	//일정 반경 안에 들어오면 플레이어를 향해 이동
-	UPROPERTY(EditAnywhere)
-	float TargetRange = 700;
-
-	//일정 반경 안에 들어오면 공격모드로 전환
-	UPROPERTY( EditAnywhere )
-	float AttackRange = 500;
-
-	void MoveToTarget();
-
-	void TakeDamage();
-
-	float currentTime=0;
 };
