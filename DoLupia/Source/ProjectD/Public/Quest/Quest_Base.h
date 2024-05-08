@@ -24,7 +24,32 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-public:
+	UFUNCTION()
+	void OnObjectiveIDHeard( FString ObjectiveID );
+
+	UFUNCTION()
+	void GetQuestDetails();
+
+	// 이벤트 델리게이트 정의
+	UPROPERTY( BlueprintAssignable )
+	FQuestDataLoadedSignature OnQuestDataLoaded;
+
+	UFUNCTION()
+	void OnQuestDataLoadedHandler( FName QuestID );
+
+	UFUNCTION()
+	FORCEINLINE FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID )
+	{
+		for (const auto& Objective : CurrentStageDetails.Objectives)
+		{
+			if (Objective.ObjectiveID == ObjectiveID) {
+				return Objective;
+			}
+		}
+		// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
+		return FObjectiveDetails();
+	}
+
 	UPROPERTY(EditAnywhere) //expose on spawn 안됨
 	FName QuestID;
 
@@ -42,4 +67,7 @@ public:
 
 	UPROPERTY()
 	bool IsCompleted;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	FDataTableRowHandle QuestData;
 };

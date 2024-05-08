@@ -66,15 +66,18 @@ protected:
     UPROPERTY( EditAnywhere , BlueprintReadWrite )
     FDataTableRowHandle QuestData;
 
+    UPROPERTY( EditAnywhere )
+    class AQuest_Base* CurrentQuestActor;
+
     // 함수 정의
     UFUNCTION()
     void OnButtonClicked();
 
     UFUNCTION()
-    void OnQuestSelected( FName QuestID );
+    void OnQuestSelected( FName QuestID , AQuest_Base* QuestActor );
 
     UFUNCTION()
-    void DisplayQuest( FName QuestID );
+    void DisplayQuest( FName QuestID , AQuest_Base* QuestActor );
 
     void AddQuestToScrollBox( UWidgetQuestLog_QuestEntry* QuestWidget , FQuestDetails* QuestDetailsRow , FName QuestID );
 

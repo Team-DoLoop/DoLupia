@@ -69,7 +69,6 @@ void UWidgetQuestGiver::NativeConstruct()
         //if(btn_Accept)
             //InputMode.SetWidgetToFocus(btn_Accept);
         PlayerControllerD->SetInputMode( InputMode );
-        PlayerControllerD->SetShowMouseCursor( true );
     }
 }
 
@@ -84,7 +83,6 @@ void UWidgetQuestGiver::NativeDestruct()
 	    auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
         FInputModeGameOnly InputMode;
         PlayerControllerD->SetInputMode( InputMode );
-        PlayerControllerD->SetShowMouseCursor( true );
     }
         
 }
@@ -115,6 +113,12 @@ void UWidgetQuestGiver::OnAcceptClicked()
         UE_LOG( LogTemp , Error , TEXT( "QuestLogComponent is invalid or not found on PlayerCharacter." ) );
         return;
     }
+
+    if (QuestID.IsNone())
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ WidgetQuestGiver" ) );
+    }
+    UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestID.ToString() );
 
     // 컴포넌트가 유효할 경우, 퀘스트를 추가합니다.
     QuestLogComp->AddNewQuest( QuestID );
