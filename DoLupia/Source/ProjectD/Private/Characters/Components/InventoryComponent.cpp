@@ -9,7 +9,7 @@
 //engine
 #include "Algo/Sort.h"
 
-constexpr int NONFIND_INDEX = -1;
+constexpr int32 NONFIND_INDEX = -1;
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -26,7 +26,7 @@ void UInventoryComponent::BeginPlay()
 
 }
 
-void UInventoryComponent::ReleaseInventory(UItemBase* ItemIn) const
+void UInventoryComponent::ReleaseInventory(UItemBase* ItemIn)
 {
 	if(!ItemIn)
 		return;
@@ -39,31 +39,30 @@ void UInventoryComponent::ReleaseInventory(UItemBase* ItemIn) const
 
 		if (InventoryContents[i] == ItemIn)
 		{
-			//InventoryContents[i] = nullptr;
-			UE_LOG(LogTemp, Warning, TEXT("ReleaseInventory Sucesssed"));
+			InventoryContents[i] = nullptr;
+
+			const FString& InKey = ItemIn->GetTextData().Name.ToString();
+			const int32* ElemValue = InventoryCount.Find(InKey);
+			const int32 Quantity = ItemIn->GetQuantity();
+
+			if(ElemValue)
+			{
+				if (*ElemValue == ItemIn->GetQuantity())
+				{
+					InventoryCount.Remove(InKey);
+					InventoryItembaseStorage.Remove(InKey);
+				}
+					
+				else
+					InventoryCount[InKey] -= Quantity;
+
+				UE_LOG( LogTemp , Warning , TEXT( "ReleaseInventory Sucesssed" ) );
+
+			}
+
 			break;
 		}
 	}
-
-	//for (int32 i = 0; i < InventoryContents.Num(); ++i)
-	//{
-	//	if (InventoryContents[i] == ItemIn)
-	//	{
-	//		FString InKey = ItemIn->GetTextData().Name.ToString();
-
-	//		if (InventoryCount.Contains( InKey ))
-	//		{
-	//			int32& Quantity = InventoryCount[InKey];
-	//			Quantity -= ItemIn->GetQuantity();
-
-	//			if (Quantity <= 0)
-	//				InventoryCount.Remove( InKey );
-	//		}
-
-	//		InventoryContents[i] = nullptr;
-	//		return;
-	//	}
-	//}
 }
 
 const int32 UInventoryComponent::FindEmptyItemIndex(int32 FirstIndex, const FString& InKey) const
@@ -71,8 +70,8 @@ const int32 UInventoryComponent::FindEmptyItemIndex(int32 FirstIndex, const FStr
 	// 인벤토리 안에 있는 아이템을 찾고
 	// 만약 없다면 빈 곳에
 	// 있다면 수량이 들어갈 수 있는 곳에 넣어주자.
-	int Index = NONFIND_INDEX;
-	const int* ElemValue = InventoryCount.Find(InKey);
+	int32 Index = NONFIND_INDEX;
+	const int32* ElemValue = InventoryCount.Find(InKey);
 
 	// 아이템이 배열안에 존재하면 반환한다.
 	for(int32 i = FirstIndex; i < InventoryContents.Num(); ++i)
@@ -136,7 +135,7 @@ UItemBase* UInventoryComponent::FindNextPartialStack(UItemBase* ItemIn) const
 	// 이 때 ItemIn의 스택이 너무 크다면 여러 번 받아야 하기 때문에 반복문을 수행하자. -> 호출하는 함수에서 실행
 	if(ItemIn)
 	{
-		for (int i = 0; i < InventoryContents.Num(); ++i)
+		for (int32 i = 0; i < InventoryContents.Num(); ++i)
 		{
 			if (!InventoryContents[i])
 				continue;
@@ -164,15 +163,24 @@ int32 UInventoryComponent::CalculateWeightAddAmount(UItemBase* ItemIn, int32 Req
 	return WeightMaxAddAmount;
 }
 
-int32 UInventoryComponent::CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount)
+int32 UInventoryComponent::CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount, bool IsFindStackItem)
 {
 
 	const int32 StackSize = StackableItem->NumericData.MaxStackSize;
 	int32 AddNum = StackSize - StackableItem->Quantity;
 
-	AddNum <= 0
-		? AddNum = StackSize
-		: AddNum = StackSize - StackableItem->GetQuantity();
+	if(AddNum <= 0)
+	{
+		if(StackSize <= StackableItem->Quantity)
+			AddNum = StackSize;
+	}
+	else
+	{
+		if(!IsFindStackItem)
+			AddNum = StackableItem->Quantity;
+	}
+	//else
+	//	AddNum = FMath::Max(AddNum, StackableItem->Quantity );
 
 		
 
@@ -203,7 +211,11 @@ void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
 				Quantity -= ItemToRemove->GetQuantity();
 
 				if(Quantity <= 0)
+				{
 					InventoryCount.Remove(InKey);
+					InventoryItembaseStorage.Remove(InKey);
+				}
+					
 			}
 
 			InventoryContents[i] = nullptr;
@@ -216,12 +228,15 @@ void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
 
 int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAmountToRemove)
 {
+
+	const int32 Quantity = ItemIn->NumericData.bIsStackable ? ItemIn->Quantity : 1;
+
 	// min(삭제할 만큼의 아이템 수량, 현재 내가 가지고 있는 아이템 수량)
 	// 하는 이유 -> 아이템 분할(스플릿) 하기 때문이다. 
-	const int32 ActualAmountToRemove = FMath::Min(DesiredAmountToRemove, ItemIn->Quantity);
+	const int32 ActualAmountToRemove = FMath::Min(DesiredAmountToRemove, Quantity);
 
 	// 삭제할 양 만큼 아이템의 수량을 맞춰준다.
-	ItemIn->SetQuantity(ItemIn->Quantity - ActualAmountToRemove);
+	ItemIn->SetQuantity(Quantity - ActualAmountToRemove);
 
 	// 삭제할 양 만큼 인벤토리의 무게를 맞춰준다.
 	InventoryTotalWeight -= ActualAmountToRemove * ItemIn->GetItemSingleWeight();
@@ -235,7 +250,7 @@ int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAm
 
 void UInventoryComponent::SplitExistingStack(UItemBase* ItemIn, const int32 AmountToSplit)
 {
-	const int index = FindEmptyItemIndex();
+	const int32 index = FindEmptyItemIndex();
 
 	if(index != NONFIND_INDEX)
 	{
@@ -258,7 +273,7 @@ void UInventoryComponent::SwapInventory(UInventoryItemSlot* Sour, UInventoryItem
 
 int32 UInventoryComponent::GetInventoryItemCount(const FString& InKey)
 {
-	const int* ElemPtr = InventoryCount.Find(InKey);
+	const int32* ElemPtr = InventoryCount.Find(InKey);
 
 	if(ElemPtr)
 		return *ElemPtr;
@@ -317,6 +332,7 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 
 	// 이미 인벤토리에 있는 지 확인하고 없으면 새로 인벤토리에 추가해 넣는다.
 	UItemBase* ExistingItemStack = FindNextPartialStack(ItemIn);
+	bool IsFindStack = ExistingItemStack ? true : false;
 
 	// 현재 내가 넣고 싶은 아이템이름을 가져오자.
 	FString ItemName = ItemIn->GetTextData().Name.ToString();
@@ -324,7 +340,6 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 	// 아이템 데이터가 없는 곳에 아이템 데이터를 넣어주자.
 	int32 FindItemIdx = FindEmptyItemIndex(0, ItemName);
 
-	int32 OriginalItemStack = 0;
 
 	if (!ExistingItemStack)
 	{
@@ -335,7 +350,6 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 	}
 	else
 	{
-		OriginalItemStack = ExistingItemStack->GetQuantity();
 		UE_LOG(LogTemp, Warning, TEXT("ExistingItemStack : is not null!"));
 	}
 		
@@ -344,7 +358,7 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 	while (AmountToDistribute)
 	{
 		// 아이템의 전체 수량을 반환한다.(기준 min(아이템 최대 개수, 필요한 아이템의개수))
-		const int32 AmountToMakeFullstack = CalculateNumberForFullStack( ExistingItemStack , AmountToDistribute );
+		const int32 AmountToMakeFullstack = CalculateNumberForFullStack( ExistingItemStack , AmountToDistribute, IsFindStack );
 		// 아이템의 무게를 기반해서 아이템을 얼마 넣을 수 있는 지 확인한다.	
 		const int32 WeightLimitAddAmount = CalculateWeightAddAmount( ExistingItemStack , AmountToMakeFullstack );
 
@@ -356,7 +370,7 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 			if (WeightLimitAddAmount > AmountToDistribute)
 			{
 				// 다 넣지 못한 수량만큼 아이템의 수량을 업데이트(감소) 시켜주자.
-				AmountToDistribute -= WeightLimitAddAmount - OriginalItemStack;
+				AmountToDistribute -= WeightLimitAddAmount;
 				ItemIn->SetQuantity( AmountToDistribute );
 
 				// 필요한 양의 아이템을 모두 못 넣기 때문에 데이터를 카피해서 넣어주자.
@@ -364,14 +378,8 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 				return RequestedAddAmount - AmountToDistribute;
 			}
 
-			//// 기존 수량에서 추가한다.
-			//ExistingItemStack->SetQuantity( ExistingItemStack->Quantity + WeightLimitAddAmount );
-
-			// 기존 무게에서 들어노는 무게와 기존 무게를 더해준다.
-			//InventoryTotalWeight += ExistingItemStack->GetItemSingleWeight() * WeightLimitAddAmount;
-
 			// 현재 필요한 아이템 수량 -= 실제로 운반할 수 있는 아이템 수량
-			AmountToDistribute -= WeightLimitAddAmount - OriginalItemStack;
+			AmountToDistribute -= WeightLimitAddAmount;
 
 			// 내가 옮긴 아이템 남은 수량으로 바꿔준다.
 			ItemIn->SetQuantity( AmountToDistribute );
@@ -408,6 +416,7 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 		// 아이템이 남아있는 지 체크한다.
 		ExistingItemStack = FindNextItemByID( ItemIn );
 		FindItemIdx = FindEmptyItemIndex( ++FindItemIdx, ItemName );
+		IsFindStack = ExistingItemStack ? true : false;
 
 		if (!ExistingItemStack)
 		{
@@ -415,29 +424,8 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 				return RequestedAddAmount - AmountToDistribute;
 
 			ExistingItemStack = ItemIn;
-			OriginalItemStack = 0;
 		}
-		else
-			OriginalItemStack = ExistingItemStack->GetQuantity();
 	}
-
-	// partial stack을 찾을 수 없을 때 새로운 스택에 추가한다.
-	//if(InventoryContents.Num() + 1 <= InventorySlotsCapacity)
-	//{
-	//	// 아이템의 무게를 기반해서 아이템을 얼마 넣을 수 있는 지 확인한다.
-	//	const int32 WeightLimitAddAmount = CalculateWeightAddAmount(ItemIn, AmountToDistribute);
-
-	//	
-
-	//	// 아이템 무게가 존재한다면?
-	//	if(WeightLimitAddAmount >= 0)
-	//	{
-
-	//		// 무게를 비교해서 현재 필요량보다 크다면 모두 넣어주자.
-	//
-	//		return RequestedAddAmount;
-	//	}
-	//}
 
 	OnInventoryUpdated.Broadcast();
 	return RequestedAddAmount - AmountToDistribute;
@@ -527,7 +515,10 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 	if (ElemPtr)
 		InventoryCount[ItemName] += AmountToAdd;
 	else
+	{
 		InventoryCount.Emplace( ItemName , AmountToAdd );
+		InventoryItembaseStorage.Emplace( ItemName, Item );
+	}
 
 
 	// InventoryComponent 를 동기화시켜주고, 아이템 수량을 넣어준다.
@@ -558,34 +549,105 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 
 void UInventoryComponent::SortItem_Name()
 {
-	Algo::Sort( InventoryContents , []( UItemBase* A, UItemBase* B ) 
+
+	TArray<TTuple<FString , TObjectPtr<UItemBase>, int32>> Pairs;
+
+	for (auto& Elem : InventoryItembaseStorage)
 	{
-		// A가 nullptr이면 B가 앞으로 가야 하므로 false 반환
-		if (!A) return false;
-		// B가 nullptr이면 A가 앞으로 가야 하므로 true 반환
-		if (!B) return true;
+		Pairs.Push({Elem.Key, Elem.Value, InventoryCount[Elem.Key]});
+	}
 
-		const FString& SourItemName = A->GetTextData().Name.ToString();
-		const FString& DestItemName = B->GetTextData().Name.ToString();
+	InventoryCount.Empty();
 
-		if(SourItemName == DestItemName)
-		{
-			if (!A->IsFullItemStack() && !B->IsFullItemStack())
-			{
-				const int32 SourQuantity = A->GetQuantity();
-				const int32 DestQuantity = B->GetQuantity();
+	for(int32 i = 0; i < 100; ++i)
+		InventoryContents[i] = nullptr;
 
-				const int32 MaxSize = A->GetNumericData().MaxStackSize;
-				const int32 Quota = FMath::Clamp(MaxSize, DestQuantity, MaxSize - SourQuantity);
-				A->SetQuantity( SourQuantity + Quota );
-				B->SetQuantity( DestQuantity - Quota );
-				return false;
-			}
-		}
+	InventoryItembaseStorage.Empty();
 
+	InventoryTotalWeight = 0.0f;
 
-		return SourItemName < DestItemName;
+	Algo::Sort( Pairs, [](	const TTuple<FString , TObjectPtr<UItemBase> , int32>& A, 
+							const TTuple<FString , TObjectPtr<UItemBase> , int32>& B)
+	{
+		const FString SourName = A.Get<0>();
+		const int32 SourCount = A.Get<2>();
+
+		const FString DestName = B.Get<0>();
+		const int32 DestCount = B.Get<2>();
+
+		return SourName == DestName ? SourCount > DestCount :  SourName < DestName;
 	});
+
+
+	for(auto& Elem : Pairs)
+	{
+		int32 Count = Elem.Get<2>();
+		const TObjectPtr<UItemBase> ItemBase = Elem.Get<1>();
+		TObjectPtr<UItemBase> CopyItemBase = nullptr;
+
+		if(ItemBase->GetNumericData().bIsStackable)
+		{
+			CopyItemBase = ItemBase->CreateItemCopy();
+
+			//const int32 AddNum = FMath::Min(Count, ItemBase->GetNumericData().MaxStackSize);
+
+			//while (Count)
+			//{
+			//	Count -= AddNum;
+			//	CopyItemBase->SetQuantity( AddNum );
+			//	HandelStackableItems( CopyItemBase , Count );
+			//	CopyItemBase->ResetItemFlags();
+			//}
+
+			
+		}
+			
+
+		else
+		{
+			for(int32 i = 0; i < Count; ++i)
+			{
+				CopyItemBase = ItemBase->CreateItemCopy();
+				HandelNonStackableItems( ItemBase );
+				CopyItemBase->ResetItemFlags();
+				CopyItemBase->SetQuantity( Count );
+			}
+				
+		}
+			
+		
+	}
+
+
+
+	//Algo::Sort( InventoryContents , []( UItemBase* A, UItemBase* B ) 
+	//{
+	//	// A가 nullptr이면 B가 앞으로 가야 하므로 false 반환
+	//	if (!A) return false;
+	//	// B가 nullptr이면 A가 앞으로 가야 하므로 true 반환
+	//	if (!B) return true;
+
+	//	const FString& SourItemName = A->GetTextData().Name.ToString();
+	//	const FString& DestItemName = B->GetTextData().Name.ToString();
+
+	//	if(SourItemName == DestItemName)
+	//	{
+	//		if (!A->IsFullItemStack() && !B->IsFullItemStack())
+	//		{
+	//			const int32 SourQuantity = A->GetQuantity();
+	//			const int32 DestQuantity = B->GetQuantity();
+
+	//			const int32 MaxSize = A->GetNumericData().MaxStackSize;
+	//			const int32 Quota = FMath::Clamp(MaxSize, DestQuantity, MaxSize - SourQuantity);
+	//			A->SetQuantity( SourQuantity + Quota );
+	//			B->SetQuantity( DestQuantity - Quota );
+	//			return false;
+	//		}
+	//	}
+
+
+	//	return SourItemName < DestItemName;
+	//});
 
 	// PlayerMainHUD를 가져오자.
 	if (const ADoLupiaHUD* HUD = Cast<ADoLupiaHUD>( GetWorld()->GetFirstPlayerController()->GetHUD() ))
@@ -594,7 +656,7 @@ void UInventoryComponent::SortItem_Name()
 		if (UInventoryPannel* InventoryPanel = HUD->GetMainMeun()->GetInventoryPanel())
 		{
 			//for(int i = 0; i < InventorySlotsCapacity)
-			for (int i = 0; i < 100; ++i) // test
+			for (int32 i = 0; i < 100; ++i) // test
 			{
 				InventoryPanel->RefreshInventoryPannel( i , InventoryContents[i] );
 			}

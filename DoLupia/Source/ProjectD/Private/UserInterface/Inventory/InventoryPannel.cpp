@@ -4,14 +4,15 @@
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
-#include "Components/Button.h"
-#include "Components/EditableText.h"
-
-
-#include "Components/TextBlock.h"
-#include "Components/WrapBox.h"
 #include "UserInterface/Inventory/InventoryTooltip.h"
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
+
+//engine
+#include "Components/Button.h"
+#include "Components/EditableText.h"
+#include "Components/TextBlock.h"
+#include "Components/WrapBox.h"
+
 
 void UInventoryPannel::NativeOnInitialized()
 {
