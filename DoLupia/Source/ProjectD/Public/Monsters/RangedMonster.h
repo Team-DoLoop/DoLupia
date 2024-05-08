@@ -4,21 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Monsters/Monster.h"
-#include "StrikeMonster.generated.h"
+#include "RangedMonster.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTD_API AStrikeMonster : public AMonster
+class PROJECTD_API ARangedMonster : public AMonster
 {
 	GENERATED_BODY()
 
 
-
 public:
 	// Sets default values for this character's properties
-	AStrikeMonster();
+	ARangedMonster();
 
 protected:
 	// Called when the game starts or when spawned

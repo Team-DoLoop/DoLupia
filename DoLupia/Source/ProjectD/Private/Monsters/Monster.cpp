@@ -42,7 +42,8 @@ AMonster::AMonster()
 	healthUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "healthUI" ) );
 
 	healthUI->SetupAttachment( RootComponent );
-	//healthUI->SetRelativeLocation( FVector( 0 , 0 , 100 ) );
+	healthUI->SetCastShadow( false );
+	
 
 }
 
@@ -84,10 +85,98 @@ void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 }
 
 
+void AMonster::PatrolState()
+{
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
+
+	//플레이어를 타겟으로 설정
+	target = GetWorld()->GetFirstPlayerController()->GetPawn();
+	TargetVector = target->GetActorLocation() - this->GetActorLocation();
+	if (TargetVector.Size() < TargetRange) {
+		MonsterFSM->state = EMonsterState::Move;
+	}
+}
+
+void AMonster::MoveState()
+{
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( " AMonster::MoveState()" ) );
+	//플레이어 방향으로 이동
+	MoveToTarget();
+	if (TargetVector.Size() < AttackRange) {
+		MonsterFSM->state = EMonsterState::Attack;
+	}
+}
+
+void AMonster::AttackState()
+{
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
+
+	MoveToTarget();
+
+	if (TargetVector.Size() > AttackRange) {
+		MonsterFSM->state = EMonsterState::Move;
+	}
+}
+
+void AMonster::DamageState()
+{
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DamageState()" ) );
+
+	currentTime += GetWorld()->GetDeltaSeconds();
+	if (currentTime > 1.3)
+	{
+		MonsterFSM->state = EMonsterState::Attack;
+		this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+		currentTime = 0;
+	}
+
+}
+
+void AMonster::DieState()
+{
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DieState()" ) );
+
+	//죽음 애니메이션 끝난 후 destroy
+	currentTime += GetWorld()->GetDeltaSeconds();
+	if (currentTime > 4)
+	{
+		//아이템 드랍
+
+		this->Destroy();
+		currentTime = 0;
+	}
+}
+
+void AMonster::MoveToTarget()
+{
+	TargetVector = target->GetActorLocation() - this->GetActorLocation();
+	this->AddMovementInput( TargetVector.GetSafeNormal() );
+
+	FRotator MonsterRotation = FRotationMatrix::MakeFromX( TargetVector ).Rotator();
+	this->SetActorRotation( MonsterRotation );
+}
+
 void AMonster::OnMyTakeDamage(int damage)
 {
 	currentHP -= damage;
-	MonsterFSM->TakeDamage();
 	monsterHPWidget->SetHP( currentHP , maxHP );
+
+	if (currentHP < 0)
+	{
+		currentHP = 0;
+	}
+
+	if (currentHP > 0)
+	{
+		MonsterFSM->state = EMonsterState::Damage;
+	}
+
+	else
+	{
+		MonsterFSM->state = EMonsterState::Die;
+	}
+
+	// 충돌체 끄기
+	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 

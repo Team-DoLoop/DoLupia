@@ -36,104 +36,12 @@ void UMonsterFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 	switch (state)
 	{
-	case EMonsterState::Patrol:		PatrolState();		break;
-	case EMonsterState::Move:		MoveState();		break;
-	case EMonsterState::Attack:		AttackState();		break;
-	case EMonsterState::Damage:		DamageState();		break;
-	case EMonsterState::Die:		DieState();			break;
+	case EMonsterState::Patrol:		me->PatrolState();		break;
+	case EMonsterState::Move:		me->MoveState();		break;
+	case EMonsterState::Attack:		me->AttackState();		break;
+	case EMonsterState::Damage:		me->DamageState();		break;
+	case EMonsterState::Die:		me->DieState();			break;
 	}
 }
 
-void UMonsterFSM::PatrolState()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("UMonsterFSM::PatrolState()"));
-
-	//플레이어를 타겟으로 설정
-	target = GetWorld()->GetFirstPlayerController()->GetPawn();
-	TargetVector = target->GetActorLocation() - me->GetActorLocation();
-	if (TargetVector.Size() < TargetRange) {
-		state = EMonsterState::Move;
-	}
-}
-
-void UMonsterFSM::MoveState()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("UMonsterFSM::MoveState()"));
-	//플레이어 방향으로 이동
-	MoveToTarget();
-	if (TargetVector.Size() < AttackRange) {
-		state = EMonsterState::Attack;
-	}
-}
-
-void UMonsterFSM::AttackState()
-{
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "UMonsterFSM::AttackState()" ) );
-
-	MoveToTarget();
-
-	if (TargetVector.Size() > AttackRange) {
-		state = EMonsterState::Move;
-	}
-}
-
-void UMonsterFSM::DamageState()
-{
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "UMonsterFSM::DamageState()" ) );
-
-	currentTime += GetWorld()->GetDeltaSeconds();
-	if(currentTime > 0.7)
-	{
-		state = EMonsterState::Attack;
-		me->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
-		currentTime = 0;
-	}
-
-}
-
-void UMonsterFSM::DieState()
-{
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "UMonsterFSM::DieState()" ) );
-	//죽음 애니메이션 끝난 후 destroy
-	currentTime+= GetWorld()->GetDeltaSeconds();
-	if(currentTime>4)
-	{
-		//아이템 드랍
-
-		me->Destroy();
-		currentTime = 0;
-	}
-}
-
-void UMonsterFSM::MoveToTarget()
-{
-	TargetVector = target->GetActorLocation() - me->GetActorLocation();
-	me->AddMovementInput( TargetVector.GetSafeNormal() );
-
-	FRotator MonsterRotation = FRotationMatrix::MakeFromX( TargetVector ).Rotator();
-	me->SetActorRotation( MonsterRotation );
-}
-
-void UMonsterFSM::TakeDamage()
-{
-	if (me->currentHP < 0)
-	{
-		me->currentHP = 0;
-	}
-
-	if (me->currentHP > 0)
-	{
-		state=EMonsterState::Damage;
-
-		//뒤로 물러나기
-	}
-
-	else
-	{
-		state = EMonsterState::Die;
-	}
-
-	// 충돌체 끄기
-	me->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
-}
 
