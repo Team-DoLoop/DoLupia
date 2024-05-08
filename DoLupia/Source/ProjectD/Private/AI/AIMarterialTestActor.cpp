@@ -117,18 +117,6 @@ UTexture2D* AAIMarterialTestActor::LoadTextureFromImage(const FString& ImagePath
     return Texture;
 }
 
-// 텍스처를 파일로 저장하는 함수
-void AAIMarterialTestActor::SaveTextureToFile( UTexture2D* Texture , const FString& FilePath )
-{
-    if (!Texture)
-    {
-        UE_LOG( LogTemp , Error , TEXT( "Invalid texture to save." ) );
-        return;
-    }
-    
-}
-
-
 
 UMaterialInterface* AAIMarterialTestActor::CreateMaterialFromTexture(UTexture2D* Texture)
 {
