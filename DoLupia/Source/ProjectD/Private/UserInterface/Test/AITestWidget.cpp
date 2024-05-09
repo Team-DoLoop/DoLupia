@@ -10,6 +10,7 @@
 #include "ImageUtils.h"
 #include "AI/AIMarterialTestActor.h"
 #include "Components/Image.h"
+#include "Engine.h"
 
 void UAITestWidget::NativeConstruct()
 {
@@ -47,14 +48,15 @@ void UAITestWidget::SendImgaiSV()
 
 void UAITestWidget::ChangeMaterial()
 {
+	UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial" ) );
 	// Find the actor of type AYourActor
-	/*
 	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
+		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
 		// Call the function on the actor
-		ActorItr->();
+		ActorItr->UpdateActorMaterial();
+		
 	}
-	*/
 }
 
 void UAITestWidget::ReqDataPost(const FString& url, const FString& msg)
@@ -144,7 +146,7 @@ void UAITestWidget::ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Respo
 
 		UE_LOG( LogTemp , Warning , TEXT( "TEST2" ) )
 		//저장한 이미지의 경로를 정하고 싶다
-		FString imgPath = FPaths::ProjectContentDir() + "/AIImgTxt.png";
+		FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *imgPath )
 
 

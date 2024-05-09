@@ -18,10 +18,10 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaTime ) override;
 
+	// Update actor's material
 	void UpdateActorMaterial();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UTexture2D* LoadTextureFromImage( const FString& ImagePath );
 	UMaterialInterface* CreateMaterialFromTexture( UTexture2D* Texture );

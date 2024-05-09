@@ -52,9 +52,13 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	// ...
 }
 
+
+// <---------------------- Move ---------------------->
 void UPlayerMoveComp::OnSetDestinationTriggered()
 {
 	if(!Player) return;
+
+	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
 	
 	// We flag that the input is being pressed
 	FollowTime += GetWorld()->GetDeltaSeconds();
@@ -94,6 +98,8 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 
 void UPlayerMoveComp::OnSetDestinationReleased()
 {
+	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
+	
 	// If it was a short press
 	//if (FollowTime <= ShortPressThreshold)
 	{
@@ -105,9 +111,12 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 	FollowTime = 0.f;
 }
 
+
+// <---------------------- Evasion ---------------------->
 void UPlayerMoveComp::Evasion()
 {
 	if(!Player || !PlayerController) return;
+	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
 	
 	FHitResult Hit;
 	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
@@ -129,5 +138,18 @@ void UPlayerMoveComp::EvasionEnd()
 {
 	if(!PlayerFSM) return;
 	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
+}
+
+
+// <---------------------- Die ---------------------->
+void UPlayerMoveComp::Die()
+{
+	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
+	
+	if(!PlayerFSM) return;
+	PlayerFSM->ChangePlayerState(EPlayerState::DIE);
+
+	if(!PlayerAnim) return;
+	PlayerAnim->PlayerDieAnimation();
 }
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Struct_QuestSystem.h"
 #include "Blueprint/UserWidget.h"
+#include "Quest/Quest_Base.h"
 #include "WidgetQuestLog_Objective.generated.h"
 
 

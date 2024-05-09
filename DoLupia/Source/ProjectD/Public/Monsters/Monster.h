@@ -6,6 +6,13 @@
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
+UENUM( BlueprintType )
+enum class EMonsterType : uint8
+{
+	Strike UMETA(DisplayName = "Strike"),
+	Ranged UMETA(DisplayName = "Ranged") ,
+};
+
 UCLASS()
 class PROJECTD_API AMonster : public ACharacter
 {
@@ -23,6 +30,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere)
+	EMonsterType MonsterType;
 
 	UFUNCTION()
 	void OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , 
@@ -50,5 +59,31 @@ public:
 	UPROPERTY()
 	class UMonsterHPWidget* monsterHPWidget;
 
+	//플레이어를 타겟으로 설정
+	UPROPERTY( EditAnywhere )
+	AActor* target;
+
+	FVector TargetVector;
+
+	//State 함수
+	virtual void PatrolState();
+	virtual void MoveState();
+	virtual void AttackState();
+	virtual void DamageState();
+	virtual void DieState();
+
+
+	//일정 반경 안에 들어오면 플레이어를 향해 이동
+	UPROPERTY( EditAnywhere )
+	float TargetRange = 800;
+
+	//일정 반경 안에 들어오면 공격모드로 전환
+	UPROPERTY( EditAnywhere )
+	float AttackRange = 500;
+
+	void MoveToTarget();
+
 	void OnMyTakeDamage(int damage);
+
+	float currentTime = 0;
 };

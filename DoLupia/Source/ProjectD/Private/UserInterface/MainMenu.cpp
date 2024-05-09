@@ -4,6 +4,7 @@
 #include "UserInterface/MainMenu.h"
 
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/InventoryComponent.h"
 #include "Items/ItemBase.h"
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
@@ -57,7 +58,11 @@ bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 
 		// 여기서 이제 드래그 앤 드랍되면 초기화 될 수 있도록 설정
 		ItemDragDrop->GetInventoryItemSlot()->SetItemReference(nullptr);
-		PlayerCharacter->DropItem(ItemBase, ItemBase->GetQuantity());
+
+		const int32 Quantity = ItemBase->GetNumericData().bIsStackable ? ItemBase->GetQuantity() : 1;
+		PlayerCharacter->DropItem(ItemBase, Quantity);
+		ItemDragDrop->GetSourceInventory()->ReleaseInventory( ItemBase );
+
 		return true;
 	}
 

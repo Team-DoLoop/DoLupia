@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Monster.h"
 #include "Animation/AnimInstance.h"
 #include "MonsterFSM.h"
 #include "MonsterAnim.generated.h"
@@ -18,4 +19,7 @@ class PROJECTD_API UMonsterAnim : public UAnimInstance
 public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EMonsterState state;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EMonsterType MonsterType;
 };

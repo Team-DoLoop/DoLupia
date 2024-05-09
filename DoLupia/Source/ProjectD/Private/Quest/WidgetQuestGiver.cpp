@@ -111,6 +111,12 @@ void UWidgetQuestGiver::OnAcceptClicked()
         return;
     }
 
+    if (QuestID.IsNone())
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ WidgetQuestGiver" ) );
+    }
+    UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestID.ToString() );
+
     // 컴포넌트가 유효할 경우, 퀘스트를 추가합니다.
     // 수락을 하면!!!!!
     QuestLogComp->AddNewQuest( QuestID );

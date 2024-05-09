@@ -96,7 +96,9 @@ public:
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
 
 	UFUNCTION( Category = "Inventory" )
-	const int32 FindEmptyItemIndex(int32 FirstIndex = 0) const;
+	void ReleaseInventory(UItemBase* ItemIn);
+	UFUNCTION(Category = "Inventory")
+	const int32 FindEmptyItemIndex(int32 FirstIndex = 0, const FString& InKey = "") const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindMatchItem(UItemBase* ItemIn) const;
 	UFUNCTION(Category = "Inventory")
@@ -143,7 +145,7 @@ protected:
 	FItemAddResult HandelNonStackableItems(UItemBase* InputItem);
 	int32 HandelStackableItems(UItemBase* ItemIn, int32 RequestedAddAmount);
 	int32 CalculateWeightAddAmount(UItemBase* ItemIn, int32 RequestedAddAmount);
-	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount);
+	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount, bool IsFindStackItem );
 
 	void AddNewItem(UItemBase* Item, const int32 AmountToAdd, const int32 InputItemIndex);
 
@@ -160,6 +162,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory" )
 	TMap<FString, int32> InventoryCount;
+
+
+	UPROPERTY( VisibleAnywhere , Category = "Inventory" )
+	TMap<FString, TObjectPtr<UItemBase>> InventoryItembaseStorage;
 
 		
 };
