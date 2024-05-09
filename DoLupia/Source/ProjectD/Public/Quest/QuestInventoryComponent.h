@@ -33,5 +33,7 @@ public:
 	UFUNCTION()
 	void AddToInventory(FName Item, int32 Quantity);
 
+	UFUNCTION()
+	int32 QueryInventory(FName Item);
 		
 };

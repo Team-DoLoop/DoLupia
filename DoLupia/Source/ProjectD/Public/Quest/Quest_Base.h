@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "QuestLogComponent.h"
 #include "GameFramework/Actor.h"
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest_Base.generated.h"
 
+class AQuestLogComponent;
 class UWidgetQuestNotification;
 
 UCLASS()

@@ -70,3 +70,14 @@ void UQuestInventoryComponent::AddToInventory( FName Item , int32 Quantity )
 
 }
 
+int32 UQuestInventoryComponent::QueryInventory( FName Item )
+{
+	// Content 맵이 유효한지 확인
+	if (Content.Num() <= 0)
+	{
+		//UE_LOG( LogTemp , Warning , TEXT( "Content map is empty or null." ) );
+		return 0; // 이 경우 0 또는 다른 기본값을 반환할 수 있습니다.
+	}
+	FString ItemString = Item.ToString();
+	return *Content.Find( ItemString );
+}

@@ -3,6 +3,7 @@
 
 #include "Quest/Quest_Base.h"
 #include "Quest/QuestLogComponent.h"
+#include "Quest/QuestInventoryComponent.h"
 #include <Characters/ProjectDCharacter.h>
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
@@ -78,6 +79,23 @@ void AQuest_Base::BeginPlay()
 	//테스트 퀘스트 인벤토리 컴포넌트 생성
 	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
 
+	if (QuestInventorycomponent) {
+
+		for (const auto& Objective : CurrentStageDetails.Objectives)
+		{
+			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
+			if (Objective.Type == EObjectiveType::Collect)
+			{
+				FName MyName = FName( Objective.ObjectiveID );
+				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
+				
+				//목표 수량에 보내기
+				for (const auto& Objective : CurrentStageDetails.Objectives)
+					OnObjectiveIDHeard( Objective.ObjectiveID , InventoryCount );
+			}
+		}
+	}
+
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
 
@@ -91,15 +109,6 @@ void AQuest_Base::BeginPlay()
 		// QuestID가 유효해졌으므로 이후 작업 수행
 		GetQuestDetails();
 	} );
-
-	for (const auto& Objective : CurrentStageDetails.Objectives)
-	{
-		if (Objective.Type == EObjectiveType::Collect)
-		{
-			//QuestInventorycomponent->Content.
-		}
-	}
-
 }
 
 
