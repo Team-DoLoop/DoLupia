@@ -21,7 +21,7 @@ class PROJECTD_API UItemBase : public UObject
 public:
 	UItemBase();
 
-	UItemBase* CreateItemCopy() const;
+	void CreateItemCopy(const UItemBase* MyItemBase);
 
 	UFUNCTION(Category = "Item")
 	FORCEINLINE float GetItemStackWeight() const { return Quantity * NumericData.Weight; };
