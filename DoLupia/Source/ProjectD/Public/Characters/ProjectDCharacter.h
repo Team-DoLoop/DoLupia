@@ -142,7 +142,7 @@ protected:
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
-
+	
 
 	
 	// <---------------------- Interaction ---------------------->

@@ -15,6 +15,7 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	Player = Cast<AProjectDCharacter>(TryGetPawnOwner());
+	SkillAnimationName = {"Default", "SkillSwing", "SkillSpell", "SkillCastingHitDown", "SkillUlt"};
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -69,8 +70,9 @@ void UPlayerAnimInstance::AnimNotify_AttackEnd()
 	Player->GetAttackComp()->AttackEnd();
 }
 
-void UPlayerAnimInstance::PlayerAttackAnimation()
+void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 {
 	if(!attackMontage) return;
 	Montage_Play(attackMontage);
+	Montage_JumpToSection(SkillAnimationName[SkillIndex],attackMontage);
 }

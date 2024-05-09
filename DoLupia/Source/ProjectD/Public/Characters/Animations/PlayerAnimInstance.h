@@ -15,8 +15,8 @@ class PROJECTD_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 
 	// <---------------------- Player ---------------------->
@@ -56,6 +56,7 @@ public:
 	
 	// <---------------------- Attack ---------------------->
 private:
+	TArray<FName> SkillAnimationName;
 
 public:
 	UPROPERTY(EditDefaultsOnly)
@@ -70,6 +71,6 @@ public:
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
 	
-	void PlayerAttackAnimation();
+	void PlayerAttackAnimation(int32 SkillIndex);
 
 };

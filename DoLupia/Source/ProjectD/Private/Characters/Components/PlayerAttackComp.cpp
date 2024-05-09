@@ -7,6 +7,11 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Characters/Skill/PlayerSkillBase.h"
+#include "Characters/Skill/PlayerSkillCastingHitDown.h"
+#include "Characters/Skill/PlayerSkillSpell.h"
+#include "Characters/Skill/PlayerSkillSwing.h"
+#include "Characters/Skill/PlayerSkillUlt.h"
 
 // Sets default values for this component's properties
 UPlayerAttackComp::UPlayerAttackComp()
@@ -29,6 +34,11 @@ void UPlayerAttackComp::BeginPlay()
 	if(!Player) return;
 	PlayerFSMComp = Player->GetPlayerFSMComp();
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
+	
+	Skills.Add(NewObject<UPlayerSkillSwing>());
+	Skills.Add(NewObject<UPlayerSkillSpell>());
+	Skills.Add(NewObject<UPlayerSkillCastingHitDown>());
+	Skills.Add(NewObject<UPlayerSkillUlt>());
 }
 
 
@@ -48,12 +58,30 @@ void UPlayerAttackComp::Attack()
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
 	if(!PlayerAnim) return;
-	PlayerAnim->PlayerAttackAnimation();
+	PlayerAnim->PlayerAttackAnimation(0);
 }
 
 void UPlayerAttackComp::AttackEnd()
 {
 	if(!PlayerFSMComp) return;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+}
+
+
+void UPlayerAttackComp::ExecuteSkill(int32 SkillIndex)
+{
+	if(!PlayerFSMComp) return;
+	if(PlayerFSMComp -> GetCurrentState() == EPlayerState::DIE) return;
+
+	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+	
+	// 스킬 애니메이션 실행
+	PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
+	
+	// 스킬 기능 실행
+	if(SkillIndex >= 0 && SkillIndex < Skills.Num())
+	{
+		Skills[SkillIndex]->Execute();
+	}
 }
 
