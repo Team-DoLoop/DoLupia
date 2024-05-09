@@ -31,8 +31,8 @@ public:
 	void GetQuestDetails();
 
 	// 이벤트 델리게이트 정의
-	UPROPERTY( BlueprintAssignable )
-	FQuestDataLoadedSignature OnQuestDataLoaded;
+	//UPROPERTY( BlueprintAssignable )
+	//FQuestDataLoadedSignature OnQuestDataLoaded;
 
 	UFUNCTION()
 	void OnQuestDataLoadedHandler( FName QuestID );

@@ -18,7 +18,8 @@ void UMainMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	bIsFocusable = true;
+	//bIsFocusable
+	SetIsFocusable(true);
 	SetKeyboardFocus();
 
 	PlayerCharacter = Cast<AProjectDCharacter>(GetOwningPlayerPawn());

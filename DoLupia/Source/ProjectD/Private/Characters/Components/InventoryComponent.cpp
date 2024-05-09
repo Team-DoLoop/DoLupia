@@ -7,7 +7,10 @@
 #include "UserInterface/Inventory/InventoryPannel.h"
 
 //engine
+#include "Characters/Components/InventoryComponent.h"
+
 #include "Algo/Sort.h"
+#include "Pooling/ItemPool.h"
 
 constexpr int32 NONFIND_INDEX = -1;
 
@@ -15,14 +18,16 @@ UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	ItemPool = CreateDefaultSubobject<UItemPool>(TEXT("ItemPool"));
+
 }
 
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	//InventorySlotsCapacity
+	ItemPool->CreateItem(100);
 
 }
 
@@ -39,27 +44,17 @@ void UInventoryComponent::ReleaseInventory(UItemBase* ItemIn)
 
 		if (InventoryContents[i] == ItemIn)
 		{
+			ItemPool->ReturnItem(InventoryContents[i]);
 			InventoryContents[i] = nullptr;
 
 			const FString& InKey = ItemIn->GetTextData().Name.ToString();
 			const int32* ElemValue = InventoryCount.Find(InKey);
 			const int32 Quantity = ItemIn->GetQuantity();
 
-			if(ElemValue)
-			{
-				if (*ElemValue == ItemIn->GetQuantity())
-				{
-					InventoryCount.Remove(InKey);
-					InventoryItembaseStorage.Remove(InKey);
-				}
-					
-				else
-					InventoryCount[InKey] -= Quantity;
+			if(!ElemValue)
+				InventoryCount.Remove( InKey );
 
-				UE_LOG( LogTemp , Warning , TEXT( "ReleaseInventory Sucesssed" ) );
-
-			}
-
+			UE_LOG(LogTemp, Warning, TEXT("ReleaseInventory Sucesssed"));
 			break;
 		}
 	}
@@ -203,7 +198,7 @@ void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
 	{
 		if (InventoryContents[i] == ItemToRemove)
 		{
-			FString InKey = ItemToRemove->GetTextData().Name.ToString();
+			const FString& InKey = ItemToRemove->GetTextData().Name.ToString();
 		
 			if(InventoryCount.Contains(InKey))
 			{
@@ -213,11 +208,11 @@ void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
 				if(Quantity <= 0)
 				{
 					InventoryCount.Remove(InKey);
-					InventoryItembaseStorage.Remove(InKey);
 				}
 					
 			}
 
+			ItemPool->ReturnItem(InventoryContents[i]);
 			InventoryContents[i] = nullptr;
 			return;
 		}
@@ -415,7 +410,8 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 
 		// 아이템이 남아있는 지 체크한다.
 		ExistingItemStack = FindNextItemByID( ItemIn );
-		FindItemIdx = FindEmptyItemIndex( ++FindItemIdx, ItemName );
+
+		IsFindStack ? FindItemIdx = FindEmptyItemIndex( 0 , ItemName ) : FindItemIdx = FindEmptyItemIndex( ++FindItemIdx , ItemName );
 		IsFindStack = ExistingItemStack ? true : false;
 
 		if (!ExistingItemStack)
@@ -503,22 +499,12 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 	else
 	{
 		// 다른 인벤토리 또는 처음 만들어진 데이터를 카피한다.
-		NewItem = Item->CreateItemCopy();
+		NewItem = ItemPool->GetItem(Item->GetTextData().Name.ToString()); //Item->CreateItemCopy();
 	}
 
 	// 인벤토리의 무게를 늘려주자.
 	InventoryTotalWeight += NewItem->GetItemSingleWeight() * AmountToAdd;
 
-	FString ItemName = Item->GetTextData().Name.ToString();
-	const int* ElemPtr = InventoryCount.Find( ItemName );
-
-	if (ElemPtr)
-		InventoryCount[ItemName] += AmountToAdd;
-	else
-	{
-		InventoryCount.Emplace( ItemName , AmountToAdd );
-		InventoryItembaseStorage.Emplace( ItemName, Item );
-	}
 
 
 	// InventoryComponent 를 동기화시켜주고, 아이템 수량을 넣어준다.
@@ -536,6 +522,18 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 	// 인벤토리에 아이템 데이터를 아이템 데이터가 없는 인덱스에 추가한다.
 	InventoryContents[InputItemIndex] = NewItem;
 
+
+	FString ItemName = Item->GetTextData().Name.ToString();
+	const int* ElemPtr = InventoryCount.Find( ItemName );
+
+	if (ElemPtr)
+		InventoryCount[ItemName] += AmountToAdd;
+	else
+	{
+		InventoryCount.Emplace( ItemName , AmountToAdd );
+	}
+
+
 	// PlayerMainHUD를 가져오자.
 	if(const ADoLupiaHUD* HUD = Cast<ADoLupiaHUD>( GetWorld()->GetFirstPlayerController()->GetHUD() ))
 	{
@@ -550,73 +548,116 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 void UInventoryComponent::SortItem_Name()
 {
 
-	TArray<TTuple<FString , TObjectPtr<UItemBase>, int32>> Pairs;
+	/*TArray<TTuple<FString , TObjectPtr<UItemBase>, int32>> Pairs;
 
-	for (auto& Elem : InventoryItembaseStorage)
+	for (auto Elem : InventoryItembaseStorage)
 	{
 		Pairs.Push({Elem.Key, Elem.Value, InventoryCount[Elem.Key]});
-	}
-
-	InventoryCount.Empty();
+	}*/
 
 	for(int32 i = 0; i < 100; ++i)
-		InventoryContents[i] = nullptr;
-
-	InventoryItembaseStorage.Empty();
+	{
+		if(InventoryContents[i])
+		{
+			ItemPool->ReturnItem(InventoryContents[i]);
+			InventoryContents[i] = nullptr;
+		}
+		
+	}
 
 	InventoryTotalWeight = 0.0f;
 
-	Algo::Sort( Pairs, [](	const TTuple<FString , TObjectPtr<UItemBase> , int32>& A, 
-							const TTuple<FString , TObjectPtr<UItemBase> , int32>& B)
+	//Algo::Sort( Pairs, [](	const TTuple<FString , TObjectPtr<UItemBase> , int32>& A, 
+	//						const TTuple<FString , TObjectPtr<UItemBase> , int32>& B)
+	//{
+	//	const FString SourName = A.Get<0>();
+	//	const FString DestName = B.Get<0>();
+
+	//	return SourName < DestName;
+	//});
+
+		// TArray에 TMap의 내용을 (키, 값) 쌍으로 복사
+	TArray<TPair<FString , int32>> PP;
+	for (const TPair<FString , int32>& Pair : InventoryCount)
 	{
-		const FString SourName = A.Get<0>();
-		const int32 SourCount = A.Get<2>();
+		PP.Add( Pair );
+	}
 
-		const FString DestName = B.Get<0>();
-		const int32 DestCount = B.Get<2>();
+	// TArray 정렬, 람다식을 사용하여 키 기준으로 정렬
+	PP.Sort( []( const TPair<FString , int32>& A , const TPair<FString , int32>& B ) {
+		return A.Key < B.Key; // 오름차순 정렬
+	} );
 
-		return SourName == DestName ? SourCount > DestCount :  SourName < DestName;
-	});
-
-
-	for(auto& Elem : Pairs)
+	for(auto Iterate : PP)
 	{
-		int32 Count = Elem.Get<2>();
-		const TObjectPtr<UItemBase> ItemBase = Elem.Get<1>();
+		TObjectPtr<UItemBase> CopyItemBase = ItemPool->GetItem(Iterate.Key);
+
+		if (CopyItemBase->GetNumericData().bIsStackable && CopyItemBase->GetNumericData().MaxStackSize)
+		{
+			while (Iterate.Value)
+			{
+				CopyItemBase = ItemPool->GetItem( Iterate.Key );
+				const int32 AddNum = FMath::Min( Iterate.Value , CopyItemBase->GetNumericData().MaxStackSize );
+				CopyItemBase->SetQuantity( AddNum );
+				Iterate.Value -= AddNum;
+				HandelStackableItems( CopyItemBase , AddNum );
+				CopyItemBase->ResetItemFlags();
+			}
+		}
+		else
+		{
+			while (Iterate.Value--)
+			{
+				CopyItemBase = ItemPool->GetItem( Iterate.Key );
+				CopyItemBase->SetQuantity( 1 );
+				HandelNonStackableItems( CopyItemBase );
+				CopyItemBase->ResetItemFlags();
+			}
+
+		}
+
+		InventoryCount[Iterate.Key] /= 2;
+	}
+
+
+	/*for(int32 i = 0; i < Pairs.Num(); ++i)
+	{
+		int32 Count = Pairs[i].Get<2>();
+		FString Name = Pairs[i].Get<0>();
+
+		const TObjectPtr<UItemBase> ItemBase = Pairs[i].Get<1>();
 		TObjectPtr<UItemBase> CopyItemBase = nullptr;
 
-		if(ItemBase->GetNumericData().bIsStackable)
+		if(ItemBase->GetNumericData().bIsStackable && ItemBase->GetNumericData().MaxStackSize)
 		{
-			CopyItemBase = ItemBase->CreateItemCopy();
+			while (Count)
+			{
+				CopyItemBase = ItemPool->GetItem( ItemBase );
+				const int32 AddNum = FMath::Min( Count , ItemBase->GetNumericData().MaxStackSize );
+				CopyItemBase->SetQuantity( AddNum );
+				Count -= AddNum;
+				HandelStackableItems( CopyItemBase , AddNum );
+				CopyItemBase->ResetItemFlags();
+			}
 
-			//const int32 AddNum = FMath::Min(Count, ItemBase->GetNumericData().MaxStackSize);
-
-			//while (Count)
-			//{
-			//	Count -= AddNum;
-			//	CopyItemBase->SetQuantity( AddNum );
-			//	HandelStackableItems( CopyItemBase , Count );
-			//	CopyItemBase->ResetItemFlags();
-			//}
-
-			
 		}
 			
 
 		else
 		{
-			for(int32 i = 0; i < Count; ++i)
+			while (Count--)
 			{
-				CopyItemBase = ItemBase->CreateItemCopy();
-				HandelNonStackableItems( ItemBase );
+				CopyItemBase = ItemPool->GetItem(ItemBase);
+				CopyItemBase->SetQuantity(1);
+				HandelNonStackableItems( CopyItemBase );
 				CopyItemBase->ResetItemFlags();
-				CopyItemBase->SetQuantity( Count );
 			}
 				
 		}
-			
+
+		InventoryCount[Name] /= 2;
 		
-	}
+	}*/
 
 
 
