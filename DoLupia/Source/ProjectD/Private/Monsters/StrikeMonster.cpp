@@ -19,6 +19,11 @@ AStrikeMonster::AStrikeMonster()
 		Weapon->SetupAttachment( GetMesh() , WeaponSocket );
 	}
 
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/Blueprints/ABP_StrikeMonster.ABP_StrikeMonster_C'" ) );
+	if (tempClass.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass( tempClass.Class );
+	}
 
 }
 
@@ -35,6 +40,8 @@ void AStrikeMonster::AttackState()
 {
 	Super::AttackState();
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
+
+	MoveToTarget();
 }
 
 

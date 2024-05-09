@@ -65,6 +65,9 @@ public:
 
 	FVector TargetVector;
 
+	UPROPERTY()
+	class UMonsterAnim* anim;
+
 	//State 함수
 	virtual void PatrolState();
 	virtual void MoveState();
@@ -75,7 +78,7 @@ public:
 
 	//일정 반경 안에 들어오면 플레이어를 향해 이동
 	UPROPERTY( EditAnywhere )
-	float TargetRange = 800;
+	float TargetRange = 900;
 
 	//일정 반경 안에 들어오면 공격모드로 전환
 	UPROPERTY( EditAnywhere )
