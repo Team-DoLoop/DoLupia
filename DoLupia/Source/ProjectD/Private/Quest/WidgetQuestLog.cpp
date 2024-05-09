@@ -16,7 +16,7 @@ void UWidgetQuestLog::NativePreConstruct()
 {
     Super::NativePreConstruct();
 
-    QuestSelected.AddDynamic(this, &UWidgetQuestLog::OnQuestSelected);
+    //QuestSelected.AddDynamic( this , &UWidgetQuestLog::OnQuestSelected );
 
     // 데이터 테이블 가져오기
     UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/QuestSystem/QuestData.QuestData"));
@@ -54,7 +54,7 @@ void UWidgetQuestLog::NativePreConstruct()
     }
 
     // 배열을 순회하여 각 퀘스트를 처리
-    for (const auto& Quest : QuestLogComp->CurrentActiveQuests)
+    for (const auto& Quest : QuestLogComp->CurrentQuest)
     {
         UWidgetQuestLog_QuestEntry* QuestWidget = CreateWidget<UWidgetQuestLog_QuestEntry>( GetWorld() , QuestLog_Widget );
         if (!IsValid( QuestWidget ))
@@ -62,25 +62,27 @@ void UWidgetQuestLog::NativePreConstruct()
             continue;
         }
 
-        QuestWidget->QuestID = Quest;
+        QuestWidget->QuestID = Quest->QuestID;
+        QuestWidget->QuestActor = Quest;
 
-        FQuestDetails* QuestDetailsRow = QuestData.DataTable->FindRow<FQuestDetails>( Quest , TEXT( "Searching for row" ) , true );
+        FQuestDetails* QuestDetailsRow = QuestData.DataTable->FindRow<FQuestDetails>( Quest->QuestID , TEXT( "Searching for row" ) , true );
         if (!QuestDetailsRow)
         {
             continue;
         }
-        AddQuestToScrollBox( QuestWidget , QuestDetailsRow, Quest );
+        AddQuestToScrollBox( QuestWidget , QuestDetailsRow, Quest->QuestID );
+    }
+
+    //버튼 할당
+    if (btn_Close)
+    {
+        btn_Close->OnClicked.AddDynamic( this , &UWidgetQuestLog::OnButtonClicked );
     }
 }
 
 void UWidgetQuestLog::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-    if (btn_Close)
-    {
-        btn_Close->OnClicked.AddDynamic( this , &UWidgetQuestLog::OnButtonClicked );
-    }
 
     SetupPlayerController();
 }
@@ -95,22 +97,55 @@ void UWidgetQuestLog::NativeDestruct()
     if (PlayerControllerD) {
         FInputModeGameOnly InputMode;
         PlayerControllerD->SetInputMode( InputMode );
-        PlayerControllerD->SetShowMouseCursor( true );
     }
 }
+
+void UWidgetQuestLog::AddQuestToScrollBox( UWidgetQuestLog_QuestEntry* QuestWidget , FQuestDetails* QuestDetailsRow , FName QuestID )
+{
+    if (!IsValid( scroll_MainQuests ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "scroll_MainQuests is not valid." ) );
+        return;
+    }
+    if (!IsValid( scroll_SideQuests ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "scroll_SideQuests is not valid." ) );
+        return;
+    }
+
+    UScrollBox* SelectedScrollBox = nullptr;
+    SelectedScrollBox = QuestDetailsRow->IsMainQuest ? scroll_MainQuests : scroll_SideQuests;
+
+    if (IsValid( SelectedScrollBox ))
+    {
+        SelectedScrollBox->AddChild( QuestWidget ); // 선택된 스크롤 박스에 위젯 추가
+
+        //위젯에 있는 OnQuestSelected 델리게이트를 가져오는 것. -이건 버튼에 연결됨.
+        QuestWidget->OnQuestSelected.AddDynamic( this , &UWidgetQuestLog::OnQuestSelected ); // QuestWidget의 QuestSelected 이벤트에 OnQuestSelected 함수를 등록
+
+    }
+    else
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "SelectedScrollBox is not valid." ) );
+    }
+}
+
 
 void UWidgetQuestLog::OnButtonClicked()
 {
     RemoveFromParent();
 }
 
-void UWidgetQuestLog::OnQuestSelected( FName QuestID )
+void UWidgetQuestLog::OnQuestSelected( FName QuestID , AQuest_Base* QuestActor )
 {
-    DisplayQuest( QuestID );
+    //QuestID, QuestBaseActor를 받아옴. QuestEntry에서
+    DisplayQuest( QuestID, QuestActor );
 }
 
-void UWidgetQuestLog::DisplayQuest( FName QuestID )
+void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
 {
+    CurrentQuestActor = QuestActor;
+
     WidgetSwitcher->SetActiveWidgetIndex( 1 );
 
     box_Objectives->ClearChildren();
@@ -126,42 +161,17 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID )
     	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[0].Description );
     	txt_StageDesc->SetText( SD_MyText );
 
+        //Objective 위젯 추가 
         for (const auto& Objective : QuestDetialsRow->Stages[0].Objectives) // 범위 기반 for 루프
         {
             UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );
             if (IsValid( ObjectiveWidget ))
             {
                 ObjectiveWidget->ObjectiveData = Objective;
+                ObjectiveWidget->QuestActor = CurrentQuestActor;
                 box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
             }
         }
-    }
-}
-
-void UWidgetQuestLog::AddQuestToScrollBox(UWidgetQuestLog_QuestEntry* QuestWidget, FQuestDetails* QuestDetailsRow, FName QuestID)
-{
-    if (!IsValid( scroll_MainQuests ))
-    {
-        UE_LOG( LogTemp , Error , TEXT( "scroll_MainQuests is not valid." ) );
-        return;
-    }
-    if (!IsValid( scroll_SideQuests ))
-    {
-        UE_LOG( LogTemp , Error , TEXT( "scroll_SideQuests is not valid." ) );
-        return;
-    }
-
-    UScrollBox* SelectedScrollBox = nullptr;
-	SelectedScrollBox = QuestDetailsRow->IsMainQuest ? scroll_MainQuests : scroll_SideQuests;
-
-    if (IsValid( SelectedScrollBox ))
-    {
-        SelectedScrollBox->AddChild( QuestWidget ); // 선택된 스크롤 박스에 위젯 추가
-        QuestSelected.Broadcast( QuestID ); // 이벤트 브로드캐스트
-    }
-    else
-    {
-        UE_LOG( LogTemp , Warning , TEXT( "SelectedScrollBox is not valid." ) );
     }
 }
 
@@ -178,6 +188,5 @@ void UWidgetQuestLog::SetupPlayerController()
     {
         FInputModeUIOnly InputMode;
         PlayerControllerD->SetInputMode( InputMode );
-        PlayerControllerD->SetShowMouseCursor( true );
     }
 }

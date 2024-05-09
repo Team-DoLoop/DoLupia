@@ -1,52 +1,50 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "Quest_Base.h"
 #include "Components/ActorComponent.h"
 #include "QuestLogComponent.generated.h"
 
+class AQuest_Base;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
+
+UCLASS( ClassGroup = (Custom) , meta = (BlueprintSpawnableComponent) )
 class PROJECTD_API UQuestLogComponent : public UActorComponent
 {
-	GENERATED_BODY()
-
-public:	
-	// Sets default values for this component's properties
-	UQuestLogComponent();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+    GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	TArray<FName> CurrentActiveQuests;
+    // Sets default values for this component's properties
+    UQuestLogComponent();
 
-	UPROPERTY()
-	TArray<FName> CompletedQuests;
+protected:
+    // Called when the game starts
+    virtual void BeginPlay() override;
 
-	UPROPERTY()
-	FName CurrentTrackedQuest;
+public:
+    // Called every frame
+    virtual void TickComponent( float DeltaTime , ELevelTick TickType , FActorComponentTickFunction* ThisTickFunction ) override;
 
-	UPROPERTY()
-	TArray<AQuest_Base*> CurrentQuest;
+    UPROPERTY( BlueprintAssignable )
+    FQuestDataLoadedSignature OnQuestDataLoaded;
 
-	UFUNCTION()
-	void AddNewQuest(FName QuestID);
+public:
+    UPROPERTY()
+    TArray<FName> CurrentActiveQuests;
 
-	//UFUNCTION()
-	//void CompleteQuest(); 보상줄때 쓸 함수
+    UPROPERTY()
+    TArray<FName> CompletedQuests;
 
-	UFUNCTION()
-	bool QueryActiveQuest(FName QuestID);
+    UPROPERTY()
+    FName CurrentTrackedQuest;
 
-	//UFUNCTION()
-	//void TrackQuest();
+    UPROPERTY()
+    TArray<AQuest_Base*> CurrentQuest; // 수정: AQuest_Base* 에서 UQuest_Base* 로 변경
+
+    UFUNCTION()
+    void AddNewQuest( FName QuestID );
+
+    UFUNCTION()
+    bool QueryActiveQuest( FName QuestID );
 };
+

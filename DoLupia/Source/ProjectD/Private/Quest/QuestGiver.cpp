@@ -94,6 +94,7 @@ void UQuestGiver::DisplayQuest()
         {
 	        QuestWidget->QuestDetails = *Row;
             QuestWidget->QuestID = QuestData.RowName;
+            UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestData.RowName.ToString() );
 			QuestWidget->AddToViewport(); // 위젯을 화면에 추가
         }
     }

@@ -43,6 +43,17 @@ public:
 	
 */
 
+	// <---------------------- Test ---------------------->
+private:
+
+protected:
+	void TestAnyFunction();
+	
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* TestAction;
+	
 
 	// <---------------------- Player ---------------------->
 private:
@@ -143,6 +154,7 @@ private:
 	void QuestLogMenu();
 
 	
+
 
 };
 

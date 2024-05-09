@@ -44,10 +44,14 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* evasionMontage;
 
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* dieMontage;
+
 	UFUNCTION()
 	void AnimNotify_PlayerEvasionEnd();
 	
 	void PlayerEvasionAnimation();
+	void PlayerDieAnimation();
 
 	
 	// <---------------------- Attack ---------------------->

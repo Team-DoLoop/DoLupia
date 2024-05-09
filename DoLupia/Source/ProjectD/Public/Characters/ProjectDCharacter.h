@@ -33,6 +33,8 @@ struct FInteractionData
 // Delegate 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnObjectiveIDCalled , FString, ObjectiveID);
 
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnQuestIDCalled , FName , QuestID );
+
 
 UCLASS(Blueprintable)
 class AProjectDCharacter : public ACharacter, public IDamageInterface
@@ -210,6 +212,9 @@ public:
 	// Event Dispatcher 선언
 	UPROPERTY( BlueprintAssignable , Category = "Events" )
 	FOnObjectiveIDCalled OnObjectiveIDCalled;
-	
+
+	/*UPROPERTY(BlueprintAssignable , Category = "Events")
+	FOnQuestIDCalled OnQuestIDCalled;
+	*/
 };
 

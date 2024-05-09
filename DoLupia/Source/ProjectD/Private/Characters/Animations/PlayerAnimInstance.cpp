@@ -43,6 +43,12 @@ void UPlayerAnimInstance::PlayerEvasionAnimation()
 	Montage_Play(evasionMontage);
 }
 
+void UPlayerAnimInstance::PlayerDieAnimation()
+{
+	if(!dieMontage) return;
+	Montage_Play(dieMontage);
+}
+
 
 // <---------------------- Attack ---------------------->
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()

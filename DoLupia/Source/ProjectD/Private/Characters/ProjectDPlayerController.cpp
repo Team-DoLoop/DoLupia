@@ -25,12 +25,23 @@ AProjectDPlayerController::AProjectDPlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 }
 
+
 void AProjectDPlayerController::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
 
 	ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+}
+
+
+// <---------------------- Test ---------------------->
+
+void AProjectDPlayerController::TestAnyFunction()
+{
+	if(!ControlledCharacter) return;
+	
+	ControlledCharacter->moveComp->Die();
 }
 
 
@@ -82,6 +93,8 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Attack);
 
+		// Test
+		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
 	}
 	else
 	{
@@ -196,7 +209,7 @@ void AProjectDPlayerController::Attack()
 	
 	ControlledCharacter->attackComp->Attack();
 
-	// Test
+	// TakeDamage Test
 	ControlledCharacter->TakeDamage(10.0f);
 }
 

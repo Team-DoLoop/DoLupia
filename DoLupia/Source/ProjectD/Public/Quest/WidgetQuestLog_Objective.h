@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Struct_QuestSystem.h"
 #include "Blueprint/UserWidget.h"
+#include "Quest/Quest_Base.h"
 #include "WidgetQuestLog_Objective.generated.h"
 
 
@@ -27,6 +28,9 @@ public:
 
     UPROPERTY( EditAnywhere , BlueprintReadWrite )
     FObjectiveDetails ObjectiveData;
+
+    UPROPERTY( EditAnywhere )
+    class AQuest_Base* QuestActor;
 
 protected:
     // 위젯에 바인드할 컴포넌트 선언

@@ -25,16 +25,17 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 			txt_QuestName->SetText( QN_MyText );
 		}
 	}
+
+	//버튼 할당
+	if (btn_QuestName)
+	{
+		btn_QuestName->OnClicked.AddDynamic( this , &UWidgetQuestLog_QuestEntry::OnButtonClicked );
+	}
 }
 
 void UWidgetQuestLog_QuestEntry::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-    if (btn_QuestName)
-    {
-        btn_QuestName->OnClicked.AddDynamic( this , &UWidgetQuestLog_QuestEntry::OnButtonClicked );
-    }
 }
 
 void UWidgetQuestLog_QuestEntry::NativeDestruct()
@@ -46,6 +47,6 @@ void UWidgetQuestLog_QuestEntry::OnButtonClicked()
 {
 	if (OnQuestSelected.IsBound())
 	{
-		OnQuestSelected.Broadcast( QuestID ); // 델리게이트 호출
+		OnQuestSelected.Broadcast( QuestID , QuestActor); // 델리게이트 호출
 	}
 }
