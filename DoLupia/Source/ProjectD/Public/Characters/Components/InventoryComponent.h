@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <Pooling/ItemPool.h>
+
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Items/ItemBase.h"
@@ -11,6 +13,7 @@ DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
 class UItemBase;
 class UInventoryItemSlot;
+class UItemPool;
 
 UENUM(BlueprintType)
 enum class EItemAddResult : uint8
@@ -105,6 +108,8 @@ public:
 	UItemBase* FindNextItemByID(UItemBase* ItemIn) const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindNextPartialStack(UItemBase* ItemIn) const;
+	UFUNCTION( Category = "Inventory" )
+	int32 FindItemQuantity(const FString& InKey) { return InventoryCount[InKey]; }
 
 	UFUNCTION(Category = "Inventory")
 	void RemoveSingleInstanceOfItem(UItemBase* ItemToRemove);
@@ -127,6 +132,8 @@ public:
 	UFUNCTION(Category = "Inventory")
 	int32 GetInventoryItemCount(const FString& InKey);
 
+
+	
 
 	// setters
 	UFUNCTION(Category = "Inventory")
@@ -163,9 +170,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory" )
 	TMap<FString, int32> InventoryCount;
 
-
-	UPROPERTY( VisibleAnywhere , Category = "Inventory" )
-	TMap<FString, TObjectPtr<UItemBase>> InventoryItembaseStorage;
-
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UItemPool> ItemPool;
 		
 };

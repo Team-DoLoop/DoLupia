@@ -10,6 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Monsters/MonsterAnim.h"
 // Sets default values
 AMonster::AMonster()
 {
@@ -43,6 +44,8 @@ AMonster::AMonster()
 
 	healthUI->SetupAttachment( RootComponent );
 	healthUI->SetCastShadow( false );
+
+	
 	
 
 }
@@ -55,6 +58,9 @@ void AMonster::BeginPlay()
 	SetActorRotation( FRotator( 0 , yaw ,0 ) );
 	monsterHPWidget = Cast<UMonsterHPWidget>( healthUI->GetWidget() );
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic( this , &AMonster::OnMyCompBeginOverlap );
+
+	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
+
 }
 
 // Called every frame
@@ -88,6 +94,8 @@ void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 void AMonster::PatrolState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
+	//애니메이션 상태 업데이트
+	anim->animState = MonsterFSM->state;
 
 	//플레이어를 타겟으로 설정
 	target = GetWorld()->GetFirstPlayerController()->GetPawn();
@@ -100,6 +108,7 @@ void AMonster::PatrolState()
 void AMonster::MoveState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( " AMonster::MoveState()" ) );
+	anim->animState = MonsterFSM->state;
 	//플레이어 방향으로 이동
 	MoveToTarget();
 	if (TargetVector.Size() < AttackRange) {
@@ -111,7 +120,8 @@ void AMonster::AttackState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 
-	MoveToTarget();
+	//MoveToTarget();
+	//anim->animState = MonsterFSM->state;
 
 	if (TargetVector.Size() > AttackRange) {
 		MonsterFSM->state = EMonsterState::Move;
@@ -121,11 +131,11 @@ void AMonster::AttackState()
 void AMonster::DamageState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DamageState()" ) );
-
+	anim->animState = MonsterFSM->state;
 	currentTime += GetWorld()->GetDeltaSeconds();
-	if (currentTime > 1.3)
+	if (currentTime > 1)
 	{
-		MonsterFSM->state = EMonsterState::Attack;
+		MonsterFSM->state = EMonsterState::Move;
 		this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 		currentTime = 0;
 	}
@@ -136,7 +146,10 @@ void AMonster::DieState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DieState()" ) );
 
-	//죽음 애니메이션 끝난 후 destroy
+	anim->animState = MonsterFSM->state;
+
+	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	//죽음 애니메이션 끝난 후 destroy..이것도 die delay로 구현?
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 4)
 	{

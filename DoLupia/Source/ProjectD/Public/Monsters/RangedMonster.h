@@ -28,5 +28,8 @@ public:
 	UPROPERTY( VisibleAnywhere )
 	UStaticMeshComponent* Weapon;
 
+	//virtual void MoveState() override;
 	virtual void AttackState() override;
+
+	float attackDelayTime = 3;
 };

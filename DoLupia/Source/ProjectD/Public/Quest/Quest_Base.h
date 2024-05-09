@@ -8,6 +8,8 @@
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest_Base.generated.h"
 
+class UWidgetQuestNotification;
+
 UCLASS()
 class AQuest_Base : public AActor
 {
@@ -21,6 +23,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	class AProjectDCharacter* ProjectDCharacter;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -31,12 +36,11 @@ public:
 	UFUNCTION()
 	void GetQuestDetails();
 
-	// 이벤트 델리게이트 정의
-	UPROPERTY( BlueprintAssignable )
-	FQuestDataLoadedSignature OnQuestDataLoaded;
-
 	UFUNCTION()
 	void OnQuestDataLoadedHandler( FName QuestID );
+
+	UFUNCTION()
+	void IsObjectiveComplete( FString ObjectiveID );
 
 	UFUNCTION()
 	FORCEINLINE FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID )
@@ -71,4 +75,8 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FDataTableRowHandle QuestData;
+
+	//블루프린트에서 넣어줘야해!!!!!
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UWidgetQuestNotification> Notification_Widget;
 };

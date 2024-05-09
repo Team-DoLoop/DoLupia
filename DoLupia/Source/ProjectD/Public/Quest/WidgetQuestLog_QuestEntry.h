@@ -6,13 +6,12 @@
 #include "Blueprint/UserWidget.h"
 #include "WidgetQuestLog_QuestEntry.generated.h"
 
-
 /**
  * 
  */
 
  // Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnQuestSelected , FName , QuestID, AQuest_Base*, QuestActor );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnQuestSelected , FName , QuestID , AQuest_Base*, QuestActor);
 
 UCLASS()
 class PROJECTD_API UWidgetQuestLog_QuestEntry : public UUserWidget
@@ -21,7 +20,7 @@ class PROJECTD_API UWidgetQuestLog_QuestEntry : public UUserWidget
 
 public:
 
-	virtual auto NativePreConstruct() -> void override;
+	virtual void NativePreConstruct() override;
 
 	virtual void NativeConstruct() override;
 
@@ -31,13 +30,13 @@ public:
 	void OnButtonClicked();
 
 	// Event Dispatcher 선언
-	UPROPERTY( EditAnywhere , Category = "Events" )
+	UPROPERTY( BlueprintAssignable , Category = "Events" )
 	FOnQuestSelected OnQuestSelected;
 
 	UPROPERTY( EditAnywhere ) //expose on spawn
 	FName QuestID;
 
-	UPROPERTY( EditAnywhere ) //expose on spawn
+	UPROPERTY(EditAnywhere)
 	class AQuest_Base* QuestActor;
 
 protected:

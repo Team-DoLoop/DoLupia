@@ -18,8 +18,13 @@ class PROJECTD_API UMonsterAnim : public UAnimInstance
 
 public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
-	EMonsterState state;
+	EMonsterState animState;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EMonsterType MonsterType;
+
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UPROPERTY( EditDefaultsOnly , BlueprintReadWrite )
+	bool bAttackDelay = false;
 };

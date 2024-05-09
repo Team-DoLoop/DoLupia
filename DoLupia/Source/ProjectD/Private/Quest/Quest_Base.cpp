@@ -4,6 +4,9 @@
 #include "Quest/Quest_Base.h"
 #include "Quest/QuestLogComponent.h"
 #include <Characters/ProjectDCharacter.h>
+#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
+#include "Quest/WidgetQuestNotification.h"
 
 // Sets default values
 AQuest_Base::AQuest_Base()
@@ -23,6 +26,17 @@ AQuest_Base::AQuest_Base()
 	{
 		// 로드 실패 시 처리
 		UE_LOG( LogTemp , Error , TEXT( "Data table not found!" ) );
+	}
+
+	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/QuestSystem/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
+	if (WidgetClassFinder.Succeeded())
+	{
+		Notification_Widget = WidgetClassFinder.Class;
+		UE_LOG( LogTemp , Log , TEXT( "Widget class loaded successfully" ) );
+	}
+	else
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Failed to load widget class" ) );
 	}
 
 }
@@ -47,14 +61,14 @@ void AQuest_Base::BeginPlay()
 	}
 
 	// 가져온 플레이어 캐릭터가 ProjectDCharacter 클래스의 인스턴스인지 확인
-	auto ProjectDCharacter = Cast<AProjectDCharacter>( PlayerCharacter );
+	ProjectDCharacter = Cast<AProjectDCharacter>( PlayerCharacter );
 	if (!IsValid( ProjectDCharacter ))
 	{
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / ProjectDCharacter is not valid." ) );
 		return;
 	}
 
-	//QuestLogComp 에서 생성되고, QuestId를 받는데, beginplay 에서도, 함수에서도 invalid하다....
+	//QuestLogComp 에서 생성되고, QuestId를 받음.
 	UQuestLogComponent* Questcomponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
 	if (Questcomponent) 
 	{
@@ -62,11 +76,24 @@ void AQuest_Base::BeginPlay()
 		UE_LOG( LogTemp , Error , TEXT( "&AQuest_Base::OnQuestDataLoadedHandler." ) );
 		Questcomponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}
-	
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
-	
-	GetQuestDetails();
+	UE_LOG( LogTemp , Error , TEXT( "ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard" ) );
+
+
+	//비동기 함수!!!
+	AsyncTask( ENamedThreads::GameThread , [this]() {
+		while (QuestID.IsNone())
+		{
+			FPlatformProcess::Sleep( 0.1f ); // 설정될 때까지 0.1초 간격으로 대기
+		}
+
+		// QuestID가 유효해졌으므로 이후 작업 수행
+		GetQuestDetails();
+	} );
+
+	UE_LOG( LogTemp , Error , TEXT( "AsyncTask 지나침." ) );
+
 }
 
 
@@ -80,17 +107,24 @@ void AQuest_Base::Tick(float DeltaTime)
 void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID)
 {
 	int32* ValuePtr = CurrentObjectiveProgress.Find( BObjectiveID );
-
+	
 	if (ValuePtr)
 	{
+		FString stringValue = FString::FromInt( *ValuePtr ); // int32를 FString으로 변환
+		UE_LOG( LogTemp , Warning , TEXT( "Value: %s" ) , *stringValue ); // 로그에 출력
+
 		if (GetObjectiveDataByID( BObjectiveID ).Quantity > *ValuePtr) {
 			// 해당 키를 찾은 경우
 			int32 Value = *ValuePtr + 1;
-			CurrentObjectiveProgress.Add( BObjectiveID , Value );
+			FString stringValue2 = FString::FromInt( Value ); // int32를 FString으로 변환
+			UE_LOG( LogTemp , Warning , TEXT( "Value: %s" ) , *stringValue2 ); // 로그에 출력
 
+			CurrentObjectiveProgress.Add( BObjectiveID , Value );
+			//완료하면
+			IsObjectiveComplete( BObjectiveID );
+			UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete( BObjectiveID )" ) );
 			return;
 		}
-		
 	}
 	else 
 	{
@@ -101,7 +135,7 @@ void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID)
 
 void AQuest_Base::GetQuestDetails()
 {
-
+	UE_LOG( LogTemp , Error , TEXT( " AQuest_Base::GetQuestDetails" ) );
 	if (!QuestData.DataTable)
 	{
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / GetQuestDetails / QuestData.DataTable is nullptr" ) );
@@ -121,7 +155,6 @@ void AQuest_Base::GetQuestDetails()
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / GetQuestDetails / !Row" ) );
 		return;
 	}
-	// 나머지 코드
 
 	QuestDetails = *Row;
 
@@ -147,24 +180,21 @@ void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 	UE_LOG( LogTemp , Error , TEXT( "QuestID: %s AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )" ) , *QuestID.ToString() );
 }
 
-/*FObjectiveDetails AQuest_Base::GetObjectiveDataByID(FString ObjectiveID)
+//WidgetQuestNotification위젯 생성!!
+void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 {
-	for (const auto& Objective : CurrentStageDetails.Objectives)
+	int32* ValuePtr = CurrentObjectiveProgress.Find( ObjectiveID );
+
+	if (ValuePtr && (*ValuePtr >= GetObjectiveDataByID( ObjectiveID ).Quantity))
 	{
-		if (Objective.ObjectiveID == ObjectiveID) {
-			return Objective;
+		UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
+		UE_LOG( LogTemp , Error , TEXT( "UWidgetQuestNotification* QuestWidget" ) );
+
+		if (QuestWidget)
+		{
+			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
+			UE_LOG( LogTemp , Error , TEXT( "GetObjectiveDataByID( ObjectiveID ).Description" ) );
+			QuestWidget->AddToViewport();
 		}
 	}
 }
-*/
-
-
-/*
-LogTemp: Error: &AQuest_Base::OnQuestDataLoadedHandler. //스폰 되고
-LogTemp: Error: Invalid QuestID _ GetQuestDetails AQuest_Base // 전달이 안됐고
-LogTemp : Error: QuestID: None // GetQuestDetails() 여기가 불려서 안되고
-LogDataTable : Warning: UDataTable::FindRow : 'Searching for row' requested invalid row 'None' from DataTable '/Game/QuestSystem/QuestData.QuestData'.
-LogTemp : Error : Quest_Base / GetQuestDetails / !Row 
-LogTemp : Error: QuestID: 1001 SpawneQuest->QuestID // logComp 에서 프라퍼티 적용이 되는..
-어케 해야해?
-*/
