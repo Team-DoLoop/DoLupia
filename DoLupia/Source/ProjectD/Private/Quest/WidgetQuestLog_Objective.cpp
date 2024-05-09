@@ -2,8 +2,10 @@
 
 
 #include "Quest/WidgetQuestLog_Objective.h"
+
 #include "Components/CheckBox.h"
 #include "Components/TextBlock.h"
+#include "Quest/Quest_Base.h"
 
 void UWidgetQuestLog_Objective::NativePreConstruct()
 {
@@ -22,26 +24,30 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
     FFormatNamedArguments Args;
     Args.Add( "desc" , FText::FromString( ObjectiveData.Description ) );
 
-    if (QuestActor) 
+    if(QuestActor)
     {
-        int32* ObjectiveValue = QuestActor->CurrentObjectiveProgress.Find( ObjectiveData.ObjectiveID );
-        if (QuestActor->CurrentObjectiveProgress.Find( ObjectiveData.ObjectiveID )) {
-            Args.Add( "current" , FText::AsNumber( *ObjectiveValue ) );
+        int32* currentValue = QuestActor->CurrentObjectiveProgress.Find( ObjectiveData.ObjectiveID );
+        Args.Add( "current" , FText::AsNumber( *currentValue ) ); // 초기값을 0으로 설정
+        UE_LOG( LogTemp , Warning , TEXT( "QuestActor _ currnetValue" ) );
+
+        // check_IsCompleted 유효성 검사 및 초기화
+        if (check_IsCompleted)
+        {
+            auto checkbox = (ObjectiveData.Quantity <= *currentValue) ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+
+            check_IsCompleted->SetCheckedState( checkbox ); // 체크박스 초기화
         }
-        else {
-            Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+        else
+        {
+            UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
         }
-        if (*ObjectiveValue >= ObjectiveData.Quantity) { //여기서도 오류남!!!!!!!!!!!!!!
-            if (check_IsCompleted)
-            {
-                check_IsCompleted->SetCheckedState( ECheckBoxState::Checked ); // 체크박스 초기화
-            }
-        }
-    }
-    else 
+
+    }else
     {
-        Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+    	Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+        UE_LOG( LogTemp , Warning , TEXT( "QuestActor invalid" ) );
     }
+
    
     Args.Add( "quantity" , FText::AsNumber( ObjectiveData.Quantity ) );
 
@@ -55,16 +61,6 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
     else
     {
         UE_LOG( LogTemp , Warning , TEXT( "txt_Description is not bound." ) );
-    }
-
-    // check_IsCompleted 유효성 검사 및 초기화
-    if (check_IsCompleted)
-    {
-        check_IsCompleted->SetCheckedState( ECheckBoxState::Unchecked ); // 체크박스 초기화
-    }
-    else
-    {
-        UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
     }
 }
 

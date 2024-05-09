@@ -16,8 +16,6 @@ void UWidgetQuestLog::NativePreConstruct()
 {
     Super::NativePreConstruct();
 
-    //QuestSelected.AddDynamic( this , &UWidgetQuestLog::OnQuestSelected );
-
     // 데이터 테이블 가져오기
     UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/QuestSystem/QuestData.QuestData"));
     if (!IsObjectValid( DataTable , "DataTable" ))
@@ -72,17 +70,16 @@ void UWidgetQuestLog::NativePreConstruct()
         }
         AddQuestToScrollBox( QuestWidget , QuestDetailsRow, Quest->QuestID );
     }
-
-    //버튼 할당
-    if (btn_Close)
-    {
-        btn_Close->OnClicked.AddDynamic( this , &UWidgetQuestLog::OnButtonClicked );
-    }
 }
 
 void UWidgetQuestLog::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+    if (btn_Close)
+    {
+        btn_Close->OnClicked.AddDynamic( this , &UWidgetQuestLog::OnButtonClicked );
+    }
 
     SetupPlayerController();
 }
@@ -95,50 +92,18 @@ void UWidgetQuestLog::NativeDestruct()
     auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
 
     if (PlayerControllerD) {
-        FInputModeGameOnly InputMode;
+        FInputModeGameAndUI InputMode;
         PlayerControllerD->SetInputMode( InputMode );
     }
 }
-
-void UWidgetQuestLog::AddQuestToScrollBox( UWidgetQuestLog_QuestEntry* QuestWidget , FQuestDetails* QuestDetailsRow , FName QuestID )
-{
-    if (!IsValid( scroll_MainQuests ))
-    {
-        UE_LOG( LogTemp , Error , TEXT( "scroll_MainQuests is not valid." ) );
-        return;
-    }
-    if (!IsValid( scroll_SideQuests ))
-    {
-        UE_LOG( LogTemp , Error , TEXT( "scroll_SideQuests is not valid." ) );
-        return;
-    }
-
-    UScrollBox* SelectedScrollBox = nullptr;
-    SelectedScrollBox = QuestDetailsRow->IsMainQuest ? scroll_MainQuests : scroll_SideQuests;
-
-    if (IsValid( SelectedScrollBox ))
-    {
-        SelectedScrollBox->AddChild( QuestWidget ); // 선택된 스크롤 박스에 위젯 추가
-
-        //위젯에 있는 OnQuestSelected 델리게이트를 가져오는 것. -이건 버튼에 연결됨.
-        QuestWidget->OnQuestSelected.AddDynamic( this , &UWidgetQuestLog::OnQuestSelected ); // QuestWidget의 QuestSelected 이벤트에 OnQuestSelected 함수를 등록
-
-    }
-    else
-    {
-        UE_LOG( LogTemp , Warning , TEXT( "SelectedScrollBox is not valid." ) );
-    }
-}
-
 
 void UWidgetQuestLog::OnButtonClicked()
 {
     RemoveFromParent();
 }
 
-void UWidgetQuestLog::OnQuestSelected( FName QuestID , AQuest_Base* QuestActor )
+void UWidgetQuestLog::OnQuestSelected( FName QuestID, AQuest_Base* QuestActor )
 {
-    //QuestID, QuestBaseActor를 받아옴. QuestEntry에서
     DisplayQuest( QuestID, QuestActor );
 }
 
@@ -161,7 +126,6 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
     	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[0].Description );
     	txt_StageDesc->SetText( SD_MyText );
 
-        //Objective 위젯 추가 
         for (const auto& Objective : QuestDetialsRow->Stages[0].Objectives) // 범위 기반 for 루프
         {
             UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );
@@ -172,6 +136,34 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
                 box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
             }
         }
+    }
+}
+
+void UWidgetQuestLog::AddQuestToScrollBox(UWidgetQuestLog_QuestEntry* QuestWidget, FQuestDetails* QuestDetailsRow, FName QuestID)
+{
+    if (!IsValid( scroll_MainQuests ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "scroll_MainQuests is not valid." ) );
+        return;
+    }
+    if (!IsValid( scroll_SideQuests ))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "scroll_SideQuests is not valid." ) );
+        return;
+    }
+
+    UScrollBox* SelectedScrollBox = nullptr;
+	SelectedScrollBox = QuestDetailsRow->IsMainQuest ? scroll_MainQuests : scroll_SideQuests;
+
+    if (IsValid( SelectedScrollBox ))
+    {
+        SelectedScrollBox->AddChild( QuestWidget ); // 선택된 스크롤 박스에 위젯 추가
+        //여기서 questEntry의 방송을 구독하는 것!! QuestID, QuestActor받을 수 있음
+        QuestWidget->OnQuestSelected.AddDynamic( this , &UWidgetQuestLog::OnQuestSelected );
+    }
+    else
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "SelectedScrollBox is not valid." ) );
     }
 }
 
