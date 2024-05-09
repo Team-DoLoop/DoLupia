@@ -28,6 +28,9 @@ public:
     UPROPERTY( EditAnywhere , BlueprintReadWrite )
     FObjectiveDetails ObjectiveData;
 
+    UPROPERTY( EditAnywhere )
+    class AQuest_Base* QuestActor;
+
 protected:
     // 위젯에 바인드할 컴포넌트 선언
     UPROPERTY( meta = (BindWidget) )

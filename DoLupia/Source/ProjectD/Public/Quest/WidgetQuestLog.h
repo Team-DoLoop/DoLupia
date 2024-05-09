@@ -6,15 +6,13 @@
 #include "Components/VerticalBox.h"
 #include "WidgetQuestLog.generated.h"
 
+class AQuest_Base;
 class UWidgetQuestLog_Objective;
 class UTextBlock; 
 class UScrollBox;
 class UWidgetSwitcher;
 class UButton;
 class UWidgetQuestLog_QuestEntry;
-
-// Event Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestSelected , FName , QuestID );
 
 UCLASS()
 class PROJECTD_API UWidgetQuestLog : public UUserWidget
@@ -26,9 +24,6 @@ public:
     virtual void NativeConstruct() override;
     virtual void NativeDestruct() override;
 
-    // Event Dispatcher
-    UPROPERTY( BlueprintAssignable , Category = "Events" )
-    FQuestSelected QuestSelected;
 
 protected:
     // 위젯에 바인드할 컴포넌트 선언
@@ -66,15 +61,18 @@ protected:
     UPROPERTY( EditAnywhere , BlueprintReadWrite )
     FDataTableRowHandle QuestData;
 
+    UPROPERTY( EditAnywhere , BlueprintReadWrite )
+    class AQuest_Base* CurrentQuestActor;
+
     // 함수 정의
     UFUNCTION()
     void OnButtonClicked();
 
     UFUNCTION()
-    void OnQuestSelected( FName QuestID );
+    void OnQuestSelected( FName QuestID , AQuest_Base* QuestActor );
 
     UFUNCTION()
-    void DisplayQuest( FName QuestID );
+    void DisplayQuest( FName QuestID, AQuest_Base* QuestActor );
 
     void AddQuestToScrollBox( UWidgetQuestLog_QuestEntry* QuestWidget , FQuestDetails* QuestDetailsRow , FName QuestID );
 

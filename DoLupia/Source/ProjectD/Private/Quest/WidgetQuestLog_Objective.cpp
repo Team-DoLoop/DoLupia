@@ -5,6 +5,7 @@
 
 #include "Components/CheckBox.h"
 #include "Components/TextBlock.h"
+#include "Quest/Quest_Base.h"
 
 void UWidgetQuestLog_Objective::NativePreConstruct()
 {
@@ -22,7 +23,20 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
 
     FFormatNamedArguments Args;
     Args.Add( "desc" , FText::FromString( ObjectiveData.Description ) );
-    Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+
+    if(QuestActor)
+    {
+        int32* currentValue = QuestActor->CurrentObjectiveProgress.Find( ObjectiveData.ObjectiveID );
+        Args.Add( "current" , FText::AsNumber( *currentValue ) ); // 초기값을 0으로 설정
+        UE_LOG( LogTemp , Warning , TEXT( "QuestActor _ currnetValue" ) );
+
+    }else
+    {
+    	Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+        UE_LOG( LogTemp , Warning , TEXT( "QuestActor invalid" ) );
+    }
+
+   
     Args.Add( "quantity" , FText::AsNumber( ObjectiveData.Quantity ) );
 
     FText FormattedText = FText::Format( Template , Args );

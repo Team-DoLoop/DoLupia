@@ -334,9 +334,13 @@ void AProjectDCharacter::BeginInteract()
 		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( LookAtActor );
 		if (QuestInterface)
 		{
-			QuestInterface->InteractWith();
-			FString ActorObjectID = LookAtActor->GetFName().ToString();
+			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
+			FString ActorObjectID = QuestInterface->InteractWith();
+			UE_LOG( LogTemp , Warning , TEXT( "QuestInterface->InteractWith(): %s" ) , *ActorObjectID );
 
+			FString ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
+			UE_LOG( LogTemp , Warning , TEXT( "LookatActor: %s" ) , *ActorName );
+			//캐릭터가 베이스 한테
 			OnObjectiveIDCalled.Broadcast( ActorObjectID );
 		}
 	}

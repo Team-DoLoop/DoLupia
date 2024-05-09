@@ -8,6 +8,9 @@
 #include "QuestLogComponent.generated.h"
 
 
+// 예시: FName 타입을 전달하는 델리게이트 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UQuestLogComponent : public UActorComponent
 {
@@ -25,7 +28,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
+	UPROPERTY( BlueprintAssignable )
+	FQuestDataLoadedSignature OnQuestDataLoaded;
+
 	UPROPERTY()
 	TArray<FName> CurrentActiveQuests;
 

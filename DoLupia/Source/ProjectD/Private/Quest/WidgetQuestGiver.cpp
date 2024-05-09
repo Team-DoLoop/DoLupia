@@ -117,6 +117,7 @@ void UWidgetQuestGiver::OnAcceptClicked()
     }
 
     // 컴포넌트가 유효할 경우, 퀘스트를 추가합니다.
+    // 수락을 하면!!!!!
     QuestLogComp->AddNewQuest( QuestID );
 
     // 위젯을 화면에서 제거합니다.

@@ -35,6 +35,7 @@ void ATestNPCCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
+//Player -> NPC 인거 같음.
 FString ATestNPCCharacter::InteractWith()
 {
     // 먼저 QuestGiverComp가 유효한지 확인
@@ -60,7 +61,7 @@ FString ATestNPCCharacter::InteractWith()
         return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
     }
 
-    // 인터페이스 메서드 호출
+    // 인터페이스 메서드 호출 NPC -> QuestGiver
     return QuestInterface->InteractWith();
 }
 

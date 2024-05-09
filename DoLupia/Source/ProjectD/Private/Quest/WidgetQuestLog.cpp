@@ -16,8 +16,6 @@ void UWidgetQuestLog::NativePreConstruct()
 {
     Super::NativePreConstruct();
 
-    QuestSelected.AddDynamic(this, &UWidgetQuestLog::OnQuestSelected);
-
     // 데이터 테이블 가져오기
     UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/QuestSystem/QuestData.QuestData"));
     if (!IsObjectValid( DataTable , "DataTable" ))
@@ -54,7 +52,7 @@ void UWidgetQuestLog::NativePreConstruct()
     }
 
     // 배열을 순회하여 각 퀘스트를 처리
-    for (const auto& Quest : QuestLogComp->CurrentActiveQuests)
+    for (const auto& Quest : QuestLogComp->CurrentQuest)
     {
         UWidgetQuestLog_QuestEntry* QuestWidget = CreateWidget<UWidgetQuestLog_QuestEntry>( GetWorld() , QuestLog_Widget );
         if (!IsValid( QuestWidget ))
@@ -62,14 +60,15 @@ void UWidgetQuestLog::NativePreConstruct()
             continue;
         }
 
-        QuestWidget->QuestID = Quest;
+        QuestWidget->QuestID = Quest->QuestID;
+        QuestWidget->QuestActor = Quest;
 
-        FQuestDetails* QuestDetailsRow = QuestData.DataTable->FindRow<FQuestDetails>( Quest , TEXT( "Searching for row" ) , true );
+        FQuestDetails* QuestDetailsRow = QuestData.DataTable->FindRow<FQuestDetails>( Quest->QuestID , TEXT( "Searching for row" ) , true );
         if (!QuestDetailsRow)
         {
             continue;
         }
-        AddQuestToScrollBox( QuestWidget , QuestDetailsRow, Quest );
+        AddQuestToScrollBox( QuestWidget , QuestDetailsRow, Quest->QuestID );
     }
 }
 
@@ -104,13 +103,15 @@ void UWidgetQuestLog::OnButtonClicked()
     RemoveFromParent();
 }
 
-void UWidgetQuestLog::OnQuestSelected( FName QuestID )
+void UWidgetQuestLog::OnQuestSelected( FName QuestID, AQuest_Base* QuestActor )
 {
-    DisplayQuest( QuestID );
+    DisplayQuest( QuestID, QuestActor );
 }
 
-void UWidgetQuestLog::DisplayQuest( FName QuestID )
+void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
 {
+    CurrentQuestActor = QuestActor;
+
     WidgetSwitcher->SetActiveWidgetIndex( 1 );
 
     box_Objectives->ClearChildren();
@@ -132,6 +133,7 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID )
             if (IsValid( ObjectiveWidget ))
             {
                 ObjectiveWidget->ObjectiveData = Objective;
+                ObjectiveWidget->QuestActor = CurrentQuestActor;
                 box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
             }
         }
@@ -157,7 +159,8 @@ void UWidgetQuestLog::AddQuestToScrollBox(UWidgetQuestLog_QuestEntry* QuestWidge
     if (IsValid( SelectedScrollBox ))
     {
         SelectedScrollBox->AddChild( QuestWidget ); // 선택된 스크롤 박스에 위젯 추가
-        QuestSelected.Broadcast( QuestID ); // 이벤트 브로드캐스트
+        //여기서 questEntry의 방송을 구독하는 것!! QuestID, QuestActor받을 수 있음
+        QuestWidget->OnQuestSelected.AddDynamic( this , &UWidgetQuestLog::OnQuestSelected );
     }
     else
     {

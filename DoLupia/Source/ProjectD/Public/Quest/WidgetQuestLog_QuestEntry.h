@@ -11,7 +11,7 @@
  */
 
  // Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnQuestSelected , FName , QuestID );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnQuestSelected , FName , QuestID , AQuest_Base*, QuestActor);
 
 UCLASS()
 class PROJECTD_API UWidgetQuestLog_QuestEntry : public UUserWidget
@@ -35,6 +35,9 @@ public:
 
 	UPROPERTY( EditAnywhere ) //expose on spawn
 	FName QuestID;
+
+	UPROPERTY(EditAnywhere)
+	class AQuest_Base* QuestActor;
 
 protected:
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )

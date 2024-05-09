@@ -20,6 +20,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	class AProjectDCharacter* ProjectDCharacter;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -29,10 +32,6 @@ public:
 
 	UFUNCTION()
 	void GetQuestDetails();
-
-	// 이벤트 델리게이트 정의
-	UPROPERTY( BlueprintAssignable )
-	FQuestDataLoadedSignature OnQuestDataLoaded;
 
 	UFUNCTION()
 	void OnQuestDataLoadedHandler( FName QuestID );

@@ -73,6 +73,7 @@ FString UQuestGiver::InteractWith()
 
     if (!QuestComponent->QueryActiveQuest( QuestData.RowName ))
     {
+        //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
         DisplayQuest();
         return GetOwner()->GetName();
     }

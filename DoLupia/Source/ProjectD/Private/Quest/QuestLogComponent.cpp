@@ -39,6 +39,12 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 	// 스폰 액터 생성
 	AQuest_Base* SpawnedQuest = GetWorld()->SpawnActor<AQuest_Base>(AQuest_Base::StaticClass());
+	if(SpawnedQuest)
+	{
+		OnQuestDataLoaded.Broadcast( QuestID );
+		//SpawnedQuest->QuestID=  QuestID;
+		UE_LOG( LogTemp , Error , TEXT( "QuestID: %s UQuestLogComponent::AddNewQuestBroadcast, Property" ) , *QuestID.ToString() );
+	}
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
 	CurrentQuest.Add(SpawnedQuest);
