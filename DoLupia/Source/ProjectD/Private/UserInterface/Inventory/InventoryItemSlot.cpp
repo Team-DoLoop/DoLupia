@@ -66,7 +66,8 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 						// -> 장착할 검의 속성을 그대로 넣어주고 인벤토리 아이템을 비워주기
 
 					LongSwordTest->ReceiveItemData(ItemReference);
-					InventoryComponent->ReleaseInventory( ItemReference );
+					InventoryComponent->RemoveAmountOfItem(ItemReference , 1);
+					InventoryComponent->ReleaseInventory(ItemReference);
 					ResetItemSlot();
 					
 				}
