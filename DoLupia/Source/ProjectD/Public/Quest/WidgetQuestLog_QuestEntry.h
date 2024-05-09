@@ -20,7 +20,7 @@ class PROJECTD_API UWidgetQuestLog_QuestEntry : public UUserWidget
 
 public:
 
-	virtual auto NativePreConstruct() -> void override;
+	virtual void NativePreConstruct() override;
 
 	virtual void NativeConstruct() override;
 

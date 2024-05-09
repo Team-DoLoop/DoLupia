@@ -92,9 +92,8 @@ void UWidgetQuestLog::NativeDestruct()
     auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
 
     if (PlayerControllerD) {
-        FInputModeGameOnly InputMode;
+        FInputModeGameAndUI InputMode;
         PlayerControllerD->SetInputMode( InputMode );
-        PlayerControllerD->SetShowMouseCursor( true );
     }
 }
 
@@ -181,6 +180,5 @@ void UWidgetQuestLog::SetupPlayerController()
     {
         FInputModeUIOnly InputMode;
         PlayerControllerD->SetInputMode( InputMode );
-        PlayerControllerD->SetShowMouseCursor( true );
     }
 }

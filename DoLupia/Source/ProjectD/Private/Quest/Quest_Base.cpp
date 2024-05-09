@@ -4,6 +4,9 @@
 #include "Quest/Quest_Base.h"
 #include "Quest/QuestLogComponent.h"
 #include <Characters/ProjectDCharacter.h>
+#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
+#include "Quest/WidgetQuestNotification.h"
 
 // Sets default values
 AQuest_Base::AQuest_Base()
@@ -23,6 +26,17 @@ AQuest_Base::AQuest_Base()
 	{
 		// 로드 실패 시 처리
 		UE_LOG( LogTemp , Error , TEXT( "Data table not found!" ) );
+	}
+
+	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/QuestSystem/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
+	if (WidgetClassFinder.Succeeded())
+	{
+		Notification_Widget = WidgetClassFinder.Class;
+		UE_LOG( LogTemp , Log , TEXT( "Widget class loaded successfully" ) );
+	}
+	else
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Failed to load widget class" ) );
 	}
 
 }
@@ -104,11 +118,13 @@ void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID)
 			int32 Value = *ValuePtr + 1;
 			FString stringValue2 = FString::FromInt( Value ); // int32를 FString으로 변환
 			UE_LOG( LogTemp , Warning , TEXT( "Value: %s" ) , *stringValue2 ); // 로그에 출력
-			CurrentObjectiveProgress.Add( BObjectiveID , Value );
 
+			CurrentObjectiveProgress.Add( BObjectiveID , Value );
+			//완료하면
+			IsObjectiveComplete( BObjectiveID );
+			UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete( BObjectiveID )" ) );
 			return;
 		}
-		
 	}
 	else 
 	{
@@ -162,4 +178,23 @@ void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 {
 	QuestID = BroQuestID;
 	UE_LOG( LogTemp , Error , TEXT( "QuestID: %s AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )" ) , *QuestID.ToString() );
+}
+
+//WidgetQuestNotification위젯 생성!!
+void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
+{
+	int32* ValuePtr = CurrentObjectiveProgress.Find( ObjectiveID );
+
+	if (ValuePtr && (*ValuePtr >= GetObjectiveDataByID( ObjectiveID ).Quantity))
+	{
+		UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
+		UE_LOG( LogTemp , Error , TEXT( "UWidgetQuestNotification* QuestWidget" ) );
+
+		if (QuestWidget)
+		{
+			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
+			UE_LOG( LogTemp , Error , TEXT( "GetObjectiveDataByID( ObjectiveID ).Description" ) );
+			QuestWidget->AddToViewport();
+		}
+	}
 }

@@ -30,6 +30,18 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
         Args.Add( "current" , FText::AsNumber( *currentValue ) ); // 초기값을 0으로 설정
         UE_LOG( LogTemp , Warning , TEXT( "QuestActor _ currnetValue" ) );
 
+        // check_IsCompleted 유효성 검사 및 초기화
+        if (check_IsCompleted)
+        {
+            auto checkbox = (ObjectiveData.Quantity <= *currentValue) ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+
+            check_IsCompleted->SetCheckedState( checkbox ); // 체크박스 초기화
+        }
+        else
+        {
+            UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
+        }
+
     }else
     {
     	Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
@@ -49,16 +61,6 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
     else
     {
         UE_LOG( LogTemp , Warning , TEXT( "txt_Description is not bound." ) );
-    }
-
-    // check_IsCompleted 유효성 검사 및 초기화
-    if (check_IsCompleted)
-    {
-        check_IsCompleted->SetCheckedState( ECheckBoxState::Unchecked ); // 체크박스 초기화
-    }
-    else
-    {
-        UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
     }
 }
 

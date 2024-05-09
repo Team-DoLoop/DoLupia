@@ -7,6 +7,8 @@
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest_Base.generated.h"
 
+class UWidgetQuestNotification;
+
 UCLASS()
 class AQuest_Base : public AActor
 {
@@ -35,6 +37,9 @@ public:
 
 	UFUNCTION()
 	void OnQuestDataLoadedHandler( FName QuestID );
+
+	UFUNCTION()
+	void IsObjectiveComplete( FString ObjectiveID );
 
 	UFUNCTION()
 	FORCEINLINE FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID )
@@ -69,4 +74,8 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FDataTableRowHandle QuestData;
+
+	//블루프린트에서 넣어줘야해!!!!!
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UWidgetQuestNotification> Notification_Widget;
 };

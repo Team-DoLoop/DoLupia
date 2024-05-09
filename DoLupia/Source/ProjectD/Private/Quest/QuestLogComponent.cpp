@@ -37,7 +37,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 {
 	CurrentActiveQuests.AddUnique(QuestID);
 
-	// 스폰 액터 생성
+	// QuestBase 액터 생성
 	AQuest_Base* SpawnedQuest = GetWorld()->SpawnActor<AQuest_Base>(AQuest_Base::StaticClass());
 	if(SpawnedQuest)
 	{

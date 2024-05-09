@@ -67,6 +67,5 @@ FString ATestNPCCharacter::InteractWith()
 
 void ATestNPCCharacter::LookAt()
 {
-	IQuestInteractionInterface::LookAt();
 
 }
