@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Quest_Base.h"
+
 #include "Components/ActorComponent.h"
 #include "QuestLogComponent.generated.h"
 
@@ -41,7 +41,7 @@ public:
 	FName CurrentTrackedQuest;
 
 	UPROPERTY()
-	TArray<AQuest_Base*> CurrentQuest;
+	TArray<class AQuest_Base*> CurrentQuest;
 
 	UFUNCTION()
 	void AddNewQuest(FName QuestID);
