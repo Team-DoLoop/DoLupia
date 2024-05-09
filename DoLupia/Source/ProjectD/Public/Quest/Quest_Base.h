@@ -31,7 +31,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void OnObjectiveIDHeard( FString ObjectiveID );
+	void OnObjectiveIDHeard( FString ObjectiveID, int32 Value = 1 );
 
 	UFUNCTION()
 	void GetQuestDetails();
