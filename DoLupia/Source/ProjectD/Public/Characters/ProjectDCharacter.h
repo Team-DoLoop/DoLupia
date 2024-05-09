@@ -14,6 +14,7 @@ class UInventoryComponent;
 class UItemBase;
 class UTimelineComponent;
 class UQuestLogComponent;
+class UQuestInventoryComponent;
 
 USTRUCT()
 struct FInteractionData
@@ -31,10 +32,7 @@ struct FInteractionData
 };
 
 // Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnObjectiveIDCalled , FString, ObjectiveID);
-
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnQuestIDCalled , FName , QuestID );
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1;);
 
 UCLASS(Blueprintable)
 class AProjectDCharacter : public ACharacter, public IDamageInterface
@@ -199,6 +197,10 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Character | Quest")
 	UQuestLogComponent* PlayerQuest;
+
+	//테스트용 인벤토리 컴포넌트 추가!
+	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
+	UQuestInventoryComponent* PlayerQuestInventory;
 	
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	TScriptInterface<class IQuestInteractionInterface> QuestInteractable;
@@ -211,6 +213,8 @@ protected:
 	
 public:	
 	FORCEINLINE UQuestLogComponent* GetQuestLogComponent() const { return PlayerQuest; };
+
+	FORCEINLINE UQuestInventoryComponent* GetQuestInventoryComponent() const { return PlayerQuestInventory; };
 	
 	// Event Dispatcher 선언
 	UPROPERTY( BlueprintAssignable , Category = "Events" )

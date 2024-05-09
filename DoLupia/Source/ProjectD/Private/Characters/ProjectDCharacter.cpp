@@ -86,6 +86,8 @@ AProjectDCharacter::AProjectDCharacter()
 	
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
+	PlayerQuestInventory = CreateDefaultSubobject<UQuestInventoryComponent>( TEXT( "PlayerQuestInventory" ) );
+
 	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
 
 	// Activate ticking in order to update the cursor every frame.
@@ -359,7 +361,7 @@ void AProjectDCharacter::BeginInteract()
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			UE_LOG( LogTemp , Warning , TEXT( "LookatActor: %s" ) , *ActorName );
 			//캐릭터가 베이스 한테
-			OnObjectiveIDCalled.Broadcast( ActorObjectID );
+			OnObjectiveIDCalled.Broadcast( ActorObjectID, 1);
 		}
 	}
 }

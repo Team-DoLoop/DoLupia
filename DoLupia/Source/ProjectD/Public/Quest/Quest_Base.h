@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "QuestLogComponent.h"
 #include "GameFramework/Actor.h"
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest_Base.generated.h"
 
+class AQuestLogComponent;
 class UWidgetQuestNotification;
 
 UCLASS()
@@ -31,7 +31,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void OnObjectiveIDHeard( FString ObjectiveID );
+	void OnObjectiveIDHeard( FString ObjectiveID, int32 Value = 1 );
 
 	UFUNCTION()
 	void GetQuestDetails();

@@ -3,6 +3,7 @@
 
 #include "Quest/Quest_Base.h"
 #include "Quest/QuestLogComponent.h"
+#include "Quest/QuestInventoryComponent.h"
 #include <Characters/ProjectDCharacter.h>
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
@@ -32,7 +33,6 @@ AQuest_Base::AQuest_Base()
 	if (WidgetClassFinder.Succeeded())
 	{
 		Notification_Widget = WidgetClassFinder.Class;
-		UE_LOG( LogTemp , Log , TEXT( "Widget class loaded successfully" ) );
 	}
 	else
 	{
@@ -73,12 +73,30 @@ void AQuest_Base::BeginPlay()
 	if (Questcomponent) 
 	{
 		//컴포넌트에서 questID 방송 받아서 여기서 함수 호출해서 QuestID 저장하기
-		UE_LOG( LogTemp , Error , TEXT( "&AQuest_Base::OnQuestDataLoadedHandler." ) );
 		Questcomponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}
 
+	//테스트 퀘스트 인벤토리 컴포넌트 생성
+	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
+
+	if (QuestInventorycomponent) {
+
+		for (const auto& Objective : CurrentStageDetails.Objectives)
+		{
+			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
+			if (Objective.Type == EObjectiveType::Collect)
+			{
+				FName MyName = FName( Objective.ObjectiveID );
+				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
+				
+				//목표 수량에 보내기
+				for (const auto& Objective : CurrentStageDetails.Objectives)
+					OnObjectiveIDHeard( Objective.ObjectiveID , InventoryCount );
+			}
+		}
+	}
+
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
-	UE_LOG( LogTemp , Error , TEXT( "ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard" ) );
 
 
 	//비동기 함수!!!
@@ -91,9 +109,6 @@ void AQuest_Base::BeginPlay()
 		// QuestID가 유효해졌으므로 이후 작업 수행
 		GetQuestDetails();
 	} );
-
-	UE_LOG( LogTemp , Error , TEXT( "AsyncTask 지나침." ) );
-
 }
 
 
@@ -104,29 +119,33 @@ void AQuest_Base::Tick(float DeltaTime)
 
 }
 
-void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID)
+void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID, int32 Value )
 {
+	//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
 	int32* ValuePtr = CurrentObjectiveProgress.Find( BObjectiveID );
-	
+
 	if (ValuePtr)
 	{
-		FString stringValue = FString::FromInt( *ValuePtr ); // int32를 FString으로 변환
-		UE_LOG( LogTemp , Warning , TEXT( "Value: %s" ) , *stringValue ); // 로그에 출력
+		int32 Sign = FMath::Sign( Value );
 
-		if (GetObjectiveDataByID( BObjectiveID ).Quantity > *ValuePtr) {
-			// 해당 키를 찾은 경우
-			int32 Value = *ValuePtr + 1;
-			FString stringValue2 = FString::FromInt( Value ); // int32를 FString으로 변환
-			UE_LOG( LogTemp , Warning , TEXT( "Value: %s" ) , *stringValue2 ); // 로그에 출력
-
-			CurrentObjectiveProgress.Add( BObjectiveID , Value );
-			//완료하면
-			IsObjectiveComplete( BObjectiveID );
-			UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete( BObjectiveID )" ) );
+		if (Sign > 0)
+		{
+			if (GetObjectiveDataByID( BObjectiveID ).Quantity > *ValuePtr)
+			{
+				int32 PluValue = *ValuePtr + Value;
+				CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
+				IsObjectiveComplete( BObjectiveID );
+				return;
+			}
+		}
+		else
+		{
+			int32 PluValue = *ValuePtr + Value;
+			CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
 			return;
 		}
 	}
-	else 
+	else
 	{
 		return;
 	}
@@ -135,7 +154,6 @@ void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID)
 
 void AQuest_Base::GetQuestDetails()
 {
-	UE_LOG( LogTemp , Error , TEXT( " AQuest_Base::GetQuestDetails" ) );
 	if (!QuestData.DataTable)
 	{
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / GetQuestDetails / QuestData.DataTable is nullptr" ) );
@@ -146,7 +164,6 @@ void AQuest_Base::GetQuestDetails()
 	{
 		UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ GetQuestDetails AQuest_Base" ) );
 	}
-	UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestID.ToString() );
 
 	
 	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
@@ -177,7 +194,6 @@ void AQuest_Base::GetQuestDetails()
 void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 {
 	QuestID = BroQuestID;
-	UE_LOG( LogTemp , Error , TEXT( "QuestID: %s AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )" ) , *QuestID.ToString() );
 }
 
 //WidgetQuestNotification위젯 생성!!
@@ -188,12 +204,10 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 	if (ValuePtr && (*ValuePtr >= GetObjectiveDataByID( ObjectiveID ).Quantity))
 	{
 		UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
-		UE_LOG( LogTemp , Error , TEXT( "UWidgetQuestNotification* QuestWidget" ) );
 
 		if (QuestWidget)
 		{
 			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
-			UE_LOG( LogTemp , Error , TEXT( "GetObjectiveDataByID( ObjectiveID ).Description" ) );
 			QuestWidget->AddToViewport();
 		}
 	}
