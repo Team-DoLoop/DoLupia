@@ -9,6 +9,7 @@
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/PlayerStat.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -25,7 +26,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-
+#include "Items/Sword/LongSword.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -69,7 +70,7 @@ AProjectDCharacter::AProjectDCharacter()
 	PlayerFSM = CreateDefaultSubobject<UPlayerFSMComp>(TEXT("PlayerFSM"));
 
 	// Move
-	moveComp = CreateDefaultSubobject<UPlayerMoveComp>(TEXT("moveComp"));
+	moveComp = CreateDefaultSubobject<UPlayerMoveComp>(TEXT("MoveComp"));
 	
 	// Attack
 	attackComp = CreateDefaultSubobject<UPlayerAttackComp>(TEXT("AttackComp"));
@@ -107,6 +108,20 @@ void AProjectDCharacter::BeginPlay()
 	{
 		AimingCameraTimeline->AddInterpFloat(AimingCameraCurve, AimLerpAlphaValue);
 		AimingCameraTimeline->SetTimelineFinishedFunc(TimelineFinishedEvent);
+	}
+
+	// Sword
+	FName SwordSocket(TEXT("SwordSocket"));
+	LongSword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != LongSword)
+	{
+		LongSword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
+	}
+
+	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
+	if(PlayerStat)
+	{
+		PlayerStat->initPlayerData();
 	}
 }
 

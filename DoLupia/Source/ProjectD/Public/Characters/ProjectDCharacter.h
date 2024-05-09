@@ -79,6 +79,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	class UPlayerFSMComp* PlayerFSM;
 
+	UPROPERTY()
+	class ALongSword* LongSword;
+
 protected:
 	
 public:
