@@ -28,10 +28,14 @@ void UAITestWidget::SendChatbotSV()
 	msgData.Add(TEXT("message"), msg);
 
 	FString sendJson = UJsonLibrary::MapToJson(msgData);
-	FString fullURL = "http://192.168.240.75:8000/chat";
+	
+	FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
 
-	// server connect
-	ReqDataPost(fullURL, sendJson);
+	/* Server Conn URL */
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
+
+	// Server connect
+	ReqDataPost( ServerURL , sendJson);
 }
 
 void UAITestWidget::SendImgaiSV()
@@ -42,8 +46,11 @@ void UAITestWidget::SendImgaiSV()
 
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
-	FString fullURL = "http://192.168.240.75:8000/imageAI";
-	ReqImgPost(fullURL, sendJson);
+	/* Server Conn URL */
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
+
+	// server connect
+	ReqImgPost( ServerURL , sendJson);
 }
 
 void UAITestWidget::ChangeMaterial()
@@ -136,19 +143,14 @@ void UAITestWidget::ReqImgPost(const FString& url, const FString& msg)
 
 void UAITestWidget::ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully )
 {
-	UE_LOG( LogTemp , Warning, TEXT("TEST1"))
 	if (bConnectedSuccessfully)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "TEST2" ) )
-
 		//바이트 배열에 응답받은 콘텐츠를 가져오고 싶다.
 		TArray<uint8> buf = Response->GetContent();
 
-		UE_LOG( LogTemp , Warning , TEXT( "TEST2" ) )
 		//저장한 이미지의 경로를 정하고 싶다
 		FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *imgPath )
-
 
 		//FFileHelper의 save 함수를 통해 파일로 저장한다.
 		FFileHelper::SaveArrayToFile( buf , *imgPath );
@@ -164,7 +166,7 @@ void UAITestWidget::ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Respo
 	{
 		if (Request->GetStatus() == EHttpRequestStatus::Succeeded)
 		{
-			UE_LOG( LogTemp , Warning , TEXT( "Responce Failed... %d" ) , Response->GetResponseCode() );
+			UE_LOG( LogTemp , Warning , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
 		}
 	}
 }
