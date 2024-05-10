@@ -3,6 +3,10 @@
 
 #include "Characters/Skill/PlayerSkillSwing.h"
 
+UPlayerSkillSwing::UPlayerSkillSwing()
+{
+}
+
 void UPlayerSkillSwing::Execute()
 {
 	Super::Execute();

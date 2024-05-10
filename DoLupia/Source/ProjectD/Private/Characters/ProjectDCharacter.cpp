@@ -27,6 +27,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Items/Sword/LongSword.h"
+#include "Quest/QuestInventoryComponent.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -199,18 +200,9 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
 }
 
-void AProjectDCharacter::ApplyBleedingEffect()
-{
-	
-}
-
-void AProjectDCharacter::ApplyPoisonEffect()
-{
-	
-}
-
 
 // <---------------------- Interaction ---------------------->
+
 void AProjectDCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();

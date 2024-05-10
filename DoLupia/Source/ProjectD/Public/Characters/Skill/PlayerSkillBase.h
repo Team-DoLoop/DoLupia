@@ -34,6 +34,8 @@ protected:
 	int32 SkillDamage = 0;
 
 public:
+	UPlayerSkillBase();
+	
 	virtual void Execute() override;
 	virtual void ApplySkill(ACharacter* Target) override;
 };
