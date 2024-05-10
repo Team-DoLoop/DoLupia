@@ -7,6 +7,8 @@
 #include "QuestInventoryComponent.generated.h"
 
 
+struct FObjectiveID_Value;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UQuestInventoryComponent : public UActorComponent
 {
@@ -29,9 +31,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TMap<FString , int32> Content;
-
+	
 	UFUNCTION()
-	void AddToInventory(FName Item, int32 Quantity);
+	void AddToInventory( FObjectiveID_Value BroadCastMap );
 
 	UFUNCTION()
 	int32 QueryInventory(FName Item);

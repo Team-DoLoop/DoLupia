@@ -53,21 +53,30 @@ void UQuestInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// ...
 }
 
-void UQuestInventoryComponent::AddToInventory( FName Item , int32 Quantity )
+void UQuestInventoryComponent::AddToInventory( FObjectiveID_Value BroadCastMap )
 {
-	FString ItemString = Item.ToString(); // FName을 FString으로 변환
+	for (const auto& KeyValue : BroadCastMap) {
+		FString ItemString = KeyValue.Key().ToString(); // FName을 FString으로 변환
 
-	int32* ExistingQuantity = Content.Find( ItemString ); // 해당 아이템의 수량을 찾음
+		int32* ExistingQuantity = Content.Find( ItemString ); // 해당 아이템의 수량을 찾음
 
-	if (ExistingQuantity) // 만약 해당 아이템이 이미 맵에 존재한다면
-	{
-		auto PlusQuantity = (*ExistingQuantity) + Quantity; // 수량을 더해줌
-		Content.Add( ItemString , PlusQuantity); // 새로운 아이템과 수량을 추가함
+		if (ExistingQuantity) // 만약 해당 아이템이 이미 맵에 존재한다면
+		{
+			UE_LOG( LogTemp , Warning , TEXT( "AddToInventory FName: %s, Inventory Count: %d" ) , *KeyValue.Key().ToString() , KeyValue.Value() );
+			auto PlusQuantity = (*ExistingQuantity) + KeyValue.Value(); // 수량을 더해줌
+			Content.Add( ItemString , PlusQuantity ); // 새로운 아이템과 수량을 추가함
+		}
+		else
+		{
+			//처음 얻을때
+			UE_LOG( LogTemp , Warning , TEXT( "First AddToInventory FName: %s, Inventory Count: %d" ) , *KeyValue.Key().ToString() , KeyValue.Value() );
+			Content.Add( ItemString , KeyValue.Value() );
+		}
+		//플레이어에 있는 방송을 가져와서 아이템 이름을 보냄!!
+		FObjectiveID_Value QIBroadCastMap;
+		QIBroadCastMap.ObjectiveID_Value.Add( ItemString , KeyValue.Value() );
+		ProjectDCharacter->OnObjectiveIDCalled.Broadcast( QIBroadCastMap );
 	}
-
-	//플레이어에 있는 방송을 가져와서 아이템 이름을 보냄!!
-	ProjectDCharacter->OnObjectiveIDCalled.Broadcast(ItemString, Quantity );
-
 }
 
 int32 UQuestInventoryComponent::QueryInventory( FName Item )
@@ -75,7 +84,7 @@ int32 UQuestInventoryComponent::QueryInventory( FName Item )
 	// Content 맵이 유효한지 확인
 	if (Content.Num() <= 0)
 	{
-		//UE_LOG( LogTemp , Warning , TEXT( "Content map is empty or null." ) );
+		UE_LOG( LogTemp , Warning , TEXT( "QueryInventory Content map is empty or null." ) );
 		return 0; // 이 경우 0 또는 다른 기본값을 반환할 수 있습니다.
 	}
 	FString ItemString = Item.ToString();

@@ -18,49 +18,51 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
         return; // 유효하지 않으면 조기 종료
     }
 
-    // 포맷된 텍스트 생성
-    FText Template = FText::FromString( "{desc} {current} / {quantity}" );
-
-    FFormatNamedArguments Args;
-    Args.Add( "desc" , FText::FromString( ObjectiveData.Description ) );
-
-    if(QuestActor)
+    for (const auto& KeyValue : ObjectiveData.ObjectiveID_Quantity) 
     {
-        int32* currentValue = QuestActor->CurrentObjectiveProgress.Find( ObjectiveData.ObjectiveID );
-        Args.Add( "current" , FText::AsNumber( *currentValue ) ); // 초기값을 0으로 설정
-        UE_LOG( LogTemp , Warning , TEXT( "QuestActor _ currnetValue" ) );
+        // 포맷된 텍스트 생성
+        FText Template = FText::FromString( "{desc} {current} / {quantity}" );
 
-        // check_IsCompleted 유효성 검사 및 초기화
-        if (check_IsCompleted)
+        FFormatNamedArguments Args;
+        Args.Add( "desc" , FText::FromString( ObjectiveData.Description ) );
+
+        if (QuestActor)
         {
-            auto checkbox = (ObjectiveData.Quantity <= *currentValue) ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+            int32* currentValue = QuestActor->CurrentObjectiveProgress.Find( KeyValue.Key );
+            Args.Add( "current" , FText::AsNumber( *currentValue ) ); // 초기값을 0으로 설정
+            UE_LOG( LogTemp , Warning , TEXT( "QuestActor _ currnetValue" ) );
 
-            check_IsCompleted->SetCheckedState( checkbox ); // 체크박스 초기화
+            // check_IsCompleted 유효성 검사 및 초기화
+            if (check_IsCompleted)
+            {
+                auto checkbox = (KeyValue.Value <= *currentValue) ? ECheckBoxState::Checked : ECheckBoxState::Unchecked;
+
+                check_IsCompleted->SetCheckedState( checkbox ); // 체크박스 초기화
+            }
+            else
+            {
+                UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
+            }
         }
-        else
-        {
-            UE_LOG( LogTemp , Warning , TEXT( "check_IsCompleted is not bound." ) );
-        }
+		else
+	    {
+	        Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
+	        UE_LOG( LogTemp , Warning , TEXT( "QuestActor invalid UWidgetQuestLog_Objective" ) );
+	    }
 
-    }else
-    {
-    	Args.Add( "current" , FText::AsNumber( 0 ) ); // 초기값을 0으로 설정
-        UE_LOG( LogTemp , Warning , TEXT( "QuestActor invalid" ) );
-    }
+	    Args.Add( "quantity" , FText::AsNumber( KeyValue.Value ) );
+		
+	    FText FormattedText = FText::Format( Template , Args );
 
-   
-    Args.Add( "quantity" , FText::AsNumber( ObjectiveData.Quantity ) );
-
-    FText FormattedText = FText::Format( Template , Args );
-
-    // txt_Description 유효성 검사
-    if (txt_Description)
-    {
-        txt_Description->SetText( FormattedText ); // 포맷된 텍스트 설정
-    }
-    else
-    {
-        UE_LOG( LogTemp , Warning , TEXT( "txt_Description is not bound." ) );
+	    // txt_Description 유효성 검사
+	    if (txt_Description)
+	    {
+	        txt_Description->SetText( FormattedText ); // 포맷된 텍스트 설정
+	    }
+	    else
+	    {
+	        UE_LOG( LogTemp , Warning , TEXT( "txt_Description is not bound." ) );
+	    }
     }
 }
 

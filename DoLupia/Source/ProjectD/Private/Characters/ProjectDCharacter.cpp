@@ -5,6 +5,7 @@
 #include "World/Pickup.h"
 #include "Quest/QuestLogComponent.h"
 #include "Quest/TestNPCCharacter.h"
+#include "Quest/QuestInventoryComponent.h" //지울 예정
 
 // engine
 #include "UObject/ConstructorHelpers.h"
@@ -27,6 +28,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Items/Sword/LongSword.h"
+
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -361,7 +363,9 @@ void AProjectDCharacter::BeginInteract()
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			UE_LOG( LogTemp , Warning , TEXT( "LookatActor: %s" ) , *ActorName );
 			//캐릭터가 베이스 한테
-			OnObjectiveIDCalled.Broadcast( ActorObjectID, 1);
+			FObjectiveID_Value BroadCastMap;
+			BroadCastMap.ObjectiveID_Value.Add( ActorObjectID , 1 );
+			OnObjectiveIDCalled.Broadcast( BroadCastMap );
 		}
 	}
 }

@@ -3,10 +3,11 @@
 
 #include "Quest/Quest_Base.h"
 #include "Quest/QuestLogComponent.h"
-#include "Quest/QuestInventoryComponent.h"
+#include "Quest/QuestInventoryComponent.h" //지울 예정 
 #include <Characters/ProjectDCharacter.h>
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
+#include "Characters/Components/InventoryComponent.h"
 #include "Quest/WidgetQuestNotification.h"
 
 // Sets default values
@@ -75,26 +76,9 @@ void AQuest_Base::BeginPlay()
 		//컴포넌트에서 questID 방송 받아서 여기서 함수 호출해서 QuestID 저장하기
 		Questcomponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}
+	UE_LOG( LogTemp , Error , TEXT( "QuestInventorycomponent 생성" ) );
 
-	//테스트 퀘스트 인벤토리 컴포넌트 생성
-	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
-
-	if (QuestInventorycomponent) {
-
-		for (const auto& Objective : CurrentStageDetails.Objectives)
-		{
-			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
-			if (Objective.Type == EObjectiveType::Collect)
-			{
-				FName MyName = FName( Objective.ObjectiveID );
-				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
-				
-				//목표 수량에 보내기
-				for (const auto& ObjObjective : CurrentStageDetails.Objectives)
-					OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
-			}
-		}
-	}
+	//UInventoryComponent* Inventorycomponent = ProjectDCharacter->FindComponentByClass<UInventoryComponent>();
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
@@ -106,8 +90,12 @@ void AQuest_Base::BeginPlay()
 			FPlatformProcess::Sleep( 0.1f ); // 설정될 때까지 0.1초 간격으로 대기
 		}
 
+		UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails() , CheckItem()" ) )
+
 		// QuestID가 유효해졌으므로 이후 작업 수행
 		GetQuestDetails();
+		CheckItem();
+
 	} );
 }
 
@@ -119,37 +107,38 @@ void AQuest_Base::Tick(float DeltaTime)
 
 }
 
-void AQuest_Base::OnObjectiveIDHeard(FString BObjectiveID, int32 Value )
+void AQuest_Base::OnObjectiveIDHeard( FObjectiveID_Value BroadCastMap )
 {
-	//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
-	int32* ValuePtr = CurrentObjectiveProgress.Find( BObjectiveID );
+	for (const auto& KeyValue : BroadCastMap) {
+		//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
+		int32* ValuePtr = CurrentObjectiveProgress.Find( KeyValue.Key() );
 
-	if (ValuePtr)
-	{
-		int32 Sign = FMath::Sign( Value );
-
-		if (Sign > 0)
+		if (ValuePtr)
 		{
-			if (GetObjectiveDataByID( BObjectiveID ).Quantity > *ValuePtr)
+			int32 Sign = FMath::Sign( KeyValue.Value() );
+
+			if (Sign > 0)
 			{
-				int32 PluValue = *ValuePtr + Value;
-				CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
-				IsObjectiveComplete( BObjectiveID );
+				if (GetObjectiveDataByID( KeyValue.Key() ).Quantity > *ValuePtr)
+				{
+					int32 PluValue = *ValuePtr + KeyValue.Value();
+					CurrentObjectiveProgress.Add( KeyValue.Key() , PluValue );
+					IsObjectiveComplete( KeyValue.Key() );
+					return;
+				}
+			}
+			else
+			{
+				int32 PluValue = *ValuePtr + KeyValue.Value();
+				CurrentObjectiveProgress.Add( KeyValue.Key() , PluValue );
 				return;
 			}
 		}
 		else
 		{
-			int32 PluValue = *ValuePtr + Value;
-			CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
 			return;
 		}
 	}
-	else
-	{
-		return;
-	}
-
 }
 
 void AQuest_Base::GetQuestDetails()
@@ -191,6 +180,40 @@ void AQuest_Base::GetQuestDetails()
 	}
 }
 
+void AQuest_Base::CheckItem()
+{
+
+	//테스트 퀘스트 인벤토리 컴포넌트 생성
+	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
+
+	if (QuestInventorycomponent) {
+		UE_LOG( LogTemp , Error , TEXT( "QuestInventorycomponent 있다" ) )
+			for (const auto& Objective : CurrentStageDetails.Objectives)
+			{
+				//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
+				if (Objective.Type == EObjectiveType::Collect)
+				{
+					UE_LOG( LogTemp , Error , TEXT( "EObjectiveType::Collect" ) );
+
+					FName MyName = FName( Objective.ObjectiveID );
+					UE_LOG( LogTemp , Warning , TEXT( "FName: %s" ) , *MyName.ToString() );
+
+					int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
+					UE_LOG( LogTemp , Error , TEXT( "%d" ) , InventoryCount );
+
+					//목표 수량에 보내기
+					//for (const auto& ObjObjective : CurrentStageDetails.Objectives)
+						//OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
+
+					FObjectiveID_Value BroadCastMap;
+					BroadCastMap.ObjectiveID_Value.Add( Objective.ObjectiveID , InventoryCount );
+					ProjectDCharacter->OnObjectiveIDCalled.Broadcast( BroadCastMap );
+					OnObjectiveIDHeard( BroadCastMap );
+				}
+			}
+	}
+}
+
 void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 {
 	QuestID = BroQuestID;
@@ -210,5 +233,19 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
 			QuestWidget->AddToViewport();
 		}
+	}
+}
+
+FObjectiveDetails AQuest_Base::GetObjectiveDataByID( FString ObjectiveID )
+{
+	{
+		for (const auto& Objective : CurrentStageDetails.Objectives)
+		{
+			if (Objective.ObjectiveID == ObjectiveID) {
+				return Objective;
+			}
+		}
+		// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
+		return FObjectiveDetails();
 	}
 }

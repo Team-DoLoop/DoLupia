@@ -31,8 +31,18 @@ struct FInteractionData
 	
 };
 
+USTRUCT( BlueprintType )
+struct FObjectiveID_Value
+{
+	GENERATED_BODY()
+
+	UPROPERTY( BlueprintReadWrite )
+	TMap<FString , int32> ObjectiveID_Value;
+};
+
 // Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1;);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnObjectiveIDCalled, FObjectiveID_Value , ObjectiveID_Value);
+
 
 UCLASS(Blueprintable)
 class AProjectDCharacter : public ACharacter, public IDamageInterface
