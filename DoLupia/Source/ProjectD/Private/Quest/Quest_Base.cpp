@@ -90,8 +90,8 @@ void AQuest_Base::BeginPlay()
 				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
 				
 				//목표 수량에 보내기
-				for (const auto& Objective : CurrentStageDetails.Objectives)
-					OnObjectiveIDHeard( Objective.ObjectiveID , InventoryCount );
+				for (const auto& ObjObjective : CurrentStageDetails.Objectives)
+					OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
 			}
 		}
 	}

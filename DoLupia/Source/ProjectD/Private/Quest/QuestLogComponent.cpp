@@ -35,19 +35,29 @@ void UQuestLogComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UQuestLogComponent::AddNewQuest(FName QuestID)
 {
-	CurrentActiveQuests.AddUnique(QuestID);
+    if (QuestID.IsNone())
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ QuestLogComponent" ) );
+        return;
+    }
 
-	// QuestBase 액터 생성
-	AQuest_Base* SpawnedQuest = GetWorld()->SpawnActor<AQuest_Base>(AQuest_Base::StaticClass());
-	if(SpawnedQuest)
-	{
-		OnQuestDataLoaded.Broadcast( QuestID );
-		//SpawnedQuest->QuestID=  QuestID;
-		UE_LOG( LogTemp , Error , TEXT( "QuestID: %s UQuestLogComponent::AddNewQuestBroadcast, Property" ) , *QuestID.ToString() );
-	}
+    // 생성자에 QuestID를 전달하여 AQuest_Base를 생성합니다.
+    AQuest_Base* SpawneQuest = GetWorld()->SpawnActor<AQuest_Base>( AQuest_Base::StaticClass() );
+
+	if (!SpawneQuest)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Failed to spawn AQuest_Base" ) );
+        return;
+    }
+    else
+    {
+        //QuestID quest_Base에 보내기
+        OnQuestDataLoaded.Broadcast( QuestID );
+        SpawneQuest->QuestID = QuestID;
+    }
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
-	CurrentQuest.Add(SpawnedQuest);
+	CurrentQuest.Add( SpawneQuest );
 }
 
 bool UQuestLogComponent::QueryActiveQuest(FName QuestID)
