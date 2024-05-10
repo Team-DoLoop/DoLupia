@@ -32,7 +32,7 @@ void UAITestWidget::SendChatbotSV()
 	FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
 
 	/* Server Conn URL */
-	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
+	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/chat";
 
 	// Server connect
 	ReqDataPost( ServerURL , sendJson);
@@ -47,7 +47,7 @@ void UAITestWidget::SendImgaiSV()
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
 	/* Server Conn URL */
-	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
+	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/imageAI";
 
 	// server connect
 	ReqImgPost( ServerURL , sendJson);
