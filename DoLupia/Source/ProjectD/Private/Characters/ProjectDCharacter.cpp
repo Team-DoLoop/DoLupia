@@ -28,6 +28,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Items/Sword/LongSword.h"
+#include "Quest/QuestInventoryComponent.h"
 
 
 
@@ -116,10 +117,10 @@ void AProjectDCharacter::BeginPlay()
 
 	// Sword
 	FName SwordSocket(TEXT("SwordSocket"));
-	LongSword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != LongSword)
+	Sword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != Sword)
 	{
-		LongSword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
 	}
 
 	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
@@ -201,18 +202,9 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
 }
 
-void AProjectDCharacter::ApplyBleedingEffect()
-{
-	
-}
-
-void AProjectDCharacter::ApplyPoisonEffect()
-{
-	
-}
-
 
 // <---------------------- Interaction ---------------------->
+
 void AProjectDCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCehckTime = GetWorld()->GetTimeSeconds();

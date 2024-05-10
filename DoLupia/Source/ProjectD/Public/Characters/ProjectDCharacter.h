@@ -88,7 +88,7 @@ private:
 	class UPlayerFSMComp* PlayerFSM;
 
 	UPROPERTY()
-	class ALongSword* LongSword;
+	class ASwordBase* Sword;
 
 protected:
 	
@@ -148,8 +148,6 @@ protected:
 	void CameraTimelineEnd();
 
 	virtual void TakeDamage(float Damage) override;
-	virtual void ApplyBleedingEffect() override;
-	virtual void ApplyPoisonEffect() override;
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}

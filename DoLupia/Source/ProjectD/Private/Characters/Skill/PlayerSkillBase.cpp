@@ -8,9 +8,17 @@
 #include "Characters/Components/PlayerFSMComp.h"
 
 
+UPlayerSkillBase::UPlayerSkillBase()
+	: SkillName(""),
+	  SkillLevel(0),
+	  SkillCost(0),
+	  SkillCoolTime(0),
+	  SkillDamage(0)
+{
+}
+
 void UPlayerSkillBase::Execute()
 {
-
 }
 
 void UPlayerSkillBase::ApplySkill(ACharacter* Target)
