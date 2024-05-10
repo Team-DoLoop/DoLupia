@@ -115,10 +115,10 @@ void AProjectDCharacter::BeginPlay()
 
 	// Sword
 	FName SwordSocket(TEXT("SwordSocket"));
-	LongSword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != LongSword)
+	Sword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != Sword)
 	{
-		LongSword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
 	}
 
 	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());

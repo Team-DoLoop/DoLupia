@@ -78,7 +78,7 @@ private:
 	class UPlayerFSMComp* PlayerFSM;
 
 	UPROPERTY()
-	class ALongSword* LongSword;
+	class ASwordBase* Sword;
 
 protected:
 	
