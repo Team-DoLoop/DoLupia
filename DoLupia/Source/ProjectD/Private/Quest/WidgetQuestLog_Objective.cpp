@@ -12,7 +12,7 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
     Super::NativePreConstruct();
 
     // ObjectiveData 유효성 검사
-    if (ObjectiveData.ObjectiveID.IsEmpty())
+    if (ObjectiveData.ObjectiveID_Quantity.IsEmpty())
     {
         UE_LOG( LogTemp , Warning , TEXT( "ObjectiveData.ObjectiveID is empty." ) );
         return; // 유효하지 않으면 조기 종료

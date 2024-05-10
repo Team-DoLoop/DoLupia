@@ -50,11 +50,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EObjectiveType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString ObjectiveID;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//FString ObjectiveID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Quantity;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//int32 Quantity;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	TMap<FString , int32> ObjectiveID_Quantity;
