@@ -3,6 +3,11 @@
 
 #include "Characters/Skill/PlayerSkillCastingHitDown.h"
 
+UPlayerSkillCastingHitDown::UPlayerSkillCastingHitDown()
+{
+	
+}
+
 void UPlayerSkillCastingHitDown::Execute()
 {
 	Super::Execute();

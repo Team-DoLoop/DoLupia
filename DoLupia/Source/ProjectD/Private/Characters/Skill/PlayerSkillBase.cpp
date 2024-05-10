@@ -8,6 +8,10 @@
 #include "Characters/Components/PlayerFSMComp.h"
 
 
+UPlayerSkillBase::UPlayerSkillBase()
+{
+}
+
 void UPlayerSkillBase::Execute()
 {
 

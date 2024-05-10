@@ -13,13 +13,12 @@ UCLASS()
 class PROJECTD_API UPlayerSkillSpell : public UPlayerSkillBase
 {
 	GENERATED_BODY()
-
 private:
-		
 
-protected:
-
+	
 public:
+	UPlayerSkillSpell();
+	
 	virtual void Execute() override;
 	virtual void ApplySkill(class ACharacter* Target) override;
 };
