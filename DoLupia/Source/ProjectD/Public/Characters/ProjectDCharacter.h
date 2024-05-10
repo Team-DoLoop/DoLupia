@@ -171,14 +171,10 @@ public:
 	
 	
 	// <---------------------- Item ---------------------->
-private:
-	
-protected:
-
 public:
 	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 	void UpdateInteractionWidget() const;
-
+	void SwitchLongSword(UItemBase* ItemBase);
 	
 
 	// <---------------------- Inventory ---------------------->	
