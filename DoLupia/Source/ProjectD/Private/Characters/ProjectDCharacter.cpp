@@ -27,6 +27,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Items/Sword/LongSword.h"
+#include "Quest/QuestInventoryComponent.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
