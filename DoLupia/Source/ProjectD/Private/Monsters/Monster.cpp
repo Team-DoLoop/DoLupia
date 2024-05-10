@@ -120,8 +120,8 @@ void AMonster::AttackState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 
-	//MoveToTarget();
-	//anim->animState = MonsterFSM->state;
+	MoveToTarget();
+	anim->animState = MonsterFSM->state;
 
 	if (TargetVector.Size() > AttackRange) {
 		MonsterFSM->state = EMonsterState::Move;
@@ -132,8 +132,9 @@ void AMonster::DamageState()
 {
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DamageState()" ) );
 	anim->animState = MonsterFSM->state;
+
 	currentTime += GetWorld()->GetDeltaSeconds();
-	if (currentTime > 1)
+	if (currentTime > 1.5)
 	{
 		MonsterFSM->state = EMonsterState::Move;
 		this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
@@ -149,7 +150,7 @@ void AMonster::DieState()
 	anim->animState = MonsterFSM->state;
 
 	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
-	//죽음 애니메이션 끝난 후 destroy..이것도 die delay로 구현?
+	//죽음 애니메이션 끝난 후 destroy
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 4)
 	{
@@ -167,12 +168,14 @@ void AMonster::MoveToTarget()
 
 	FRotator MonsterRotation = FRotationMatrix::MakeFromX( TargetVector ).Rotator();
 	this->SetActorRotation( MonsterRotation );
+
 }
 
 void AMonster::OnMyTakeDamage(int damage)
 {
 	currentHP -= damage;
 	monsterHPWidget->SetHP( currentHP , maxHP );
+	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 
 	if (currentHP < 0)
 	{

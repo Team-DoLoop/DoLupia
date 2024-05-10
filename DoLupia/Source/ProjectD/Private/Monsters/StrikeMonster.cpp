@@ -3,6 +3,7 @@
 
 #include "Monsters/StrikeMonster.h"
 
+#include "Monsters/MonsterFSM.h"
 
 
 AStrikeMonster::AStrikeMonster()
@@ -31,6 +32,7 @@ void AStrikeMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	this->MonsterType= EMonsterType::Strike;
+	this->MonsterFSM->state = EMonsterState::Patrol;
 	//근거리 몬스터 체력 설정
 	this->maxHP = 150;
 	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , this->maxHP );
