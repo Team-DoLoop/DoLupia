@@ -66,8 +66,6 @@ void UWidgetQuestGiver::NativeConstruct()
 
     if (PlayerControllerD) {
         FInputModeUIOnly InputMode;
-        //if(btn_Accept)
-            //InputMode.SetWidgetToFocus(btn_Accept);
         PlayerControllerD->SetInputMode( InputMode );
     }
 }
@@ -81,7 +79,7 @@ void UWidgetQuestGiver::NativeDestruct()
     if(PlayerController)
     {
 	    auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
-        FInputModeGameOnly InputMode;
+        FInputModeGameAndUI InputMode;
         PlayerControllerD->SetInputMode( InputMode );
     }
         
@@ -89,21 +87,20 @@ void UWidgetQuestGiver::NativeDestruct()
 
 void UWidgetQuestGiver::OnAcceptClicked()
 {
-    APlayerController* OwningPlayer = GetOwningPlayer();
-
-    if (OwningPlayer == nullptr)
+    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+    if (!IsValid( PlayerController ))
     {
-        UE_LOG( LogTemp , Error , TEXT( "OwningPlayer is null." ) );
+        UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / PlayerController is not valid." ) );
         return;
     }
 
-    // 플레이어 캐릭터를 찾습니다.
-    ACharacter* PlayerCharacter = OwningPlayer->GetCharacter(); // 플레이어 컨트롤러가 소유한 캐릭터
-    if (PlayerCharacter == nullptr)
+    ACharacter* PlayerCharacter = Cast<ACharacter>( PlayerController->GetPawn() );
+    if (!IsValid( PlayerCharacter ))
     {
-        UE_LOG( LogTemp , Error , TEXT( "PlayerCharacter is null." ) );
+        UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / PlayerCharacter is not valid." ) );
         return;
     }
+
 	AProjectDCharacter* PlayerCharacterD = Cast<AProjectDCharacter>( PlayerCharacter );
 
     // 캐릭터에서 QuestLogComponent를 찾습니다.
@@ -121,6 +118,7 @@ void UWidgetQuestGiver::OnAcceptClicked()
     UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestID.ToString() );
 
     // 컴포넌트가 유효할 경우, 퀘스트를 추가합니다.
+    // 수락을 하면!!!!!
     QuestLogComp->AddNewQuest( QuestID );
 
     // 위젯을 화면에서 제거합니다.

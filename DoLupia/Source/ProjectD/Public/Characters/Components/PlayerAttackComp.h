@@ -41,12 +41,15 @@ public:
 
 	// <---------------------- Attack ---------------------->
 private:
+	TArray<class UPlayerSkillBase*> Skills;
 
 protected:
 	void Attack();
 	
 public:
 	void AttackEnd();
-	
+
+	void ExecuteSkill(int32 SkillIndex);
+	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return Skills;}
 	
 };

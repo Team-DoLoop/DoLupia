@@ -42,6 +42,9 @@ void AProjectDPlayerController::TestAnyFunction()
 	if(!ControlledCharacter) return;
 	
 	ControlledCharacter->moveComp->Die();
+
+	// TakeDamage Test
+	ControlledCharacter->TakeDamage(10.0f);
 }
 
 
@@ -92,6 +95,11 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Attack);
+
+		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);
+		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);
+		EnhancedInputComponent->BindAction(CastingHitDownSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 2);
+		EnhancedInputComponent->BindAction(UltSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 3);
 
 		// Test
 		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
@@ -209,8 +217,14 @@ void AProjectDPlayerController::Attack()
 	
 	ControlledCharacter->attackComp->Attack();
 
-	// TakeDamage Test
-	ControlledCharacter->TakeDamage(10.0f);
+
+}
+
+void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)
+{
+	if(!ControlledCharacter) return;
+
+	ControlledCharacter->attackComp->ExecuteSkill(SkillIndex);
 }
 
 // <---------------------- Quest UI ---------------------->

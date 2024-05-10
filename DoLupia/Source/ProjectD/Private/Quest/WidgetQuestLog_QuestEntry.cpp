@@ -26,7 +26,6 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 		}
 	}
 
-	//버튼 할당
 	if (btn_QuestName)
 	{
 		btn_QuestName->OnClicked.AddDynamic( this , &UWidgetQuestLog_QuestEntry::OnButtonClicked );
@@ -36,6 +35,7 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 void UWidgetQuestLog_QuestEntry::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 }
 
 void UWidgetQuestLog_QuestEntry::NativeDestruct()
@@ -47,6 +47,7 @@ void UWidgetQuestLog_QuestEntry::OnButtonClicked()
 {
 	if (OnQuestSelected.IsBound())
 	{
-		OnQuestSelected.Broadcast( QuestID , QuestActor); // 델리게이트 호출
+		//퀘스트 로그 위젯으로 보내진다 -> OnQuestSelected
+		OnQuestSelected.Broadcast( QuestID , QuestActor ); // 델리게이트 호출
 	}
 }

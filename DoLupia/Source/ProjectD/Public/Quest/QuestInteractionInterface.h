@@ -22,10 +22,8 @@ class PROJECTD_API IQuestInteractionInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	//UFUNCTION()
-	virtual void LookAt();
 
-	//UFUNCTION()
-	virtual FString InteractWith();
+	virtual void LookAt() PURE_VIRTUAL( UQuestInteractionInterface::LookAt , );
+	virtual FString InteractWith() PURE_VIRTUAL( UQuestInteractionInterface::InteractWith , return FString(); );
 
 };

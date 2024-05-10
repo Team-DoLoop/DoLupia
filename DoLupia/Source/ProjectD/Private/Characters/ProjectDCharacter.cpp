@@ -3,10 +3,13 @@
 #include "Characters/ProjectDCharacter.h"
 #include "UserInterface/DoLupiaHUD.h"
 #include "World/Pickup.h"
+#include "Quest/QuestLogComponent.h"
+#include "Quest/TestNPCCharacter.h"
 
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/PlayerStat.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -14,6 +17,8 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
+#include "Characters/Skill/PlayerSkillSpell.h"
+#include "Characters/Skill/PlayerSkillSwing.h"
 #include "Components/TimelineComponent.h"
 #include "Elements/Framework/TypedElementQueryBuilder.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -21,8 +26,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-#include "Quest/QuestLogComponent.h"
-#include "Quest/TestNPCCharacter.h"
+#include "Items/Sword/LongSword.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -66,7 +70,7 @@ AProjectDCharacter::AProjectDCharacter()
 	PlayerFSM = CreateDefaultSubobject<UPlayerFSMComp>(TEXT("PlayerFSM"));
 
 	// Move
-	moveComp = CreateDefaultSubobject<UPlayerMoveComp>(TEXT("moveComp"));
+	moveComp = CreateDefaultSubobject<UPlayerMoveComp>(TEXT("MoveComp"));
 	
 	// Attack
 	attackComp = CreateDefaultSubobject<UPlayerAttackComp>(TEXT("AttackComp"));
@@ -82,6 +86,8 @@ AProjectDCharacter::AProjectDCharacter()
 	
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
+	PlayerQuestInventory = CreateDefaultSubobject<UQuestInventoryComponent>( TEXT( "PlayerQuestInventory" ) );
+
 	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
 
 	// Activate ticking in order to update the cursor every frame.
@@ -104,6 +110,20 @@ void AProjectDCharacter::BeginPlay()
 	{
 		AimingCameraTimeline->AddInterpFloat(AimingCameraCurve, AimLerpAlphaValue);
 		AimingCameraTimeline->SetTimelineFinishedFunc(TimelineFinishedEvent);
+	}
+
+	// Sword
+	FName SwordSocket(TEXT("SwordSocket"));
+	LongSword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != LongSword)
+	{
+		LongSword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
+	}
+
+	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
+	if(PlayerStat)
+	{
+		PlayerStat->initPlayerData();
 	}
 }
 
@@ -334,10 +354,14 @@ void AProjectDCharacter::BeginInteract()
 		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( LookAtActor );
 		if (QuestInterface)
 		{
-			QuestInterface->InteractWith();
-			FString ActorObjectID = LookAtActor->GetFName().ToString();
+			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
+			const FString& ActorObjectID = QuestInterface->InteractWith();
+			UE_LOG( LogTemp , Warning , TEXT( "QuestInterface->InteractWith(): %s" ) , *ActorObjectID );
 
-			OnObjectiveIDCalled.Broadcast( ActorObjectID );
+			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
+			UE_LOG( LogTemp , Warning , TEXT( "LookatActor: %s" ) , *ActorName );
+			//캐릭터가 베이스 한테
+			OnObjectiveIDCalled.Broadcast( ActorObjectID, 1);
 		}
 	}
 }
