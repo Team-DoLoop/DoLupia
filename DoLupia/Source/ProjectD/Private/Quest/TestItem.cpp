@@ -25,12 +25,9 @@ void ATestItem::NotifyActorBeginOverlap( AActor* OtherActor )
             UQuestInventoryComponent* QuestInventoryComp = PlayerCharacter->FindComponentByClass<UQuestInventoryComponent>();
             if (QuestInventoryComp != nullptr)
             {
-                // FName을 생성하여 전달하고, 필요에 따라 아이템의 수량을 지정할 수 있습니다.
-                //FName ItemName = FName( TEXT( "testitem" ) );
-                //int32 Quantity = 1;
-                FObjectiveID_Value BroadCastMap;
-                BroadCastMap.ObjectiveID_Value.Add( "testitem" , 1 );
-                QuestInventoryComp->AddToInventory( BroadCastMap );
+                FName ItemName = FName( TEXT( "testitem" ) );
+                int32 Quantity = 1;
+                QuestInventoryComp->AddToInventory( ItemName , Quantity );
 
                 // 부딪힌 아이템을 삭제합니다.
                 Destroy();

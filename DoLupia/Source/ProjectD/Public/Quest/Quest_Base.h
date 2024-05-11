@@ -32,7 +32,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void OnObjectiveIDHeard( FObjectiveID_Value BroadCastMap );
+	void OnObjectiveIDHeard( FString ObjectiveID , int32 Value = 1 );
 
 	UFUNCTION()
 	void GetQuestDetails();

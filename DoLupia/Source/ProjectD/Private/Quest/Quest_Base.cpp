@@ -107,47 +107,35 @@ void AQuest_Base::Tick(float DeltaTime)
 
 }
 
-void AQuest_Base::OnObjectiveIDHeard( FObjectiveID_Value BroadCastMap )
+void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 {
-	for (const auto& KeyValue : BroadCastMap.ObjectiveID_Value) 
+	//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
+	int32* ValuePtr = CurrentObjectiveProgress.Find( BObjectiveID );
+
+	if (ValuePtr)
 	{
-		//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
-		int32* ValuePtr = CurrentObjectiveProgress.Find( KeyValue.Key );
-
-		if (ValuePtr)
+		int32 Sign = FMath::Sign( Value );
+		if (Sign > 0)
 		{
-			int32 Sign = FMath::Sign( KeyValue.Value);
 
-			if (Sign > 0)
+			if (GetObjectiveDataByID( BObjectiveID ).Quantity > *ValuePtr)
 			{
-				for (const auto& GetKeyValue : GetObjectiveDataByID( KeyValue.Key ).ObjectiveID_Quantity)
-				{
-					if (GetKeyValue.Value > *ValuePtr)
-					{
-						int32 PluValue = *ValuePtr + GetKeyValue.Value;
-						CurrentObjectiveProgress.Add( GetKeyValue.Key , PluValue );
-						IsObjectiveComplete( GetKeyValue.Key );
-						return;
-					}
-				}
-			}
-			else
-			{
-				for (const auto& MGetKeyValue : GetObjectiveDataByID( KeyValue.Key ).ObjectiveID_Quantity)
-				{
-					if (MGetKeyValue.Value > *ValuePtr)
-					{
-						int32 PluValue = *ValuePtr + MGetKeyValue.Value;
-						CurrentObjectiveProgress.Add( MGetKeyValue.Key , PluValue );
-						return;
-					}
-				}
+				int32 PluValue = *ValuePtr + Value;
+				CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
+				IsObjectiveComplete( BObjectiveID );
+				return;
 			}
 		}
 		else
 		{
+			int32 PluValue = *ValuePtr + Value;
+			CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
 			return;
 		}
+	}
+	else
+	{
+		return;
 	}
 }
 
@@ -186,18 +174,13 @@ void AQuest_Base::GetQuestDetails()
 
 	for (const auto& Objective : CurrentStageDetails.Objectives)
 	{
-		for (const auto& OQ_Objective : Objective.ObjectiveID_Quantity)
-		{
+		CurrentObjectiveProgress.Add( Objective.ObjectiveID , 0 );
 
-			CurrentObjectiveProgress.Add( OQ_Objective.Key , 0 );
-		}
 	}
 }
 
 void AQuest_Base::CheckItem()
 {
-
-	//테스트 퀘스트 인벤토리 컴포넌트 생성
 	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
 
 	if (QuestInventorycomponent) {
@@ -207,19 +190,12 @@ void AQuest_Base::CheckItem()
 			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
 			if (Objective.Type == EObjectiveType::Collect)
 			{
-				for (const auto& OQ_Objective : Objective.ObjectiveID_Quantity) 
-				{
-					FName MyName = FName( OQ_Objective.Key );
+				FName MyName = FName( Objective.ObjectiveID );
+				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
 
-					int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
-
-					FObjectiveID_Value BroadCastMap;
-					BroadCastMap.ObjectiveID_Value.Add( OQ_Objective.Key , InventoryCount );
-					//캐릭터를 의 방송을 통해 획득한 아이템과 수를 struct 구조로 보냄
-					ProjectDCharacter->OnObjectiveIDCalled.Broadcast( BroadCastMap );
-					OnObjectiveIDHeard( BroadCastMap );
-				}
-				
+				//목표 수량에 보내기
+				for (const auto& ObjObjective : CurrentStageDetails.Objectives)
+					OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
 			}
 		}
 	}
@@ -235,30 +211,29 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 {
 	int32* ValuePtr = CurrentObjectiveProgress.Find( ObjectiveID );
 
-	for (const auto& Objective : GetObjectiveDataByID( ObjectiveID ).ObjectiveID_Quantity)
+	if (ValuePtr && (*ValuePtr >= GetObjectiveDataByID( ObjectiveID ).Quantity))
 	{
-		if (ValuePtr && (*ValuePtr >= Objective.Value))
-		{
-			UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
+		UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
 
-			if (QuestWidget)
-			{
-				QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
-				QuestWidget->AddToViewport();
-			}
+		if (QuestWidget)
+		{
+			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
+			QuestWidget->AddToViewport();
 		}
 	}
+
 }
 
 FObjectiveDetails AQuest_Base::GetObjectiveDataByID( FString ObjectiveID )
 {
-	for (const auto& Objective : CurrentStageDetails.Objectives)
 	{
-		for (const auto& KeyValue : Objective.ObjectiveID_Quantity) {
-		if (KeyValue.Key == ObjectiveID) {
-			return Objective;
+		for (const auto& Objective : CurrentStageDetails.Objectives)
+		{
+			if (Objective.ObjectiveID == ObjectiveID) {
+				return Objective;
+			}
 		}
+		// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
+		return FObjectiveDetails();
 	}
-	// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
-	return FObjectiveDetails();
 }

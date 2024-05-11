@@ -355,9 +355,7 @@ void AProjectDCharacter::BeginInteract()
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			UE_LOG( LogTemp , Warning , TEXT( "LookatActor: %s" ) , *ActorName );
 			//캐릭터가 베이스 한테
-			FObjectiveID_Value BroadCastMap;
-			BroadCastMap.ObjectiveID_Value.Add( ActorObjectID , 1 );
-			OnObjectiveIDCalled.Broadcast( BroadCastMap );
+			OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
 		}
 	}
 }

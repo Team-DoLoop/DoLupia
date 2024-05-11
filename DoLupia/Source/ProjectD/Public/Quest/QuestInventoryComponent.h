@@ -33,7 +33,7 @@ public:
 	TMap<FString , int32> Content;
 	
 	UFUNCTION()
-	void AddToInventory( FObjectiveID_Value BroadCastMap );
+	void AddToInventory( FName Item , int32 Quantity );
 
 	UFUNCTION()
 	int32 QueryInventory(FName Item);
