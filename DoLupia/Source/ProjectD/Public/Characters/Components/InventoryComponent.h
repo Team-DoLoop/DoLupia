@@ -8,7 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
-class UItemBase; class UInventoryItemSlot; class UItemPool; class UItemWidgetPool;
+class UItemBase; class UInventoryItemSlot; class UItemPool; class UItemWidgetPool; class UItemCarouselWidget;
 
 UENUM(BlueprintType)
 enum class EItemAddResult : uint8
@@ -173,6 +173,15 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UItemWidgetPool> ItemWidgetPool;
+
+	UPROPERTY()
+	TObjectPtr<UItemCarouselWidget> ItemCarouselWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UItemCarouselWidget> LootingItemWidgetFactory;
+
+
+	FTimerHandle ItemCarouselWidgetIHandle;
 	
 		
 };

@@ -6,12 +6,10 @@
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "UserInterface/Inventory/InventoryPannel.h"
 #include "Pooling/ItemPool.h"
-#include "Pooling/ItemWidgetPool.h"
-#include "Characters/ProjectDCharacter.h"
 
 //engine
 #include "Algo/Sort.h"
-
+#include "UserInterface/Item/ItemCarouselWidget.h"
 
 
 constexpr int32 NONFIND_INDEX = -1;
@@ -33,11 +31,9 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 UInventoryComponent::UInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = true; // 나중에 삭제
 
 	ItemPool = CreateDefaultSubobject<UItemPool>(TEXT("ItemPool"));
-	ItemWidgetPool = CreateDefaultSubobject<UItemWidgetPool>( TEXT( "ItemWidgetPool" ) );
-
 }
 
 void UInventoryComponent::BeginPlay()
@@ -46,6 +42,9 @@ void UInventoryComponent::BeginPlay()
 
 	//InventorySlotsCapacity
 	ItemPool->CreateItem(100);
+
+	ItemCarouselWidget = CreateWidget<UItemCarouselWidget>(GetWorld(), LootingItemWidgetFactory);
+	ItemCarouselWidget->AddToViewport();
 }
 
 //
@@ -457,7 +456,19 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		if(!InputItem->NumericData.bIsStackable)
 		{
 			// 아이템을 담을 수 있는 지 체크하고 반환한다.
-			return HandelNonStackableItems(InputItem);
+			FItemAddResult Result = HandelNonStackableItems( InputItem );
+
+			switch (Result.OperationResult)
+			{
+
+			case EItemAddResult::IAR_PartialAmoutItemAdded:
+			case EItemAddResult::IAR_AllItemAdded:
+				ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name, InitialRequestedAddAmount, InputItem->GetAssetData().Icon );
+				break;
+			default: ;
+			}
+
+			return Result;
 		}
 
 		// 스택에 쌓이는 아이템 반환 ex) 소비 아이템 등
@@ -466,6 +477,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		// 인벤토리에 담을 수 있는 양 == 인벤토리에 담아야 하는 양
 		if(StackableAmountAdded == InitialRequestedAddAmount)
 		{
+			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount , InputItem->GetAssetData().Icon );
+
 			// 모두 인벤토리에 넣어주자.
 			return FItemAddResult::AddedAll(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Successfully added {0} {1} to the Inventory."), 
@@ -477,6 +490,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		// 인벤토리에 담을 수 있는 양 > 0 -> 인벤토리가 비어 있는 지 확인.
 		if (StackableAmountAdded < InitialRequestedAddAmount && StackableAmountAdded > 0)
 		{
+			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount , InputItem->GetAssetData().Icon );
+
 			// 부분만 인벤토리에 넣어주자.
 			return FItemAddResult::AddedPartial(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Partial amount of {0} added to thie Inventory. Number added {1}"), 

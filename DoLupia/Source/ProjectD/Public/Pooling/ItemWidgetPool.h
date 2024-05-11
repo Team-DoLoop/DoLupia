@@ -8,6 +8,8 @@
 
 class ULootingItemWidget;
 class UItemBase;
+class FText;
+class UTexture2D;
 
 /**
  * 
@@ -20,8 +22,10 @@ class PROJECTD_API UItemWidgetPool : public UObject
 public:
     UItemWidgetPool();
 
+    void AddWidget( TSubclassOf<ULootingItemWidget> LootingWidgetFactory );
+
     // 풀에서 위젯 가져오기
-    ULootingItemWidget* GetWidget( UItemBase* ItemBase );
+    ULootingItemWidget* GetWidget( FText ItemName , int32 Quantity , UTexture2D* Icon );
 
     // 사용한 위젯을 풀로 반환하기
     void ReturnWidget( ULootingItemWidget* Widget );
@@ -29,6 +33,9 @@ public:
 private:
     UPROPERTY(VisibleAnywhere)
     TArray<TObjectPtr<ULootingItemWidget>> PoolWidget;
-    
+
+    TSubclassOf<ULootingItemWidget> LootingWidgetFactory;
+
+
     
 };

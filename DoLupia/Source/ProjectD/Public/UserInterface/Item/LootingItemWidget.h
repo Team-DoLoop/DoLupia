@@ -20,6 +20,8 @@ class PROJECTD_API ULootingItemWidget : public UUserWidget
 
 public:
 	void SetMyWidget( const FText& ItemName, int32 ItemQuantity, class UTexture2D* ItemImage );
+	FORCEINLINE float& GetSmoothScrollSpeed() { return SmoothScrollSpeed; }
+	FORCEINLINE float& GetLifeTime() { return LifeCycle; }
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -32,6 +34,13 @@ protected:
 	UImage* Image;
 
 	UPROPERTY(meta = (BindWidget))
-	UBorder* Border;
+	UBorder* MyBorder;
+
+
+	UPROPERTY(VisibleAnywhere)
+	float SmoothScrollSpeed;
+
+	UPROPERTY( VisibleAnywhere )
+	float LifeCycle;
 
 };

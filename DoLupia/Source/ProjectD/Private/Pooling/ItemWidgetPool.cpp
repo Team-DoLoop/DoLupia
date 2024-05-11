@@ -7,16 +7,21 @@
 
 UItemWidgetPool::UItemWidgetPool()
 {
-	constexpr int32 MaxWidget = 6;
 
+}
+
+void UItemWidgetPool::AddWidget(TSubclassOf<ULootingItemWidget> WidgetFactory)
+{
+	constexpr int32 MaxWidget = 7;
+	LootingWidgetFactory = WidgetFactory;
 	for (int32 i = 0; i < MaxWidget; ++i)
 	{
-		TObjectPtr<ULootingItemWidget> LootingWidget = CreateWidget<ULootingItemWidget>( GetWorld(), ULootingItemWidget::StaticClass());
-		PoolWidget.Add(LootingWidget);
+		TObjectPtr<ULootingItemWidget> LootingWidget = CreateWidget<ULootingItemWidget>( GetWorld() , LootingWidgetFactory );
+		PoolWidget.Add( LootingWidget );
 	}
 }
 
-ULootingItemWidget* UItemWidgetPool::GetWidget( UItemBase* ItemBase )
+ULootingItemWidget* UItemWidgetPool::GetWidget( FText ItemName, int32 Quantity, UTexture2D* Icon )
 {
 	TObjectPtr<ULootingItemWidget> LootingWidget = nullptr;
 	
@@ -28,14 +33,17 @@ ULootingItemWidget* UItemWidgetPool::GetWidget( UItemBase* ItemBase )
 		PoolWidget.RemoveAt(PoolSize);
 	}
 	else
-		LootingWidget = CreateWidget<ULootingItemWidget>( GetWorld() , ULootingItemWidget::StaticClass() );
+		LootingWidget = CreateWidget<ULootingItemWidget>( GetWorld() , LootingWidgetFactory );
 		
-	LootingWidget->SetMyWidget( ItemBase->GetTextData().Name, ItemBase->GetQuantity(), ItemBase->GetAssetData().Icon);
+	LootingWidget->SetMyWidget( ItemName , Quantity , Icon );
+	
 
 	return LootingWidget;
 }
 
 void UItemWidgetPool::ReturnWidget( ULootingItemWidget* Widget )
 {
+	Widget->SetRenderOpacity(1.f);
+	Widget->SetVisibility(ESlateVisibility::Hidden);
 	PoolWidget.Add(Widget);
 }
