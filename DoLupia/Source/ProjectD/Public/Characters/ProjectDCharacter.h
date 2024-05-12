@@ -34,6 +34,7 @@ struct FInteractionData
 // Delegate 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1;);
 
+
 UCLASS(Blueprintable)
 class AProjectDCharacter : public ACharacter, public IDamageInterface
 {
@@ -78,7 +79,7 @@ private:
 	class UPlayerFSMComp* PlayerFSM;
 
 	UPROPERTY()
-	class ALongSword* LongSword;
+	class ASwordBase* Sword;
 
 protected:
 	
@@ -138,8 +139,6 @@ protected:
 	void CameraTimelineEnd();
 
 	virtual void TakeDamage(float Damage) override;
-	virtual void ApplyBleedingEffect() override;
-	virtual void ApplyPoisonEffect() override;
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}

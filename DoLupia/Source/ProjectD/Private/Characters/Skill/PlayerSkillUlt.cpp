@@ -3,6 +3,10 @@
 
 #include "Characters/Skill/PlayerSkillUlt.h"
 
+UPlayerSkillUlt::UPlayerSkillUlt()
+{
+}
+
 void UPlayerSkillUlt::Execute()
 {
 	Super::Execute();
