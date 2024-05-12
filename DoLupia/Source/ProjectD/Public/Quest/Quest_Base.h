@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Characters/ProjectDCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest_Base.generated.h"
@@ -31,10 +32,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void OnObjectiveIDHeard( FString ObjectiveID, int32 Value = 1 );
+	void OnObjectiveIDHeard( FString ObjectiveID , int32 Value = 1 );
 
 	UFUNCTION()
 	void GetQuestDetails();
+
+	UFUNCTION()
+	void CheckItem();
 
 	UFUNCTION()
 	void OnQuestDataLoadedHandler( FName QuestID );
@@ -43,17 +47,7 @@ public:
 	void IsObjectiveComplete( FString ObjectiveID );
 
 	UFUNCTION()
-	FORCEINLINE FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID )
-	{
-		for (const auto& Objective : CurrentStageDetails.Objectives)
-		{
-			if (Objective.ObjectiveID == ObjectiveID) {
-				return Objective;
-			}
-		}
-		// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
-		return FObjectiveDetails();
-	}
+	FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID );
 
 	UPROPERTY(EditAnywhere) //expose on spawn 안됨
 	FName QuestID;

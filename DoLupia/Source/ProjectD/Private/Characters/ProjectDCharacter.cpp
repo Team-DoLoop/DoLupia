@@ -5,6 +5,7 @@
 #include "World/Pickup.h"
 #include "Quest/QuestLogComponent.h"
 #include "Quest/TestNPCCharacter.h"
+#include "Quest/QuestInventoryComponent.h" //지울 예정
 
 // engine
 #include "UObject/ConstructorHelpers.h"
@@ -28,6 +29,7 @@
 #include "Engine/World.h"
 #include "Items/Sword/LongSword.h"
 #include "Quest/QuestInventoryComponent.h"
+
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -87,7 +89,6 @@ AProjectDCharacter::AProjectDCharacter()
 	
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
-	PlayerQuestInventory = CreateDefaultSubobject<UQuestInventoryComponent>( TEXT( "PlayerQuestInventory" ) );
 
 	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
 
@@ -115,10 +116,10 @@ void AProjectDCharacter::BeginPlay()
 
 	// Sword
 	FName SwordSocket(TEXT("SwordSocket"));
-	LongSword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != LongSword)
+	Sword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != Sword)
 	{
-		LongSword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
 	}
 
 	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
@@ -353,7 +354,7 @@ void AProjectDCharacter::BeginInteract()
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			UE_LOG( LogTemp , Warning , TEXT( "LookatActor: %s" ) , *ActorName );
 			//캐릭터가 베이스 한테
-			OnObjectiveIDCalled.Broadcast( ActorObjectID, 1);
+			OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
 		}
 	}
 }
@@ -386,7 +387,12 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	}
 }
 
-	// <---------------------- Item ---------------------->
+void AProjectDCharacter::SwitchLongSword(UItemBase* ItemBase)
+{
+	LongSword->ReceiveItemData(ItemBase);
+}
+
+// <---------------------- Item ---------------------->
 void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
 	if(PlayerInventory->FindMatchItem(ItemToDrop))

@@ -34,6 +34,7 @@ struct FInteractionData
 // Delegate 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1;);
 
+
 UCLASS(Blueprintable)
 class AProjectDCharacter : public ACharacter, public IDamageInterface
 {
@@ -78,7 +79,7 @@ private:
 	class UPlayerFSMComp* PlayerFSM;
 
 	UPROPERTY()
-	class ALongSword* LongSword;
+	class ASwordBase* Sword;
 
 protected:
 	
@@ -169,14 +170,10 @@ public:
 	
 	
 	// <---------------------- Item ---------------------->
-private:
-	
-protected:
-
 public:
 	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 	void UpdateInteractionWidget() const;
-
+	void SwitchLongSword(UItemBase* ItemBase);
 	
 
 	// <---------------------- Inventory ---------------------->	

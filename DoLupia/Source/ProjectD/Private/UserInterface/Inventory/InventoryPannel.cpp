@@ -114,7 +114,7 @@ void UInventoryPannel::RefreshInventoryPannel(const int32 Index, UItemBase* Item
 }
 
 bool UInventoryPannel::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-                                    UDragDropOperation* InOperation)
+		UDragDropOperation* InOperation)
 {
 	const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation);
 

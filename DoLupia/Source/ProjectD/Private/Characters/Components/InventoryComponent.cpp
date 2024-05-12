@@ -5,21 +5,35 @@
 #include "UserInterface/MainMenu.h"
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "UserInterface/Inventory/InventoryPannel.h"
+#include "Pooling/ItemPool.h"
 
 //engine
-#include "Characters/Components/InventoryComponent.h"
-
 #include "Algo/Sort.h"
-#include "Pooling/ItemPool.h"
+#include "UserInterface/Item/ItemCarouselWidget.h"
+
 
 constexpr int32 NONFIND_INDEX = -1;
 
+void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime , TickType , ThisTickFunction);
+
+	if(GetWorld()->GetFirstPlayerController()->GetInputKeyTimeDown(FKey("L")))
+	{
+		TMap<FString, int32> Map;
+		Map.Emplace( "bucket", 2 );
+		Map.Emplace( "regeneration potion", 100 );
+
+		HandelRemoveItem(Map);
+	}
+}
+
 UInventoryComponent::UInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = true; // 나중에 삭제
 
 	ItemPool = CreateDefaultSubobject<UItemPool>(TEXT("ItemPool"));
-
 }
 
 void UInventoryComponent::BeginPlay()
@@ -29,7 +43,11 @@ void UInventoryComponent::BeginPlay()
 	//InventorySlotsCapacity
 	ItemPool->CreateItem(100);
 
+	ItemCarouselWidget = CreateWidget<UItemCarouselWidget>(GetWorld(), LootingItemWidgetFactory);
+	ItemCarouselWidget->AddToViewport();
 }
+
+//
 
 void UInventoryComponent::ReleaseInventory(UItemBase* ItemIn)
 {
@@ -438,7 +456,19 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		if(!InputItem->NumericData.bIsStackable)
 		{
 			// 아이템을 담을 수 있는 지 체크하고 반환한다.
-			return HandelNonStackableItems(InputItem);
+			FItemAddResult Result = HandelNonStackableItems( InputItem );
+
+			switch (Result.OperationResult)
+			{
+
+			case EItemAddResult::IAR_PartialAmoutItemAdded:
+			case EItemAddResult::IAR_AllItemAdded:
+				ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name, InitialRequestedAddAmount, InputItem->GetAssetData().Icon );
+				break;
+			default: ;
+			}
+
+			return Result;
 		}
 
 		// 스택에 쌓이는 아이템 반환 ex) 소비 아이템 등
@@ -447,6 +477,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		// 인벤토리에 담을 수 있는 양 == 인벤토리에 담아야 하는 양
 		if(StackableAmountAdded == InitialRequestedAddAmount)
 		{
+			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount , InputItem->GetAssetData().Icon );
+
 			// 모두 인벤토리에 넣어주자.
 			return FItemAddResult::AddedAll(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Successfully added {0} {1} to the Inventory."), 
@@ -458,6 +490,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		// 인벤토리에 담을 수 있는 양 > 0 -> 인벤토리가 비어 있는 지 확인.
 		if (StackableAmountAdded < InitialRequestedAddAmount && StackableAmountAdded > 0)
 		{
+			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount , InputItem->GetAssetData().Icon );
+
 			// 부분만 인벤토리에 넣어주자.
 			return FItemAddResult::AddedPartial(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Partial amount of {0} added to thie Inventory. Number added {1}"), 
@@ -477,6 +511,36 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 	//Owner가 없을 때 프로젝트를 다운시킨다.
 	check(false);
 	return FItemAddResult::AddedNone(FText::FromString("TryAddItem fallthrough error. GetOwner() check somehow failed"));
+}
+
+void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& Test)
+{
+
+	TArray<TPair<FString, int32>> ItemName;
+
+	for(const auto& Iterate : Test)
+	{
+		const int32* Value = InventoryCount.Find( Iterate.Key );
+
+		if(!Value || *Value < Iterate.Value)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UInventoryComponent::HandelRemoveItem() -> Not Enough Item Quantity"));
+			return;
+		}
+
+		ItemName.Add( { Iterate.Key, Iterate.Value } );
+	}
+
+	if (GetOwner())
+	{
+		int32 Index = 0;
+		for(TPair<FString , int32> Items : ItemName)
+		{
+			DeleteItem( Items.Key , Items.Value, Index );
+		}
+
+		OnInventoryUpdated.Broadcast();
+	}
 }
 
 
@@ -524,7 +588,7 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 
 
 	FString ItemName = Item->GetTextData().Name.ToString();
-	const int* ElemPtr = InventoryCount.Find( ItemName );
+	const int32* ElemPtr = InventoryCount.Find( ItemName );
 
 	if (ElemPtr)
 		InventoryCount[ItemName] += AmountToAdd;
@@ -543,6 +607,82 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 	}
 	
 	//OnInventoryUpdated.Broadcast();
+}
+
+void UInventoryComponent::DeleteItem(const FString& ItemName, const int32 AmountToAdd, const int32 SearchInventoryIndex)
+{
+	int32 Index = SearchInventoryIndex;
+	int32 ToAdd = AmountToAdd;
+
+	while(ToAdd)
+	{
+		UItemBase* ExistingItemStack = nullptr;
+
+		for (; Index < InventoryContents.Num(); ++Index)
+		{
+			if (!InventoryContents[Index])
+				continue;
+
+			if (InventoryContents[Index]->TextData.Name.ToString() == ItemName)
+			{
+				ExistingItemStack = InventoryContents[Index];
+				break;
+			}
+		}
+
+		if(!ExistingItemStack)
+			break;
+
+
+
+		const int32 Quantity = ExistingItemStack->GetNumericData().bIsStackable ? ExistingItemStack->GetQuantity() : 1;
+
+		// 인벤토리의 무게를 줄여주자.
+		InventoryTotalWeight -= ExistingItemStack->GetItemSingleWeight() * Quantity;
+
+
+		ExistingItemStack->SetQuantity( FMath::Min(0, ExistingItemStack->GetQuantity() - ToAdd ));
+
+		if (int32* ElemPtr = InventoryCount.Find( ItemName ))
+		{
+			*ElemPtr -= Quantity;
+
+			if (*ElemPtr == 0)
+				InventoryCount.Remove( ItemName );
+		}
+
+		ToAdd -= Quantity;
+		
+		// 만약 아이템 슬롯에 있는 아이템을 다 비웠으면
+		if (ExistingItemStack->GetQuantity() <= 0)
+		{
+			ItemPool->ReturnItem(ExistingItemStack);
+
+			// InventoryComponent를 비워주자.
+			ExistingItemStack->OwningInventory = nullptr;
+			// 인벤토리에 아이템 수량이 0인 인벤토리의 인덱스를 비워주자.
+			InventoryContents[Index] = nullptr;
+
+			// PlayerMainHUD를 가져오자.
+			if (const ADoLupiaHUD* HUD = Cast<ADoLupiaHUD>( GetWorld()->GetFirstPlayerController()->GetHUD() ))
+			{
+				// HUD에 InventoryPanel를 가져와서 Inventory Widget을 업데이트 시켜주자.
+				if (UInventoryPannel* InventoryPanel = HUD->GetMainMeun()->GetInventoryPanel())
+					InventoryPanel->RefreshInventoryPannel( Index , nullptr );
+			}
+		}
+		else
+		{
+			// PlayerMainHUD를 가져오자.
+			if (const ADoLupiaHUD* HUD = Cast<ADoLupiaHUD>( GetWorld()->GetFirstPlayerController()->GetHUD() ))
+			{
+				// HUD에 InventoryPanel를 가져와서 Inventory Widget을 업데이트 시켜주자.
+				if (UInventoryPannel* InventoryPanel = HUD->GetMainMeun()->GetInventoryPanel())
+					InventoryPanel->RefreshInventoryPannel( Index , ExistingItemStack );
+			}
+		}
+	}
+
 }
 
 void UInventoryComponent::SortItem_Name()
@@ -596,99 +736,30 @@ void UInventoryComponent::SortItem_Name()
 		{
 			while (Iterate.Value)
 			{
-				CopyItemBase = ItemPool->GetItem( Iterate.Key );
 				const int32 AddNum = FMath::Min( Iterate.Value , CopyItemBase->GetNumericData().MaxStackSize );
 				CopyItemBase->SetQuantity( AddNum );
 				Iterate.Value -= AddNum;
 				HandelStackableItems( CopyItemBase , AddNum );
 				CopyItemBase->ResetItemFlags();
+				CopyItemBase = ItemPool->GetItem( Iterate.Key );
 			}
 		}
 		else
 		{
 			while (Iterate.Value--)
 			{
-				CopyItemBase = ItemPool->GetItem( Iterate.Key );
 				CopyItemBase->SetQuantity( 1 );
 				HandelNonStackableItems( CopyItemBase );
 				CopyItemBase->ResetItemFlags();
+				CopyItemBase = ItemPool->GetItem( Iterate.Key );
 			}
 
 		}
+
+		ItemPool->ReturnItem(CopyItemBase);
 
 		InventoryCount[Iterate.Key] /= 2;
 	}
-
-
-	/*for(int32 i = 0; i < Pairs.Num(); ++i)
-	{
-		int32 Count = Pairs[i].Get<2>();
-		FString Name = Pairs[i].Get<0>();
-
-		const TObjectPtr<UItemBase> ItemBase = Pairs[i].Get<1>();
-		TObjectPtr<UItemBase> CopyItemBase = nullptr;
-
-		if(ItemBase->GetNumericData().bIsStackable && ItemBase->GetNumericData().MaxStackSize)
-		{
-			while (Count)
-			{
-				CopyItemBase = ItemPool->GetItem( ItemBase );
-				const int32 AddNum = FMath::Min( Count , ItemBase->GetNumericData().MaxStackSize );
-				CopyItemBase->SetQuantity( AddNum );
-				Count -= AddNum;
-				HandelStackableItems( CopyItemBase , AddNum );
-				CopyItemBase->ResetItemFlags();
-			}
-
-		}
-			
-
-		else
-		{
-			while (Count--)
-			{
-				CopyItemBase = ItemPool->GetItem(ItemBase);
-				CopyItemBase->SetQuantity(1);
-				HandelNonStackableItems( CopyItemBase );
-				CopyItemBase->ResetItemFlags();
-			}
-				
-		}
-
-		InventoryCount[Name] /= 2;
-		
-	}*/
-
-
-
-	//Algo::Sort( InventoryContents , []( UItemBase* A, UItemBase* B ) 
-	//{
-	//	// A가 nullptr이면 B가 앞으로 가야 하므로 false 반환
-	//	if (!A) return false;
-	//	// B가 nullptr이면 A가 앞으로 가야 하므로 true 반환
-	//	if (!B) return true;
-
-	//	const FString& SourItemName = A->GetTextData().Name.ToString();
-	//	const FString& DestItemName = B->GetTextData().Name.ToString();
-
-	//	if(SourItemName == DestItemName)
-	//	{
-	//		if (!A->IsFullItemStack() && !B->IsFullItemStack())
-	//		{
-	//			const int32 SourQuantity = A->GetQuantity();
-	//			const int32 DestQuantity = B->GetQuantity();
-
-	//			const int32 MaxSize = A->GetNumericData().MaxStackSize;
-	//			const int32 Quota = FMath::Clamp(MaxSize, DestQuantity, MaxSize - SourQuantity);
-	//			A->SetQuantity( SourQuantity + Quota );
-	//			B->SetQuantity( DestQuantity - Quota );
-	//			return false;
-	//		}
-	//	}
-
-
-	//	return SourItemName < DestItemName;
-	//});
 
 	// PlayerMainHUD를 가져오자.
 	if (const ADoLupiaHUD* HUD = Cast<ADoLupiaHUD>( GetWorld()->GetFirstPlayerController()->GetHUD() ))
