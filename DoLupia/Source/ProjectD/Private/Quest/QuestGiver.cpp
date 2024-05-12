@@ -22,8 +22,7 @@ UQuestGiver::UQuestGiver()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// 데이터 테이블 로드
-    UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestData.QuestData" ) );
-
+    UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
 	if (DataTable)
 	{
 		// 데이터 테이블이 성공적으로 로드된 경우 작업 수행
