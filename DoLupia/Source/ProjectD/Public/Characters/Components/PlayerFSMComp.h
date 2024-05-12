@@ -59,7 +59,7 @@ public:
 	FORCEINLINE EPlayerState GetCurrentState() const { return CurrentState; }
 	void CheckState(EPlayerState _state);
 	void ChangePlayerState(EPlayerState _state);
-
+	bool CanChangeState(EPlayerState _changeState);
 
 
 	// <--------------------- IDLE --------------------->
@@ -68,11 +68,48 @@ private:
 public:
 	
 
+	
 	// <--------------------- Move --------------------->
 private:
 
 public:
 	void TickMove();
+	bool CanMoveState(EPlayerState _CurrentState);
+
 
 	
+	// <--------------------- Attack --------------------->
+private:
+
+public:
+	bool CanAttackState(EPlayerState _CurrentState);
+
+	
+	// <--------------------- Damage --------------------->
+private:
+
+public:
+	bool CanDamageState(EPlayerState _CurrentState);
+
+	
+	
+	// <--------------------- Evasion --------------------->
+private:
+
+public:
+	bool CanEvasionState(EPlayerState _CurrentState);
+
+
+	// <--------------------- TalkNPC --------------------->
+private:
+
+public:
+	bool CanTalkNPCState(EPlayerState _CurrentState);
+	
+
+	// <--------------------- Die --------------------->
+private:
+
+public:
+	bool CanDieState(EPlayerState _CurrentState);
 };
