@@ -41,9 +41,7 @@ void AStrikeMonster::BeginPlay()
 void AStrikeMonster::AttackState()
 {
 	Super::AttackState();
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
-
-	MoveToTarget();
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
 }
 
 
