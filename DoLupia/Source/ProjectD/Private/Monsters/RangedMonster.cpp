@@ -32,9 +32,11 @@ void ARangedMonster::BeginPlay()
 	Super::BeginPlay();
 
 	this->MonsterType = EMonsterType::Ranged;
+	MonsterFSM->state = EMonsterState::Patrol;
 	//원거리 몬스터 기본 설정
 	this->maxHP = 150;
-	this->AttackRange = 800;
+	this->AttackRange = 1000;
+	this->attackDelayTime = 7;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 }
 
@@ -42,25 +44,17 @@ void ARangedMonster::BeginPlay()
 
 void ARangedMonster::AttackState()
 {
-	//Super::AttackState();
+	Super::AttackState();
 
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
 
-	
-	anim->animState = MonsterFSM->state;
 
-	currentTime += GetWorld()->GetDeltaSeconds();
-	if(currentTime>attackDelayTime)
-	{
-		anim->bAttackDelay = true;
-		currentTime = 0;
-	}
-	
-	anim->bAttackDelay = false;
-	MoveToTarget();
-	
+}
 
-	if (TargetVector.Size() > AttackRange) {
-		MonsterFSM->state = EMonsterState::Move;
-	}
+void ARangedMonster::RangedAttack()
+{
+	// 마법 bullet 발사, notify 시점에
+	// 만약 플레이어와 충돌하면 플레이어 hp 감소
+	// 10초 뒤 bullet 파괴
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MagicAttack()" ) );
 }

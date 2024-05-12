@@ -20,6 +20,8 @@ private:
 protected:
 
 public:
+	UPlayerSkillUlt();
+	
 	virtual void Execute() override;
 	virtual void ApplySkill(class ACharacter* Target) override;
 };

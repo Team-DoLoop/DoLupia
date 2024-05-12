@@ -23,7 +23,4 @@ class PROJECTD_API IDamageInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void TakeDamage(float Damage) = 0;
-
-	virtual void ApplyBleedingEffect() {};
-	virtual void ApplyPoisonEffect() {};
 };

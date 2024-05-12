@@ -21,6 +21,8 @@ private:
 protected:
 
 public:
+	UPlayerSkillCastingHitDown();
+	
 	virtual void Execute() override;
 	virtual void ApplySkill(class ACharacter* Target) override;
 };

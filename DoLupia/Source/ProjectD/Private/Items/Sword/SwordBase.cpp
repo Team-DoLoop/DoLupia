@@ -12,6 +12,7 @@ ASwordBase::ASwordBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SwordStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sword Static Mesh"));
+	SetRootComponent(SwordStaticMesh);
 }
 
 

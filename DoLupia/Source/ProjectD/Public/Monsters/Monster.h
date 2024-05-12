@@ -75,10 +75,11 @@ public:
 	virtual void DamageState();
 	virtual void DieState();
 
+	bool bHasTarget = false;
 
 	//일정 반경 안에 들어오면 플레이어를 향해 이동
 	UPROPERTY( EditAnywhere )
-	float TargetRange = 900;
+	float TargetRange = 1500;
 
 	//일정 반경 안에 들어오면 공격모드로 전환
 	UPROPERTY( EditAnywhere )
@@ -88,5 +89,10 @@ public:
 
 	void OnMyTakeDamage(int damage);
 
+	UPROPERTY( EditAnywhere )
+	float attackDelayTime = 3;
+
 	float currentTime = 0;
+
+	bool bOnceAttack = false;
 };

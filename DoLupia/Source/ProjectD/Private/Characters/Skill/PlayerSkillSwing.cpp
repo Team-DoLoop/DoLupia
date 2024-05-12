@@ -3,6 +3,15 @@
 
 #include "Characters/Skill/PlayerSkillSwing.h"
 
+UPlayerSkillSwing::UPlayerSkillSwing()
+{
+	SkillName = "Swing";
+	SkillLevel = 1;
+	SkillCost = 10;
+	SkillCoolTime = 5;
+	SkillDamage = 10;
+}
+
 void UPlayerSkillSwing::Execute()
 {
 	Super::Execute();

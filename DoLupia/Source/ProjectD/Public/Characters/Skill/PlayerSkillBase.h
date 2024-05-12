@@ -18,22 +18,25 @@ class PROJECTD_API UPlayerSkillBase : public UObject, public ISkillInterface
 private:
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	FString SkillName = "";
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillLevel = 0;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillCost = 0;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillCoolTime = 0;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillDamage = 0;
 
 public:
+	UPlayerSkillBase();
+
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	FString SkillName;
+
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	int32 SkillLevel;
+
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	int32 SkillCost;
+
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	int32 SkillCoolTime;
+
+	UPROPERTY(VisibleAnywhere, Category = "Skill")
+	int32 SkillDamage;
+	
 	virtual void Execute() override;
 	virtual void ApplySkill(ACharacter* Target) override;
 };

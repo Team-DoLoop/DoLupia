@@ -31,5 +31,19 @@ public:
 	//virtual void MoveState() override;
 	virtual void AttackState() override;
 
-	float attackDelayTime = 3;
+	float attackDelayTime = 6;
+
+	UPROPERTY( EditAnywhere )
+	float DelayTime = 3;
+
+	//Looping 여부
+	UPROPERTY( EditAnywhere )
+	bool bIsLoop = true;
+
+	//원거리 공격
+	void RangedAttack();
+
+	float currentTimeRM = 0;
+
+	
 };

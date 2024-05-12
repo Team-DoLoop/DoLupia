@@ -72,8 +72,15 @@ void AMonster::Tick(float DeltaTime)
 	FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
 	FVector dir = camLoc - healthUI->GetComponentLocation();
 	dir.Normalize();
-
 	healthUI->SetWorldRotation( dir.ToOrientationRotator() );
+
+	//항상 플레이어를 바라보도록 회전
+	FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
+	rot.Normalize();
+	if(bHasTarget)
+	{
+		this->SetActorRotation( rot.ToOrientationRotator() );
+	}
 }
 
 
@@ -93,7 +100,7 @@ void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 void AMonster::PatrolState()
 {
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
 	//애니메이션 상태 업데이트
 	anim->animState = MonsterFSM->state;
 
@@ -102,54 +109,72 @@ void AMonster::PatrolState()
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
 	if (TargetVector.Size() < TargetRange) {
 		MonsterFSM->state = EMonsterState::Move;
+		anim->animState = MonsterFSM->state;
+		bHasTarget = true;
 	}
 }
 
 void AMonster::MoveState()
 {
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( " AMonster::MoveState()" ) );
-	anim->animState = MonsterFSM->state;
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( " AMonster::MoveState()" ) );
 	//플레이어 방향으로 이동
 	MoveToTarget();
+
 	if (TargetVector.Size() < AttackRange) {
 		MonsterFSM->state = EMonsterState::Attack;
+		anim->animState = MonsterFSM->state;
+		anim->bAttackDelay = true;
+		currentTime = attackDelayTime;
 	}
 }
 
 void AMonster::AttackState()
 {
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
+	currentTime += GetWorld()->GetDeltaSeconds();
+	TargetVector = target->GetActorLocation() - this->GetActorLocation();
 
-	//MoveToTarget();
-	//anim->animState = MonsterFSM->state;
-
-	if (TargetVector.Size() > AttackRange) {
-		MonsterFSM->state = EMonsterState::Move;
+	if(currentTime>attackDelayTime)
+	{
+		currentTime = 0;
+		anim->bAttackDelay = true;
+		bOnceAttack = true;
 	}
+
+	if(bOnceAttack)
+	{
+		if (TargetVector.Size() > AttackRange) {
+			MonsterFSM->state = EMonsterState::Move;
+			anim->animState = MonsterFSM->state;
+			bOnceAttack = false;
+		}
+	}
+
 }
 
 void AMonster::DamageState()
 {
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DamageState()" ) );
-	anim->animState = MonsterFSM->state;
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DamageState()" ) );
+
 	currentTime += GetWorld()->GetDeltaSeconds();
-	if (currentTime > 1)
+	if (currentTime > 1.5)
 	{
 		MonsterFSM->state = EMonsterState::Move;
 		this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 		currentTime = 0;
+		anim->animState = MonsterFSM->state;
 	}
 
 }
 
 void AMonster::DieState()
 {
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DieState()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DieState()" ) );
 
 	anim->animState = MonsterFSM->state;
 
 	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
-	//죽음 애니메이션 끝난 후 destroy..이것도 die delay로 구현?
+	//죽음 애니메이션 끝난 후 destroy
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 4)
 	{
@@ -167,12 +192,14 @@ void AMonster::MoveToTarget()
 
 	FRotator MonsterRotation = FRotationMatrix::MakeFromX( TargetVector ).Rotator();
 	this->SetActorRotation( MonsterRotation );
+
 }
 
 void AMonster::OnMyTakeDamage(int damage)
 {
 	currentHP -= damage;
 	monsterHPWidget->SetHP( currentHP , maxHP );
+	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 
 	if (currentHP < 0)
 	{
@@ -188,7 +215,7 @@ void AMonster::OnMyTakeDamage(int damage)
 	{
 		MonsterFSM->state = EMonsterState::Die;
 	}
-
+	anim->animState = MonsterFSM->state;
 	// 충돌체 끄기
 	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
