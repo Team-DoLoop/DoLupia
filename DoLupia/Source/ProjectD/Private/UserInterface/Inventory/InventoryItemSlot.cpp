@@ -3,12 +3,12 @@
 
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 
+#include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Items/ItemBase.h"
-#include "Items/Sword/LongSword.h"
 #include "UserInterface/Inventory/DragItemVisual.h"
 #include "UserInterface/Inventory/InventoryTooltip.h"
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
@@ -45,6 +45,7 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 		{
 
 			UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory();
+			AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( ItemReference->GetOwningInventory()->GetOwner() );
 
 			switch (ItemReference->GetItemType())
 			{
@@ -54,18 +55,14 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 			case EItemType::Weapon:
 				// 나중에 속성만 바꾸기
 				{
-					FVector SowrdTestLocation = FVector( 1350.0 , 1820.0 , 0.0 );
-
-					ALongSword* LongSwordTest = GetWorld()->SpawnActor<ALongSword>
-					( ALongSword::StaticClass(), SowrdTestLocation,  FRotator::ZeroRotator);
 
 					// 만약 내가 검을 장착하고 있다면?
 						// -> 내가 장착할 검과 현재 장착한 검의 속성만 바꿔주고 적용하기
 
 					// 검을 장착하고 있지 않다면?
 						// -> 장착할 검의 속성을 그대로 넣어주고 인벤토리 아이템을 비워주기
-
-					LongSwordTest->ReceiveItemData(ItemReference);
+					
+					MyCharacter->SwitchLongSword(ItemReference);
 					InventoryComponent->RemoveAmountOfItem(ItemReference , 1);
 					InventoryComponent->ReleaseInventory(ItemReference);
 					ResetItemSlot();
@@ -243,4 +240,6 @@ void UInventoryItemSlot::ResetItemSlot()
 	if (ItemReference)
 		ItemReference = nullptr;
 
+	int32 zxc = 0;
+	ItemQuantity->SetText(FText::FromString(FString::FromInt(zxc)));
 }

@@ -89,7 +89,6 @@ AProjectDCharacter::AProjectDCharacter()
 	
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
-	PlayerQuestInventory = CreateDefaultSubobject<UQuestInventoryComponent>( TEXT( "PlayerQuestInventory" ) );
 
 	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
 
@@ -388,7 +387,12 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	}
 }
 
-	// <---------------------- Item ---------------------->
+void AProjectDCharacter::SwitchLongSword(UItemBase* ItemBase)
+{
+	LongSword->ReceiveItemData(ItemBase);
+}
+
+// <---------------------- Item ---------------------->
 void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
 	if(PlayerInventory->FindMatchItem(ItemToDrop))
