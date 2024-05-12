@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Quest/WidgetQuestGiver.h"
+#include "UserInterface/Quest/WidgetQuestGiver.h"
 
 #include "Characters/ProjectDCharacter.h"
 #include "Components/Button.h"
@@ -9,7 +9,7 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Components/VerticalBox.h"
 #include "Quest/QuestLogComponent.h"
-#include "Quest/WidgetQuestLog_Objective.h"
+#include "UserInterface/Quest/WidgetQuestLog_Objective.h"
 
 void UWidgetQuestGiver::NativePreConstruct()
 {
@@ -115,7 +115,6 @@ void UWidgetQuestGiver::OnAcceptClicked()
     {
         UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ WidgetQuestGiver" ) );
     }
-    UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestID.ToString() );
 
     // 컴포넌트가 유효할 경우, 퀘스트를 추가합니다.
     // 수락을 하면!!!!!

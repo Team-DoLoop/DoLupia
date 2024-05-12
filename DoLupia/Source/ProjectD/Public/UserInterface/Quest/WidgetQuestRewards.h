@@ -3,27 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Struct_QuestSystem.h"
 #include "Blueprint/UserWidget.h"
-#include "WidgetQuestGiver.generated.h"
+#include <Quest/Struct_QuestSystem.h>
+#include "WidgetQuestRewards.generated.h"
 
 class UWidgetQuestLog_Objective;
 class UVerticalBox;
-/**
- * 
- */
+
 UCLASS()
-class PROJECTD_API UWidgetQuestGiver : public UUserWidget
+class PROJECTD_API UWidgetQuestRewards : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
 public:
-
-    virtual auto NativePreConstruct() -> void override;
-
-    virtual void NativeConstruct() override;
-
-    virtual void NativeDestruct() override;
+	virtual void NativePreConstruct() override; // 함수 시그니처 정리
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
     UFUNCTION()
     void OnAcceptClicked();
@@ -32,14 +27,14 @@ public:
     void OnDeclineClicked();
 
     UPROPERTY( EditAnywhere ) //expose on spawn
-	FQuestDetails QuestDetails;
+    FQuestDetails QuestDetails;
 
     UPROPERTY( EditAnywhere ) //expose on spawn
-	FName QuestID;
+    FName QuestID;
 
-    UPROPERTY( meta = (BindWidget) )
-    UVerticalBox* box_Objectives;
-	
+    //UPROPERTY( meta = (BindWidget) )
+    //UVerticalBox* box_Objectives;
+
 protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
     class UTextBlock* txt_QuestName;

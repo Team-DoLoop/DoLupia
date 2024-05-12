@@ -1,12 +1,12 @@
-﻿#include "Quest/WidgetQuestLog.h" // 클래스에 대한 헤더
+﻿#include "UserInterface/Quest/WidgetQuestLog.h" // 클래스에 대한 헤더
 
 #include "Characters/ProjectDCharacter.h"
 #include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetSwitcher.h"
 #include "Quest/QuestLogComponent.h" // QuestLogComponent에 대한 헤더
-#include "Quest/WidgetQuestLog_QuestEntry.h"
-#include "Quest/WidgetQuestLog_Objective.h"
+#include "UserInterface/Quest/WidgetQuestLog_QuestEntry.h"
+#include "UserInterface/Quest/WidgetQuestLog_Objective.h"
 
 // 필요하다면 다른 인클루드 추가
 #include "Components/Button.h" // 버튼 사용

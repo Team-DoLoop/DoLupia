@@ -10,7 +10,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Quest/QuestLogComponent.h"
 #include "Quest/Struct_QuestSystem.h"
-#include "Quest/WidgetQuestGiver.h"
+#include "UserInterface/Quest/WidgetQuestGiver.h"
+#include "UserInterface/Quest/WidgetQuestRewards.h"
+#include "Quest/Quest_Base.h"
 
 // Sets default values for this component's properties
 UQuestGiver::UQuestGiver()
@@ -71,16 +73,50 @@ FString UQuestGiver::InteractWith()
         return FString( TEXT( "QuestComponent not found or cast failed." ) );
     }
 
-    if (!QuestComponent->QueryActiveQuest( QuestData.RowName ))
+    UE_LOG( LogTemp , Error , TEXT( "QuestData.RowName %s" ) , *QuestData.RowName.ToString() );
+
+    bool ActiveQuest = QuestComponent->QueryActiveQuest( QuestData.RowName );
+
+    if (!ActiveQuest)
     {
         //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
+        UE_LOG( LogTemp , Error , TEXT( "!QuestComponent->QueryActiveQuest( QuestData.RowName )" ) );
         DisplayQuest();
         return GetOwner()->GetName();
     }
     else
     {
-        GEngine->AddOnScreenDebugMessage( -1 , 5.0f , FColor::Red , TEXT( "Already on Quest" ) );
-        return GetOwner()->GetName();
+        if (QuestComponent == nullptr)
+        {
+            UE_LOG( LogTemp , Error , TEXT( "QuestComponent not found or cast failed." ) );
+            return FString( TEXT( "QuestComponent not found or cast failed." ) );
+        }
+
+        AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName );
+        if (CompleteValuePtr)
+        {
+            UE_LOG( LogTemp , Error , TEXT( "AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName )" ) );
+            if (CompleteValuePtr->IsCompleted) 
+            {
+                UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
+                //완료가 true이면
+                DisplayRewards();
+                return GetOwner()->GetName();
+            }
+            /*
+                else 
+            {
+                UE_LOG( LogTemp , Error , TEXT( " DisplayQuest();" ) );
+                //false이면
+                DisplayQuest();
+                return GetOwner()->GetName();
+            }
+            */
+               
+        }
+
+        // 모든 조건을 처리한 후에도 값을 반환하지 않았으므로 기본값을 반환합니다.
+        return FString( TEXT( "InteractWith function did not return a valid value." ) );
     }
 }
 
@@ -95,8 +131,22 @@ void UQuestGiver::DisplayQuest()
         {
 	        QuestWidget->QuestDetails = *Row;
             QuestWidget->QuestID = QuestData.RowName;
-            UE_LOG( LogTemp , Error , TEXT( "QuestID: %s" ) , *QuestData.RowName.ToString() );
 			QuestWidget->AddToViewport(); // 위젯을 화면에 추가
         }
     }
+}
+
+void UQuestGiver::DisplayRewards()
+{
+    FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+    if (Row)
+    {
+        RewardsWidget = CreateWidget<UWidgetQuestRewards>( GetWorld() , QuestRewardsWidget );
+        if (RewardsWidget)
+        {
+            RewardsWidget->QuestDetails = *Row;
+            RewardsWidget->QuestID = QuestData.RowName;
+            RewardsWidget->AddToViewport();
+        }
+    }   
 }
