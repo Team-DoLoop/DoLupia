@@ -20,26 +20,34 @@ void APickup::BeginPlay()
 	Super::BeginPlay();
 
 	InitializePickup(UItemBase::StaticClass(), ItemQuantity);
+
+	if (ItemDataTable)
+	{
+		if (const FItemData* ItemData = ItemDataTable->FindRow<FItemData>( DesiredItemID , DesiredItemID.ToString() ))
+		{
+			PickUpMesh->SetStaticMesh( ItemData->AssetData.Mesh );
+		}
+	}
 	
 }
 
-void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	const FName ChangePropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-
-	if(ChangePropertyName == GET_MEMBER_NAME_CHECKED(APickup, DesiredItemID))
-	{
-		if(ItemDataTable)
-		{
-			if(const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(DesiredItemID, DesiredItemID.ToString()))
-			{
-				PickUpMesh->SetStaticMesh(ItemData->AssetData.Mesh);
-			}
-		}
-	}
-}
+//void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+//{
+//	Super::PostEditChangeProperty(PropertyChangedEvent);
+//
+//	const FName ChangePropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+//
+//	if(ChangePropertyName == GET_MEMBER_NAME_CHECKED(APickup, DesiredItemID))
+//	{
+//		if(ItemDataTable)
+//		{
+//			if(const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(DesiredItemID, DesiredItemID.ToString()))
+//			{
+//				PickUpMesh->SetStaticMesh(ItemData->AssetData.Mesh);
+//			}
+//		}
+//	}
+//}
 
 void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
 {
