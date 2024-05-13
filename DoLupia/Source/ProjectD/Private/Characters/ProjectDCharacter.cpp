@@ -392,7 +392,7 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 
 void AProjectDCharacter::SwitchLongSword(UItemBase* ItemBase)
 {
-	LongSword->ReceiveItemData(ItemBase);
+	Sword->ReceiveItemData(ItemBase);
 }
 
 // <---------------------- Item ---------------------->
