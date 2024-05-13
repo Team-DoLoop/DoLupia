@@ -9,6 +9,7 @@
 
 //engine
 #include "Algo/Sort.h"
+#include "Characters/ProjectDCharacter.h"
 #include "UserInterface/Item/ItemCarouselWidget.h"
 
 
@@ -39,6 +40,8 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	player = Cast<AProjectDCharacter>( GetOwner() );
 
 	//InventorySlotsCapacity
 	ItemPool->CreateItem(100);
@@ -450,7 +453,7 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 	if(GetOwner())
 	{
 		// 아이템의 수량
-		const int32 InitialRequestedAddAmount = InputItem->Quantity;
+		int32 InitialRequestedAddAmount = InputItem->Quantity;
 
 		// 스택에 쌓이지 않는 아이템 반환 ex) 무기, 방어구 등
 		if(!InputItem->NumericData.bIsStackable)
@@ -462,8 +465,14 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 			{
 
 			case EItemAddResult::IAR_PartialAmoutItemAdded:
+				ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount - InputItem->Quantity , InputItem->GetAssetData().Icon );
+				player->OnObjectiveIDCalled.Broadcast( InputItem->GetTextData().Name.ToString() , InputItem->Quantity );
+
+				break;
 			case EItemAddResult::IAR_AllItemAdded:
 				ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name, InitialRequestedAddAmount, InputItem->GetAssetData().Icon );
+				player->OnObjectiveIDCalled.Broadcast( InputItem->GetTextData().Name.ToString() , InputItem->Quantity );
+
 				break;
 			default: ;
 			}
@@ -478,6 +487,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		if(StackableAmountAdded == InitialRequestedAddAmount)
 		{
 			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount , InputItem->GetAssetData().Icon );
+			const FString& ItemName = InputItem->GetTextData().Name.ToString();
+			player->OnObjectiveIDCalled.Broadcast( ItemName , InitialRequestedAddAmount );
 
 			// 모두 인벤토리에 넣어주자.
 			return FItemAddResult::AddedAll(InitialRequestedAddAmount, FText::Format
@@ -490,12 +501,14 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		// 인벤토리에 담을 수 있는 양 > 0 -> 인벤토리가 비어 있는 지 확인.
 		if (StackableAmountAdded < InitialRequestedAddAmount && StackableAmountAdded > 0)
 		{
-			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount , InputItem->GetAssetData().Icon );
-
+			int AddedAmount = InitialRequestedAddAmount - StackableAmountAdded;
+			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , AddedAmount , InputItem->GetAssetData().Icon );
+			const FString& ItemName = InputItem->GetTextData().Name.ToString();
+			player->OnObjectiveIDCalled.Broadcast( ItemName , AddedAmount );
 			// 부분만 인벤토리에 넣어주자.
 			return FItemAddResult::AddedPartial(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Partial amount of {0} added to thie Inventory. Number added {1}"), 
-			InputItem->GetTextData().Name, InitialRequestedAddAmount));
+			InputItem->GetTextData().Name, AddedAmount ));
 		}
 
 		// 인벤토리가 꽉 차있다면

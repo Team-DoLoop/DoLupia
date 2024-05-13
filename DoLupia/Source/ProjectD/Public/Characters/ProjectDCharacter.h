@@ -81,6 +81,9 @@ private:
 	UPROPERTY()
 	class ASwordBase* Sword;
 
+	UPROPERTY(VisibleAnywhere)
+	class UGadgetComponent* Gadget;
+
 protected:
 	
 public:
@@ -173,7 +176,8 @@ public:
 public:
 	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 	void UpdateInteractionWidget() const;
-	void SwitchLongSword(UItemBase* ItemBase);
+	void SwitchLongSword( UItemBase* ItemBase ); // 나중에 공격 연동되면 삭제 예정.
+	class UItemBase* SwitchEquipItem(UItemBase* ItemBase);
 	
 
 	// <---------------------- Inventory ---------------------->	

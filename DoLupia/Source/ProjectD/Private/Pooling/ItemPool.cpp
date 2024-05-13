@@ -55,7 +55,7 @@ UItemBase* UItemPool::GetItem(const FString& ItemID)
     }
     else
     {
-        RetrievedItem = NewObject<UItemBase>(this);  // 풀이 비어 있다면 새로운 아이템 생성
+        RetrievedItem = NewObject<UItemBase>(this, UItemBase::StaticClass());  // 풀이 비어 있다면 새로운 아이템 생성
     }
 
     RetrievedItem->CreateItemCopy(ItemManager[ItemID]); // 풀이 있다면 객체 속성 복사

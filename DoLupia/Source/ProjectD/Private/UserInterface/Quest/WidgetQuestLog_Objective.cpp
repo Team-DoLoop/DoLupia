@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Quest/WidgetQuestLog_Objective.h"
+#include "UserInterface/Quest/WidgetQuestLog_Objective.h"
 
 #include "Components/CheckBox.h"
 #include "Components/TextBlock.h"

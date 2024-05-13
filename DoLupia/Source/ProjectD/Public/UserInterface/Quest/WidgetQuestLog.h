@@ -2,8 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h" // UUserWidget 정의
-#include "Struct_QuestSystem.h" // FDataTableRowHandle 포함
 #include "Components/VerticalBox.h"
+#include <Quest/Struct_QuestSystem.h>
 #include "WidgetQuestLog.generated.h"
 
 class AQuest_Base;

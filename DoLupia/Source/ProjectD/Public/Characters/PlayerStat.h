@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+
 UCLASS()
 class PROJECTD_API APlayerStat : public APlayerState
 {
@@ -35,8 +37,14 @@ public:
 	void initPlayerData();
 	
 	FORCEINLINE int32 GetHP() const {return HP;}
-	FORCEINLINE int32 GetMP() const {return MP;}
-	FORCEINLINE int32 GetATK() const {return ATK;}
-	FORCEINLINE int32 GetDEF() const {return DEF;}
+	FORCEINLINE void  SetHP(int32 _HP) {HP = _HP;}
 	
+	FORCEINLINE int32 GetMP() const {return MP;}
+	FORCEINLINE void  SetMP(int32 _MP) {MP = _MP;}
+	
+	FORCEINLINE int32 GetATK() const {return ATK;}
+	FORCEINLINE void  SetATK(float _ATK) {ATK = _ATK;}
+	
+	FORCEINLINE int32 GetDEF() const {return DEF;}
+	FORCEINLINE void  SetDEF(float _DEF) {DEF = _DEF;}
 };

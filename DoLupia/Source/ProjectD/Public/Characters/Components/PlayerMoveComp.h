@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Characters/PlayerStateBase.h"
 #include "Components/ActorComponent.h"
 #include "PlayerMoveComp.generated.h"
 
@@ -41,6 +42,8 @@ private:
 
 	UPROPERTY()
 	class UPlayerAnimInstance* PlayerAnim;
+
+	EPlayerState state;
 	
 protected:
 
@@ -50,6 +53,7 @@ public:
 	
 	// <---------------------- Move ---------------------->
 private:
+	EPlayerState MoveState = EPlayerState::MOVE;
 	FVector CachedDestination;
 
 	// bool bIsTouch; // Is it a touch device

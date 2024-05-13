@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WidgetQuestGiver.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "Quest/QuestInteractionInterface.h"
 #include "QuestGiver.generated.h"
 
 
+class UItemBase;
 class UWidgetQuestGiver;
+class UWidgetQuestRewards;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UQuestGiver : public UActorComponent, public IQuestInteractionInterface
@@ -36,6 +37,21 @@ protected:
 	UFUNCTION()
 	void DisplayQuest();
 
+	UFUNCTION()
+	void DisplayRewards();
+
+	UFUNCTION()
+	UItemBase* CreateItem( const TSubclassOf<UItemBase> BaseClass , const int32 InQuantity );
+
+	UPROPERTY( EditInstanceOnly)
+	UDataTable* ItemDataTable;
+
+	UPROPERTY( EditInstanceOnly )
+	FName DesiredItemID;
+
+	UPROPERTY( VisibleAnywhere )
+	UItemBase* ItemReference;
+
 	UPROPERTY()
 	class AProjectDCharacter* MyPlayerCharacter;
 	UPROPERTY()
@@ -49,4 +65,11 @@ protected:
 
 	UPROPERTY()
 	UWidgetQuestGiver* QuestWidget;
+
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UWidgetQuestRewards> QuestRewardsWidget;
+
+	UPROPERTY()
+	UWidgetQuestRewards* RewardsWidget;
+
 };

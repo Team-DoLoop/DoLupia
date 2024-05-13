@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Quest/WidgetQuestLog_QuestEntry.h"
+#include "UserInterface/Quest/WidgetQuestLog_QuestEntry.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Quest/Struct_QuestSystem.h"
@@ -10,7 +10,7 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestData.QuestData" ) );
+	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
 
 	if (DataTable)
 	{
