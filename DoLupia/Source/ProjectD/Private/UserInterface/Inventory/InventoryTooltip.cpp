@@ -14,7 +14,7 @@ void UInventoryTooltip::SetupTooltip()
 
 	switch (const EItemType& MyItemType = ItemBeingHovered->GetItemType())
 	{
-	case EItemType::Armor:
+	case EItemType::Top:
 		ItemType->SetText(FText::FromString("Armor"));
 		break;
 	case EItemType::Weapon:

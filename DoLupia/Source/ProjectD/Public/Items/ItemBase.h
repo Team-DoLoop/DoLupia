@@ -44,7 +44,7 @@ public:
 	FORCEINLINE void SetAssetData(FItemAssetData _AssetData) { AssetData = _AssetData; }
 
 	FORCEINLINE const FName& GetID() const { return ID; }
-	FORCEINLINE EItemType GetItemType() { return ItemType; }
+	FORCEINLINE EItemType GetItemType() const { return ItemType; }
 	FORCEINLINE int32 GetQuantity() const { return Quantity; } 
 	FORCEINLINE EItemQuality GetItemQuality() const { return ItemQuality; }
 	FORCEINLINE const FItemStatistics& GetItemStatistics() const { return ItemStatistics; }

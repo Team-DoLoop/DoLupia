@@ -12,6 +12,7 @@
 #include "Camera/CameraComponent.h"
 #include "Characters/PlayerStat.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
+#include "Characters/Components/GadgetComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Characters/Components/InventoryComponent.h"
@@ -83,6 +84,9 @@ AProjectDCharacter::AProjectDCharacter()
 	PlayerInventory->SetSlotsCapacity(20);
 	PlayerInventory->SetWeightCapacity(50.0f);
 
+	// Gadget
+	Gadget = CreateDefaultSubobject<UGadgetComponent>(TEXT("Gadget"));
+
 	// Interaction
 	InteractionCheckFrequency = 0.1f;
 	InteractionCheckDistance = 225.0f;
@@ -115,12 +119,14 @@ void AProjectDCharacter::BeginPlay()
 	}
 
 	// Sword
-	FName SwordSocket(TEXT("SwordSocket"));
-	Sword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != Sword)
-	{
-		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
-	}
+	//FName SwordSocket(TEXT("SwordSocket"));
+	//Sword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	//if (nullptr != Sword)
+	//{
+	//	Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
+	//}
+
+	Gadget->InitEquip();
 
 	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
 	if(PlayerStat)
@@ -393,6 +399,11 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 void AProjectDCharacter::SwitchLongSword(UItemBase* ItemBase)
 {
 	Sword->ReceiveItemData(ItemBase);
+}
+
+UItemBase* AProjectDCharacter::SwitchEquipItem(UItemBase* ItemBase)
+{
+	return Gadget->ChangeItem(ItemBase);
 }
 
 // <---------------------- Item ---------------------->
