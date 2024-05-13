@@ -85,7 +85,7 @@ protected:
 	
 public:
 	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
-
+	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 	
 
 	// <---------------------- UI ---------------------->

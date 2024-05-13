@@ -23,11 +23,13 @@ class PROJECTD_API UPlayerAnimInstance : public UAnimInstance
 private:
 	UPROPERTY()
 	class AProjectDCharacter* Player;
+	class UGadgetComponent* Gadget;
 
 public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerState State;
+
 	
 
 	
