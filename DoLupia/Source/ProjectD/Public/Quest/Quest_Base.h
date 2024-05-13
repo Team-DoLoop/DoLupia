@@ -47,6 +47,9 @@ public:
 	void IsObjectiveComplete( FString ObjectiveID );
 
 	UFUNCTION()
+	bool AreObjectivesComplete();
+
+	UFUNCTION()
 	FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID );
 
 	UPROPERTY(EditAnywhere) //expose on spawn 안됨
@@ -73,4 +76,8 @@ public:
 	//블루프린트에서 넣어줘야해!!!!!
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UWidgetQuestNotification> Notification_Widget;
+
+protected:
+	bool Local_AllComplete;
+
 };
