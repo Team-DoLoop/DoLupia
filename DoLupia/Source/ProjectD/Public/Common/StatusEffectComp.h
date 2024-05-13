@@ -35,29 +35,24 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
-
-
-
+	
 private:
+
+protected:
 	//UPROPERTY(EditAnywhere)
 	//USoundBase* SFX;
 
 	//UPROPERTY(EditAnywhere)
 	// UParticleSystem* VFX;
 
+public:
 	float TakeDamage = 0.0f;
-
 	bool IsDotAttack = false;
 
-	//TMap<EStatusEffect, USoundBase> StatusEffectSFX;
-	//TMap<EStatusEffect, UParticleSystem> StatusEffectVFX;
+	// 대상에게 줄 효과 Set
+	virtual void SetStatusEffect(EStatusEffect _statusEffect);
 
-protected:
+	// Target에게 상태 이상 효과 적용
+	virtual void AddStatusEffect(class ACharacter* Target);
 
-public:
-	void SetStatusEffect(EStatusEffect _statusEffect);
-	void SetBleedEffect();
-	void SetPoisonEffect();
-	
-	void ApplyStatusEffect();
 };
