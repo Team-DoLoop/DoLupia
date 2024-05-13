@@ -103,7 +103,6 @@ void UWidgetQuestRewards::OnAcceptClicked()
 
     // UInventoryComponent 찾기
     UInventoryComponent* InvetoryComp = Cast<UInventoryComponent>( PlayerCharacterD->GetComponentByClass( UInventoryComponent::StaticClass() ) );
-    InvetoryComp->HandelAddItem( ItemRewards );
 
     //Delete(ObjectiveItems)
     auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
@@ -119,6 +118,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
         InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
     }
     
+    InvetoryComp->HandelAddItem( ItemRewards );
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();

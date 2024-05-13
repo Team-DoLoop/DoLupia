@@ -175,7 +175,7 @@ void AQuest_Base::GetQuestDetails()
 	for (const auto& Objective : CurrentStageDetails.Objectives)
 	{
 		CurrentObjectiveProgress.Add( Objective.ObjectiveID , 0 );
-
+		UE_LOG( LogTemp , Error , TEXT( "CurrentObjectiveProgress.Add : %s" ), *Objective.ObjectiveID );
 	}
 }
 
@@ -189,15 +189,15 @@ void AQuest_Base::CheckItem()
 
 		for (const auto& Objective : CurrentStageDetails.Objectives)
 		{
-			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
 			if (Objective.Type == EObjectiveType::Collect)
 			{
-				//FindItemQuantity
-				int32 InventoryCount =Inventorycomponent->FindItemQuantity( Objective.ObjectiveID );
+				int32 InventoryCount = Inventorycomponent->FindItemQuantity( Objective.ObjectiveID );
 				UE_LOG( LogTemp , Error , TEXT( "Objective.ObjectiveID : %s / InventoryCount : %d" ) , *Objective.ObjectiveID , InventoryCount );
-				//목표 수량에 보내기
-				for (const auto& ObjObjective : CurrentStageDetails.Objectives) {
-					OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
+
+				// 인벤토리에 해당 아이템이 있을 때에만 호출
+				if (InventoryCount > 0)
+				{
+					OnObjectiveIDHeard( Objective.ObjectiveID , InventoryCount );
 				}
 			}
 		}
@@ -232,7 +232,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 
 bool AQuest_Base::AreObjectivesComplete()
 {
-	for (const auto& Objective : CurrentStageDetails.Objectives)
+	for (auto& Objective : CurrentStageDetails.Objectives)
 	{
 		FObjectiveDetails ObjectiveData = GetObjectiveDataByID( Objective.ObjectiveID );
 
