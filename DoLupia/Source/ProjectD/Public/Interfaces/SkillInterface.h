@@ -26,6 +26,6 @@ private:
 protected:
 
 public:
-	virtual void Execute() = 0;
-	virtual void ApplySkill(class ACharacter* Target) = 0;
+	virtual void Execute();
+	virtual void ApplySkill(class ACharacter* Target);
 };

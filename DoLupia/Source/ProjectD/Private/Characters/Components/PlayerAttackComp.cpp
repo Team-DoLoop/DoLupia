@@ -53,7 +53,7 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 void UPlayerAttackComp::Attack()
 {
 	if(!PlayerFSMComp) return;
-	if(PlayerFSMComp -> GetCurrentState() == EPlayerState::DIE) return;
+	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 	
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
@@ -71,7 +71,7 @@ void UPlayerAttackComp::AttackEnd()
 void UPlayerAttackComp::ExecuteSkill(int32 SkillIndex)
 {
 	if(!PlayerFSMComp) return;
-	if(PlayerFSMComp -> GetCurrentState() == EPlayerState::DIE) return;
+	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 	

@@ -89,7 +89,6 @@ AProjectDCharacter::AProjectDCharacter()
 	
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
-	PlayerQuestInventory = CreateDefaultSubobject<UQuestInventoryComponent>( TEXT( "PlayerQuestInventory" ) );
 
 	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
 
@@ -198,6 +197,9 @@ void AProjectDCharacter::CameraTimelineEnd()
 
 void AProjectDCharacter::TakeDamage(float Damage)
 {
+	if(!PlayerFSM) return;
+	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
+	
 	// 데미지 받기
 	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
 }
@@ -388,7 +390,12 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	}
 }
 
-	// <---------------------- Item ---------------------->
+void AProjectDCharacter::SwitchLongSword(UItemBase* ItemBase)
+{
+	LongSword->ReceiveItemData(ItemBase);
+}
+
+// <---------------------- Item ---------------------->
 void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop)
 {
 	if(PlayerInventory->FindMatchItem(ItemToDrop))

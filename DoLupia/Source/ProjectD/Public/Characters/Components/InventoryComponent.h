@@ -1,9 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
-#include <Pooling/ItemPool.h>
-
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Items/ItemBase.h"
@@ -11,9 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
-class UItemBase;
-class UInventoryItemSlot;
-class UItemPool;
+class UItemBase; class UInventoryItemSlot; class UItemPool; class UItemWidgetPool; class UItemCarouselWidget;
 
 UENUM(BlueprintType)
 enum class EItemAddResult : uint8
@@ -89,7 +84,8 @@ class PROJECTD_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UInventoryComponent();
 
 	UFUNCTION( Category = "Inventory")
@@ -97,6 +93,9 @@ public:
 
 	UFUNCTION(Category = "Inventory")
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
+
+	UFUNCTION( Category = "Inventory" )
+	void HandelRemoveItem(const TMap<FString , int32>& Test);
 
 	UFUNCTION( Category = "Inventory" )
 	void ReleaseInventory(UItemBase* ItemIn);
@@ -133,8 +132,6 @@ public:
 	int32 GetInventoryItemCount(const FString& InKey);
 
 
-	
-
 	// setters
 	UFUNCTION(Category = "Inventory")
 	FORCEINLINE void SetSlotsCapacity(const int32 NewSlotCapacity) { InventorySlotsCapacity = NewSlotCapacity; };
@@ -155,6 +152,7 @@ protected:
 	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount, bool IsFindStackItem );
 
 	void AddNewItem(UItemBase* Item, const int32 AmountToAdd, const int32 InputItemIndex);
+	void DeleteItem(const FString& ItemName, const int32 AmountToAdd, const int32 SearchInventoryIndex = 0);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")
@@ -172,5 +170,18 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UItemPool> ItemPool;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UItemWidgetPool> ItemWidgetPool;
+
+	UPROPERTY()
+	TObjectPtr<UItemCarouselWidget> ItemCarouselWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UItemCarouselWidget> LootingItemWidgetFactory;
+
+
+	FTimerHandle ItemCarouselWidgetIHandle;
+	
 		
 };

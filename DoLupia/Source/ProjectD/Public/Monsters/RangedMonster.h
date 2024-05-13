@@ -40,10 +40,10 @@ public:
 	UPROPERTY( EditAnywhere )
 	bool bIsLoop = true;
 
-	//마법 발사
-	void MagicAttack();
+	//원거리 공격
+	void RangedAttack();
 
 	float currentTimeRM = 0;
 
-	bool isPaused = false;
+	
 };

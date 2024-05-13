@@ -62,6 +62,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* attackMontage;
 
+	void PlayerAttackAnimation(int32 SkillIndex);
+	
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentStart();
 
@@ -70,7 +72,7 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_AttackEnd();
-	
-	void PlayerAttackAnimation(int32 SkillIndex);
+
+
 
 };

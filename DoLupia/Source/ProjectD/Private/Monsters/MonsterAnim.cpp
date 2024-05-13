@@ -18,3 +18,20 @@ void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 	}
 
 }
+
+void UMonsterAnim::OnEndHitAttackAnimation()
+{
+	bAttackDelay = false;
+}
+
+void UMonsterAnim::OnEndRangedAttackAnimation()
+{
+	bAttackDelay = false;
+}
+
+void UMonsterAnim::OnDoRangedAttackAnimation()
+{
+	auto ownerPawn = TryGetPawnOwner();
+	auto monster = Cast<AMonster>( ownerPawn );
+
+}
