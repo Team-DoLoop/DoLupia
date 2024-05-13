@@ -10,6 +10,7 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Kismet/KismetMathLibrary.h"
 
 class AProjectDCharacter;
@@ -56,9 +57,10 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 // <---------------------- Move ---------------------->
 void UPlayerMoveComp::OnSetDestinationTriggered()
 {
+	state = EPlayerState::MOVE;
+	
 	if(!Player) return;
-
-	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
+	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
 	
 	// We flag that the input is being pressed
 	FollowTime += GetWorld()->GetDeltaSeconds();
@@ -91,17 +93,20 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 	{
 		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
-			
-		if(Player != nullptr) PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
+		
+		if(Player != nullptr && PlayerFSM->GetCurrentState() != EPlayerState::MOVE) PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
 	}
 }
 
 void UPlayerMoveComp::OnSetDestinationReleased()
 {
-	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
+	state = EPlayerState::MOVE;
+	
+	if(!Player) return;
+	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
 	
 	// If it was a short press
-	//if (FollowTime <= ShortPressThreshold)
+	// if (FollowTime <= ShortPressThreshold)
 	{
 		// We move there and spawn some particles
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(PlayerController, CachedDestination);
@@ -115,8 +120,10 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 // <---------------------- Evasion ---------------------->
 void UPlayerMoveComp::Evasion()
 {
+	state = EPlayerState::EVASION;
 	if(!Player || !PlayerController) return;
-	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
+	if(!(PlayerFSM -> CanChangeState(state))) return;
+	PlayerFSM -> ChangePlayerState(state);
 	
 	FHitResult Hit;
 	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
@@ -127,9 +134,6 @@ void UPlayerMoveComp::Evasion()
 		Player->SetActorRotation( UKismetMathLibrary::MakeRotFromXZ( EvasionVec , Player->GetActorUpVector() ) );
 	}
 	
-	if(!PlayerFSM) return;
-	PlayerFSM -> ChangePlayerState(EPlayerState::EVASION);
-
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerEvasionAnimation();
 }
@@ -137,17 +141,20 @@ void UPlayerMoveComp::Evasion()
 void UPlayerMoveComp::EvasionEnd()
 {
 	if(!PlayerFSM) return;
-	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
+	
+	state = EPlayerState::IDLE;
+	PlayerFSM->ChangePlayerState(state);
 }
 
 
 // <---------------------- Die ---------------------->
 void UPlayerMoveComp::Die()
 {
-	if(PlayerFSM -> GetCurrentState() == EPlayerState::DIE) return;
+	state = EPlayerState::DIE;
+	if(!(PlayerFSM->CanChangeState(state))) return;
 	
 	if(!PlayerFSM) return;
-	PlayerFSM->ChangePlayerState(EPlayerState::DIE);
+	PlayerFSM->ChangePlayerState(state);
 
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerDieAnimation();

@@ -15,7 +15,7 @@
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Engine/LocalPlayer.h"
-#include "Quest/WidgetQuestLog.h"
+#include "UserInterface/Quest/WidgetQuestLog.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 

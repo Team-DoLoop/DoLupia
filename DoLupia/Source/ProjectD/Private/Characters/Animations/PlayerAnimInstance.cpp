@@ -52,6 +52,14 @@ void UPlayerAnimInstance::PlayerDieAnimation()
 
 
 // <---------------------- Attack ---------------------->
+
+void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
+{
+	if(!attackMontage) return;
+	Montage_Play(attackMontage);
+	Montage_JumpToSection(SkillAnimationName[SkillIndex],attackMontage);
+}
+
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 {
 	// 공격 판정 시작
@@ -68,11 +76,4 @@ void UPlayerAnimInstance::AnimNotify_AttackEnd()
 {
 	if(!Player) return;
 	Player->GetAttackComp()->AttackEnd();
-}
-
-void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
-{
-	if(!attackMontage) return;
-	Montage_Play(attackMontage);
-	Montage_JumpToSection(SkillAnimationName[SkillIndex],attackMontage);
 }

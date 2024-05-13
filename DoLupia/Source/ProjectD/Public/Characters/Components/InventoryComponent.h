@@ -108,7 +108,17 @@ public:
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindNextPartialStack(UItemBase* ItemIn) const;
 	UFUNCTION( Category = "Inventory" )
-	int32 FindItemQuantity(const FString& InKey) { return InventoryCount[InKey]; }
+	int32 FindItemQuantity(const FString& InKey)
+	{
+		const int32* ElemValue = InventoryCount.Find( InKey );
+
+		int32 Result = 0;
+
+		if (ElemValue)
+			Result = *ElemValue;
+
+		return Result;
+	}
 
 	UFUNCTION(Category = "Inventory")
 	void RemoveSingleInstanceOfItem(UItemBase* ItemToRemove);
@@ -182,6 +192,8 @@ protected:
 
 
 	FTimerHandle ItemCarouselWidgetIHandle;
-	
-		
+
+	//퀘스트에 보내기 위해
+	UPROPERTY()
+	class AProjectDCharacter* player;
 };

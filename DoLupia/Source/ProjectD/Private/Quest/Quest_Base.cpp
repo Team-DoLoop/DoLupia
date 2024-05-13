@@ -8,7 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/InventoryComponent.h"
-#include "Quest/WidgetQuestNotification.h"
+#include "UserInterface/Quest/WidgetQuestNotification.h"
 
 // Sets default values
 AQuest_Base::AQuest_Base()
@@ -16,13 +16,12 @@ AQuest_Base::AQuest_Base()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestData.QuestData" ) );
+	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
 
 	if (DataTable)
 	{
 		// 데이터 테이블이 성공적으로 로드된 경우 작업 수행
 		QuestData.DataTable = DataTable;  // 데이터 테이블 설정
-		//QuestData.RowName = FName("DefaultRow");  // 행 이름 설정
 	}
 	else
 	{
@@ -30,6 +29,7 @@ AQuest_Base::AQuest_Base()
 		UE_LOG( LogTemp , Error , TEXT( "Data table not found!" ) );
 	}
 
+	//_C!!!!!
 	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/QuestSystem/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
 	if (WidgetClassFinder.Succeeded())
 	{
@@ -76,9 +76,6 @@ void AQuest_Base::BeginPlay()
 		//컴포넌트에서 questID 방송 받아서 여기서 함수 호출해서 QuestID 저장하기
 		Questcomponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}
-	UE_LOG( LogTemp , Error , TEXT( "QuestInventorycomponent 생성" ) );
-
-	//UInventoryComponent* Inventorycomponent = ProjectDCharacter->FindComponentByClass<UInventoryComponent>();
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
@@ -97,6 +94,8 @@ void AQuest_Base::BeginPlay()
 		CheckItem();
 
 	} );
+
+	IsCompleted = AreObjectivesComplete();
 }
 
 
@@ -109,6 +108,8 @@ void AQuest_Base::Tick(float DeltaTime)
 
 void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 {
+	UE_LOG( LogTemp , Warning , TEXT( "AQuest_Base::OnObjectiveIDHeard - %s , %d" ) , *BObjectiveID , Value );
+
 	//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
 	int32* ValuePtr = CurrentObjectiveProgress.Find( BObjectiveID );
 
@@ -117,7 +118,6 @@ void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 		int32 Sign = FMath::Sign( Value );
 		if (Sign > 0)
 		{
-
 			if (GetObjectiveDataByID( BObjectiveID ).Quantity > *ValuePtr)
 			{
 				int32 PluValue = *ValuePtr + Value;
@@ -179,23 +179,26 @@ void AQuest_Base::GetQuestDetails()
 	}
 }
 
+
 void AQuest_Base::CheckItem()
 {
-	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
+	UInventoryComponent* Inventorycomponent = ProjectDCharacter->FindComponentByClass<UInventoryComponent>();
 
-	if (QuestInventorycomponent) {
+	if (Inventorycomponent) {
+		UE_LOG( LogTemp , Error , TEXT( "QuestInventorycomponent 존재" ) );
 
 		for (const auto& Objective : CurrentStageDetails.Objectives)
 		{
 			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
 			if (Objective.Type == EObjectiveType::Collect)
 			{
-				FName MyName = FName( Objective.ObjectiveID );
-				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
-
+				//FindItemQuantity
+				int32 InventoryCount =Inventorycomponent->FindItemQuantity( Objective.ObjectiveID );
+				UE_LOG( LogTemp , Error , TEXT( "Objective.ObjectiveID : %s / InventoryCount : %d" ) , *Objective.ObjectiveID , InventoryCount );
 				//목표 수량에 보내기
-				for (const auto& ObjObjective : CurrentStageDetails.Objectives)
+				for (const auto& ObjObjective : CurrentStageDetails.Objectives) {
 					OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
+				}
 			}
 		}
 	}
@@ -219,21 +222,55 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 		{
 			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
 			QuestWidget->AddToViewport();
+			IsCompleted = AreObjectivesComplete();
+			if(IsCompleted)
+				UE_LOG( LogTemp , Error , TEXT( "IsCompleted = true;" ) );
 		}
 	}
 
 }
 
-FObjectiveDetails AQuest_Base::GetObjectiveDataByID( FString ObjectiveID )
+bool AQuest_Base::AreObjectivesComplete()
 {
+	for (const auto& Objective : CurrentStageDetails.Objectives)
 	{
-		for (const auto& Objective : CurrentStageDetails.Objectives)
+		FObjectiveDetails ObjectiveData = GetObjectiveDataByID( Objective.ObjectiveID );
+
+		// 현재 진행 상황 찾기
+		int32* CurrentProgress = CurrentObjectiveProgress.Find( Objective.ObjectiveID );
+
+		// 목표 데이터와 현재 진행 상황이 유효한지 확인
+		if (ObjectiveData.Quantity > 0 && CurrentProgress)
 		{
-			if (Objective.ObjectiveID == ObjectiveID) {
-				return Objective;
+			// 목표 수량과 현재 진행 상황 비교
+			if (*CurrentProgress >= ObjectiveData.Quantity)
+			{
+				Local_AllComplete = true;
+			}
+			else
+			{
+				Local_AllComplete = false;
+				break; // 하나라도 목표 달성 조건을 만족하지 않으면 반복문 종료
 			}
 		}
-		// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
-		return FObjectiveDetails();
+		else
+		{
+			Local_AllComplete = false;
+			break; // 목표 데이터나 현재 진행 상황이 유효하지 않으면 반복문 종료
+		}
 	}
+
+	return Local_AllComplete;
+}
+
+FObjectiveDetails AQuest_Base::GetObjectiveDataByID( FString ObjectiveID )
+{
+	for (const auto& Objective : CurrentStageDetails.Objectives)
+	{
+		if (Objective.ObjectiveID == ObjectiveID) {
+			return Objective;
+		}
+	}
+	// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
+	return FObjectiveDetails();
 }

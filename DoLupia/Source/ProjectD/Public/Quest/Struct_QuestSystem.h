@@ -7,21 +7,21 @@
 #include "Engine/DataTable.h"
 #include "Struct_QuestSystem.generated.h"
 
-UENUM(BlueprintType)
+UENUM( BlueprintType )
 enum class EObjectiveType : uint8
-{ 
-	Location,
-	Kill,
-	Interaction,
-	Collect,
+{
+	Location ,
+	Kill ,
+	Interaction ,
+	Collect ,
 };
 
 UCLASS()
 class PROJECTD_API AStruct_QuestSystem : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AStruct_QuestSystem();
 
@@ -29,74 +29,77 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick( float DeltaTime ) override;
 
 };
 
-USTRUCT(Atomic, BlueprintType)
+USTRUCT( Atomic , BlueprintType )
 struct FObjectiveDetails
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString ObjectiveName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString Description;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EObjectiveType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString ObjectiveID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	int32 Quantity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	TMap<FString , int32> ItemObjectives;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	bool IsOptional;
 };
 
-USTRUCT(Atomic, BlueprintType)
+USTRUCT( Atomic , BlueprintType )
 struct FStageDetails
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString StageName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString Description;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	TArray<FObjectiveDetails> Objectives;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FString, int32> ItemRewards;
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	TMap<FString , int32> ItemRewards;
 };
 
-USTRUCT(Atomic, BlueprintType)
+USTRUCT( Atomic , BlueprintType )
 struct FQuestDetails :public FTableRowBase
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString QuestName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString LogDescription;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString TrackingDescription;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	bool IsMainQuest;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	TArray<FStageDetails> Stages;
 };

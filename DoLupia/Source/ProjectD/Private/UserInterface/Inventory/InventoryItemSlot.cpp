@@ -46,10 +46,23 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 
 			UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory();
 			AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( ItemReference->GetOwningInventory()->GetOwner() );
+			UItemBase* EquipItemBase = MyCharacter->SwitchEquipItem( ItemReference );
+
+			if (EquipItemBase)
+			{
+				ItemReference = EquipItemBase;
+				RefreshItemSlot();
+			}
+			else
+			{
+				InventoryComponent->RemoveAmountOfItem( ItemReference , 1 );
+				InventoryComponent->ReleaseInventory( ItemReference );
+				ResetItemSlot();
+			}
 
 			switch (ItemReference->GetItemType())
 			{
-			case EItemType::Armor:
+			case EItemType::Top:
 
 				break;
 			case EItemType::Weapon:
@@ -61,12 +74,8 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 
 					// 검을 장착하고 있지 않다면?
 						// -> 장착할 검의 속성을 그대로 넣어주고 인벤토리 아이템을 비워주기
-					
-					MyCharacter->SwitchLongSword(ItemReference);
-					InventoryComponent->RemoveAmountOfItem(ItemReference , 1);
-					InventoryComponent->ReleaseInventory(ItemReference);
-					ResetItemSlot();
-					
+
+
 				}
 
 				break;

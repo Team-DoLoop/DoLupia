@@ -46,12 +46,17 @@ public:
 	UFUNCTION()
 	void AddNewQuest(FName QuestID);
 
-	//UFUNCTION()
-	//void CompleteQuest(); 보상줄때 쓸 함수
+	UFUNCTION()
+	void CompleteQuest( FName QuestID );
+
+	UFUNCTION()
+	void TurnInQuest( FName QuestID );
 
 	UFUNCTION()
 	bool QueryActiveQuest(FName QuestID);
 
-	//UFUNCTION()
-	//void TrackQuest();
+	UFUNCTION()
+	AQuest_Base* GetQuestActor(FName QuestID);
+
+
 };
