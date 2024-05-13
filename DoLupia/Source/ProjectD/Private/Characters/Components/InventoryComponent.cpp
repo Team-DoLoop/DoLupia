@@ -450,7 +450,7 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 	if(GetOwner())
 	{
 		// 아이템의 수량
-		const int32 InitialRequestedAddAmount = InputItem->Quantity;
+		int32 InitialRequestedAddAmount = InputItem->Quantity;
 
 		// 스택에 쌓이지 않는 아이템 반환 ex) 무기, 방어구 등
 		if(!InputItem->NumericData.bIsStackable)
@@ -462,6 +462,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 			{
 
 			case EItemAddResult::IAR_PartialAmoutItemAdded:
+				ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , InitialRequestedAddAmount - InputItem->Quantity , InputItem->GetAssetData().Icon );
+				break;
 			case EItemAddResult::IAR_AllItemAdded:
 				ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name, InitialRequestedAddAmount, InputItem->GetAssetData().Icon );
 				break;
