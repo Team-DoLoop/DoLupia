@@ -118,14 +118,7 @@ void AProjectDCharacter::BeginPlay()
 		AimingCameraTimeline->SetTimelineFinishedFunc(TimelineFinishedEvent);
 	}
 
-	// Sword
-	//FName SwordSocket(TEXT("SwordSocket"));
-	//Sword = GetWorld()->SpawnActor<ALongSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-	//if (nullptr != Sword)
-	//{
-	//	Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SwordSocket);
-	//}
-
+	// 초기 장비 착용
 	Gadget->InitEquip();
 
 	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
@@ -394,11 +387,6 @@ void AProjectDCharacter::UpdateInteractionWidget() const
 	{
 		HUD->UpdateInteractionWidget(&TargetInteractable->GetInteractableData());
 	}
-}
-
-void AProjectDCharacter::SwitchLongSword(UItemBase* ItemBase)
-{
-	Sword->ReceiveItemData(ItemBase);
 }
 
 UItemBase* AProjectDCharacter::SwitchEquipItem(UItemBase* ItemBase)

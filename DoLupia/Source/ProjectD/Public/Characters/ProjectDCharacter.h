@@ -32,7 +32,7 @@ struct FInteractionData
 };
 
 // Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1;);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1);
 
 
 UCLASS(Blueprintable)
@@ -77,9 +77,6 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
 	class UPlayerFSMComp* PlayerFSM;
-
-	UPROPERTY()
-	class ASwordBase* Sword;
 
 	UPROPERTY(VisibleAnywhere)
 	class UGadgetComponent* Gadget;
@@ -176,7 +173,6 @@ public:
 public:
 	void DropItem(UItemBase* ItemToDrop, const int32 QuantityToDrop);
 	void UpdateInteractionWidget() const;
-	void SwitchLongSword( UItemBase* ItemBase ); // 나중에 공격 연동되면 삭제 예정.
 	class UItemBase* SwitchEquipItem(UItemBase* ItemBase);
 	
 
