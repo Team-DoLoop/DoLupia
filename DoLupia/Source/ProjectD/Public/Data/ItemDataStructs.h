@@ -22,9 +22,12 @@ enum class EItemQuality : uint8
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
-	Armor UMETA(DisplayName = "Armor"),
-	Weapon UMETA(DisplayName = "Weapon"),
+	Head UMETA( DisplayName = "Head" ),
+	Top UMETA(DisplayName = "Top"),
+	Pants UMETA( DisplayName = "Pants"),
+	Shoes UMETA( DisplayName = "Shoes"),
 	Shield UMETA(DisplayName = "Shield"),
+	Weapon UMETA( DisplayName = "Weapon" ) ,
 	Spell UMETA(DisplayName = "Spell"),
 	Consumable UMETA(DisplayName = "Consumable"),
 	Quest UMETA(DisplayName = "Quest"),
