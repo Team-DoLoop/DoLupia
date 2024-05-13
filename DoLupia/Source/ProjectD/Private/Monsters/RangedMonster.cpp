@@ -3,8 +3,10 @@
 
 #include "Monsters/RangedMonster.h"
 
+#include "Components/ArrowComponent.h"
 #include "Monsters/MonsterAnim.h"
 #include "Monsters/MonsterFSM.h"
+#include "Monsters/RMProjectile.h"
 
 ARangedMonster::ARangedMonster()
 {
@@ -25,6 +27,9 @@ ARangedMonster::ARangedMonster()
 	{
 		GetMesh()->SetAnimInstanceClass( tempClass.Class );
 	}
+
+	firePosition = CreateDefaultSubobject<UArrowComponent>( TEXT( "firePosition" ) );
+	firePosition->SetupAttachment( RootComponent );
 }
 
 void ARangedMonster::BeginPlay()
@@ -36,25 +41,51 @@ void ARangedMonster::BeginPlay()
 	//원거리 몬스터 기본 설정
 	this->maxHP = 150;
 	this->AttackRange = 1000;
-	this->attackDelayTime = 7;
+	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
+	UE_LOG( LogTemp , Warning , TEXT( "%f" ) , attackDelayTime );
 }
 
 
 
 void ARangedMonster::AttackState()
 {
-	Super::AttackState();
+	//Super::AttackState();
 
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
+	currentTimeRM += GetWorld()->GetDeltaSeconds();
+	TargetVector = target->GetActorLocation() - this->GetActorLocation();
+	bHasTarget = false;
 
+	if (currentTimeRM > attackDelayTime)
+	{
+		currentTimeRM = 0;
+		anim->bAttackDelay = true;
+		bOnceAttack = true;
+		bHasTarget = true;
+	}
+
+	if (bOnceAttack)
+	{
+		if (TargetVector.Size() > AttackRange) {
+			MonsterFSM->state = EMonsterState::Move;
+			anim->animState = MonsterFSM->state;
+			bOnceAttack = false;
+		}
+	}
 
 }
 
 void ARangedMonster::RangedAttack()
 {
-	// 마법 bullet 발사, notify 시점에
+	// notify 시점에 투사체 발사, 
 	// 만약 플레이어와 충돌하면 플레이어 hp 감소
-	// 10초 뒤 bullet 파괴
+	// 10초 뒤 투사체 파괴
 	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MagicAttack()" ) );
+
+	if(ProjectileClass)
+	{
+		FTransform t = firePosition->GetComponentTransform();
+		GetWorld()->SpawnActor<ARMProjectile>( ProjectileClass , t );
+	}
 }

@@ -77,7 +77,7 @@ void AMonster::Tick(float DeltaTime)
 	//항상 플레이어를 바라보도록 회전
 	FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
 	rot.Normalize();
-	if(bHasTarget)
+	if (bHasTarget)
 	{
 		this->SetActorRotation( rot.ToOrientationRotator() );
 	}
@@ -133,7 +133,7 @@ void AMonster::AttackState()
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 	currentTime += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
-
+	
 	if(currentTime>attackDelayTime)
 	{
 		currentTime = 0;

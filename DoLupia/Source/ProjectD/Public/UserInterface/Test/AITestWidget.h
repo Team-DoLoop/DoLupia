@@ -52,7 +52,7 @@ private:
 	class UImage* img_aitexture;
 
 	/* IP Adress, Port */
-	FString LanIP = "192.168.240.75";
+	FString LanIP = "192.168.75.246";
 	FString WifiIP = "172.16.216.55";
 	FString ServerPort = "8000";
 
