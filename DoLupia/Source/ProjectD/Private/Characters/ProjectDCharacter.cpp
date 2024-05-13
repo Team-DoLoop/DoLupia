@@ -197,6 +197,9 @@ void AProjectDCharacter::CameraTimelineEnd()
 
 void AProjectDCharacter::TakeDamage(float Damage)
 {
+	if(!PlayerFSM) return;
+	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
+	
 	// 데미지 받기
 	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
 }
