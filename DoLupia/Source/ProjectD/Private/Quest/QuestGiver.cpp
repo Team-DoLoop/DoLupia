@@ -13,6 +13,8 @@
 #include "UserInterface/Quest/WidgetQuestGiver.h"
 #include "UserInterface/Quest/WidgetQuestRewards.h"
 #include "Quest/Quest_Base.h"
+#include "Characters/Components/InventoryComponent.h"
+#include "World/Pickup.h"
 
 // Sets default values for this component's properties
 UQuestGiver::UQuestGiver()
@@ -34,6 +36,10 @@ UQuestGiver::UQuestGiver()
 		// 로드 실패 시 처리
 		UE_LOG(LogTemp, Error, TEXT("Data table not found!"));
 	}
+
+	// 데이터 테이블 로드
+	ItemDataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/ItemData/MundaneItems.MundaneItems" ) );
+
 }
 
 
@@ -145,7 +151,43 @@ void UQuestGiver::DisplayRewards()
         {
             RewardsWidget->QuestDetails = *Row;
             RewardsWidget->QuestID = QuestData.RowName;
+
+            //보상 아이템 들 이름, 수량
+            for (auto& Pair : Row->Stages.GetData()->ItemRewards)
+            {
+                //아이템 종류 선택ID 수량 연동 해야할듯
+                DesiredItemID = TEXT( "test_001" );
+                RewardsWidget->ItemRewards = CreateItem( UItemBase::StaticClass() , Pair.Value );
+            }
+
             RewardsWidget->AddToViewport();
         }
     }   
+}
+
+UItemBase* UQuestGiver::CreateItem(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
+{
+    if (ItemDataTable && !DesiredItemID.IsNone())
+    {
+        const FItemData* ItemData = ItemDataTable->FindRow<FItemData>( DesiredItemID , DesiredItemID.ToString() );
+
+        ItemReference = NewObject<UItemBase>( this , BaseClass );
+
+        ItemReference->SetID( ItemData->ID );
+        ItemReference->SetItemType( ItemData->ItemType );
+        ItemReference->SetItemQuality( ItemData->ItemQuality );
+        ItemReference->SetItemStatistics( ItemData->ItemStatistics );
+        ItemReference->SetTextData( ItemData->TextData );
+        ItemReference->SetNumericData( ItemData->NumericData );
+        ItemReference->SetAssetData( ItemData->AssetData );
+
+        // 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
+        FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
+        ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
+        InQuantity <= 0 ? ItemReference->SetQuantity( 1 ) : ItemReference->SetQuantity( InQuantity );
+
+        //UpdateInteractableData();
+        return ItemReference;
+    }
+    return nullptr;
 }
