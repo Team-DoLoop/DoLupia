@@ -39,11 +39,19 @@ public:
 	//Looping 여부
 	UPROPERTY( EditAnywhere )
 	bool bIsLoop = true;
+	float currentTimeRM = 0;
 
 	//원거리 공격
 	void RangedAttack();
 
-	float currentTimeRM = 0;
+	UPROPERTY( EditAnywhere , BlueprintReadWrite  )
+	FVector MuzzleOffset;
+
+	UPROPERTY( EditDefaultsOnly  )
+	TSubclassOf<class ARMProjectile> ProjectileClass;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	class UArrowComponent* firePosition;
 
 	
 };

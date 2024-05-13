@@ -3,6 +3,7 @@
 
 #include "Monsters/MonsterAnim.h"
 #include "Monsters/Monster.h"
+#include "Monsters/RangedMonster.h"
 
 void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -32,6 +33,6 @@ void UMonsterAnim::OnEndRangedAttackAnimation()
 void UMonsterAnim::OnDoRangedAttackAnimation()
 {
 	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<AMonster>( ownerPawn );
-
+	auto monster = Cast<ARangedMonster>( ownerPawn );
+	monster->RangedAttack();
 }
