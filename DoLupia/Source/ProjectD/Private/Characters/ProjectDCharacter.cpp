@@ -128,11 +128,11 @@ void AProjectDCharacter::BeginPlay()
 
 	Gadget->InitEquip();
 
-	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
+	PlayerStat = Cast<APlayerStat>(GetPlayerState());
+
 	if(PlayerStat)
-	{
 		PlayerStat->initPlayerData();
-	}
+
 }
 
 void AProjectDCharacter::Tick(float DeltaSeconds)

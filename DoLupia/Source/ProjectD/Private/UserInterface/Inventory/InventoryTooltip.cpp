@@ -56,8 +56,11 @@ void UInventoryTooltip::SetupTooltip()
 	ItemDescription->SetText( TextData.Description );
 	SellValue->SetText( FText::AsNumber( ItemStatistics.SellValue ) );
 
+	float Weight = NumericData.bIsStackable
+		? ItemBeingHovered->GetItemStackWeight()
+		: ItemBeingHovered->GetItemSingleWeight();
 
-	const FString& WeightInfo = { "Weight : " + FString::Printf(TEXT("%.2f"),ItemBeingHovered->GetItemStackWeight())};
+	const FString& WeightInfo = { "Weight : " + FString::Printf(TEXT("%.2f"), Weight)};
 
 	StackWeight->SetText( FText::FromString( WeightInfo ) );
 

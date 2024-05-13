@@ -35,22 +35,42 @@ enum class EItemType : uint8
 
 };
 
+UENUM( BlueprintType )
+enum class ESkillAttribute : uint8
+{
+	Fire UMETA( DisplayName = "Fire" ) ,
+	Water UMETA( DisplayName = "Water" ) ,
+	Ground UMETA( DisplayName = "Ground" ) ,
+};
+
 USTRUCT()
 struct FItemStatistics
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY( EditAnywhere, Category = "Level")
+	int32 ItemLevel;
+
+	UPROPERTY( EditAnywhere , Category = "Equipment" )
+	float DefenseIncreaseAmount;
+
+	UPROPERTY( EditAnywhere , Category = "Equipment" )
+	float DamageIncreaseAmount;
+
+	UPROPERTY(EditAnywhere , Category = "Equipment" )
 	float ArmorRating;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere , Category = "Equipment" )
 	float DamageValue;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere , Category = "Store" )
 	float RestorationAmout;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Store" )
 	float SellValue;
+
+	UPROPERTY( EditAnywhere, Category = "Item")
+	float HealthValue;
 };
 
 USTRUCT()
@@ -123,4 +143,8 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemAssetData AssetData;
+
+	UPROPERTY(EditAnywhere, Category = "Item Data")
+	ESkillAttribute SkillAttribute;
+
 };
