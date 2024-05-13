@@ -7,9 +7,9 @@ UPlayerSkillUlt::UPlayerSkillUlt()
 {
 }
 
-void UPlayerSkillUlt::Execute()
+void UPlayerSkillUlt::ExecuteSkill()
 {
-	Super::Execute();
+	Super::ExecuteSkill();
 
 	UE_LOG(LogTemp, Log, TEXT("Ult"));
 }

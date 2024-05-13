@@ -8,6 +8,7 @@
 #include "Characters/Components/PlayerFSMComp.h"
 
 
+
 UPlayerSkillBase::UPlayerSkillBase()
 	: SkillName(""),
 	  SkillLevel(0),
@@ -17,7 +18,7 @@ UPlayerSkillBase::UPlayerSkillBase()
 {
 }
 
-void UPlayerSkillBase::Execute()
+void UPlayerSkillBase::ExecuteSkill()
 {
 }
 

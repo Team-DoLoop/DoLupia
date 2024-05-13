@@ -68,7 +68,7 @@ void UPlayerAttackComp::AttackEnd()
 }
 
 
-void UPlayerAttackComp::ExecuteSkill(int32 SkillIndex)
+void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 {
 	if(!PlayerFSMComp) return;
 	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
@@ -81,7 +81,7 @@ void UPlayerAttackComp::ExecuteSkill(int32 SkillIndex)
 	// 스킬 기능 실행
 	if(SkillIndex >= 0 && SkillIndex < Skills.Num())
 	{
-		Skills[SkillIndex]->Execute();
+		Skills[SkillIndex]->ExecuteSkill();
 	}
 }
 

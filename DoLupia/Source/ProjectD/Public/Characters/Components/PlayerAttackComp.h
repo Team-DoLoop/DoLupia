@@ -49,7 +49,7 @@ protected:
 public:
 	void AttackEnd();
 
-	void ExecuteSkill(int32 SkillIndex);
+	void PlayerExecuteSkill(int32 SkillIndex);
 	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return Skills;}
 	
 };
