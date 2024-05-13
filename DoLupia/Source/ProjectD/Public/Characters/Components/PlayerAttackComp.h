@@ -24,6 +24,9 @@ private:
 	class AProjectDCharacter* Player;
 
 	UPROPERTY()
+	class AProjectDPlayerController* PlayerController;
+	
+	UPROPERTY()
 	class UPlayerFSMComp* PlayerFSMComp;
 
 	UPROPERTY()
@@ -37,6 +40,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+
+	// <---------------------- Attack ---------------------->
+private:
+
+public:
+	void TurnPlayer();
 	
 
 	// <---------------------- Attack ---------------------->

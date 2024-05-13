@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Skill/PlayerSkillBase.h"
@@ -12,6 +13,7 @@
 #include "Characters/Skill/PlayerSkillSpell.h"
 #include "Characters/Skill/PlayerSkillSwing.h"
 #include "Characters/Skill/PlayerSkillUlt.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UPlayerAttackComp::UPlayerAttackComp()
@@ -32,6 +34,8 @@ void UPlayerAttackComp::BeginPlay()
 	// ...
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	if(!Player) return;
+	
+	PlayerController = Cast<AProjectDPlayerController>(Player->GetController());
 	PlayerFSMComp = Player->GetPlayerFSMComp();
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
 	
@@ -50,6 +54,17 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
+void UPlayerAttackComp::TurnPlayer()
+{
+	FHitResult Hit;
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	if(bHitSuccessful)
+	{
+		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
+		Player->SetActorRotation( UKismetMathLibrary::MakeRotFromXZ( EvasionVec , Player->GetActorUpVector() ) );
+	}
+}
+
 void UPlayerAttackComp::Attack()
 {
 	if(!PlayerFSMComp) return;
@@ -57,6 +72,8 @@ void UPlayerAttackComp::Attack()
 	
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
+	TurnPlayer();
+	
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerAttackAnimation(0);
 }
@@ -74,6 +91,8 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+
+	TurnPlayer();
 	
 	// 스킬 애니메이션 실행
 	PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
