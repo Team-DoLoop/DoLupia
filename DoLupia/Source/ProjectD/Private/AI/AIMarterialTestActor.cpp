@@ -21,7 +21,7 @@ AAIMarterialTestActor::AAIMarterialTestActor()
     meshComp = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp" ) );
     meshComp->SetupAttachment( RootComponent );
 
-    meshComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+    meshComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
 
 }
 
@@ -42,8 +42,8 @@ void AAIMarterialTestActor::Tick(float DeltaTime)
 void AAIMarterialTestActor::UpdateActorMaterial()
 {
     UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::UpdateActorMaterial" ) );
-    //UTexture2D* LoadedTexture = LoadTextureFromImage( TEXT("D:/Projects/DoLupia/DoLupia/Content/a.png") );
-    FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
+
+    FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AITexture.png";
     UTexture2D* LoadedTexture = LoadTextureFromImage( imgPath );
     UMaterialInterface* LoadedMaterial = CreateMaterialFromTexture( LoadedTexture );
     if (LoadedMaterial)
@@ -113,6 +113,13 @@ UTexture2D* AAIMarterialTestActor::LoadTextureFromImage(const FString& ImagePath
 
     // 텍스처에 업데이트할 픽셀 데이터를 설정합니다.
     Texture->UpdateTextureRegions( 0 , 1 , &UpdateRegion , ImageWrapper->GetWidth() * 4 , 4 , RawData.GetData() );
+
+    // Create a new package
+    UPackage* Package = NewObject<UPackage>( this , FName( "MyPackage" ) );
+
+    // Save the texture as a .uasset file
+
+
 
     return Texture;
 }
