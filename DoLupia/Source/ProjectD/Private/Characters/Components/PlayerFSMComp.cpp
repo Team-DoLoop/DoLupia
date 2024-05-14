@@ -59,10 +59,10 @@ void UPlayerFSMComp::CheckState(EPlayerState _state)
 	{
 	case EPlayerState::IDLE:				return;
 	case EPlayerState::MOVE:	TickMove();	return;
+	case EPlayerState::EVASION:				return;
 		
 	case EPlayerState::ATTACK:				return;
 	case EPlayerState::DAMAGE:				return;
-	case EPlayerState::EVASION:				return;
 
 	case EPlayerState::TALK_NPC:			return;
 		
@@ -127,6 +127,22 @@ bool UPlayerFSMComp::CanMoveState(EPlayerState _CurrentState)
 }
 
 
+// <--------------------- Evasion --------------------->
+
+bool UPlayerFSMComp::CanEvasionState(EPlayerState _CurrentState)
+{
+	// 안되는 상태 : 회피, 대화, 죽음
+	switch (_CurrentState)
+	{
+	case EPlayerState::EVASION : return false;
+	case EPlayerState::TALK_NPC : return false;
+		
+	case EPlayerState::DIE : return false;
+	}
+	return true;
+}
+
+
 // <--------------------- Attack --------------------->
 
 bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState)
@@ -156,22 +172,6 @@ bool UPlayerFSMComp::CanDamageState(EPlayerState _CurrentState)
 	case EPlayerState::EVASION : return false;
 
 	case EPlayerState::TALK_NPC : return false;
-	case EPlayerState::DIE : return false;
-	}
-	return true;
-}
-
-
-// <--------------------- Evasion --------------------->
-
-bool UPlayerFSMComp::CanEvasionState(EPlayerState _CurrentState)
-{
-	// 안되는 상태 : 회피, 대화, 죽음
-	switch (_CurrentState)
-	{
-	case EPlayerState::EVASION : return false;
-	case EPlayerState::TALK_NPC : return false;
-		
 	case EPlayerState::DIE : return false;
 	}
 	return true;

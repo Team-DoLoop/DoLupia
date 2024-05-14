@@ -28,7 +28,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Items/Sword/LongSword.h"
-
+#include "Monsters/Monster.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -134,6 +134,12 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	{
 		PerformInteractionCheck();
 	}
+}
+
+void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+	
 }
 
 	// <---------------------- UI ---------------------->
@@ -409,6 +415,8 @@ void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToD
 		APickup* Pickup = GetWorld()->SpawnActor<APickup>(APickup::StaticClass(), SpawnTransform, SpawnParams);
 
 		Pickup->InitializeDrop(ItemToDrop, RemoveQuantity);
+
+		OnObjectiveIDCalled.Broadcast( ItemToDrop->GetTextData().Name.ToString() , -1*RemoveQuantity );
 	}
 	else
 	{

@@ -22,6 +22,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* collisionComp;
+
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	
 protected:
 

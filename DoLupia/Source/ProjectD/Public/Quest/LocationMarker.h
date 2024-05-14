@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "LocationMarker.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class PROJECTD_API ALocationMarker : public AActor
 {

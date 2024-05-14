@@ -42,24 +42,27 @@ public:
 
 
 
-	// <---------------------- Attack ---------------------->
+	// <---------------------- Player ---------------------->
 private:
 
 public:
 	void TurnPlayer();
+
 	
 
 	// <---------------------- Attack ---------------------->
 private:
-	TArray<class UPlayerSkillBase*> Skills;
+	UPROPERTY()
+	TArray<class UPlayerSkillBase*> PlayerSkills;
 
 protected:
 	void Attack();
 	
 public:
 	void AttackEnd();
-
 	void PlayerExecuteSkill(int32 SkillIndex);
-	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return Skills;}
-	
+
+	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
+
+
 };

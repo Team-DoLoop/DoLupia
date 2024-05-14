@@ -11,10 +11,13 @@
 #include "AI/AIMarterialTestActor.h"
 #include "Components/Image.h"
 #include "Engine.h"
+#include "Library/AIConnectionLibrary.h"
 
 void UAITestWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	connectionLibrary = NewObject<UAIConnectionLibrary>();
 
 	btn_chatbot->OnClicked.AddDynamic(this, &UAITestWidget::SendChatbotSV);
 	btn_imgAI->OnClicked.AddDynamic(this, &UAITestWidget::SendImgaiSV);
@@ -23,34 +26,46 @@ void UAITestWidget::NativeConstruct()
 
 void UAITestWidget::SendChatbotSV()
 {
+	//UAIConnectionLibrary* connectionLibrary = NewObject<UAIConnectionLibrary>();
+
 	TMap<FString, FString> msgData;
 	FString msg = *edit_sendText->GetText().ToString();
-	msgData.Add(TEXT("message"), msg);
 
+	connectionLibrary->SendNPCConversationToServer( msg );
+
+	//UE_LOG( LogTemp , Warning , TEXT( "test : [%s]" ) , *test )
+	//txt_chatbot->SetText( FText::FromString( test) );
+
+	//msgData.Add(TEXT("message"), msg);
+
+	/*
 	FString sendJson = UJsonLibrary::MapToJson(msgData);
 	
-	FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
+	//FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AIImgTxt.png";
 
-	/* Server Conn URL */
+	Server Conn URL 
 	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
 
 	// Server connect
 	ReqDataPost( ServerURL , sendJson);
+	*/
 }
 
 void UAITestWidget::SendImgaiSV()
 {
 	TMap<FString, FString> imgData;
 	FString imgmsg = *edit_sendText->GetText().ToString();
+
+	connectionLibrary->SendImageKeywordToServer( imgmsg );
+
+	/*
 	imgData.Add(TEXT("Img_keywords"), imgmsg);
 
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
-	/* Server Conn URL */
 	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
-
-	// server connect
 	ReqImgPost( ServerURL , sendJson);
+	*/
 }
 
 void UAITestWidget::ChangeMaterial()

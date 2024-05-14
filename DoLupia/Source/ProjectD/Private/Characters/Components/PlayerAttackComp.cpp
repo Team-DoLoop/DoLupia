@@ -39,10 +39,10 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerFSMComp = Player->GetPlayerFSMComp();
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
 	
-	Skills.Add(NewObject<UPlayerSkillSwing>());
-	Skills.Add(NewObject<UPlayerSkillSpell>());
-	Skills.Add(NewObject<UPlayerSkillCastingHitDown>());
-	Skills.Add(NewObject<UPlayerSkillUlt>());
+	PlayerSkills.Add(NewObject<UPlayerSkillSwing>());
+	PlayerSkills.Add(NewObject<UPlayerSkillSpell>());
+	PlayerSkills.Add(NewObject<UPlayerSkillCastingHitDown>());
+	PlayerSkills.Add(NewObject<UPlayerSkillUlt>());
 }
 
 
@@ -98,9 +98,10 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 	PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
 	
 	// 스킬 기능 실행
-	if(SkillIndex >= 0 && SkillIndex < Skills.Num())
+	if(SkillIndex >= 0 && SkillIndex < PlayerSkills.Num())
 	{
-		Skills[SkillIndex]->ExecuteSkill();
+		if(!PlayerSkills[SkillIndex]) return;
+		PlayerSkills[SkillIndex]->ExecuteSkill();
 	}
 }
 
