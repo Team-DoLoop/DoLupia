@@ -56,7 +56,7 @@ public:
 	FORCEINLINE void SetOwningInventory(UInventoryComponent* NewOwningInventory) { OwningInventory = NewOwningInventory; };
 
 	UFUNCTION( Category = "Item" )
-	virtual void Use( class AProjectDCharacter* Character );
+	void Use();
 
 protected:
 	bool operator==(const FName& OtherID) const
@@ -92,6 +92,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FItemAssetData AssetData;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item" )
+	ESkillAttribute SkillAttribute;
 
 	bool bIsCopy;
 	bool bIsPickup;

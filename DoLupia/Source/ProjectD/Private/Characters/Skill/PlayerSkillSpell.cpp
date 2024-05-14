@@ -14,9 +14,9 @@ UPlayerSkillSpell::UPlayerSkillSpell()
 	SkillDamage = 0;
 }
 
-void UPlayerSkillSpell::Execute()
+void UPlayerSkillSpell::ExecuteSkill()
 {
-	Super::Execute();
+	Super::ExecuteSkill();
 	
 	UE_LOG(LogTemp, Log, TEXT("Spell"));
 }

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/Components/StatusEffectComp.h"
+#include "Common/StatusEffectComp.h"
 
 // Sets default values for this component's properties
 UStatusEffectComp::UStatusEffectComp()
@@ -34,27 +34,13 @@ void UStatusEffectComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UStatusEffectComp::SetStatusEffect(EStatusEffect _statusEffect)
 {
-	switch (_statusEffect)
-	{
-	case EStatusEffect::BLEED : SetBleedEffect(); break;
-	case EStatusEffect::POISON : SetPoisonEffect(); break;
-	}
-
-	ApplyStatusEffect();
+	// 어떤 StatusEffect인지에 따라
+	// Damage, IsDotAttack, VFX, SFX 설정
 }
 
-void UStatusEffectComp::SetBleedEffect()
+void UStatusEffectComp::AddStatusEffect(ACharacter* Target)
 {
-	IsDotAttack = true;
+	// 설정한 값들 Target에 적용
 }
 
-void UStatusEffectComp::SetPoisonEffect()
-{
-	
-}
-
-void UStatusEffectComp::ApplyStatusEffect()
-{
-	
-}
 
