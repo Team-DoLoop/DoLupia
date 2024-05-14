@@ -224,7 +224,7 @@ void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)
 {
 	if(!ControlledCharacter) return;
 
-	ControlledCharacter->attackComp->ExecuteSkill(SkillIndex);
+	ControlledCharacter->attackComp->PlayerExecuteSkill(SkillIndex);
 }
 
 // <---------------------- Quest UI ---------------------->

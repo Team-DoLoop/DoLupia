@@ -4,9 +4,11 @@
 #include "Characters/Animations/PlayerAnimInstance.h"
 
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
+#include "Items/Sword/SwordBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -27,6 +29,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	State =  Player->GetPlayerFSMComp()->GetCurrentState();
 	Velocity = Player->GetVelocity();
 	Speed = UKismetMathLibrary::VSizeXY(Velocity);
+	Gadget = Player->GetGadgetComp();
 	
 }
 
@@ -56,20 +59,35 @@ void UPlayerAnimInstance::PlayerDieAnimation()
 void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 {
 	if(!attackMontage) return;
+
+	// 검 소지 중인지 아닌지 나눠주기
+	// 검을 들고 있다면?
 	Montage_Play(attackMontage);
 	Montage_JumpToSection(SkillAnimationName[SkillIndex],attackMontage);
+	
+	
+	// 안들고 있다면?
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 {
 	// 공격 판정 시작
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment Start"));
+	if(!Player || !Gadget) return;
+
+	ASwordBase* Sword = Gadget->GetSword();
+	if(!Sword) return;
+	Sword->CollisionOn();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 {
 	// 공격 판정 끝
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment End"));
+
+	ASwordBase* Sword = Gadget->GetSword();
+	if(!Sword) return;
+	Sword->CollisionOff();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackEnd()

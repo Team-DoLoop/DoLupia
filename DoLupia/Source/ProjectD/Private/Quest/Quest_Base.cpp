@@ -76,9 +76,6 @@ void AQuest_Base::BeginPlay()
 		//컴포넌트에서 questID 방송 받아서 여기서 함수 호출해서 QuestID 저장하기
 		Questcomponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}
-	UE_LOG( LogTemp , Error , TEXT( "QuestInventorycomponent 생성" ) );
-
-	//UInventoryComponent* Inventorycomponent = ProjectDCharacter->FindComponentByClass<UInventoryComponent>();
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
@@ -178,29 +175,29 @@ void AQuest_Base::GetQuestDetails()
 	for (const auto& Objective : CurrentStageDetails.Objectives)
 	{
 		CurrentObjectiveProgress.Add( Objective.ObjectiveID , 0 );
-
+		UE_LOG( LogTemp , Error , TEXT( "CurrentObjectiveProgress.Add : %s" ), *Objective.ObjectiveID );
 	}
 }
 
-//이것도 실행이 안되고 있음!!!!!!
+
 void AQuest_Base::CheckItem()
 {
-	UQuestInventoryComponent* QuestInventorycomponent = ProjectDCharacter->FindComponentByClass<UQuestInventoryComponent>();
+	UInventoryComponent* Inventorycomponent = ProjectDCharacter->FindComponentByClass<UInventoryComponent>();
 
-	if (QuestInventorycomponent) {
+	if (Inventorycomponent) {
 		UE_LOG( LogTemp , Error , TEXT( "QuestInventorycomponent 존재" ) );
 
 		for (const auto& Objective : CurrentStageDetails.Objectives)
 		{
-			//목표들 중에 수집이 있는지 확인하고, 인벤토리에 있는지 확인하는
 			if (Objective.Type == EObjectiveType::Collect)
 			{
-				FName MyName = FName( Objective.ObjectiveID );
-				int32 InventoryCount = QuestInventorycomponent->QueryInventory( MyName );
+				int32 InventoryCount = Inventorycomponent->FindItemQuantity( Objective.ObjectiveID );
 				UE_LOG( LogTemp , Error , TEXT( "Objective.ObjectiveID : %s / InventoryCount : %d" ) , *Objective.ObjectiveID , InventoryCount );
-				//목표 수량에 보내기
-				for (const auto& ObjObjective : CurrentStageDetails.Objectives) {
-					OnObjectiveIDHeard( ObjObjective.ObjectiveID , InventoryCount );
+
+				// 인벤토리에 해당 아이템이 있을 때에만 호출
+				if (InventoryCount > 0)
+				{
+					OnObjectiveIDHeard( Objective.ObjectiveID , InventoryCount );
 				}
 			}
 		}
@@ -235,7 +232,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 
 bool AQuest_Base::AreObjectivesComplete()
 {
-	for (const auto& Objective : CurrentStageDetails.Objectives)
+	for (auto& Objective : CurrentStageDetails.Objectives)
 	{
 		FObjectiveDetails ObjectiveData = GetObjectiveDataByID( Objective.ObjectiveID );
 
@@ -261,16 +258,6 @@ bool AQuest_Base::AreObjectivesComplete()
 			Local_AllComplete = false;
 			break; // 목표 데이터나 현재 진행 상황이 유효하지 않으면 반복문 종료
 		}
-	}
-
-	// 반환값 확인
-	if (Local_AllComplete)
-	{
-		UE_LOG( LogTemp , Error , TEXT( "Local_AllComplete = true;" ) );
-	}
-	else
-	{
-		UE_LOG( LogTemp , Error , TEXT( "Local_AllComplete = false;" ) );
 	}
 
 	return Local_AllComplete;

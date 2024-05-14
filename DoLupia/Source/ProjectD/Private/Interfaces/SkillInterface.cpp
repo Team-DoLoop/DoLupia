@@ -4,7 +4,7 @@
 #include "Interfaces/SkillInterface.h"
 
 // Add default functionality here for any ISkillInterface functions that are not pure virtual.
-void ISkillInterface::Execute()
+void ISkillInterface::ExecuteSkill()
 {
 	
 }

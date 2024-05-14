@@ -8,9 +8,9 @@ UPlayerSkillCastingHitDown::UPlayerSkillCastingHitDown()
 	
 }
 
-void UPlayerSkillCastingHitDown::Execute()
+void UPlayerSkillCastingHitDown::ExecuteSkill()
 {
-	Super::Execute();
+	Super::ExecuteSkill();
 
 	UE_LOG(LogTemp, Log, TEXT("CastingHitDown"));
 }

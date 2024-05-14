@@ -24,6 +24,9 @@ private:
 	class AProjectDCharacter* Player;
 
 	UPROPERTY()
+	class AProjectDPlayerController* PlayerController;
+	
+	UPROPERTY()
 	class UPlayerFSMComp* PlayerFSMComp;
 
 	UPROPERTY()
@@ -37,6 +40,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+
+	// <---------------------- Attack ---------------------->
+private:
+
+public:
+	void TurnPlayer();
 	
 
 	// <---------------------- Attack ---------------------->
@@ -49,7 +59,7 @@ protected:
 public:
 	void AttackEnd();
 
-	void ExecuteSkill(int32 SkillIndex);
+	void PlayerExecuteSkill(int32 SkillIndex);
 	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return Skills;}
 	
 };

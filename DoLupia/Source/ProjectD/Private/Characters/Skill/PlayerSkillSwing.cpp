@@ -12,9 +12,9 @@ UPlayerSkillSwing::UPlayerSkillSwing()
 	SkillDamage = 10;
 }
 
-void UPlayerSkillSwing::Execute()
+void UPlayerSkillSwing::ExecuteSkill()
 {
-	Super::Execute();
+	Super::ExecuteSkill();
 
 	UE_LOG(LogTemp, Log, TEXT("Swing"));
 }
