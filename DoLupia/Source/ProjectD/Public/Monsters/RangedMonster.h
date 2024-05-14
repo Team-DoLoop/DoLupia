@@ -44,6 +44,8 @@ public:
 	//원거리 공격
 	void RangedAttack();
 
+	void HasObstacle();
+
 	UPROPERTY( EditAnywhere , BlueprintReadWrite  )
 	FVector MuzzleOffset;
 

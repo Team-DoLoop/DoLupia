@@ -69,6 +69,7 @@ public:
 	class UMonsterAnim* anim;
 
 	//State 함수
+	virtual void IdleState();
 	virtual void PatrolState();
 	virtual void MoveState();
 	virtual void AttackState();
@@ -94,5 +95,13 @@ public:
 
 	float currentTime = 0;
 
+	float patrolTime = 3;
+
 	bool bOnceAttack = false;
+
+	class AAIController* ai;
+
+	FVector randomPos;
+
+	bool GetRandomPositionInNavMesh( FVector centerLocation , float radius , FVector& dest );
 };

@@ -2,15 +2,19 @@
 
 
 #include "Monsters/Monster.h"
+
+#include "AIController.h"
 #include "Monsters/MonsterFSM.h"
 #include "Monsters/MonsterHPWidget.h"
-#include "Monsters/DamageTestActor.h"
+#include <NavigationSystem.h>
 #include "../../../../../../../Source/Runtime/Engine/Classes/Engine/SkeletalMesh.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Items/Sword/SwordBase.h"
 #include "Monsters/MonsterAnim.h"
+#include "Navigation/PathFollowingComponent.h"
 // Sets default values
 AMonster::AMonster()
 {
@@ -22,6 +26,7 @@ AMonster::AMonster()
 	if (MonsterMesh.Succeeded()) {
 		GetMesh()->SetSkeletalMesh(MonsterMesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -189), FRotator(0, -90, 0));
+		
 	}
 
 	FName WheelsSocket( TEXT( "WheelsSocket" ) );
@@ -61,6 +66,8 @@ void AMonster::BeginPlay()
 
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 
+	ai = Cast<AAIController>( this->GetController() );
+
 }
 
 // Called every frame
@@ -87,20 +94,19 @@ void AMonster::Tick(float DeltaTime)
 void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 	//공격 받을 시 OnMyTakeDamage() 호출
-	if(AProjectDCharacter* testActor = Cast<AProjectDCharacter>(OtherActor))
+	if (ASwordBase* testActor = Cast<ASwordBase>( OtherActor ))
 	{
 		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::OnMyCompBeginOverlap" ) );
-
-		OnMyTakeDamage(10);
+		
+		OnMyTakeDamage( 10 );
 	}
 }
 
 
-void AMonster::PatrolState()
+void AMonster::IdleState()
 {
-	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
+	
 	//애니메이션 상태 업데이트
 	anim->animState = MonsterFSM->state;
 
@@ -114,6 +120,31 @@ void AMonster::PatrolState()
 	}
 }
 
+void AMonster::PatrolState()
+{
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
+	currentTime += GetWorld()->GetDeltaSeconds();
+	auto ns = UNavigationSystemV1::GetNavigationSystem( GetWorld() );
+	FPathFindingQuery query;
+	FAIMoveRequest req;
+	ai->BuildPathfindingQuery( req , query );
+	FPathFindingResult r = ns->FindPathSync( query );
+
+	auto result = ai->MoveToLocation( randomPos );
+	if(result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+	{
+		GetRandomPositionInNavMesh( this->GetActorLocation() , 500 , randomPos );
+	}
+	if(currentTime>patrolTime)
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::Move로 전환!!" ) );
+		MonsterFSM->state = EMonsterState::Move;
+		anim->animState = MonsterFSM->state;
+	}
+	
+	
+}
+
 void AMonster::MoveState()
 {
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( " AMonster::MoveState()" ) );
@@ -121,6 +152,7 @@ void AMonster::MoveState()
 	MoveToTarget();
 
 	if (TargetVector.Size() < AttackRange) {
+		ai->StopMovement();
 		MonsterFSM->state = EMonsterState::Attack;
 		anim->animState = MonsterFSM->state;
 		anim->bAttackDelay = true;
@@ -138,17 +170,17 @@ void AMonster::AttackState()
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
-		bOnceAttack = true;
+		//bOnceAttack = true;
 	}
 
-	if(bOnceAttack)
-	{
-		if (TargetVector.Size() > AttackRange) {
-			MonsterFSM->state = EMonsterState::Move;
-			anim->animState = MonsterFSM->state;
-			bOnceAttack = false;
-		}
+	
+	if (TargetVector.Size() > AttackRange) {
+		MonsterFSM->state = EMonsterState::Move;
+		anim->animState = MonsterFSM->state;
+		bOnceAttack = false;
+		GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
+	
 
 }
 
@@ -187,12 +219,37 @@ void AMonster::DieState()
 
 void AMonster::MoveToTarget()
 {
-	TargetVector = target->GetActorLocation() - this->GetActorLocation();
-	this->AddMovementInput( TargetVector.GetSafeNormal() );
-
 	FRotator MonsterRotation = FRotationMatrix::MakeFromX( TargetVector ).Rotator();
 	this->SetActorRotation( MonsterRotation );
 
+	FVector destination = target->GetActorLocation();
+	TargetVector = destination - this->GetActorLocation();
+	//this->AddMovementInput( TargetVector.GetSafeNormal() );
+	auto ns = UNavigationSystemV1::GetNavigationSystem( GetWorld() );
+
+	FPathFindingQuery query;
+
+	FAIMoveRequest req;
+	req.SetAcceptanceRadius( 3 );
+	req.SetGoalLocation( destination );
+	ai->BuildPathfindingQuery( req , query );
+	FPathFindingResult r = ns->FindPathSync( query );
+
+	ai->MoveToLocation( destination );
+
+	//네비 메쉬안에 타겟이 있다면 타겟을 향해 이동
+	/*if(r.Result==ENavigationQueryResult::Success)
+	{
+		ai->MoveToLocation( destination );
+	}
+	else
+	{ //네비 메쉬안에 타겟이 없다면 랜덤포인트를 향해 이동
+		auto result = ai->MoveToLocation( randomPos );
+		if(result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
+		{
+			GetRandomPositionInNavMesh( this->GetActorLocation() , 500 , randomPos );
+		}
+	}*/
 }
 
 void AMonster::OnMyTakeDamage(int damage)
@@ -218,5 +275,17 @@ void AMonster::OnMyTakeDamage(int damage)
 	anim->animState = MonsterFSM->state;
 	// 충돌체 끄기
 	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	ai->StopMovement();
+
+}
+
+bool AMonster::GetRandomPositionInNavMesh(FVector centerLocation, float radius, FVector& dest)
+{
+	auto ns = UNavigationSystemV1::GetNavigationSystem( GetWorld() );
+	FNavLocation loc;
+	bool result = ns->GetRandomReachablePointInRadius( centerLocation , radius , loc );
+	dest = loc.Location;
+	return result;
+
 }
 
