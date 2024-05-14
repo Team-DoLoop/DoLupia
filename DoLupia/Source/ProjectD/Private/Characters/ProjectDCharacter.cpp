@@ -415,6 +415,8 @@ void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToD
 		APickup* Pickup = GetWorld()->SpawnActor<APickup>(APickup::StaticClass(), SpawnTransform, SpawnParams);
 
 		Pickup->InitializeDrop(ItemToDrop, RemoveQuantity);
+
+		OnObjectiveIDCalled.Broadcast( ItemToDrop->GetTextData().Name.ToString() , -1*RemoveQuantity );
 	}
 	else
 	{
