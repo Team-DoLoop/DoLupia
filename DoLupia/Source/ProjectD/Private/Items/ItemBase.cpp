@@ -3,6 +3,8 @@
 
 #include "Items/ItemBase.h"
 
+#include "Characters/PlayerStat.h"
+#include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
 
 UItemBase::UItemBase() : bIsCopy(false), bIsPickup(false)
@@ -24,25 +26,9 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 	this->NumericData = MyItemBase->NumericData;
 	this->ItemStatistics = MyItemBase->ItemStatistics;
 	this->AssetData = MyItemBase->AssetData;
+	this->SkillAttribute = MyItemBase->SkillAttribute;
 	this->bIsCopy = true;
 	this->bIsPickup = true;
-
-	// TObjectPtr<UItemBase> ItemCopy = MyItemBase;
-
-	//ItemCopy = NewObject<UItemBase>( StaticClass() );
-
-	//ItemCopy->ID = this->ID;
-	//ItemCopy->Quantity = this->Quantity;
-	//ItemCopy->ItemQuality = this->ItemQuality;
-	//ItemCopy->ItemType = this->ItemType;
-	//ItemCopy->TextData = this->TextData;
-	//ItemCopy->NumericData = this->NumericData;
-	//ItemCopy->ItemStatistics = this->ItemStatistics;
-	//ItemCopy->AssetData = this->AssetData;
-	//ItemCopy->bIsCopy = true;
-	//ItemCopy->bIsPickup = true;
-
-	//return ItemCopy;
 }
 
 void UItemBase::SetQuantity(const int32 NewQuantity)
@@ -66,8 +52,10 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 
 }
 
-void UItemBase::Use(AProjectDCharacter* Character)
+void UItemBase::Use()
 {
+	AProjectDCharacter* Character = Cast<AProjectDCharacter>(OwningInventory->GetOwner());
+	Character->GetPlayerStat()->SetHP( -ItemStatistics.HealthValue );
 }
 
 

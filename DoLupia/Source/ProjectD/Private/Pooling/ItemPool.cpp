@@ -8,7 +8,7 @@ void UItemPool::CreateItem(int32 NumberOfCreate)
 {
     for (int32 i = 0; i < NumberOfCreate; ++i)
     {
-        UItemBase* Item = NewObject<UItemBase>( this );
+        UItemBase* Item = NewObject<UItemBase>( this, UItemBase::StaticClass() );
         Pool.Add(Item);
     }
 
@@ -21,7 +21,7 @@ void UItemPool::CreateItem(int32 NumberOfCreate)
         {
             if (ItemData)
             {
-                TObjectPtr<UItemBase> ItemReference = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+                UItemBase* ItemReference = NewObject<UItemBase>( this , UItemBase::StaticClass() );
 
                 ItemReference->SetID( ItemData->ID );
                 ItemReference->SetItemType( ItemData->ItemType );
@@ -53,10 +53,9 @@ UItemBase* UItemPool::GetItem(const FString& ItemID)
         RetrievedItem = Pool[Size];
         Pool.RemoveAt(Size);
     }
-    else
-    {
+
+    if(!RetrievedItem)
         RetrievedItem = NewObject<UItemBase>(this, UItemBase::StaticClass());  // 풀이 비어 있다면 새로운 아이템 생성
-    }
 
     RetrievedItem->CreateItemCopy(ItemManager[ItemID]); // 풀이 있다면 객체 속성 복사
 

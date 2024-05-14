@@ -28,9 +28,10 @@ void UGadgetComponent::BeginPlay()
 void UGadgetComponent::InitEquip()
 {
 	AProjectDCharacter* Character = Cast<AProjectDCharacter>( GetOwner() );
+	// GlovesSocket
 
 	// Head
-	const FName& HeadSocket( TEXT( "SwordSocket" ) );
+	const FName& HeadSocket( TEXT( "FX_Head" ) );
 	HeadBase = Character->GetWorld()->SpawnActor<AClothes_HeadBase>( FVector::ZeroVector , FRotator::ZeroRotator );
 
 	if (HeadBase)
@@ -40,7 +41,7 @@ void UGadgetComponent::InitEquip()
 	}
 
 	// Top
-	const FName& TopSocket( TEXT( "SwordSocket" ) );
+	const FName& TopSocket( TEXT( "Chest" ) );
 	TopBase = Character->GetWorld()->SpawnActor<AClothes_TopBase>( FVector::ZeroVector , FRotator::ZeroRotator );
 
 	if (TopBase)
@@ -50,7 +51,7 @@ void UGadgetComponent::InitEquip()
 	}
 
 	// Pants
-	const FName& PantsSocket( TEXT( "SwordSocket" ) );
+	const FName& PantsSocket( TEXT( "PantsSocket" ) );
 	PantsBase = Character->GetWorld()->SpawnActor<AClothes_PantsBase>( FVector::ZeroVector , FRotator::ZeroRotator );
 
 	if (PantsBase)
@@ -60,7 +61,7 @@ void UGadgetComponent::InitEquip()
 	}
 
 	// Shoes
-	const FName& ShoesSocket( TEXT( "SwordSocket" ) );
+	const FName& ShoesSocket( TEXT( "Foot_R" ) );
 	ShoesBase = Character->GetWorld()->SpawnActor<AClothes_ShoesBase>( FVector::ZeroVector , FRotator::ZeroRotator );
 
 	if (ShoesBase)
@@ -138,6 +139,7 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 	}
 
 	return EquippedItem;
+
 }
 
 

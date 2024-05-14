@@ -119,11 +119,11 @@ void AProjectDCharacter::BeginPlay()
 	// 초기 장비 착용
 	Gadget->InitEquip();
 
-	auto PlayerStat = Cast<APlayerStat>(GetPlayerState());
+	PlayerStat = Cast<APlayerStat>(GetPlayerState());
+
 	if(PlayerStat)
-	{
 		PlayerStat->initPlayerData();
-	}
+
 }
 
 void AProjectDCharacter::Tick(float DeltaSeconds)

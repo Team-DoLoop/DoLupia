@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,26 +21,49 @@ class PROJECTD_API APlayerStat : public APlayerState
 private:
 
 protected:
-	UPROPERTY()
-	int32 HP;
+	UPROPERTY(VisibleAnywhere)
+	int32 MaxHP;
 
-	UPROPERTY()
-	int32 MP;
+	UPROPERTY(VisibleAnywhere)
+	int32 CurrentHP;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
+	int32 MaxMP;
+
+	UPROPERTY(VisibleAnywhere)
+	int32 CurrentMP;
+
+	UPROPERTY(VisibleAnywhere)
 	float ATK;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	float DEF;
 	
 public:
 	void initPlayerData();
 	
-	FORCEINLINE int32 GetHP() const {return HP;}
-	FORCEINLINE void  SetHP(int32 _HP) {HP = _HP;}
+	FORCEINLINE int32 GetHP() const {return CurrentHP; }
+	FORCEINLINE void  SetHP(int32 _HP)
+	{
+		int32 NewHP = CurrentHP + _HP;
+
+		if(NewHP > MaxHP)
+			NewHP = MaxHP;
+
+		CurrentHP = NewHP;
+	}
 	
-	FORCEINLINE int32 GetMP() const {return MP;}
-	FORCEINLINE void  SetMP(int32 _MP) {MP = _MP;}
+	FORCEINLINE int32 GetMP() const {return CurrentHP;}
+	FORCEINLINE void  SetMP(int32 _MP)
+	{
+		int32 NewMP = CurrentMP + _MP;
+
+		if (NewMP > MaxMP)
+			NewMP = MaxMP;
+
+		CurrentMP = NewMP;
+	}
+
 	
 	FORCEINLINE int32 GetATK() const {return ATK;}
 	FORCEINLINE void  SetATK(float _ATK) {ATK = _ATK;}
