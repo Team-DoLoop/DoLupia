@@ -51,6 +51,9 @@ private:
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
 	class UImage* img_aitexture;
 
+	UPROPERTY( EditDefaultsOnly )
+	class UAIConnectionLibrary* connectionLibrary;
+
 	/* IP Adress, Port */
 	FString LanIP = "192.168.75.246";
 	FString WifiIP = "172.16.216.55";

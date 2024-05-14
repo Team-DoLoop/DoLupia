@@ -17,6 +17,8 @@ void UAITestWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	connectionLibrary = NewObject<UAIConnectionLibrary>();
+
 	btn_chatbot->OnClicked.AddDynamic(this, &UAITestWidget::SendChatbotSV);
 	btn_imgAI->OnClicked.AddDynamic(this, &UAITestWidget::SendImgaiSV);
 	btn_MLoad->OnClicked.AddDynamic( this , &UAITestWidget::ChangeMaterial );
@@ -24,12 +26,15 @@ void UAITestWidget::NativeConstruct()
 
 void UAITestWidget::SendChatbotSV()
 {
-	UAIConnectionLibrary* connectionLibrary = NewObject<UAIConnectionLibrary>();
+	//UAIConnectionLibrary* connectionLibrary = NewObject<UAIConnectionLibrary>();
 
 	TMap<FString, FString> msgData;
 	FString msg = *edit_sendText->GetText().ToString();
 
-	FString test = connectionLibrary->SendNPCConversationToServer( msg );
+	connectionLibrary->SendNPCConversationToServer( msg );
+
+	//UE_LOG( LogTemp , Warning , TEXT( "test : [%s]" ) , *test )
+	//txt_chatbot->SetText( FText::FromString( test) );
 
 	//msgData.Add(TEXT("message"), msg);
 
@@ -50,15 +55,17 @@ void UAITestWidget::SendImgaiSV()
 {
 	TMap<FString, FString> imgData;
 	FString imgmsg = *edit_sendText->GetText().ToString();
+
+	connectionLibrary->SendImageKeywordToServer( imgmsg );
+
+	/*
 	imgData.Add(TEXT("Img_keywords"), imgmsg);
 
 	FString sendJson = UJsonLibrary::MapToJson(imgData);
 
-	/* Server Conn URL */
 	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
-
-	// server connect
 	ReqImgPost( ServerURL , sendJson);
+	*/
 }
 
 void UAITestWidget::ChangeMaterial()

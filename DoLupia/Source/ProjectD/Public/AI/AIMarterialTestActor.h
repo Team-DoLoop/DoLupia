@@ -36,4 +36,5 @@ protected:
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* MaterialTemplate;
 
+
 };
