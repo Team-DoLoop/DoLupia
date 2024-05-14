@@ -54,12 +54,21 @@ public:
 private:
 	UPROPERTY()
 	EPlayerState CurrentState = EPlayerState::IDLE;
-
+	
 public:
 	FORCEINLINE EPlayerState GetCurrentState() const { return CurrentState; }
 	void CheckState(EPlayerState _state);
 	void ChangePlayerState(EPlayerState _state);
 	bool CanChangeState(EPlayerState _changeState);
+
+
+	// <--------------------- Weapon State --------------------->
+private:
+	UPROPERTY()
+	EPlayerWeaponState CurrentWeaponState = EPlayerWeaponState::UNARMED;
+
+public:
+	FORCEINLINE EPlayerWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; }
 
 
 	// <--------------------- IDLE --------------------->
@@ -76,6 +85,12 @@ public:
 	void TickMove();
 	bool CanMoveState(EPlayerState _CurrentState);
 
+	
+	// <--------------------- Evasion --------------------->
+private:
+
+public:
+	bool CanEvasionState(EPlayerState _CurrentState);
 
 	
 	// <--------------------- Attack --------------------->
@@ -90,14 +105,6 @@ private:
 
 public:
 	bool CanDamageState(EPlayerState _CurrentState);
-
-	
-	
-	// <--------------------- Evasion --------------------->
-private:
-
-public:
-	bool CanEvasionState(EPlayerState _CurrentState);
 
 
 	// <--------------------- TalkNPC --------------------->
