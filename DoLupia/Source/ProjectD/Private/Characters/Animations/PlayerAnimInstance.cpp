@@ -17,7 +17,13 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	Player = Cast<AProjectDCharacter>(TryGetPawnOwner());
+	
+	if(!Player) return;
+	Gadget = Player->GetGadgetComp();
+	
 	SkillAnimationName = {"Default", "SkillSwing", "SkillSpell", "SkillCastingHitDown", "SkillUlt"};
+	OnMontageEnded.AddDynamic(this, &UPlayerAnimInstance::MontageEnd);
+
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -29,8 +35,23 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	State =  Player->GetPlayerFSMComp()->GetCurrentState();
 	Velocity = Player->GetVelocity();
 	Speed = UKismetMathLibrary::VSizeXY(Velocity);
-	Gadget = Player->GetGadgetComp();
+}
+
+void UPlayerAnimInstance::PlayMontage(UAnimMontage* _Montage)
+{
+	if(!_Montage) return;
+
+	Montage_Play(_Montage);
+}
+
+void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
+{
+	UE_LOG(LogTemp, Log, TEXT("Player Animation Montage End"));
+	if(!Player) return;
 	
+	// End Attack Montage
+	if(Montage->GetFName() == attackMontage->GetFName())
+		Player->GetAttackComp()->AttackEnd();
 }
 
 
@@ -44,13 +65,13 @@ void UPlayerAnimInstance::AnimNotify_PlayerEvasionEnd()
 void UPlayerAnimInstance::PlayerEvasionAnimation()
 {
 	if(!evasionMontage) return;
-	Montage_Play(evasionMontage);
+	PlayMontage(evasionMontage);
 }
 
 void UPlayerAnimInstance::PlayerDieAnimation()
 {
 	if(!dieMontage) return;
-	Montage_Play(dieMontage);
+	PlayMontage(dieMontage);
 }
 
 
@@ -62,7 +83,7 @@ void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 
 	// 검 소지 중인지 아닌지 나눠주기
 	// 검을 들고 있다면?
-	Montage_Play(attackMontage);
+	PlayMontage(attackMontage);
 	Montage_JumpToSection(SkillAnimationName[SkillIndex],attackMontage);
 	
 	
@@ -88,10 +109,4 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 	ASwordBase* Sword = Gadget->GetSword();
 	if(!Sword) return;
 	Sword->CollisionOff();
-}
-
-void UPlayerAnimInstance::AnimNotify_AttackEnd()
-{
-	if(!Player) return;
-	Player->GetAttackComp()->AttackEnd();
 }

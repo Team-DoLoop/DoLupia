@@ -76,6 +76,12 @@ public:
 	void TickMove();
 	bool CanMoveState(EPlayerState _CurrentState);
 
+	
+	// <--------------------- Evasion --------------------->
+private:
+
+public:
+	bool CanEvasionState(EPlayerState _CurrentState);
 
 	
 	// <--------------------- Attack --------------------->
@@ -90,14 +96,6 @@ private:
 
 public:
 	bool CanDamageState(EPlayerState _CurrentState);
-
-	
-	
-	// <--------------------- Evasion --------------------->
-private:
-
-public:
-	bool CanEvasionState(EPlayerState _CurrentState);
 
 
 	// <--------------------- TalkNPC --------------------->
