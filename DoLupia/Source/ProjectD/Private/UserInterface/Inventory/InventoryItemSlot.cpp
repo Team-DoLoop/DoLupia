@@ -46,51 +46,53 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 
 			UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory();
 			AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( ItemReference->GetOwningInventory()->GetOwner() );
-			UItemBase* EquipItemBase = MyCharacter->SwitchEquipItem( ItemReference );
-
-			if (EquipItemBase)
-			{
-				ItemReference = EquipItemBase;
-				RefreshItemSlot();
-			}
-			else
-			{
-				InventoryComponent->RemoveAmountOfItem( ItemReference , 1 );
-				InventoryComponent->ReleaseInventory( ItemReference );
-				ResetItemSlot();
-			}
 
 			switch (ItemReference->GetItemType())
 			{
 			case EItemType::Top:
-
-				break;
 			case EItemType::Weapon:
-				// 나중에 속성만 바꾸기
+			case EItemType::Shield:
+			case EItemType::Head:
+			case EItemType::Pants:
+			case EItemType::Shoes:
+			case EItemType::Spell:
+
+				// 만약 내가 검을 장착하고 있다면?
+					// -> 내가 장착할 검과 현재 장착한 검의 속성만 바꿔주고 적용하기
+
+				// 검을 장착하고 있지 않다면?
+					// -> 장착할 검의 속성을 그대로 넣어주고 인벤토리 아이템을 비워주기
+
+				if (UItemBase* EquipItemBase = MyCharacter->SwitchEquipItem( ItemReference ))
 				{
-
-					// 만약 내가 검을 장착하고 있다면?
-						// -> 내가 장착할 검과 현재 장착한 검의 속성만 바꿔주고 적용하기
-
-					// 검을 장착하고 있지 않다면?
-						// -> 장착할 검의 속성을 그대로 넣어주고 인벤토리 아이템을 비워주기
-
-
+					ItemReference = EquipItemBase;
+					RefreshItemSlot();
+				}
+				else
+				{
+					InventoryComponent->RemoveAmountOfItem( ItemReference , 1 );
+					InventoryComponent->ReleaseInventory( ItemReference );
+					ResetItemSlot();
 				}
 
 				break;
-			case EItemType::Shield:
-
-				break;
-			case EItemType::Spell:
-
-				break;
 			case EItemType::Consumable:
-
+				{
+					/*const int32 Quantity = ItemReference->GetQuantity() - 1;
+					ItemReference->SetQuantity( Quantity );*/
+					ItemReference->GetOwningInventory()->RemoveAmountOfItem( ItemReference, 1);
+					ItemReference->Use();
+					ItemReference->GetQuantity() == 0 ? ResetItemSlot() : RefreshItemSlot();
+				}
+					
+				
+				
 				break;
+
 			case EItemType::Quest:
 
 				break;
+
 			case EItemType::Mundane:
 
 				break;
@@ -248,7 +250,4 @@ void UInventoryItemSlot::ResetItemSlot()
 
 	if (ItemReference)
 		ItemReference = nullptr;
-
-	int32 zxc = 0;
-	ItemQuantity->SetText(FText::FromString(FString::FromInt(zxc)));
 }
