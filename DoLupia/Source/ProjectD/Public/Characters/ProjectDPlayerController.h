@@ -105,6 +105,7 @@ public:
 	// <---------------------- UI ---------------------->
 private:
 	void ToggleMenu();
+	bool IsHoverd();
 
 public:
 	/* Toggle Input Action */

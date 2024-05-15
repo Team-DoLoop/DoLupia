@@ -15,6 +15,8 @@
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Engine/LocalPlayer.h"
+#include "UserInterface/DoLupiaHUD.h"
+#include "UserInterface/MainMenu.h"
 #include "UserInterface/Quest/WidgetQuestLog.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -115,19 +117,20 @@ void AProjectDPlayerController::TestAnyFunction()
 
 void AProjectDPlayerController::OnInputStarted()
 {
+	if(!ControlledCharacter || IsHoverd()) return;
 	StopMovement();
 }
 
 // Triggered every frame when the input is held down
 void AProjectDPlayerController::OnSetDestinationTriggered()
 {
-	if(!ControlledCharacter) return;
+	if(!ControlledCharacter || IsHoverd()) return;
 	ControlledCharacter->moveComp->OnSetDestinationTriggered();
 }
 
 void AProjectDPlayerController::OnSetDestinationReleased()
 {
-	if(!ControlledCharacter) return;
+	if(!ControlledCharacter || IsHoverd()) return;
 	ControlledCharacter->moveComp->OnSetDestinationReleased();
 }
 
@@ -163,6 +166,11 @@ void AProjectDPlayerController::ToggleMenu()
 	
 	if (ControlledCharacter)
 		ControlledCharacter->ToggleMenu();
+}
+
+bool AProjectDPlayerController::IsHoverd()
+{
+	return Cast<ADoLupiaHUD>( GetHUD() )->GetMainMeun()->IsHovered();
 }
 
 
