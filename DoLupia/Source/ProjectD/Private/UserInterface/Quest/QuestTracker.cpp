@@ -48,6 +48,12 @@ void UQuestTracker::NativeDestruct()
 
 void UQuestTracker::WidgetUpdate()
 {
+    if (!IsValid( QuestActor ))
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "QuestActor is null!" ) );
+        return;
+    }
+
     if (QuestActor)
     {
         if (txt_QuestName)
