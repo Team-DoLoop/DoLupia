@@ -10,11 +10,13 @@
 #include "ProjectDCharacter.generated.h"
 
 class ADoLupiaHUD;
-class UInventoryComponent;
+class UPlayerDefaultsWidget;
 class UItemBase;
+class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
+
 
 USTRUCT()
 struct FInteractionData
@@ -32,7 +34,7 @@ struct FInteractionData
 };
 
 // Delegate 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1;);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnObjectiveIDCalled , FString , ObjectiveID , int32 , Value = 1);
 
 
 UCLASS(Blueprintable)
@@ -100,11 +102,18 @@ public:
 private:
 	UPROPERTY()
 	ADoLupiaHUD* HUD;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayerDefaultsWidget> PlayerDefaultsWidgetFactory;
+
+	UPROPERTY()
+	UPlayerDefaultsWidget* PlayerDefaultsWidget;
 	
 protected:
 	void ToggleMenu();
 
 public:
+	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;};
 
 	
 

@@ -24,7 +24,7 @@ public:
 
 	void DisPlayMenu();
 	void HideMenu();
-	void ToggleMenu();
+	bool ToggleMenu();
 
 	void ShowInteractionWidget() const;
 	void HideInteractionWidget() const;
