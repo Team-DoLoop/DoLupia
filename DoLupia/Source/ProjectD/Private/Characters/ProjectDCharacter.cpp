@@ -204,7 +204,20 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
 	
 	// 데미지 받기
-	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
+	int32 HP = PlayerStat->GetHP() - Damage;
+	
+	if (HP > 0)
+	{
+		PlayerStat->SetHP( HP );
+		// PlayerFSM->ChangePlayerState( EPlayerState::DAMAGE );
+	}
+	else
+	{
+		HP = 0;
+		PlayerStat->SetHP( HP );
+		moveComp->Die();
+	}
+	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
 
 

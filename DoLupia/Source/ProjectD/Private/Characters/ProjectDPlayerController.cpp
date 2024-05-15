@@ -104,10 +104,11 @@ void AProjectDPlayerController::TestAnyFunction()
 {
 	if(!ControlledCharacter) return;
 	
-	ControlledCharacter->moveComp->Die();
+	// Die Test
+	// ControlledCharacter->moveComp->Die();
 
 	// TakeDamage Test
-	ControlledCharacter->TakeDamage(10.0f);
+	ControlledCharacter->TakeDamage(31.0f);
 }
 
 
