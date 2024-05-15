@@ -10,11 +10,12 @@
 /**
  * 
  */
+
 UCLASS()
 class PROJECTD_API UPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-
+	
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
@@ -23,13 +24,18 @@ class PROJECTD_API UPlayerAnimInstance : public UAnimInstance
 private:
 	UPROPERTY()
 	class AProjectDCharacter* Player;
+
+	UPROPERTY()
 	class UGadgetComponent* Gadget;
 
 public:
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerState State;
 
+	void PlayMontage(UAnimMontage* _Montage);
+
+	UFUNCTION()
+	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);
 	
 
 	
@@ -71,9 +77,6 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentEnd();
-
-	UFUNCTION()
-	void AnimNotify_AttackEnd();
 
 
 

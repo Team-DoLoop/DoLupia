@@ -25,7 +25,7 @@ void UMonsterFSM::BeginPlay()
 
 	me = Cast<AMonster>(GetOwner());
 	
-	state = EMonsterState::Patrol;
+	state = EMonsterState::Idle;
 }
 
 
@@ -36,6 +36,7 @@ void UMonsterFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 	switch (state)
 	{
+	case EMonsterState::Idle:		me->IdleState();		break;
 	case EMonsterState::Patrol:		me->PatrolState();		break;
 	case EMonsterState::Move:		me->MoveState();		break;
 	case EMonsterState::Attack:		me->AttackState();		break;

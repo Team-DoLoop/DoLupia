@@ -34,5 +34,5 @@ void UMonsterAnim::OnDoRangedAttackAnimation()
 {
 	auto ownerPawn = TryGetPawnOwner();
 	auto monster = Cast<ARangedMonster>( ownerPawn );
-	monster->RangedAttack();
+	monster->HasObstacle();
 }
