@@ -9,6 +9,7 @@
 #include "QuestGiver.generated.h"
 
 
+class UItemBase;
 class UWidgetQuestGiver;
 class UWidgetQuestRewards;
 
@@ -39,6 +40,18 @@ protected:
 	UFUNCTION()
 	void DisplayRewards();
 
+	UFUNCTION()
+	UItemBase* CreateItem( const TSubclassOf<UItemBase> BaseClass , const int32 InQuantity );
+
+	UPROPERTY( EditInstanceOnly)
+	UDataTable* ItemDataTable;
+
+	UPROPERTY( EditInstanceOnly )
+	FName DesiredItemID;
+
+	UPROPERTY( VisibleAnywhere )
+	UItemBase* ItemReference;
+
 	UPROPERTY()
 	class AProjectDCharacter* MyPlayerCharacter;
 	UPROPERTY()
@@ -58,4 +71,5 @@ protected:
 
 	UPROPERTY()
 	UWidgetQuestRewards* RewardsWidget;
+
 };

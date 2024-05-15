@@ -70,11 +70,13 @@ void UQuestInventoryComponent::AddToInventory( FName Item , int32 Quantity )
 		Content.Add( ItemString , Quantity );
 	}
 
+	//	FItemAddResult UInventoryComponent::HandelAddItem( UItemBase * InputItem )
 	//플레이어에 있는 방송을 가져와서 아이템 이름을 보냄!!
 	ProjectDCharacter->OnObjectiveIDCalled.Broadcast( ItemString , Quantity );
 
 }
 
+//int32 FindItemQuantity(const FString& InKey)
 int32 UQuestInventoryComponent::QueryInventory( FName Item )
 {
 	// Content 맵이 유효한지 확인

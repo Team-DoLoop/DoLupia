@@ -18,4 +18,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+// ----------------------------------------------------------
+private:
+	UPROPERTY(EditAnywhere)
+	class UCapsuleComponent* collisionComp;
+	
+protected:
+
+public:
+	void CollisionOn();
+	void CollisionOff();
 };

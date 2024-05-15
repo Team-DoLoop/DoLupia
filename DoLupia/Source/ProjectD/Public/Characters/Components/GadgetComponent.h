@@ -48,4 +48,7 @@ private:
 	UPROPERTY( VisibleAnywhere, Category = "Equipment" )
 	ASwordBase* SwordBase;
 
+public:
+	FORCEINLINE class ASwordBase* GetSword() const { return SwordBase; }
+
 };

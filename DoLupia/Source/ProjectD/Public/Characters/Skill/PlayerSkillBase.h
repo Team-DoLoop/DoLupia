@@ -37,6 +37,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Skill")
 	int32 SkillDamage;
 	
-	virtual void Execute() override;
+	virtual void ExecuteSkill() override;
 	virtual void ApplySkill(ACharacter* Target) override;
 };

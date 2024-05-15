@@ -6,8 +6,9 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Characters/ProjectDPlayerController.h"
-#include "Components/VerticalBox.h"
 #include "Quest/QuestLogComponent.h"
+#include "Characters/Components/InventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/Quest/WidgetQuestLog_Objective.h"
 
 void UWidgetQuestRewards::NativePreConstruct()
@@ -98,6 +99,26 @@ void UWidgetQuestRewards::OnAcceptClicked()
     {
         UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ WidgetQuestGiver" ) );
     }
+    //아이템 삭제, 제공
+
+    // UInventoryComponent 찾기
+    UInventoryComponent* InvetoryComp = Cast<UInventoryComponent>( PlayerCharacterD->GetComponentByClass( UInventoryComponent::StaticClass() ) );
+
+    //Delete(ObjectiveItems)
+    auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
+    for (const auto& removeItem : RemoveItem)
+    {
+        FString ItemLog;
+        for (const auto& Pair : removeItem.ItemObjectives)
+        {
+            ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
+        }
+        UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
+
+        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
+    }
+    
+    InvetoryComp->HandelAddItem( ItemRewards );
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();

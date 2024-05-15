@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include <Quest/Struct_QuestSystem.h>
+
 #include "WidgetQuestRewards.generated.h"
 
 class UWidgetQuestLog_Objective;
 class UVerticalBox;
+class UItemBase;
 
 UCLASS()
 class PROJECTD_API UWidgetQuestRewards : public UUserWidget
@@ -32,8 +34,8 @@ public:
     UPROPERTY( EditAnywhere ) //expose on spawn
     FName QuestID;
 
-    //UPROPERTY( meta = (BindWidget) )
-    //UVerticalBox* box_Objectives;
+    UPROPERTY( EditAnywhere )
+    UItemBase* ItemRewards;
 
 protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
@@ -53,5 +55,6 @@ protected:
 
     UPROPERTY( EditAnywhere )
     TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;
+  
 
 };
