@@ -73,6 +73,8 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         if (CurrentQuest[i]->QuestID == QuestID)
         {
             CurrentQuest.RemoveAt( i );
+            QuestCompleted.Broadcast(GetQuestActor(QuestID));
+
             break;
         }
     }

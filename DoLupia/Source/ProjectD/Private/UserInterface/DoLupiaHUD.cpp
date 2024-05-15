@@ -4,6 +4,7 @@
 #include "UserInterface/DoLupiaHUD.h"
 
 #include "UserInterface/MainMenu.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/Interaction/InteractionWidget.h"
 
 ADoLupiaHUD::ADoLupiaHUD()
@@ -18,7 +19,6 @@ void ADoLupiaHUD::BeginPlay()
 	{
 		MainMenuWidget = CreateWidget<UMainMenu>(GetWorld(), MainMenuFactory);
 		MainMenuWidget->AddToViewport(5);
-		MainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	if (InteractionWidgetFactory)
@@ -47,22 +47,24 @@ void ADoLupiaHUD::HideMenu()
 	}
 }
 
-void ADoLupiaHUD::ToggleMenu()
+bool ADoLupiaHUD::ToggleMenu()
 {
 	if(MainMenuWidget->GetVisibility() == ESlateVisibility::Collapsed)
 	{
 		DisPlayMenu();
 
-		APlayerController* PlayerController = GetOwningPlayerController();
-		FInputModeUIOnly InputMode;
-		InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
-		PlayerController->SetInputMode(InputMode);
-		GetOwningPlayerController()->SetShowMouseCursor(true);
+		//APlayerController* PlayerController = GetOwningPlayerController();
+		//FInputModeGameAndUI InputMode;
+		//InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
+		//PlayerController->SetInputMode(InputMode);
+		//GetOwningPlayerController()->SetShowMouseCursor(true);
+
+		return true;
 	}
 	else
 		HideMenu();
 
-	
+	return false;
 }
 
 void ADoLupiaHUD::ShowInteractionWidget() const
