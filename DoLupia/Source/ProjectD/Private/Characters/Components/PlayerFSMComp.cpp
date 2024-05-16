@@ -100,6 +100,18 @@ bool UPlayerFSMComp::CanChangeState(EPlayerState _changeState)
 }
 
 
+// <--------------------- Weapon State --------------------->
+
+void UPlayerFSMComp::ChangePlayerWeaponState(EPlayerWeaponState _weaponState)
+{
+	//if(!CanChangeWeaponState(_weaponState)) return;
+	if(CurrentWeaponState == _weaponState) return;
+	
+	CurrentWeaponState = _weaponState;
+	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentWeaponState : %s"), *UEnum::GetValueAsName(_weaponState).ToString());
+}
+
+
 // <--------------------- Move --------------------->
 
 void UPlayerFSMComp::TickMove()

@@ -86,6 +86,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class APlayerStat* PlayerStat;
 
+	UPROPERTY()
+	class AProjectDPlayerController* PlayerController;
+
 protected:
 	
 public:
@@ -94,6 +97,8 @@ public:
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	void TurnPlayer();
 	
 
 	// <---------------------- UI ---------------------->

@@ -3,6 +3,7 @@
 
 #include "Monsters/RangedMonster.h"
 
+#include "AIController.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "Monsters/MonsterAnim.h"
@@ -48,6 +49,24 @@ void ARangedMonster::BeginPlay()
 }
 
 
+void ARangedMonster::MoveState()
+{
+	//Super::MoveState();
+
+	MoveToTarget();
+
+	if (TargetVector.Size() < AttackRange) {
+		if(HasObstacle())
+		{
+			ai->StopMovement();
+			MonsterFSM->state = EMonsterState::Attack;
+			anim->animState = MonsterFSM->state;
+			anim->bAttackDelay = true;
+			currentTime = attackDelayTime;
+		}
+		
+	}
+}
 
 void ARangedMonster::AttackState()
 {
@@ -91,7 +110,7 @@ void ARangedMonster::RangedAttack()
 	}
 }
 
-void ARangedMonster::HasObstacle()
+bool ARangedMonster::HasObstacle()
 {
 	FHitResult outHit;
 
@@ -126,16 +145,18 @@ void ARangedMonster::HasObstacle()
 			AProjectDCharacter* player = Cast<AProjectDCharacter>( HitActor );
 			if (player)
 			{
-				RangedAttack();
-				
+				//RangedAttack();
+				bStartToAttack= true;
 			}
 			else
 			{
 				//PatrolState로 전환
-				MonsterFSM->state = EMonsterState::Move;
-				anim->animState = MonsterFSM->state;
+				/*MonsterFSM->state = EMonsterState::Move;
+				anim->animState = MonsterFSM->state;*/
+				bStartToAttack = false;
 			}
 		}
 	}
+	return bStartToAttack;
 
 }
