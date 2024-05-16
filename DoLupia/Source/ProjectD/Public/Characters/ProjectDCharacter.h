@@ -152,10 +152,9 @@ protected:
 	void UpdateCameraTimeline(const float TimelineValue) const;
 	UFUNCTION()
 	void CameraTimelineEnd();
-
-	virtual void TakeDamage(float Damage) override;
 	
 public:
+	virtual void TakeDamage(float Damage) override;
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 	
 
