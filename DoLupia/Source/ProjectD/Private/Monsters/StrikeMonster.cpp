@@ -3,6 +3,8 @@
 
 #include "Monsters/StrikeMonster.h"
 
+#include "Characters/ProjectDCharacter.h"
+#include "Monsters/MonsterSword.h"
 #include "Monsters/MonsterFSM.h"
 
 
@@ -36,6 +38,28 @@ void AStrikeMonster::BeginPlay()
 	//근거리 몬스터 체력 설정
 	this->maxHP = 150;
 	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , this->maxHP );
+
+	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
+}
+
+
+void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
+
+		if (OverlapPlayer->GetController())
+		{
+			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::플레이어 공격 성공!!" ) );
+			OverlapPlayer->TakeDamage( 30 );
+
+			return;
+		}
+
+		//플레이어 Damage 처리
+		UE_LOG( LogTemp , Warning , TEXT( "!OverlapPlayer->GetController()" ) );
+
+	}
 }
 
 void AStrikeMonster::AttackState()
