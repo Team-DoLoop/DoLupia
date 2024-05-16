@@ -11,6 +11,7 @@
 #include "Algo/Sort.h"
 #include "Characters/ProjectDCharacter.h"
 #include "UserInterface/Item/ItemCarouselWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
 
 constexpr int32 NONFIND_INDEX = -1;
@@ -490,6 +491,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 			const FString& ItemName = InputItem->GetTextData().Name.ToString();
 			player->OnObjectiveIDCalled.Broadcast( ItemName , InitialRequestedAddAmount );
 
+			player->GetPlayerDefaultsWidget()->RefreshQuickSlot( ItemName , InventoryCount[ItemName] );
+
 			// 모두 인벤토리에 넣어주자.
 			return FItemAddResult::AddedAll(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Successfully added {0} {1} to the Inventory."), 
@@ -503,8 +506,12 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		{
 			int AddedAmount = InitialRequestedAddAmount - StackableAmountAdded;
 			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , AddedAmount , InputItem->GetAssetData().Icon );
+
 			const FString& ItemName = InputItem->GetTextData().Name.ToString();
 			player->OnObjectiveIDCalled.Broadcast( ItemName , AddedAmount );
+
+			player->GetPlayerDefaultsWidget()->RefreshQuickSlot( ItemName , InventoryCount[ItemName]);
+
 			// 부분만 인벤토리에 넣어주자.
 			return FItemAddResult::AddedPartial(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Partial amount of {0} added to thie Inventory. Number added {1}"), 
@@ -526,12 +533,12 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 	return FItemAddResult::AddedNone(FText::FromString("TryAddItem fallthrough error. GetOwner() check somehow failed"));
 }
 
-void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& Test)
+void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& RemoveToITem )
 {
 
 	TArray<TPair<FString, int32>> ItemName;
 
-	for(const auto& Iterate : Test)
+	for(const auto& Iterate : RemoveToITem)
 	{
 		const int32* Value = InventoryCount.Find( Iterate.Key );
 
@@ -550,6 +557,12 @@ void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& Test)
 		for(TPair<FString , int32> Items : ItemName)
 		{
 			DeleteItem( Items.Key , Items.Value, Index );
+
+			const int32* ElemValue = InventoryCount.Find(Items.Key);
+			if(ElemValue)
+			{
+				player->GetPlayerDefaultsWidget()->RefreshQuickSlot( Items.Key , InventoryCount[Items.Key] );
+			}
 		}
 
 		OnInventoryUpdated.Broadcast();

@@ -201,6 +201,12 @@ void AProjectDCharacter::ToggleMenu()
 		StopAiming();
 }
 
+void AProjectDCharacter::UseQuickSlot(int32 SlotNumber)
+{
+	PlayerDefaultsWidget->UseQuickSlot( SlotNumber );
+}
+
+
 // <---------------------- Attack ---------------------->
 void AProjectDCharacter::Aim()
 {

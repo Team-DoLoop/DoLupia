@@ -16,7 +16,7 @@ class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
-class APlayerStat;
+
 
 USTRUCT()
 struct FInteractionData
@@ -84,7 +84,7 @@ private:
 	class UGadgetComponent* Gadget;
 
 	UPROPERTY(VisibleAnywhere)
-	APlayerStat* PlayerStat;
+	class APlayerStat* PlayerStat;
 
 protected:
 	
@@ -111,7 +111,8 @@ protected:
 	void ToggleMenu();
 
 public:
-	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;};
+	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;}
+	void UseQuickSlot(int32 SlotNumber);
 
 	
 
@@ -152,9 +153,10 @@ protected:
 	void UpdateCameraTimeline(const float TimelineValue) const;
 	UFUNCTION()
 	void CameraTimelineEnd();
+
+	virtual void TakeDamage(float Damage) override;
 	
 public:
-	virtual void TakeDamage(float Damage) override;
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 	
 

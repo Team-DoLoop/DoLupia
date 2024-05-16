@@ -95,7 +95,7 @@ public:
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
 
 	UFUNCTION( Category = "Inventory" )
-	void HandelRemoveItem(const TMap<FString , int32>& Test);
+	void HandelRemoveItem(const TMap<FString , int32>& RemoveToITem);
 
 	UFUNCTION( Category = "Inventory" )
 	void ReleaseInventory(UItemBase* ItemIn);
