@@ -3,6 +3,8 @@
 
 #include "Quest/QuestGiver.h"
 
+#include <Data/WidgetData.h>
+
 #include "Blueprint/UserWidget.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDGameMode.h"
@@ -136,7 +138,7 @@ void UQuestGiver::DisplayQuest()
         {
 	        QuestWidget->QuestDetails = *Row;
             QuestWidget->QuestID = QuestData.RowName;
-			QuestWidget->AddToViewport(); // 위젯을 화면에 추가
+			QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest)); // 위젯을 화면에 추가
         }
     }
 }
@@ -160,7 +162,7 @@ void UQuestGiver::DisplayRewards()
                 RewardsWidget->ItemRewards = CreateItem( UItemBase::StaticClass() , Pair.Value );
             }
 
-            RewardsWidget->AddToViewport();
+            RewardsWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
         }
     }   
 }
