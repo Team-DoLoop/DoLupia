@@ -69,6 +69,7 @@ private:
 
 public:
 	FORCEINLINE EPlayerWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; }
+	void ChangePlayerWeaponState(EPlayerWeaponState _weaponState);
 
 
 	// <--------------------- IDLE --------------------->

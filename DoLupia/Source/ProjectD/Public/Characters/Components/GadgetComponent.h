@@ -29,7 +29,7 @@ public:
 
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;
+	virtual void	BeginPlay() override;
 
 public:	
 	// Called every frame
@@ -37,6 +37,9 @@ public:
 
 
 private:
+	UPROPERTY()
+	class AProjectDCharacter* Character;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Equipment")
 	AClothes_HeadBase* HeadBase;
 	UPROPERTY( VisibleAnywhere, Category = "Equipment" )
@@ -47,6 +50,8 @@ private:
 	AClothes_ShoesBase* ShoesBase;
 	UPROPERTY( VisibleAnywhere, Category = "Equipment" )
 	ASwordBase* SwordBase;
+
+	
 
 public:
 	FORCEINLINE class ASwordBase* GetSword() const { return SwordBase; }
