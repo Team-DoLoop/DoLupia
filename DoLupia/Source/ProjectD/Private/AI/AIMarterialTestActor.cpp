@@ -11,6 +11,7 @@
 #include "Materials/MaterialExpressionTextureSample.h"
 #include "Engine/Texture2DDynamic.h" 
 #include "Blueprint/AsyncTaskDownloadImage.h"
+#include "Async/Async.h"
 #include "TextureResource.h"
 
 // Sets default values
@@ -77,21 +78,29 @@ void AAIMarterialTestActor::UpdateActorMaterial()
 void AAIMarterialTestActor::LoadWebImage()
 {
     UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Call" ) );
-    FString testURL = "http://127.0.0.1:8000/ShowAITexture";
-    // URL을 통해 이미지를 다운로드
-    UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( testURL );
-    if (DownloadTask)
-    {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Down" ) );
-        DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
-        DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
-    }
-    UMaterialInstanceDynamic* testMaterial = meshComp->CreateDynamicMaterialInstance( 0, MaterialTemplate2 );
-	//UMaterialInstanceDynamic::Create( MaterialTemplate , nullptr );
     
-    //testMaterial->SetTextureParameterValue( FName( "A1-2345" ) , testTexture );
+    // URL을 통해 이미지를 다운로드
+    AsyncTask( ENamedThreads::AnyThread , [this]()
+    {
+        AsyncTask( ENamedThreads::GameThread , [this]()
+        {
+
+            FString testURL = "http://172.16.216.55:8000/ShowAITexture";
+            UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( testURL );
+            if (DownloadTask)
+            {
+                UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Down" ) );
+                DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
+                DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
+            }
+            UMaterialInstanceDynamic* testMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate2 );
+
+         } );
+        
+    });
 
     
+
 }
 
 void AAIMarterialTestActor::ApplyMaterialToMesh(UMeshComponent* MeshComponent, UMaterialInterface* Material)
@@ -110,7 +119,7 @@ void AAIMarterialTestActor::OnImageDownloaded(UTexture2DDynamic* DownloadedTextu
 {
     if (DownloadedTexture)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );  
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
         UMaterialInstanceDynamic* DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate );
         // UTexture로 캐스팅
