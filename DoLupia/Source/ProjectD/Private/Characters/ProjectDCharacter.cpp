@@ -1,26 +1,33 @@
 ﻿
 // game
 #include "Characters/ProjectDCharacter.h"
-#include "UserInterface/DoLupiaHUD.h"
-#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "Characters/Components/InventoryComponent.h"
-#include "World/Pickup.h"
-#include "Quest/QuestLogComponent.h"
-#include "Quest/TestNPCCharacter.h"
-
-// engine
-#include "UObject/ConstructorHelpers.h"
-#include "Camera/CameraComponent.h"
-#include "Characters/PlayerStat.h"
-#include "Characters/Animations/PlayerAnimInstance.h"
-#include "Characters/Components/GadgetComponent.h"
-#include "Components/DecalComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Characters/Skill/PlayerSkillSpell.h"
 #include "Characters/Skill/PlayerSkillSwing.h"
+#include "Characters/PlayerStat.h"
+#include "Monsters/Monster.h"
+#include "Quest/QuestLogComponent.h"
+#include "Quest/QuestInventoryComponent.h"
+#include "Quest/TestNPCCharacter.h"
+#include "UserInterface/DoLupiaHUD.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/MainMenu.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+#include "World/Pickup.h"
+
+#include "Items/Sword/LongSword.h"
+
+// engine
+#include "UObject/ConstructorHelpers.h"
+#include "Camera/CameraComponent.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
+#include "Characters/Components/GadgetComponent.h"
+#include "Components/DecalComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Elements/Framework/TypedElementQueryBuilder.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,11 +35,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-#include "Items/Sword/LongSword.h"
-#include "Quest/QuestInventoryComponent.h"
-#include "UserInterface/MainMenu.h"
-#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
-#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -150,6 +152,12 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	}
 }
 
+void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+	
+}
+
 	// <---------------------- UI ---------------------->
 void AProjectDCharacter::ToggleMenu()
 {
@@ -239,7 +247,20 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
 	
 	// 데미지 받기
-	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
+	int32 HP = PlayerStat->GetHP() - Damage;
+	
+	if (HP > 0)
+	{
+		PlayerStat->SetHP( HP );
+		// PlayerFSM->ChangePlayerState( EPlayerState::DAMAGE );
+	}
+	else
+	{
+		HP = 0;
+		PlayerStat->SetHP( HP );
+		moveComp->Die();
+	}
+	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
 
 
@@ -450,6 +471,8 @@ void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToD
 		APickup* Pickup = GetWorld()->SpawnActor<APickup>(APickup::StaticClass(), SpawnTransform, SpawnParams);
 
 		Pickup->InitializeDrop(ItemToDrop, RemoveQuantity);
+
+		OnObjectiveIDCalled.Broadcast( ItemToDrop->GetTextData().Name.ToString() , -1*RemoveQuantity );
 	}
 	else
 	{

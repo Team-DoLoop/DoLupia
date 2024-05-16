@@ -3,6 +3,7 @@
 
 #include "Monsters/RangedMonster.h"
 
+#include "Characters/ProjectDCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "Monsters/MonsterAnim.h"
 #include "Monsters/MonsterFSM.h"
@@ -37,7 +38,7 @@ void ARangedMonster::BeginPlay()
 	Super::BeginPlay();
 
 	this->MonsterType = EMonsterType::Ranged;
-	MonsterFSM->state = EMonsterState::Patrol;
+	MonsterFSM->state = EMonsterState::Idle;
 	//원거리 몬스터 기본 설정
 	this->maxHP = 150;
 	this->AttackRange = 1000;
@@ -88,4 +89,42 @@ void ARangedMonster::RangedAttack()
 		FTransform t = firePosition->GetComponentTransform();
 		GetWorld()->SpawnActor<ARMProjectile>( ProjectileClass , t );
 	}
+}
+
+void ARangedMonster::HasObstacle()
+{
+	FHitResult outHit;
+
+	FVector Start = this->GetActorLocation(); // 레이캐스트의 시작점
+	FVector End = Start + this->GetActorForwardVector() * 100000; // 레이캐스트의 종료점
+
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor( this ); // 현재 액터는 충돌 검사에서 무시
+
+	// 레이캐스트를 수행하고 충돌 정보를 outHit에 저장.
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel( outHit , Start , End , ECC_Visibility , CollisionParams );
+
+	if (bIsHit)
+	{
+		// 충돌한 액터를 처리
+		AActor* HitActor = outHit.GetActor();
+		if (HitActor)
+		{
+			// 충돌한 액터가 플레이어가 아니라면
+			AProjectDCharacter* player = Cast<AProjectDCharacter>( HitActor );
+			if (!player)
+			{
+				//PatrolState로 전환
+				MonsterFSM->state = EMonsterState::Patrol;
+				anim->animState = MonsterFSM->state;
+			}
+		}
+	}
+
+	else
+	{
+		//투사체발사
+		RangedAttack();
+	}
+
 }

@@ -3,6 +3,8 @@
 
 #include "Items/Sword/SwordBase.h"
 
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Components/CapsuleComponent.h"
 #include "Items/ItemBase.h"
 #include "Monsters/Monster.h"
@@ -31,6 +33,28 @@ void ASwordBase::BeginPlay()
 	Super::BeginPlay();
 
 	CollisionOff();
+}
+
+void ASwordBase::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	AProjectDCharacter* Player = Cast<AProjectDCharacter>(GetAttachParentActor());
+	
+	// 만약 플레이어에게 들려있다면
+	if(Player)
+	{
+		// 플레이어의 상태가 검 장착 중이라면
+		auto PlayerFSM = Player->GetPlayerFSMComp();
+		if(PlayerFSM && PlayerFSM->GetCurrentWeaponState() == EPlayerWeaponState::SWORD)
+		{
+			auto _OtherActor = Cast<AMonster>(OtherActor);
+			if(_OtherActor)
+			{
+				_OtherActor->OnMyTakeDamage(10);
+			}
+		}
+	}
 }
 
 void ASwordBase::CollisionOn()
