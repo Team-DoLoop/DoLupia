@@ -139,47 +139,45 @@ void UInventoryItemSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 bool UInventoryItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>( InOperation );
-
-	// 플레이어가 아이템을 드래그 앤 드랍 할 수 있도록 설정
-	UInventoryItemSlot* InventoryItemSlot = ItemDragDrop->GetInventoryItemSlot();
-	UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
-	if (ItemBase && !InventoryItemSlot->IsEmpty())
+	if(const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>( InOperation ))
 	{
-		if(ItemBase == this->ItemReference)
-			return false;
-
-		UInventoryComponent* InventoryComponent = ItemBase->GetOwningInventory();
-		InventoryComponent->SwapInventory(InventoryItemSlot, this);
-
-		if (this->ItemReference)
+		// 플레이어가 아이템을 드래그 앤 드랍 할 수 있도록 설정
+		UInventoryItemSlot* InventoryItemSlot = ItemDragDrop->GetInventoryItemSlot();
+		UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
+		if (ItemBase && !InventoryItemSlot->IsEmpty())
 		{
-			InventoryItemSlot->SetItemReference( this->ItemReference );
-			this->ItemReference = ItemBase;
+			if(ItemBase == this->ItemReference)
+				return false;
 
-			InventoryItemSlot->GetToolTip()->SetupTooltip();
-			InventoryItemSlot->RefreshItemSlot();
+			UInventoryComponent* InventoryComponent = ItemBase->GetOwningInventory();
+			InventoryComponent->SwapInventory(InventoryItemSlot, this);
 
-			this->Tooltip->SetupTooltip();
-			this->RefreshItemSlot();
+			if (this->ItemReference)
+			{
+				InventoryItemSlot->SetItemReference( this->ItemReference );
+				this->ItemReference = ItemBase;
+
+				InventoryItemSlot->GetToolTip()->SetupTooltip();
+				InventoryItemSlot->RefreshItemSlot();
+
+				this->Tooltip->SetupTooltip();
+				this->RefreshItemSlot();
+			}
+			else
+			{
+				InventoryItemSlot->SetItemReference( this->ItemReference );
+				this->ItemReference = ItemBase;
+
+				this->Tooltip->SetupTooltip();
+				this->RefreshItemSlot();
+
+				InventoryItemSlot->ResetItemSlot();
+			}
+			return true;
+
 		}
-		else
-		{
-			InventoryItemSlot->SetItemReference( this->ItemReference );
-			this->ItemReference = ItemBase;
-
-			this->Tooltip->SetupTooltip();
-			this->RefreshItemSlot();
-
-			InventoryItemSlot->ResetItemSlot();
-		}
-
-
-
-
-		return true;
-
 	}
+
 
 	return false;
 

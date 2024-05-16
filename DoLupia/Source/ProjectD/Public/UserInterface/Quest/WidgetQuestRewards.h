@@ -9,7 +9,6 @@
 #include "WidgetQuestRewards.generated.h"
 
 class UWidgetQuestLog_Objective;
-class UVerticalBox;
 class UItemBase;
 
 UCLASS()

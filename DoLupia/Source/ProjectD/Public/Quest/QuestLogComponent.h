@@ -11,6 +11,8 @@
 // 예시: FName 타입을 전달하는 델리게이트 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestCompleted , AQuest_Base*, D_QuestActor );
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UQuestLogComponent : public UActorComponent
 {
@@ -30,6 +32,9 @@ public:
 
 	UPROPERTY( BlueprintAssignable )
 	FQuestDataLoadedSignature OnQuestDataLoaded;
+
+	UPROPERTY( BlueprintAssignable )
+	FQuestCompleted QuestCompleted;
 
 	UPROPERTY()
 	TArray<FName> CurrentActiveQuests;

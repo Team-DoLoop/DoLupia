@@ -13,6 +13,7 @@ class UScrollBox;
 class UWidgetSwitcher;
 class UButton;
 class UWidgetQuestLog_QuestEntry;
+class UQuestTracker;
 
 UCLASS()
 class PROJECTD_API UWidgetQuestLog : public UUserWidget
@@ -58,6 +59,12 @@ protected:
     UPROPERTY( EditAnywhere )
     TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;
 
+    UPROPERTY( EditAnywhere )
+    TSubclassOf<UQuestTracker> QuestTracker_Widget;
+
+    UPROPERTY()
+    class UQuestTracker* Tracker;
+
     UPROPERTY( EditAnywhere , BlueprintReadWrite )
     FDataTableRowHandle QuestData;
 
@@ -73,6 +80,9 @@ protected:
 
     UFUNCTION()
     void DisplayQuest( FName QuestID, AQuest_Base* QuestActor );
+
+    UFUNCTION()
+    void OnTracked(AQuest_Base* QuestActor);
 
     void AddQuestToScrollBox( UWidgetQuestLog_QuestEntry* QuestWidget , FQuestDetails* QuestDetailsRow , FName QuestID );
 
