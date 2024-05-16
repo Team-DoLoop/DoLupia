@@ -60,8 +60,11 @@ void UPlayerAttackComp::TurnPlayer()
 	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 	if(bHitSuccessful)
 	{
-		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
-		Player->SetActorRotation( UKismetMathLibrary::MakeRotFromXZ( EvasionVec , Player->GetActorUpVector() ) );
+		FVector AttackVec = Hit.ImpactPoint - Player->GetActorLocation();
+		FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ( AttackVec , Player->GetActorUpVector() );
+		FRotator PlayerRot = Player->GetActorRotation();
+		FRotator TempRot = FRotator(PlayerRot.Pitch, TargetRot.Yaw, PlayerRot.Roll);
+		Player->SetActorRotation( TempRot);
 	}
 }
 
