@@ -5,6 +5,7 @@
 #include "Quest/QuestLogComponent.h"
 #include "Quest/QuestInventoryComponent.h" //지울 예정 
 #include <Characters/ProjectDCharacter.h>
+#include "Data/WidgetData.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/InventoryComponent.h"
@@ -221,7 +222,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 		if (QuestWidget)
 		{
 			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
-			QuestWidget->AddToViewport();
+			QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
 			IsCompleted = AreObjectivesComplete();
 			if(IsCompleted)
 				UE_LOG( LogTemp , Error , TEXT( "IsCompleted = true;" ) );

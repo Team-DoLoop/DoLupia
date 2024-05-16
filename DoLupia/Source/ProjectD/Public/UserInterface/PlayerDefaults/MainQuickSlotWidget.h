@@ -7,7 +7,7 @@
 #include "MainQuickSlotWidget.generated.h"
 
 class UQuickSlotWidget;
-
+class UCanvasPanel;
 /**
  * 
  */
@@ -30,8 +30,12 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	//virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 protected:
+	UPROPERTY( meta = (BindWidget) )
+	UCanvasPanel* DefaultsPanel;
+
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UQuickSlotWidget> QuickSlot1;
 

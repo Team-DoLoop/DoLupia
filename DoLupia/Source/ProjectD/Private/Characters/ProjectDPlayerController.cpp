@@ -18,6 +18,7 @@
 #include "UserInterface/DoLupiaHUD.h"
 #include "UserInterface/MainMenu.h"
 #include "UserInterface/Quest/WidgetQuestLog.h"
+#include "Data/WidgetData.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -76,6 +77,8 @@ void AProjectDPlayerController::SetupInputComponent()
 
 		// UI
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
+		EnhancedInputComponent->BindAction(QuickSlotAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction );
+
 
 		//QuestUI
 		EnhancedInputComponent->BindAction( QuestTabAction , ETriggerEvent::Started , this , &AProjectDPlayerController::QuestLogMenu );
@@ -118,21 +121,22 @@ void AProjectDPlayerController::TestAnyFunction()
 
 void AProjectDPlayerController::OnInputStarted()
 {
-	if(!ControlledCharacter || IsHoverd()) return;
+	if(!ControlledCharacter) return;
 	StopMovement();
 }
 
 // Triggered every frame when the input is held down
 void AProjectDPlayerController::OnSetDestinationTriggered()
 {
-	if(!ControlledCharacter || IsHoverd()) return;
+	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->OnSetDestinationTriggered();
 }
 
 void AProjectDPlayerController::OnSetDestinationReleased()
 {
-	if(!ControlledCharacter || IsHoverd()) return;
+	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->OnSetDestinationReleased();
+	SetInputMode(FInputModeGameOnly());
 }
 
 /*
@@ -244,6 +248,6 @@ void AProjectDPlayerController::QuestLogMenu()
 
 	if(QuestWidget)
 	{
-		QuestWidget->AddToViewport();
+		QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
 	}
 }

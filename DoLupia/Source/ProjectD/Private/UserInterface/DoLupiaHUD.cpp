@@ -2,10 +2,10 @@
 
 
 #include "UserInterface/DoLupiaHUD.h"
-
 #include "UserInterface/MainMenu.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/Interaction/InteractionWidget.h"
+#include "Data/WidgetData.h"
 
 ADoLupiaHUD::ADoLupiaHUD()
 {
@@ -18,13 +18,14 @@ void ADoLupiaHUD::BeginPlay()
 	if(MainMenuFactory)
 	{
 		MainMenuWidget = CreateWidget<UMainMenu>(GetWorld(), MainMenuFactory);
-		MainMenuWidget->AddToViewport(5);
+		MainMenuWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Inventory));
+		MainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
 	if (InteractionWidgetFactory)
 	{
 		InteractionWidget = CreateWidget<UInteractionWidget>(GetWorld(), InteractionWidgetFactory);
-		InteractionWidget->AddToViewport(-1);
+		InteractionWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Interaction));
 		InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
