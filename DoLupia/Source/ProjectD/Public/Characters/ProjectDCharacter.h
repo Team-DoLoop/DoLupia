@@ -16,7 +16,7 @@ class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
-
+class APlayerStat;
 
 USTRUCT()
 struct FInteractionData
@@ -84,7 +84,7 @@ private:
 	class UGadgetComponent* Gadget;
 
 	UPROPERTY(VisibleAnywhere)
-	class APlayerStat* PlayerStat;
+	APlayerStat* PlayerStat;
 
 protected:
 	
