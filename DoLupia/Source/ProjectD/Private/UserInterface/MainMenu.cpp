@@ -37,7 +37,7 @@ FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& 
 		{
 			SetVisibility(ESlateVisibility::Collapsed);
 
-			const FInputModeGameAndUI InputMode;
+			const FInputModeGameOnly InputMode;
 			PC->SetInputMode(InputMode);
 		}
 

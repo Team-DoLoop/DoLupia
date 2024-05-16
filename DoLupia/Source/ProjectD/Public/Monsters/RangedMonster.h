@@ -28,7 +28,7 @@ public:
 	UPROPERTY( VisibleAnywhere )
 	UStaticMeshComponent* Weapon;
 
-	//virtual void MoveState() override;
+	virtual void MoveState() override;
 	virtual void AttackState() override;
 
 	float attackDelayTime = 6;
@@ -44,7 +44,7 @@ public:
 	//원거리 공격
 	void RangedAttack();
 
-	void HasObstacle();
+	bool HasObstacle();
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite  )
 	FVector MuzzleOffset;
@@ -55,5 +55,6 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	class UArrowComponent* firePosition;
 
+	bool bStartToAttack = false;
 	
 };

@@ -18,7 +18,7 @@
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 #include "World/Pickup.h"
-
+#include "Data/WidgetData.h"
 #include "Items/Sword/LongSword.h"
 
 // engine
@@ -132,11 +132,9 @@ void AProjectDCharacter::BeginPlay()
 	if(!PlayerDefaultsWidget && PlayerDefaultsWidgetFactory)
 	{
 		PlayerDefaultsWidget = CreateWidget<UPlayerDefaultsWidget>(GetWorld(), PlayerDefaultsWidgetFactory );
-		PlayerDefaultsWidget->AddToViewport(50);
-		FInputModeGameAndUI InputMode;
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
+		PlayerDefaultsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
+		FInputModeGameOnly InputMode;
 		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
-		//PlayerDefaultsWidget->SetMainQuickSlotWidget( HUD->GetMainMeun()->GetMainQuickSlotWidget());
 	}
 
 	// 초기 장비 착용
@@ -185,33 +183,40 @@ void AProjectDCharacter::TurnPlayer()
 void AProjectDCharacter::ToggleMenu()
 {
 	if(!PlayerController) return;
-	FInputModeGameAndUI InputMode;
-
+	// FInputModeGameAndUI InputMode;
+	// APlayerController* PlayerController = Cast<APlayerController>( GetController() );
+	
 	if(HUD->ToggleMenu())
 	{
-		InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget() );
+		FInputModeUIOnly InputMode;
+		PlayerController->SetInputMode( InputMode );
+		//InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget() );
 	}
 	else
 	{
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
+		FInputModeGameOnly InputMode;
 
-		UMainQuickSlotWidget* MainQuickSlotWidget = PlayerDefaultsWidget->GetMainQuickSlot();
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
 
-		InputMode.SetWidgetToFocus( MainQuickSlotWidget->TakeWidget() );
+		//UMainQuickSlotWidget* MainQuickSlotWidget = PlayerDefaultsWidget->GetMainQuickSlot();
 
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget0()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget1()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget2()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget3()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget4()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget5()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget6()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget7()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget8()->TakeWidget() );
-		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget9()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( MainQuickSlotWidget->TakeWidget() );
+
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget0()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget1()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget2()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget3()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget4()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget5()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget6()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget7()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget8()->TakeWidget() );
+		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget9()->TakeWidget() );
+
+		PlayerController->SetInputMode( InputMode );
 	}
 
-	PlayerController->SetInputMode( InputMode );
+	
 
 	if(HUD->IsMenuVisible())
 		StopAiming();

@@ -49,14 +49,17 @@ void ARMProjectile::OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedCompone
 {
 	if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
 
-		if (!OverlapPlayer->GetController())
+		if (OverlapPlayer->GetController())
 		{
-			UE_LOG( LogTemp , Warning , TEXT( "!OverlapPlayer->GetController()" ) );
+			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARMProjectile::플레이어 공격 성공!!" ) );
+			OverlapPlayer->TakeDamage(30);
+
 			return;
 		}
 
-		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARMProjectile::플레이어 공격 성공!!" ) );
 		//플레이어 Damage 처리
+		UE_LOG( LogTemp , Warning , TEXT( "!OverlapPlayer->GetController()" ) );
+
 	}
 }
 

@@ -41,7 +41,6 @@ AMonster::AMonster()
 		Wheels->SetupAttachment( GetMesh() , WheelsSocket );
 	}
 
-	
 
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>(TEXT("MonsterFSM"));
 
