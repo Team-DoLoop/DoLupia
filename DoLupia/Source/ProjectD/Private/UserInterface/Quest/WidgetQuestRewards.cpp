@@ -64,7 +64,7 @@ void UWidgetQuestRewards::NativeDestruct()
     if (PlayerController)
     {
         auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
-        FInputModeGameAndUI InputMode;
+        FInputModeGameOnly InputMode;
         PlayerControllerD->SetInputMode( InputMode );
     }
 }

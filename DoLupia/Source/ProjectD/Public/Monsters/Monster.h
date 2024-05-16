@@ -34,8 +34,8 @@ public:
 	EMonsterType MonsterType;
 
 	UFUNCTION()
-	void OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , 
-		UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
+	virtual void OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , 
+	                                   UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* sphereComp;
@@ -84,7 +84,7 @@ public:
 
 	//일정 반경 안에 들어오면 공격모드로 전환
 	UPROPERTY( EditAnywhere )
-	float AttackRange = 500;
+	float AttackRange = 300;
 
 	void MoveToTarget();
 

@@ -16,7 +16,7 @@ class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
-
+class APlayerStat;
 
 USTRUCT()
 struct FInteractionData
@@ -84,7 +84,10 @@ private:
 	class UGadgetComponent* Gadget;
 
 	UPROPERTY(VisibleAnywhere)
-	class APlayerStat* PlayerStat;
+	APlayerStat* PlayerStat;
+
+	UPROPERTY()
+	class AProjectDPlayerController* PlayerController;
 
 protected:
 	
@@ -94,6 +97,8 @@ public:
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	void TurnPlayer();
 	
 
 	// <---------------------- UI ---------------------->
@@ -152,10 +157,9 @@ protected:
 	void UpdateCameraTimeline(const float TimelineValue) const;
 	UFUNCTION()
 	void CameraTimelineEnd();
-
-	virtual void TakeDamage(float Damage) override;
 	
 public:
+	virtual void TakeDamage(float Damage) override;
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 	
 
