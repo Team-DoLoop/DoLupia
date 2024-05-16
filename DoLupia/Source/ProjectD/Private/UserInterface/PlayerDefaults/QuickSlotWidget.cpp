@@ -145,7 +145,25 @@ void UQuickSlotWidget::UseItem()
 {
 	if(ItemReference)
 	{
-		ItemReference->Use();
+		if(ItemReference->GetQuantity() > 0)
+		{
+			if(UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory())
+			{
+				if(UItemBase* ItemBase = InventoryComponent->FindMatchItem( ItemReference->GetID().ToString() ))
+				{
+					if (ItemBase)
+					{
+						const FString& ItemID = ItemReference->GetID().ToString();
+
+						ItemBase->Use();
+						InventoryComponent->HandelRemoveItem( ItemReference->GetTextData().Name.ToString(), 1, true);
+
+						if(!ItemReference->GetQuantity())
+							ItemReference = InventoryComponent->FindMatchItem( ItemID );
+					}
+				}
+			}
+		}
 	}
 }
 

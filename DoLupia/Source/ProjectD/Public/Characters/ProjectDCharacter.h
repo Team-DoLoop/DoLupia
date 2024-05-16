@@ -159,11 +159,10 @@ protected:
 	UFUNCTION()
 	void CameraTimelineEnd();
 
-	virtual void TakeDamage(float Damage) override;
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
-	
+	virtual void TakeDamage( float Damage ) override;
 
 	
 	// <---------------------- Interaction ---------------------->
