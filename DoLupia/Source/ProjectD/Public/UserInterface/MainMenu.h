@@ -8,6 +8,8 @@
 
 class AProjectDCharacter;
 class UInventoryPannel;
+class UMainQuickSlotWidget;
+
 /**
  * 
  */
@@ -19,6 +21,7 @@ class PROJECTD_API UMainMenu : public UUserWidget
 
 public:
 	FORCEINLINE UInventoryPannel* GetInventoryPanel() const { return InventoryPanel; };
+	//FORCEINLINE UMainQuickSlotWidget* GetMainQuickSlotWidget() const { return MainQuickSlotWidget; };
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -31,6 +34,9 @@ protected:
 protected:
 	UPROPERTY(meta=(BindWidget))
 	UInventoryPannel* InventoryPanel;
+
+	//UPROPERTY(meta = (BindWidget))
+	//UMainQuickSlotWidget* MainQuickSlotWidget;
 
 	UPROPERTY()
 	AProjectDCharacter* PlayerCharacter;

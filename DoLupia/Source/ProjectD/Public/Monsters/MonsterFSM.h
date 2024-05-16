@@ -9,6 +9,7 @@
 UENUM(BlueprintType)
 enum class EMonsterState : uint8
 {
+	Idle,
 	Patrol,
 	Move,
     Attack,

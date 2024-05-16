@@ -10,11 +10,13 @@
 #include "ProjectDCharacter.generated.h"
 
 class ADoLupiaHUD;
-class UInventoryComponent;
+class UPlayerDefaultsWidget;
 class UItemBase;
+class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
+
 
 USTRUCT()
 struct FInteractionData
@@ -98,11 +100,18 @@ public:
 private:
 	UPROPERTY()
 	ADoLupiaHUD* HUD;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayerDefaultsWidget> PlayerDefaultsWidgetFactory;
+
+	UPROPERTY()
+	UPlayerDefaultsWidget* PlayerDefaultsWidget;
 	
 protected:
 	void ToggleMenu();
 
 public:
+	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;};
 
 	
 

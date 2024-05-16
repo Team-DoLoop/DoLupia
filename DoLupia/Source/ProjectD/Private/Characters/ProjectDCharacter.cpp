@@ -1,25 +1,33 @@
 ﻿
 // game
 #include "Characters/ProjectDCharacter.h"
-#include "UserInterface/DoLupiaHUD.h"
-#include "World/Pickup.h"
-#include "Quest/QuestLogComponent.h"
-#include "Quest/TestNPCCharacter.h"
-
-// engine
-#include "UObject/ConstructorHelpers.h"
-#include "Camera/CameraComponent.h"
-#include "Characters/PlayerStat.h"
-#include "Characters/Animations/PlayerAnimInstance.h"
-#include "Characters/Components/GadgetComponent.h"
-#include "Components/DecalComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Characters/Skill/PlayerSkillSpell.h"
 #include "Characters/Skill/PlayerSkillSwing.h"
+#include "Characters/PlayerStat.h"
+#include "Monsters/Monster.h"
+#include "Quest/QuestLogComponent.h"
+#include "Quest/QuestInventoryComponent.h"
+#include "Quest/TestNPCCharacter.h"
+#include "UserInterface/DoLupiaHUD.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/MainMenu.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+#include "World/Pickup.h"
+
+#include "Items/Sword/LongSword.h"
+
+// engine
+#include "UObject/ConstructorHelpers.h"
+#include "Camera/CameraComponent.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
+#include "Characters/Components/GadgetComponent.h"
+#include "Components/DecalComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Elements/Framework/TypedElementQueryBuilder.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -27,8 +35,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-#include "Items/Sword/LongSword.h"
-#include "Monsters/Monster.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -116,6 +122,16 @@ void AProjectDCharacter::BeginPlay()
 		AimingCameraTimeline->SetTimelineFinishedFunc(TimelineFinishedEvent);
 	}
 
+	if(!PlayerDefaultsWidget && PlayerDefaultsWidgetFactory)
+	{
+		PlayerDefaultsWidget = CreateWidget<UPlayerDefaultsWidget>(GetWorld(), PlayerDefaultsWidgetFactory );
+		PlayerDefaultsWidget->AddToViewport(50);
+		FInputModeGameAndUI InputMode;
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
+		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
+		//PlayerDefaultsWidget->SetMainQuickSlotWidget( HUD->GetMainMeun()->GetMainQuickSlotWidget());
+	}
+
 	// 초기 장비 착용
 	Gadget->InitEquip();
 
@@ -145,13 +161,40 @@ void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	// <---------------------- UI ---------------------->
 void AProjectDCharacter::ToggleMenu()
 {
-	HUD->ToggleMenu();
+	APlayerController* PlayerController = Cast<APlayerController>( GetController() );
+	FInputModeGameAndUI InputMode;
+
+	if(HUD->ToggleMenu())
+	{
+		InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget() );
+	}
+	else
+	{
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
+
+		UMainQuickSlotWidget* MainQuickSlotWidget = PlayerDefaultsWidget->GetMainQuickSlot();
+
+		InputMode.SetWidgetToFocus( MainQuickSlotWidget->TakeWidget() );
+
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget0()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget1()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget2()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget3()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget4()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget5()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget6()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget7()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget8()->TakeWidget() );
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget9()->TakeWidget() );
+	}
+
+	PlayerController->SetInputMode( InputMode );
 
 	if(HUD->IsMenuVisible())
 		StopAiming();
 }
 
-	// <---------------------- Attack ---------------------->
+// <---------------------- Attack ---------------------->
 void AProjectDCharacter::Aim()
 {
 	// 만약 메인 위젯이 켜지지 않았다면 줌인을 하자.
@@ -204,7 +247,20 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
 	
 	// 데미지 받기
-	UE_LOG(LogTemp, Log, TEXT("%f Take Damage"), Damage);
+	int32 HP = PlayerStat->GetHP() - Damage;
+	
+	if (HP > 0)
+	{
+		PlayerStat->SetHP( HP );
+		// PlayerFSM->ChangePlayerState( EPlayerState::DAMAGE );
+	}
+	else
+	{
+		HP = 0;
+		PlayerStat->SetHP( HP );
+		moveComp->Die();
+	}
+	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
 
 

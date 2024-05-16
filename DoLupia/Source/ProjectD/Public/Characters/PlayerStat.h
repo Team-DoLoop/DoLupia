@@ -45,12 +45,12 @@ public:
 	FORCEINLINE int32 GetHP() const {return CurrentHP; }
 	FORCEINLINE void  SetHP(int32 _HP)
 	{
-		int32 NewHP = CurrentHP + _HP;
+		// int32 NewHP = CurrentHP + _HP;
 
-		if(NewHP > MaxHP)
-			NewHP = MaxHP;
+		if(_HP > MaxHP)
+			_HP = MaxHP;
 
-		CurrentHP = NewHP;
+		CurrentHP = _HP;
 	}
 	
 	FORCEINLINE int32 GetMP() const {return CurrentHP;}
