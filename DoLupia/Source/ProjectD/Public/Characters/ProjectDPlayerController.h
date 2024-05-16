@@ -8,6 +8,7 @@
 #include "ProjectDPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
+struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
 class UWidgetQuestLog;
@@ -135,7 +136,7 @@ protected:
 	void Attack();
 	void ExecuteSkill(int32 SkillIndex);
 	
-public:
+private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AimingAction;
 	
@@ -153,7 +154,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UltSkillAction;
-	
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlotAction; //FInputActionValue
 
 
 
