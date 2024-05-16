@@ -24,6 +24,7 @@
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/GadgetComponent.h"
 #include "Components/DecalComponent.h"
@@ -35,6 +36,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -112,6 +114,8 @@ void AProjectDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerController = Cast<AProjectDPlayerController>(GetController());
+	
 	HUD = Cast<ADoLupiaHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	
 	FOnTimelineFloat AimLerpAlphaValue;
@@ -161,10 +165,26 @@ void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	
 }
 
-	// <---------------------- UI ---------------------->
+void AProjectDCharacter::TurnPlayer()
+{
+	if(!PlayerController) return;
+	
+	FHitResult Hit;
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	if(bHitSuccessful)
+	{
+		FVector DirVec = Hit.ImpactPoint - GetActorLocation();
+		FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ( DirVec , GetActorUpVector() );
+		FRotator PlayerRot = GetActorRotation();
+		FRotator TempRot = FRotator(PlayerRot.Pitch, TargetRot.Yaw, PlayerRot.Roll);
+		SetActorRotation( TempRot);
+	}
+}
+
+// <---------------------- UI ---------------------->
 void AProjectDCharacter::ToggleMenu()
 {
-	APlayerController* PlayerController = Cast<APlayerController>( GetController() );
+	if(!PlayerController) return;
 	FInputModeGameAndUI InputMode;
 
 	if(HUD->ToggleMenu())
