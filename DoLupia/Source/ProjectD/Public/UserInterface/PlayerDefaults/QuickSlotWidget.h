@@ -11,6 +11,7 @@ class UTextBlock;
 class UDragQuickSlotVisual;
 class UItemBase;
 class UTexture2D;
+class UButton;
 
 /**
  * 
@@ -31,8 +32,18 @@ protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 private:
+	UFUNCTION()
+	void HorveredQuickSlotUI();
+	UFUNCTION()
+	void UnHorveredQuickSlotUI();
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	UButton* HoveredButton;
+
 	UPROPERTY(meta=(BindWidget))
 	UImage* ItemIcon;
+
 	UPROPERTY(meta = (BindWidget))
 	UImage* MainIcon;
 	UPROPERTY(meta = (BindWidget))
@@ -46,9 +57,6 @@ private:
 
 	UPROPERTY()
 	UItemBase* ItemReference;
-
-	UPROPERTY()
-	UQuickSlotWidget* TempWidget;
 
 	int32 Index;
 };

@@ -54,25 +54,14 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
-void UPlayerAttackComp::TurnPlayer()
-{
-	FHitResult Hit;
-	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-	if(bHitSuccessful)
-	{
-		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
-		Player->SetActorRotation( UKismetMathLibrary::MakeRotFromXZ( EvasionVec , Player->GetActorUpVector() ) );
-	}
-}
-
 void UPlayerAttackComp::Attack()
 {
-	if(!PlayerFSMComp) return;
+	if(!Player || !PlayerFSMComp) return;
 	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 	
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
-	TurnPlayer();
+	Player->TurnPlayer();
 	
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerAttackAnimation(0);
@@ -87,12 +76,12 @@ void UPlayerAttackComp::AttackEnd()
 
 void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 {
-	if(!PlayerFSMComp) return;
+	if(!Player || !PlayerFSMComp) return;
 	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
-	TurnPlayer();
+	Player->TurnPlayer();
 	
 	// 스킬 애니메이션 실행
 	PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);

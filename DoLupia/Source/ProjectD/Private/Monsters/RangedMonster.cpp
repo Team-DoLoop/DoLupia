@@ -3,6 +3,7 @@
 
 #include "Monsters/RangedMonster.h"
 
+#include "AIController.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "Monsters/MonsterAnim.h"
@@ -48,6 +49,24 @@ void ARangedMonster::BeginPlay()
 }
 
 
+void ARangedMonster::MoveState()
+{
+	//Super::MoveState();
+
+	MoveToTarget();
+
+	if (TargetVector.Size() < AttackRange) {
+		if(HasObstacle())
+		{
+			ai->StopMovement();
+			MonsterFSM->state = EMonsterState::Attack;
+			anim->animState = MonsterFSM->state;
+			anim->bAttackDelay = true;
+			currentTime = attackDelayTime;
+		}
+		
+	}
+}
 
 void ARangedMonster::AttackState()
 {
@@ -82,7 +101,7 @@ void ARangedMonster::RangedAttack()
 	// notify 시점에 투사체 발사, 
 	// 만약 플레이어와 충돌하면 플레이어 hp 감소
 	// 10초 뒤 투사체 파괴
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MagicAttack()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MagicAttack()" ) );
 
 	if(ProjectileClass)
 	{
@@ -91,7 +110,7 @@ void ARangedMonster::RangedAttack()
 	}
 }
 
-void ARangedMonster::HasObstacle()
+bool ARangedMonster::HasObstacle()
 {
 	FHitResult outHit;
 
@@ -106,25 +125,38 @@ void ARangedMonster::HasObstacle()
 
 	if (bIsHit)
 	{
+		DrawDebugLine( GetWorld() , Start , End , FColor::Red , false , 0.1f , 0 , 5.f );
+		UE_LOG( LogTemp , Warning , TEXT( "Obstacle detected!" ) );
+	}
+	else
+	{
+		DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 0.1f , 0 , 5.f );
+		UE_LOG( LogTemp , Warning , TEXT( "No Obstacle detected!" ) );
+	}
+
+
+	if (bIsHit)
+	{
 		// 충돌한 액터를 처리
 		AActor* HitActor = outHit.GetActor();
 		if (HitActor)
 		{
 			// 충돌한 액터가 플레이어가 아니라면
 			AProjectDCharacter* player = Cast<AProjectDCharacter>( HitActor );
-			if (!player)
+			if (player)
+			{
+				//RangedAttack();
+				bStartToAttack= true;
+			}
+			else
 			{
 				//PatrolState로 전환
-				MonsterFSM->state = EMonsterState::Patrol;
-				anim->animState = MonsterFSM->state;
+				/*MonsterFSM->state = EMonsterState::Move;
+				anim->animState = MonsterFSM->state;*/
+				bStartToAttack = false;
 			}
 		}
 	}
-
-	else
-	{
-		//투사체발사
-		RangedAttack();
-	}
+	return bStartToAttack;
 
 }

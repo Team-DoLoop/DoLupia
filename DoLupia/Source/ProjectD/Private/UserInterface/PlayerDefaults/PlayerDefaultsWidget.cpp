@@ -3,6 +3,7 @@
 
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "Data/WidgetData.h"
 
 
 void UPlayerDefaultsWidget::NativeConstruct()
@@ -12,8 +13,7 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	if(QuickSlotFactory)
 	{
 		QuickSlot = CreateWidget<UMainQuickSlotWidget>(GetWorld(), QuickSlotFactory );
-		QuickSlot->SetVisibility( ESlateVisibility::Visible );
-		QuickSlot->AddToViewport(1);
+		QuickSlot->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
 	}
 	
 }
