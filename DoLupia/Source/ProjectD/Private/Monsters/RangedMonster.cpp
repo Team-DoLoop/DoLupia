@@ -42,7 +42,7 @@ void ARangedMonster::BeginPlay()
 	MonsterFSM->state = EMonsterState::Idle;
 	//원거리 몬스터 기본 설정
 	this->maxHP = 150;
-	this->AttackRange = 1000;
+	this->AttackRange = 850;
 	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 	UE_LOG( LogTemp , Warning , TEXT( "%f" ) , attackDelayTime );
@@ -63,6 +63,7 @@ void ARangedMonster::MoveState()
 			anim->animState = MonsterFSM->state;
 			anim->bAttackDelay = true;
 			currentTime = attackDelayTime;
+			bStartToAttack = false;
 		}
 		
 	}
@@ -123,7 +124,7 @@ bool ARangedMonster::HasObstacle()
 	// 레이캐스트를 수행하고 충돌 정보를 outHit에 저장.
 	bool bIsHit = GetWorld()->LineTraceSingleByChannel( outHit , Start , End , ECC_Visibility , CollisionParams );
 
-	if (bIsHit)
+	/*if (bIsHit)
 	{
 		DrawDebugLine( GetWorld() , Start , End , FColor::Red , false , 0.1f , 0 , 5.f );
 		UE_LOG( LogTemp , Warning , TEXT( "Obstacle detected!" ) );
@@ -132,7 +133,7 @@ bool ARangedMonster::HasObstacle()
 	{
 		DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 0.1f , 0 , 5.f );
 		UE_LOG( LogTemp , Warning , TEXT( "No Obstacle detected!" ) );
-	}
+	}*/
 
 
 	if (bIsHit)
@@ -150,9 +151,6 @@ bool ARangedMonster::HasObstacle()
 			}
 			else
 			{
-				//PatrolState로 전환
-				/*MonsterFSM->state = EMonsterState::Move;
-				anim->animState = MonsterFSM->state;*/
 				bStartToAttack = false;
 			}
 		}

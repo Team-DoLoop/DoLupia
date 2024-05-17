@@ -70,7 +70,6 @@ public:
 
 	//State 함수
 	virtual void IdleState();
-	virtual void PatrolState();
 	virtual void MoveState();
 	virtual void AttackState();
 	virtual void DamageState();

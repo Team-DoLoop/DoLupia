@@ -119,33 +119,7 @@ void AMonster::IdleState()
 	}
 }
 
-void AMonster::PatrolState()
-{
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
-	currentTime += GetWorld()->GetDeltaSeconds();
-	auto ns = UNavigationSystemV1::GetNavigationSystem( GetWorld() );
-	FPathFindingQuery query;
 
-	FAIMoveRequest req;
-	ai->BuildPathfindingQuery( req , query );
-	FPathFindingResult r = ns->FindPathSync( query );
-	GetRandomPositionInNavMesh( this->GetActorLocation() , 1500 , randomPos );
-
-	auto result = ai->MoveToLocation( randomPos );
-	if(result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
-	{
-		GetRandomPositionInNavMesh( this->GetActorLocation() , 1500 , randomPos );
-	}
-
-	//if(currentTime>patrolTime)
-	//{
-	//	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::Move로 전환!!" ) );
-	//	MonsterFSM->state = EMonsterState::Move;
-	//	anim->animState = MonsterFSM->state;
-	//}
-	
-	
-}
 
 void AMonster::MoveState()
 {
