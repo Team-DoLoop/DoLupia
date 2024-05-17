@@ -5,6 +5,8 @@
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 #include "ImageUtils.h"
+#include "Engine.h"
+#include "AI/AIMarterialTestActor.h"
 #include "Library/JsonLibrary.h"
 
 
@@ -29,9 +31,22 @@ void UAIConnectionLibrary::SendImageKeywordToServer(const FString& keyword )
 
 	FString sendJson = UJsonLibrary::MapToJson( imgData );
 
-	/* AI Server Connection */
+	/* AI Server Image Request */
 	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
 	ReqAIImage( ServerURL , sendJson );
+
+
+}
+
+void UAIConnectionLibrary::LoadImageToMaterial()
+{
+	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
+		// Call the function on the actor
+		ActorItr->UpdateActorMaterial();
+
+	}
 }
 
 void UAIConnectionLibrary::ReqMessage(const FString& url, const FString& msg)

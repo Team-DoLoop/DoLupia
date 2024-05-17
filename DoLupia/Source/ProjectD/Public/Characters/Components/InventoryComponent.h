@@ -95,7 +95,8 @@ public:
 	FItemAddResult HandelAddItem(UItemBase* InputItem);
 
 	UFUNCTION( Category = "Inventory" )
-	void HandelRemoveItem(const TMap<FString , int32>& Test);
+	void HandelRemoveItem(const TMap<FString , int32>& RemoveToITem);
+	void HandelRemoveItem(FString ItemName, int32 ItemCount = 1, bool QuickSlotUseItem = false);
 
 	UFUNCTION( Category = "Inventory" )
 	void ReleaseInventory(UItemBase* ItemIn);
@@ -103,6 +104,7 @@ public:
 	const int32 FindEmptyItemIndex(int32 FirstIndex = 0, const FString& InKey = "") const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindMatchItem(UItemBase* ItemIn) const;
+	UItemBase* FindMatchItem( const FString& ItemID ) const;
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindNextItemByID(UItemBase* ItemIn) const;
 	UFUNCTION(Category = "Inventory")
@@ -162,7 +164,7 @@ protected:
 	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount, bool IsFindStackItem );
 
 	void AddNewItem(UItemBase* Item, const int32 AmountToAdd, const int32 InputItemIndex);
-	void DeleteItem(const FString& ItemName, const int32 AmountToAdd, const int32 SearchInventoryIndex = 0);
+	void DeleteItem(const FString& ItemName, const int32 AmountToAdd, const int32 SearchInventoryIndex = 0, bool QuickSlotItemDelete = false );
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory")

@@ -9,8 +9,10 @@
 
 //engine
 #include "Algo/Sort.h"
+#include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "UserInterface/Item/ItemCarouselWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
 
 constexpr int32 NONFIND_INDEX = -1;
@@ -125,6 +127,19 @@ UItemBase* UInventoryComponent::FindMatchItem(UItemBase* ItemIn) const
 		{
 			return ItemIn;
 		}
+	}
+
+	return nullptr;
+}
+
+UItemBase* UInventoryComponent::FindMatchItem(const FString& ItemID) const
+{
+
+	for(UItemBase* Item : InventoryContents)
+	{
+		if(Item)
+			if(Item->ID == ItemID)
+				return Item;
 	}
 
 	return nullptr;
@@ -490,6 +505,8 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 			const FString& ItemName = InputItem->GetTextData().Name.ToString();
 			player->OnObjectiveIDCalled.Broadcast( ItemName , InitialRequestedAddAmount );
 
+			player->GetPlayerDefaultsWidget()->RefreshQuickSlot( ItemName , InventoryCount[ItemName] );
+
 			// 모두 인벤토리에 넣어주자.
 			return FItemAddResult::AddedAll(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Successfully added {0} {1} to the Inventory."), 
@@ -503,8 +520,12 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		{
 			int AddedAmount = InitialRequestedAddAmount - StackableAmountAdded;
 			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , AddedAmount , InputItem->GetAssetData().Icon );
+
 			const FString& ItemName = InputItem->GetTextData().Name.ToString();
 			player->OnObjectiveIDCalled.Broadcast( ItemName , AddedAmount );
+
+			player->GetPlayerDefaultsWidget()->RefreshQuickSlot( ItemName , InventoryCount[ItemName]);
+
 			// 부분만 인벤토리에 넣어주자.
 			return FItemAddResult::AddedPartial(InitialRequestedAddAmount, FText::Format
 			(FText::FromString("Partial amount of {0} added to thie Inventory. Number added {1}"), 
@@ -526,12 +547,12 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 	return FItemAddResult::AddedNone(FText::FromString("TryAddItem fallthrough error. GetOwner() check somehow failed"));
 }
 
-void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& Test)
+void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& RemoveToITem )
 {
 
 	TArray<TPair<FString, int32>> ItemName;
 
-	for(const auto& Iterate : Test)
+	for(const auto& Iterate : RemoveToITem)
 	{
 		const int32* Value = InventoryCount.Find( Iterate.Key );
 
@@ -550,7 +571,32 @@ void UInventoryComponent::HandelRemoveItem(const TMap<FString, int32>& Test)
 		for(TPair<FString , int32> Items : ItemName)
 		{
 			DeleteItem( Items.Key , Items.Value, Index );
+
+			const int32* ElemValue = InventoryCount.Find(Items.Key);
+			if(ElemValue)
+			{
+				player->GetPlayerDefaultsWidget()->RefreshQuickSlot( Items.Key , InventoryCount[Items.Key] );
+			}
 		}
+
+		OnInventoryUpdated.Broadcast();
+	}
+}
+
+void UInventoryComponent::HandelRemoveItem(FString ItemName, int32 ItemCount, bool QuickSlotUseItem)
+{
+	if (GetOwner())
+	{
+		DeleteItem( ItemName , ItemCount, 0, QuickSlotUseItem);
+
+		const int32* ElemValue = InventoryCount.Find( ItemName );
+		if (ElemValue)
+		{
+			player->GetPlayerDefaultsWidget()->RefreshQuickSlot( ItemName , InventoryCount[ItemName] );
+			UE_LOG(LogTemp, Warning, TEXT("%d"), player->GetPlayerStat()->GetHP() )
+		}
+		else
+			player->GetPlayerDefaultsWidget()->RefreshQuickSlot( ItemName , 0 );
 
 		OnInventoryUpdated.Broadcast();
 	}
@@ -622,7 +668,7 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 	//OnInventoryUpdated.Broadcast();
 }
 
-void UInventoryComponent::DeleteItem(const FString& ItemName, const int32 AmountToAdd, const int32 SearchInventoryIndex)
+void UInventoryComponent::DeleteItem(const FString& ItemName, const int32 AmountToAdd, const int32 SearchInventoryIndex, bool QuickSlotItemDelete)
 {
 	int32 Index = SearchInventoryIndex;
 	int32 ToAdd = AmountToAdd;
@@ -648,13 +694,14 @@ void UInventoryComponent::DeleteItem(const FString& ItemName, const int32 Amount
 
 
 
-		const int32 Quantity = ExistingItemStack->GetNumericData().bIsStackable ? ExistingItemStack->GetQuantity() : 1;
+		const int32 Quantity = (!QuickSlotItemDelete && ExistingItemStack->GetNumericData().bIsStackable) ? ExistingItemStack->GetQuantity() : 1;
 
 		// 인벤토리의 무게를 줄여주자.
 		InventoryTotalWeight -= ExistingItemStack->GetItemSingleWeight() * Quantity;
 
-
-		ExistingItemStack->SetQuantity( FMath::Min(0, ExistingItemStack->GetQuantity() - ToAdd ));
+		QuickSlotItemDelete
+			? ExistingItemStack->SetQuantity( ExistingItemStack->GetQuantity() - 1)
+			: ExistingItemStack->SetQuantity( FMath::Min( 0 , ExistingItemStack->GetQuantity() - ToAdd ));
 
 		if (int32* ElemPtr = InventoryCount.Find( ItemName ))
 		{

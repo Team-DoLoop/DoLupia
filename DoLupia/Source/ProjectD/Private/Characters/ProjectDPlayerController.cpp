@@ -77,8 +77,17 @@ void AProjectDPlayerController::SetupInputComponent()
 
 		// UI
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
-		EnhancedInputComponent->BindAction(QuickSlotAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction );
 
+		EnhancedInputComponent->BindAction( QuickSlot1Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 0 );
+		EnhancedInputComponent->BindAction( QuickSlot2Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 1 );
+		EnhancedInputComponent->BindAction( QuickSlot3Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 2 );
+		EnhancedInputComponent->BindAction( QuickSlot4Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 3 );
+		EnhancedInputComponent->BindAction( QuickSlot5Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 4 );
+		EnhancedInputComponent->BindAction( QuickSlot6Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 5 );
+		EnhancedInputComponent->BindAction( QuickSlot7Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 6 );
+		EnhancedInputComponent->BindAction( QuickSlot8Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 7 );
+		EnhancedInputComponent->BindAction( QuickSlot9Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 8 );
+		EnhancedInputComponent->BindAction( QuickSlot0Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 9 );
 
 		//QuestUI
 		EnhancedInputComponent->BindAction( QuestTabAction , ETriggerEvent::Started , this , &AProjectDPlayerController::QuestLogMenu );
@@ -176,6 +185,12 @@ void AProjectDPlayerController::ToggleMenu()
 bool AProjectDPlayerController::IsHoverd()
 {
 	return Cast<ADoLupiaHUD>( GetHUD() )->GetMainMeun()->IsHovered();
+}
+
+void AProjectDPlayerController::UseQuickSlot(int32 QuickSlotNumber)
+{
+	if (ControlledCharacter)
+		ControlledCharacter->UseQuickSlot( QuickSlotNumber );
 }
 
 

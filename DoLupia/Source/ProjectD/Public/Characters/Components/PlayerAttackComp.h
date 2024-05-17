@@ -46,7 +46,7 @@ public:
 private:
 
 public:
-	void TurnPlayer();
+
 
 	
 
