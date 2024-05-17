@@ -21,7 +21,8 @@ public:
 protected:
 
 public:
-	virtual void SetStatusEffect(EStatusEffect _statusEffect) override;
+	virtual void SetStatusEffect(EStatusEffectType _statusEffect) override;
 
 	virtual void AddStatusEffect(ACharacter* Target) override;
+
 };
