@@ -59,7 +59,7 @@ FString UJsonLibrary::JsonParse(const FString& data)
 	return  result;
 }
 
-FString UJsonLibrary::MapToJson(const TMap<FString, FString>& map)
+FString UJsonLibrary::MapToJsonInt(const TMap<FString, int32>& map)
 {
 	// JsonObj 를 생성
 	TSharedPtr<FJsonObject> Jsonobj = MakeShareable(new FJsonObject());
@@ -68,7 +68,7 @@ FString UJsonLibrary::MapToJson(const TMap<FString, FString>& map)
 	//for(TPair<FString, FString> pair : map)
 	for (auto& pair : map)			//메모리를 새로 사용하지 않음 [&-> 원본을 사용하겠다.]
 	{
-		Jsonobj->SetStringField(pair.Key, pair.Value);
+		Jsonobj->SetNumberField(pair.Key, pair.Value);
 	}
 
 	// JsonObj를 encoding( = Serialize) 하고 싶다.
@@ -76,6 +76,28 @@ FString UJsonLibrary::MapToJson(const TMap<FString, FString>& map)
 	auto writer = TJsonWriterFactory<TCHAR>::Create(&jsonData);
 
 	FJsonSerializer::Serialize(Jsonobj.ToSharedRef(), writer);
+
+	// 그것을 반환하고 싶다.
+	return  jsonData;
+}
+
+FString UJsonLibrary::MapToJsonStr( const TMap<FString , FString>& map )
+{
+	// JsonObj 를 생성
+	TSharedPtr<FJsonObject> Jsonobj = MakeShareable( new FJsonObject() );
+
+	// map 의 내용을 JsonObj에 담음
+	//for(TPair<FString, FString> pair : map)
+	for (auto& pair : map)			//메모리를 새로 사용하지 않음 [&-> 원본을 사용하겠다.]
+	{
+		Jsonobj->SetStringField( pair.Key , pair.Value );
+	}
+
+	// JsonObj를 encoding( = Serialize) 하고 싶다.
+	FString jsonData;
+	auto writer = TJsonWriterFactory<TCHAR>::Create( &jsonData );
+
+	FJsonSerializer::Serialize( Jsonobj.ToSharedRef() , writer );
 
 	// 그것을 반환하고 싶다.
 	return  jsonData;

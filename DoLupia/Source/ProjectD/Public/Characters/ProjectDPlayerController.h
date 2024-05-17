@@ -46,6 +46,7 @@ public:
 
 	// <---------------------- Test ---------------------->
 private:
+	int32 TestCount = 0;
 
 protected:
 	void TestAnyFunction();

@@ -8,9 +8,11 @@ UPlayerStatusEffectComp::UPlayerStatusEffectComp()
 	
 }
 
-void UPlayerStatusEffectComp::SetStatusEffect(EStatusEffect _statusEffect)
+void UPlayerStatusEffectComp::SetStatusEffect(EStatusEffectType _statusEffect)
 {
 	Super::SetStatusEffect(_statusEffect);
+
+	
 }
 
 void UPlayerStatusEffectComp::AddStatusEffect(ACharacter* Target)

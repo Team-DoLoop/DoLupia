@@ -56,7 +56,9 @@ void UAITestWidget::SendImgaiSV()
 	TMap<FString, FString> imgData;
 	FString imgmsg = *edit_sendText->GetText().ToString();
 
-	connectionLibrary->SendImageKeywordToServer( imgmsg );
+	int32 tmpNum = 1;
+
+	connectionLibrary->SendImageKeywordToServer( tmpNum );
 
 	/*
 	imgData.Add(TEXT("Img_keywords"), imgmsg);

@@ -26,6 +26,7 @@ AAIMarterialTestActor::AAIMarterialTestActor()
     meshComp = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp" ) );
     meshComp->SetupAttachment( RootComponent );
 
+    boxComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
     meshComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
 
 }
@@ -80,26 +81,16 @@ void AAIMarterialTestActor::LoadWebImage()
     UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Call" ) );
     
     // URL을 통해 이미지를 다운로드
-    AsyncTask( ENamedThreads::AnyThread , [this]()
+    FString testURL = "http://172.16.216.55:8000/ShowAITexture";
+    UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( testURL );
+    if (DownloadTask)
     {
-        AsyncTask( ENamedThreads::GameThread , [this]()
-        {
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Down" ) );
+        DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
+        DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
+    }
 
-            FString testURL = "http://172.16.216.55:8000/ShowAITexture";
-            UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( testURL );
-            if (DownloadTask)
-            {
-                UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Down" ) );
-                DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
-                DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
-            }
-            UMaterialInstanceDynamic* testMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate2 );
-
-         } );
-        
-    });
-
-    
+    UMaterialInstanceDynamic* testMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate2 );
 
 }
 

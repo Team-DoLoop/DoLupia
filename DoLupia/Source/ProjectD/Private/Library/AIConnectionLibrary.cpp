@@ -16,20 +16,24 @@ void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 	FString msg = message;
 	msgData.Add( TEXT( "message" ) , msg );
 
-	FString sendJson = UJsonLibrary::MapToJson( msgData );
+	FString sendJson = UJsonLibrary::MapToJsonStr( msgData );
 
 	/* AI Server Connection */
 	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
 	ReqMessage( ServerURL , sendJson );
 }
 
-void UAIConnectionLibrary::SendImageKeywordToServer(const FString& keyword )
+void UAIConnectionLibrary::SendImageKeywordToServer( int32 keyword )
 {
-	TMap<FString , FString> imgData;
-	FString ImgKeyword = keyword;
+	//TMap<FString , FString> imgData;
+	//FString ImgKeyword = keyword;
+
+	TMap<FString , int32> imgData;
+	int32 ImgKeyword = keyword;
+
 	imgData.Add( TEXT( "Img_keywords" ) , ImgKeyword );
 
-	FString sendJson = UJsonLibrary::MapToJson( imgData );
+	FString sendJson = UJsonLibrary::MapToJsonInt( imgData );
 
 	/* AI Server Image Request */
 	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
