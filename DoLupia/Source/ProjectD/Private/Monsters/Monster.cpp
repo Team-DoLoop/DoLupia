@@ -186,6 +186,10 @@ void AMonster::DieState()
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 4)
 	{
+		//플레이어 델리게이트 사용 : 킬 목표
+		AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
+		FString EnumValueAsString = EnumToString( EMonsterType::Strike );
+		player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
 		//아이템 드랍
 
 		this->Destroy();
