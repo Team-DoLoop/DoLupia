@@ -134,7 +134,9 @@ void AProjectDCharacter::BeginPlay()
 		PlayerDefaultsWidget = CreateWidget<UPlayerDefaultsWidget>(GetWorld(), PlayerDefaultsWidgetFactory );
 		PlayerDefaultsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
 		FInputModeGameOnly InputMode;
+		InputMode.SetConsumeCaptureMouseDown( true );
 		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
+
 	}
 
 	// 초기 장비 착용
@@ -189,30 +191,16 @@ void AProjectDCharacter::ToggleMenu()
 	if(HUD->ToggleMenu())
 	{
 		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
+		InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget());
 		PlayerController->SetInputMode( InputMode );
+
 		//InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget() );
 	}
 	else
 	{
 		FInputModeGameOnly InputMode;
-
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
-
-		//UMainQuickSlotWidget* MainQuickSlotWidget = PlayerDefaultsWidget->GetMainQuickSlot();
-
-		//InputMode.SetWidgetToFocus( MainQuickSlotWidget->TakeWidget() );
-
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget0()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget1()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget2()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget3()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget4()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget5()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget6()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget7()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget8()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget9()->TakeWidget() );
-
+		InputMode.SetConsumeCaptureMouseDown(true);
 		PlayerController->SetInputMode( InputMode );
 	}
 

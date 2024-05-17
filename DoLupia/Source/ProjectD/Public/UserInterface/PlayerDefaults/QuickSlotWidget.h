@@ -8,6 +8,8 @@
 
 class UImage;
 class UTextBlock;
+class UQuickSlotDragDropOperation;
+class UMainQuickSlotWidget;
 class UDragQuickSlotVisual;
 class UItemBase;
 class UTexture2D;
@@ -25,15 +27,25 @@ class PROJECTD_API UQuickSlotWidget : public UUserWidget
 
 public:
 	FORCEINLINE int32 GetIndex() const { return Index;}
-	FORCEINLINE void SetIndex(int32 NewIndex) { Index = NewIndex; }
+	FORCEINLINE void InitQuickSlotWidget(int32 NewIndex, UMainQuickSlotWidget* NewMainQuickSlotWidget)
+	{
+		Index = NewIndex;
+		MainQuickSlotWidget = NewMainQuickSlotWidget;
+	}
+
+	FORCEINLINE UItemBase* GetItemBase() const { return ItemReference; }
+
+	bool IsHoveredButton() const;
 
 	void UseItem();
+
+	bool HandleQuickSlot( UQuickSlotWidget* OtherQuickSlot );
 
 	FItemDelegateQuantityCalled QuantityCalled;
 
 protected:
 	virtual void NativeConstruct() override;
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry , const FPointerEvent& InMouseEvent ) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
@@ -42,9 +54,18 @@ private:
 	void HorveredQuickSlotUI();
 	UFUNCTION()
 	void UnHorveredQuickSlotUI();
+	UFUNCTION()
+	void DraggingQuickSlotUI();
+	UFUNCTION()
+	void MouseUpQuickSlotUI();
 
 	UFUNCTION()
 	void SetQuantity(FString ItemID , int32 NewQuantity) const;
+
+	bool SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot );
+
+	UFUNCTION()
+	void TimerSwapQuickSlot();
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -55,6 +76,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* MainIcon;
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemQuantity;
 
@@ -67,5 +89,10 @@ private:
 	UPROPERTY()
 	UItemBase* ItemReference;
 
+	UPROPERTY()
+	UMainQuickSlotWidget* MainQuickSlotWidget;
+
 	int32 Index;
+
+	bool Clicked = false;
 };
