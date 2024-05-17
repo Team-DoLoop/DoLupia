@@ -113,12 +113,16 @@ void UWidgetQuestRewards::OnAcceptClicked()
         {
             ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
         }
-        UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
+        //UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
 
         InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
     }
     
-    InvetoryComp->HandelAddItem( ItemRewards );
+    for (const auto& items : ItemRewards) {
+        //보상 아이템 추가
+        InvetoryComp->HandelAddItem( items);
+    }
+    
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();

@@ -155,11 +155,11 @@ void UQuestGiver::DisplayRewards()
             RewardsWidget->QuestID = QuestData.RowName;
 
             //보상 아이템 들 이름, 수량
-            for (auto& Pair : Row->Stages.GetData()->ItemRewards)
+            for (auto& Pair : Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem)
             {
                 //아이템 종류 선택ID 수량 연동 해야할듯
-                DesiredItemID = TEXT( "test_001" );
-                RewardsWidget->ItemRewards = CreateItem( UItemBase::StaticClass() , Pair.Value );
+                DesiredItemID = FName(Pair.Key);
+                RewardsWidget->ItemRewards.Add(CreateItem( UItemBase::StaticClass() , Pair.Value ));
             }
 
             RewardsWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
