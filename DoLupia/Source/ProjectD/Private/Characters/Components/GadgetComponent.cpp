@@ -3,6 +3,7 @@
 
 #include "Characters/Components/GadgetComponent.h"
 
+#include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
@@ -28,7 +29,6 @@ void UGadgetComponent::BeginPlay()
 
 void UGadgetComponent::InitEquip()
 {
-	//AProjectDCharacter* Character = Cast<AProjectDCharacter>( GetOwner() );
 	Character = Cast<AProjectDCharacter>( GetOwner() );
 	
 	// GlovesSocket
@@ -143,6 +143,8 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 	default: ;
 
 	}
+
+	Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
 
 	return EquippedItem;
 

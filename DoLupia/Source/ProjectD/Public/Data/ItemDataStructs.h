@@ -57,11 +57,17 @@ struct FItemStatistics
 	UPROPERTY( EditAnywhere , Category = "Equipment" )
 	float DamageIncreaseAmount;
 
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	float HealthIncreaseAmount;
+
 	UPROPERTY(EditAnywhere , Category = "Equipment" )
 	float ArmorRating;
 
 	UPROPERTY(EditAnywhere , Category = "Equipment" )
 	float DamageValue;
+
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	float HealthValue;
 
 	UPROPERTY(EditAnywhere , Category = "Store" )
 	float RestorationAmout;
@@ -69,7 +75,15 @@ struct FItemStatistics
 	UPROPERTY(EditAnywhere, Category = "Store" )
 	float SellValue;
 
-	UPROPERTY( EditAnywhere, Category = "Item")
+
+};
+
+USTRUCT()
+struct FItemConsumableStatistics
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY( EditAnywhere , Category = "Item" )
 	float HealthValue;
 };
 
