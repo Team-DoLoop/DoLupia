@@ -172,6 +172,8 @@ void AProjectDPlayerController::OnSetDestinationReleased()
 {
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->OnSetDestinationReleased();
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(true);
 	SetInputMode(FInputModeGameOnly());
 }
 
@@ -271,8 +273,6 @@ void AProjectDPlayerController::Attack()
 	if(!ControlledCharacter) return;
 	
 	ControlledCharacter->attackComp->Attack();
-
-
 }
 
 void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)

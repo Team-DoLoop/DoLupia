@@ -13,6 +13,7 @@
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
 #include "UserInterface/PlayerDefaults/QuickSlotDragDropOperation.h"
 #include "UserInterface/PlayerDefaults/DragQuickSlotVisual.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 
 
 void UQuickSlotWidget::NativeConstruct()
@@ -20,7 +21,9 @@ void UQuickSlotWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	HoveredButton->OnHovered.AddDynamic( this , &UQuickSlotWidget::HorveredQuickSlotUI );
-	HoveredButton->OnUnhovered.AddDynamic(this, &UQuickSlotWidget::UnHorveredQuickSlotUI);
+	HoveredButton->OnUnhovered.AddDynamic(this, &UQuickSlotWidget::UnHorveredQuickSlotUI );
+	HoveredButton->OnPressed.AddDynamic( this , &UQuickSlotWidget::DraggingQuickSlotUI );
+	HoveredButton->OnReleased.AddDynamic( this , &UQuickSlotWidget::MouseUpQuickSlotUI );
 
 	QuantityCalled.BindUObject(this, &UQuickSlotWidget::SetQuantity);
 }
@@ -31,7 +34,7 @@ FReply UQuickSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Test QucikSlot"));
+		GetWorld()->GetFirstPlayerController()->SetInputMode( FInputModeUIOnly() );
 		return Reply.Handled().DetectDrag( TakeWidget() , EKeys::LeftMouseButton );
 	}
 
@@ -63,6 +66,11 @@ void UQuickSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const F
 bool UQuickSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
                                     UDragDropOperation* InOperation)
 {
+
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown( true );
+	GetWorld()->GetFirstPlayerController()->SetInputMode( InputMode );
+
 	if(const UQuickSlotDragDropOperation* QuickSlotDragDrop = Cast<UQuickSlotDragDropOperation>( InOperation ))
 	{
 		if (UItemBase* ItemBase = QuickSlotDragDrop->GetSourceItem())
@@ -110,6 +118,7 @@ bool UQuickSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 		}
 	}
 
+	
 	return false;
 }
 
@@ -122,7 +131,10 @@ void UQuickSlotWidget::HorveredQuickSlotUI()
 		APlayerController* PC = GetWorld()->GetFirstPlayerController();
 		if (PC)
 		{
-			PC->SetInputMode( FInputModeUIOnly() );
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(TakeWidget());
+			PC->SetInputMode( InputMode );
+			//PC->SetInputMode( FInputModeUIOnly() );
 		}
 	}
 }
@@ -131,14 +143,38 @@ void UQuickSlotWidget::UnHorveredQuickSlotUI()
 {
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
-	if (PlayerController)
+	if (!MainQuickSlotWidget->IsDraggingWidget() && !Clicked)
 	{
-		APlayerController* PC = GetWorld()->GetFirstPlayerController();
-		if (PC)
+		if (PlayerController)
 		{
-			PC->SetInputMode( FInputModeGameOnly() );
+			APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+			if (PC)
+			{
+				FInputModeGameOnly InputMode;
+				InputMode.SetConsumeCaptureMouseDown(true);
+				PC->SetInputMode( InputMode );
+				//PC->SetInputMode( FInputModeGameOnly() );
+			}
 		}
 	}
+}
+
+void UQuickSlotWidget::DraggingQuickSlotUI()
+{
+	Clicked = true;
+
+}
+
+void UQuickSlotWidget::MouseUpQuickSlotUI()
+{
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer( TimerHandle , this , &UQuickSlotWidget::TimerSwapQuickSlot , 0.01f);
+}
+
+bool UQuickSlotWidget::IsHoveredButton() const
+{
+	return HoveredButton->IsHovered();
 }
 
 void UQuickSlotWidget::UseItem()
@@ -167,10 +203,46 @@ void UQuickSlotWidget::UseItem()
 	}
 }
 
+bool UQuickSlotWidget::HandleQuickSlot( UQuickSlotWidget* OtherQuickSlot )
+{
+	return SwapQuickSlot( OtherQuickSlot );
+}
+
 void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity) const
 {
 	if(!ItemReference) return;
 	if(ItemReference->GetTextData().Name.ToString() != ItemID) return;
 
 	ItemQuantity->SetText(FText::FromString(FString::FromInt(NewQuantity)));
+}
+
+bool UQuickSlotWidget::SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot )
+{
+	if (UItemBase* ItemBase = OtherQuickSlot->ItemReference)
+	{
+		if (ItemBase == this->ItemReference)
+			return false;
+
+		const FText& QuantityText = FText::FromString( FString::FromInt(
+			ItemBase->GetOwningInventory()->FindItemQuantity( ItemBase->GetTextData().Name.ToString() ) ) );
+
+		ItemIcon->SetBrushFromTexture( ItemBase->GetAssetData().Icon );
+		ItemQuantity->SetVisibility( ESlateVisibility::Visible );
+		ItemQuantity->SetText( QuantityText );
+		ItemReference = ItemBase;
+
+		OtherQuickSlot->ItemIcon->SetBrushFromTexture( nullptr );
+		OtherQuickSlot->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
+		OtherQuickSlot->ItemQuantity->SetText( QuantityText );
+		OtherQuickSlot->ItemReference = nullptr;
+
+		return true;
+	}
+
+	return false;
+}
+
+void UQuickSlotWidget::TimerSwapQuickSlot()
+{
+	MainQuickSlotWidget->SwapQuickSlot(this);
 }

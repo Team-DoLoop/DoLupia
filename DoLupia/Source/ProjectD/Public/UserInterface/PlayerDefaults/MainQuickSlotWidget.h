@@ -28,6 +28,9 @@ public:
 	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget9() const { return QuickSlot9; }
 	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget0() const { return QuickSlot0; }
 
+	void SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot);
+	bool IsDraggingWidget();
+
 protected:
 	virtual void NativeConstruct() override;
 	//virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -66,5 +69,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UQuickSlotWidget> QuickSlot0;
 
+private:
+	TArray<TObjectPtr<UQuickSlotWidget>> QuickSlotArray;
 
 };

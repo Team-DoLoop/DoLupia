@@ -50,7 +50,7 @@ private:
 
 protected:
 	void TestAnyFunction();
-	
+	void GetInputModeString() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Components/PlayerAttackComp.h"
@@ -71,6 +71,7 @@ void UPlayerAttackComp::AttackEnd()
 {
 	if(!PlayerFSMComp) return;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+	PlayerController->SetInputMode( FInputModeGameOnly() );
 }
 
 
