@@ -13,6 +13,8 @@ class UItemBase;
 class UTexture2D;
 class UButton;
 
+DECLARE_DELEGATE_TwoParams( FItemDelegateQuantityCalled, FString, int32 );
+
 /**
  * 
  */
@@ -25,6 +27,10 @@ public:
 	FORCEINLINE int32 GetIndex() const { return Index;}
 	FORCEINLINE void SetIndex(int32 NewIndex) { Index = NewIndex; }
 
+	void UseItem();
+
+	FItemDelegateQuantityCalled QuantityCalled;
+
 protected:
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -36,6 +42,9 @@ private:
 	void HorveredQuickSlotUI();
 	UFUNCTION()
 	void UnHorveredQuickSlotUI();
+
+	UFUNCTION()
+	void SetQuantity(FString ItemID , int32 NewQuantity) const;
 
 private:
 	UPROPERTY(meta = (BindWidget))

@@ -21,6 +21,8 @@ void UQuickSlotWidget::NativeConstruct()
 
 	HoveredButton->OnHovered.AddDynamic( this , &UQuickSlotWidget::HorveredQuickSlotUI );
 	HoveredButton->OnUnhovered.AddDynamic(this, &UQuickSlotWidget::UnHorveredQuickSlotUI);
+
+	QuantityCalled.BindUObject(this, &UQuickSlotWidget::SetQuantity);
 }
 
 FReply UQuickSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -137,4 +139,38 @@ void UQuickSlotWidget::UnHorveredQuickSlotUI()
 			PC->SetInputMode( FInputModeGameOnly() );
 		}
 	}
+}
+
+void UQuickSlotWidget::UseItem()
+{
+	if(ItemReference)
+	{
+		if(ItemReference->GetQuantity() > 0)
+		{
+			if(UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory())
+			{
+				if(UItemBase* ItemBase = InventoryComponent->FindMatchItem( ItemReference->GetID().ToString() ))
+				{
+					if (ItemBase)
+					{
+						const FString& ItemID = ItemReference->GetID().ToString();
+
+						ItemBase->Use();
+						InventoryComponent->HandelRemoveItem( ItemReference->GetTextData().Name.ToString(), 1, true);
+
+						if(!ItemReference->GetQuantity())
+							ItemReference = InventoryComponent->FindMatchItem( ItemID );
+					}
+				}
+			}
+		}
+	}
+}
+
+void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity) const
+{
+	if(!ItemReference) return;
+	if(ItemReference->GetTextData().Name.ToString() != ItemID) return;
+
+	ItemQuantity->SetText(FText::FromString(FString::FromInt(NewQuantity)));
 }
