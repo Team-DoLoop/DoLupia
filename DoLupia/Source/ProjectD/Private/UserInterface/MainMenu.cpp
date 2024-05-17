@@ -37,7 +37,8 @@ FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& 
 		{
 			SetVisibility(ESlateVisibility::Collapsed);
 
-			const FInputModeGameOnly InputMode;
+			FInputModeGameOnly InputMode;
+			InputMode.SetConsumeCaptureMouseDown( true );
 			PC->SetInputMode(InputMode);
 		}
 
@@ -52,6 +53,9 @@ bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 	UDragDropOperation* InOperation)
 {
 	// 플레이어가 아이템을 드래그 앤 드랍 할 수 있도록 설정
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(true);
+	Cast<APlayerController>(PlayerCharacter->GetController())->SetInputMode(InputMode);
 
 	if(const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation))
 	{
