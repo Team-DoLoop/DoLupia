@@ -96,8 +96,6 @@ public:
 
 	float patrolTime = 3;
 
-	bool bOnceAttack = false;
-
 	class AAIController* ai;
 
 	FVector randomPos;

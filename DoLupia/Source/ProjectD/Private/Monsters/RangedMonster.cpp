@@ -52,9 +52,10 @@ void ARangedMonster::BeginPlay()
 void ARangedMonster::MoveState()
 {
 	//Super::MoveState();
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MoveState()" ) );
 
 	MoveToTarget();
-
+	
 	if (TargetVector.Size() < AttackRange) {
 		if(HasObstacle())
 		{
@@ -63,7 +64,13 @@ void ARangedMonster::MoveState()
 			anim->animState = MonsterFSM->state;
 			anim->bAttackDelay = true;
 			currentTime = attackDelayTime;
-			bStartToAttack = false;
+			UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격모드로 넘어갈게요" )  );
+			
+		}
+		else
+		{
+			//MoveToTarget();
+			UE_LOG( LogTemp , Warning , TEXT( "공격범위안에 있지만 장애물 있어서 이동할게요" ) );
 		}
 		
 	}
@@ -72,28 +79,35 @@ void ARangedMonster::MoveState()
 void ARangedMonster::AttackState()
 {
 	//Super::AttackState();
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
 
-	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
 	currentTimeRM += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
-	bHasTarget = false;
-
-	if (currentTimeRM > attackDelayTime)
+	if(currentTimeRM > attackDelayTime)
 	{
-		currentTimeRM = 0;
-		anim->bAttackDelay = true;
-		bOnceAttack = true;
-		bHasTarget = true;
-	}
-
-	if (bOnceAttack)
-	{
-		if (TargetVector.Size() > AttackRange) {
+		if (HasObstacle())
+		{
+			currentTimeRM = 0;
+			anim->bAttackDelay = true;
+			bStartToAttack = false;
+			UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격하고 있어요" ) );
+		}
+		else
+		{
 			MonsterFSM->state = EMonsterState::Move;
 			anim->animState = MonsterFSM->state;
-			bOnceAttack = false;
+			UE_LOG( LogTemp , Warning , TEXT( "공격모드인데 장애물 있어서 이동모드로 전환할게요" ) );
+
 		}
 	}
+	
+
+	if (TargetVector.Size() > AttackRange) {
+			MonsterFSM->state = EMonsterState::Move;
+			anim->animState = MonsterFSM->state;
+			UE_LOG( LogTemp , Warning , TEXT( "공격범위 벗어나서 이동모드로 넘어갈게요" ) );
+	}
+	
 
 }
 
@@ -148,6 +162,7 @@ bool ARangedMonster::HasObstacle()
 			{
 				//RangedAttack();
 				bStartToAttack= true;
+			
 			}
 			else
 			{

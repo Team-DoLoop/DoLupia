@@ -146,14 +146,13 @@ void AMonster::AttackState()
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
-		//bOnceAttack = true;
+
 	}
 
 	
 	if (TargetVector.Size() > AttackRange) {
 		MonsterFSM->state = EMonsterState::Move;
 		anim->animState = MonsterFSM->state;
-		bOnceAttack = false;
 		GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
 	
@@ -206,7 +205,7 @@ void AMonster::MoveToTarget()
 	FPathFindingQuery query;
 
 	FAIMoveRequest req;
-	req.SetAcceptanceRadius( 3 );
+	req.SetAcceptanceRadius( 10 );
 	req.SetGoalLocation( destination );
 	ai->BuildPathfindingQuery( req , query );
 	FPathFindingResult r = ns->FindPathSync( query );
