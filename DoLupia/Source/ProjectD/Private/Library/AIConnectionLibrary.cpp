@@ -19,7 +19,7 @@ void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 	FString sendJson = UJsonLibrary::MapToJsonStr( msgData );
 
 	/* AI Server Connection */
-	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
+	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/chat";
 	ReqMessage( ServerURL , sendJson );
 }
 
@@ -36,7 +36,7 @@ void UAIConnectionLibrary::SendImageKeywordToServer( int32 keyword )
 	FString sendJson = UJsonLibrary::MapToJsonInt( imgData );
 
 	/* AI Server Image Request */
-	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
+	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/imageAI";
 	ReqAIImage( ServerURL , sendJson );
 
 
@@ -48,7 +48,7 @@ void UAIConnectionLibrary::LoadImageToMaterial()
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
 		// Call the function on the actor
-		ActorItr->UpdateActorMaterial();
+		ActorItr->LoadWebImage();
 
 	}
 }
@@ -107,16 +107,12 @@ void UAIConnectionLibrary::ResAIImage(FHttpRequestPtr Request, FHttpResponsePtr 
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 
+		// 이미지 저장 로직 저장 X -> 서버에서 생성된 이미지를 띄우는 형식으로 변경
+		/*
 		TArray<uint8> buf = Response->GetContent();
-
-		// Image path
 		FString imgPath = FPaths::ProjectContentDir() + "/AI/Texture/AITexture.png";
-		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *imgPath )
-
-		// Save Image to File
 		FFileHelper::SaveArrayToFile( buf , *imgPath );
-
-		// 추후, image -> texture file 로 변환하는 로직 필요 (따로 함수로 기능 구현)
+		*/
 	}
 	else
 	{

@@ -27,10 +27,6 @@ public:
 	UFUNCTION()
 	void ChangeMaterial();
 
-	void ReqDataPost(const FString& url, const FString& msg);
-	void ResDataPost(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
-	void ReqImgPost( const FString& url , const FString& msg );
-	void ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully );
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
@@ -53,10 +49,5 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* connectionLibrary;
-
-	/* IP Adress, Port */
-	FString LanIP = "192.168.75.246";
-	FString WifiIP = "172.16.216.55";
-	FString ServerPort = "8000";
 
 };
