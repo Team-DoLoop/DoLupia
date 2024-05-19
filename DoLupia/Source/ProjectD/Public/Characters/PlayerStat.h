@@ -19,6 +19,29 @@ class PROJECTD_API APlayerStat : public APlayerState
 
 	APlayerStat();
 
+private:
+	UPROPERTY( VisibleAnywhere )
+	int32 MaxHP;
+
+	UPROPERTY( VisibleAnywhere )
+	int32 CurrentHP;
+
+	UPROPERTY( VisibleAnywhere )
+	int32 MaxMP;
+
+	UPROPERTY( VisibleAnywhere )
+	int32 CurrentMP;
+
+	UPROPERTY( VisibleAnywhere )
+	float ATK;
+
+	UPROPERTY( VisibleAnywhere )
+	float DEF;
+
+	UPROPERTY( VisibleAnywhere )
+	int32 SkillPoint;
+
+
 public:
 	void initPlayerData();
 
@@ -50,23 +73,7 @@ public:
 	FORCEINLINE int32 GetDEF() const {return DEF;}
 	FORCEINLINE void  SetDEF(float _DEF) {DEF = _DEF;}
 
+	FORCEINLINE int32 GetSkillPoint() const {return SkillPoint;}
+	FORCEINLINE void  SetSkillPoint(float _SkillPoint) {SkillPoint = _SkillPoint;}
 
-private:
-	UPROPERTY( VisibleAnywhere )
-	int32 MaxHP;
-
-	UPROPERTY( VisibleAnywhere )
-	int32 CurrentHP;
-
-	UPROPERTY( VisibleAnywhere )
-	int32 MaxMP;
-
-	UPROPERTY( VisibleAnywhere )
-	int32 CurrentMP;
-
-	UPROPERTY( VisibleAnywhere )
-	float ATK;
-
-	UPROPERTY( VisibleAnywhere )
-	float DEF;
 };
