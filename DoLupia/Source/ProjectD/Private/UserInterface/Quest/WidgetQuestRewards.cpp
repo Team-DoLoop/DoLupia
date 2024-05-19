@@ -13,6 +13,8 @@
 #include <Components/Image.h>
 #include "Components/HorizontalBox.h"
 #include "Components/Spacer.h"
+#include <Components/SizeBoxSlot.h>
+#include <Components/SizeBox.h>
 
 void UWidgetQuestRewards::NativePreConstruct()
 {
@@ -40,24 +42,32 @@ void UWidgetQuestRewards::NativePreConstruct()
         for (const auto& itemImage : ItemRewards)
         {
             UTexture2D* IconTexture = itemImage->GetAssetData().Icon;
-            if (!IconTexture)
-            {
-                continue;
-            }
 
-            UImage* RewardItemIcon = NewObject<UImage>( this );
-            if (RewardItemIcon)
+            // SizeBox 생성
+            USizeBox* SizeBox = NewObject<USizeBox>( this );
+            if (SizeBox)
             {
-                RewardItemIcon->SetBrushFromTexture( IconTexture );
+                // SizeBox의 크기 설정
+                SizeBox->SetWidthOverride( 60.0f );
+                SizeBox->SetHeightOverride( 60.0f );
 
-                box_RewardsItem->AddChild( RewardItemIcon );
-                
-                //Spacer 넣기
-                USpacer* Spacer = NewObject<USpacer>( this );
-                if (Spacer)
+                // UImage 생성
+                UImage* RewardItemIcon = NewObject<UImage>( this );
+                if (RewardItemIcon)
                 {
-                    Spacer->SetSize( FVector2D( 10.0f , 1.0f ) );  // Set the desired size for the spacer
-                    box_RewardsItem->AddChild( Spacer );
+                    RewardItemIcon->SetBrushFromTexture( IconTexture );
+                    SizeBox->AddChild( RewardItemIcon );
+
+                    // SizeBox를 HorizontalBox에 추가
+                    box_RewardsItem->AddChild( SizeBox );
+
+                    // Spacer 추가
+                    USpacer* Spacer = NewObject<USpacer>( this );
+                    if (Spacer)
+                    {
+                        Spacer->SetSize( FVector2D( 10.0f , 1.0f ) );  // Spacer 크기 설정
+                        box_RewardsItem->AddChild( Spacer );
+                    }
                 }
             }
         }
