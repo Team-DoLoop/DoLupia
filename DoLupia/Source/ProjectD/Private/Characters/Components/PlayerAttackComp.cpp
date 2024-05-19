@@ -14,6 +14,8 @@
 #include "Characters/Skill/PlayerSkillSwing.h"
 #include "Characters/Skill/PlayerSkillUlt.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 
 // Sets default values for this component's properties
 UPlayerAttackComp::UPlayerAttackComp()
@@ -71,7 +73,15 @@ void UPlayerAttackComp::AttackEnd()
 {
 	if(!PlayerFSMComp) return;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
-	PlayerController->SetInputMode( FInputModeGameOnly() );
+
+	if(!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
+	{
+		FInputModeGameOnly InputMode;
+		InputMode.SetConsumeCaptureMouseDown(true);
+		PlayerController->SetInputMode( InputMode );
+	}
+
+	
 }
 
 
