@@ -108,7 +108,7 @@ void UPlayerFSMComp::ChangePlayerWeaponState(EPlayerWeaponState _weaponState)
 	if(CurrentWeaponState == _weaponState) return;
 	
 	CurrentWeaponState = _weaponState;
-	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentWeaponState : %s"), *UEnum::GetValueAsName(_weaponState).ToString());
+	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentWeaponState : %s"), *UEnum::GetValueAsName(CurrentWeaponState).ToString());
 }
 
 
