@@ -34,7 +34,7 @@ public:
     FName QuestID;
 
     UPROPERTY( EditAnywhere )
-    UItemBase* ItemRewards;
+    TArray<UItemBase*> ItemRewards;
 
 protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
