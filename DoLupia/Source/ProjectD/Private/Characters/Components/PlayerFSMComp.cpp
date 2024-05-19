@@ -87,7 +87,7 @@ bool UPlayerFSMComp::CanChangeState(EPlayerState _changeState)
 	case EPlayerState::IDLE : return  true;
 	case EPlayerState::MOVE : return CanMoveState(CurrentState);
 
-	case EPlayerState::ATTACK : return CanAttackState(CurrentState);
+	case EPlayerState::ATTACK : return CanAttackState(CurrentState, CurrentWeaponState);
 	case EPlayerState::DAMAGE : return CanDamageState(CurrentState);
 	case EPlayerState::EVASION : return CanEvasionState(CurrentState);
 		
@@ -157,7 +157,7 @@ bool UPlayerFSMComp::CanEvasionState(EPlayerState _CurrentState)
 
 // <--------------------- Attack --------------------->
 
-bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState)
+bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState, EPlayerWeaponState _CurrentWeaponState)
 {
 	// 안되는 상태 : 공격, 회피, 대화, 죽음
 	switch (_CurrentState)
@@ -170,6 +170,13 @@ bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState)
 	case EPlayerState::DIE : return false;
 	}
 
+	/*
+	switch (_CurrentWeaponState)
+	{
+	case EPlayerWeaponState::UNARMED : return false;
+	}
+	*/
+	
 	return true;
 }
 
