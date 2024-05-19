@@ -52,7 +52,7 @@ void ARangedMonster::BeginPlay()
 void ARangedMonster::MoveState()
 {
 	//Super::MoveState();
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MoveState()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MoveState()" ) );
 
 	MoveToTarget();
 	
@@ -69,7 +69,7 @@ void ARangedMonster::MoveState()
 		}
 		else
 		{
-			//MoveToTarget();
+			MoveToTarget();
 			UE_LOG( LogTemp , Warning , TEXT( "공격범위안에 있지만 장애물 있어서 이동할게요" ) );
 		}
 		
@@ -79,7 +79,7 @@ void ARangedMonster::MoveState()
 void ARangedMonster::AttackState()
 {
 	//Super::AttackState();
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
 
 	currentTimeRM += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
@@ -156,7 +156,7 @@ bool ARangedMonster::HasObstacle()
 		AActor* HitActor = outHit.GetActor();
 		if (HitActor)
 		{
-			// 충돌한 액터가 플레이어가 아니라면
+			// 충돌한 액터가 플레이어라면
 			AProjectDCharacter* player = Cast<AProjectDCharacter>( HitActor );
 			if (player)
 			{
