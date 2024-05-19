@@ -41,6 +41,8 @@ public:
 
 	bool HandleQuickSlot( UQuickSlotWidget* OtherQuickSlot );
 
+	void ReleaseQuickSlot( UQuickSlotWidget* OtherQuickSlot ) const;
+
 	FItemDelegateQuantityCalled QuantityCalled;
 
 protected:
