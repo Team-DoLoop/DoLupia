@@ -10,6 +10,9 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/Quest/WidgetQuestLog_Objective.h"
+#include <Components/Image.h>
+#include "Components/HorizontalBox.h"
+#include "Components/Spacer.h"
 
 void UWidgetQuestRewards::NativePreConstruct()
 {
@@ -30,6 +33,34 @@ void UWidgetQuestRewards::NativePreConstruct()
     {
         FText SD_MyText = FText::FromString( QuestDetails.Stages[0].Description );
         txt_StageDesc->SetText( SD_MyText );
+    }
+
+    if (!ItemRewards.IsEmpty())
+    {
+        for (const auto& itemImage : ItemRewards)
+        {
+            UTexture2D* IconTexture = itemImage->GetAssetData().Icon;
+            if (!IconTexture)
+            {
+                continue;
+            }
+
+            UImage* RewardItemIcon = NewObject<UImage>( this );
+            if (RewardItemIcon)
+            {
+                RewardItemIcon->SetBrushFromTexture( IconTexture );
+
+                box_RewardsItem->AddChild( RewardItemIcon );
+                
+                //Spacer 넣기
+                USpacer* Spacer = NewObject<USpacer>( this );
+                if (Spacer)
+                {
+                    Spacer->SetSize( FVector2D( 10.0f , 1.0f ) );  // Set the desired size for the spacer
+                    box_RewardsItem->AddChild( Spacer );
+                }
+            }
+        }
     }
 
 }
