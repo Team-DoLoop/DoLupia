@@ -7,11 +7,16 @@
 #include "ImageUtils.h"
 #include "Engine.h"
 #include "AI/AIMarterialTestActor.h"
+#include "UserInterface/NPC/NPCConvWidget.h"
+#include "Components/TextBlock.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "UserInterface/NPC/NPCConvWidget.h"
 #include "Library/JsonLibrary.h"
 
 
 void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 {
+
 	TMap<FString , FString> msgData;
 	FString msg = message;
 	msgData.Add( TEXT( "message" ) , msg );
@@ -19,7 +24,7 @@ void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 	FString sendJson = UJsonLibrary::MapToJsonStr( msgData );
 
 	/* AI Server Connection */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/chat";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
 	ReqMessage( ServerURL , sendJson );
 }
 
@@ -36,7 +41,7 @@ void UAIConnectionLibrary::SendImageKeywordToServer( int32 keyword )
 	FString sendJson = UJsonLibrary::MapToJsonInt( imgData );
 
 	/* AI Server Image Request */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/imageAI";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
 	ReqAIImage( ServerURL , sendJson );
 
 
@@ -69,14 +74,20 @@ void UAIConnectionLibrary::ReqMessage(const FString& url, const FString& msg)
 void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr Response,
 	bool bConnectedSuccessfully)
 {
-	if (bConnectedSuccessfully)
+	if (bConnectedSuccessfully && Response.IsValid())
 	{
+		gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
 		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 		
 		FString result = Response->GetContentAsString();
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *result )
 
 		//나중에 여기서 받은 문자열을 NPC 혹은 gamemode 에 보내는 로직 필요
+		if (gm) {
+			gm->ReceiveNPCConv( result );
+		}
+
 	}
 	else
 	{

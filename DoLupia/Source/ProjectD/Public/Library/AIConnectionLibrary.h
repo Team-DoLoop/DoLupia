@@ -16,14 +16,17 @@ class PROJECTD_API UAIConnectionLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 /**
-	2024.05.14 함수 호출할 때 , string으로 매개변수 선언되어 있음. 매개변수 형식 변경해야할지 논의 필요
-	2024.05.14 image to texture file 로 변환하는 함수 로직 필요
+	2024.05.14 함수 호출할 때 , string으로 매개변수 선언되어 있음. 
+	2024.05.16 매개변수 int 로 변경 완료
 */
 public:
 	void SendNPCConversationToServer( const FString& message );
 	//void SendImageKeywordToServer( const FString& keyword );
 	void SendImageKeywordToServer( int32 keywords );
 	void LoadImageToMaterial();
+
+	UPROPERTY()
+	class APlayerGameMode* gm;
 	
 private:
 	void ReqMessage( const FString& url , const FString& msg );
@@ -36,4 +39,5 @@ private:
 	FString WifiIP = "172.16.216.55";
 	FString ServerPort = "8000";
 	
+
 };

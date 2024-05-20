@@ -1,0 +1,50 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Gamemode/PlayerGameMode.h"
+#include "Characters/ProjectDPlayerController.h"
+#include "Characters/ProjectDCharacter.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Components/TextBlock.h"
+#include "Library/AIConnectionLibrary.h"
+#include "UserInterface/NPC/NPCConvWidget.h"
+
+APlayerGameMode::APlayerGameMode()
+{
+	// use our custom PlayerController class
+	PlayerControllerClass = AProjectDPlayerController::StaticClass();
+
+	// set default pawn class to our Blueprinted character
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass( TEXT( "/Game/TopDown/Blueprints/BP_TopDownCharacter" ) );
+	if (PlayerPawnBPClass.Class != nullptr)
+	{
+		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}
+
+	// set default controller to our Blueprinted controller
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass( TEXT( "/Game/TopDown/Blueprints/BP_TopDownPlayerController" ) );
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		PlayerControllerClass = PlayerControllerBPClass.Class;
+	}
+
+}
+
+void APlayerGameMode::InitializeNPCConvWidget()
+{
+	NPCConvUI = CreateWidget<UNPCConvWidget>( GetWorld() , NPCUIFactory );
+	if (NPCConvUI)
+	{
+		NPCConvUI->AddToViewport(); 
+	}
+}
+
+void APlayerGameMode::ReceiveNPCConv( const FString& conv )
+{
+	UE_LOG( LogTemp , Warning , TEXT( "conv : [%s]" ) , *conv )
+
+	if (NPCConvUI)
+    {
+        NPCConvUI->txt_NPCConv->SetText(FText::FromString( conv ));
+    }
+}
