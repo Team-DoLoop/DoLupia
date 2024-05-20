@@ -55,7 +55,7 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 void UItemBase::Use()
 {
 	AProjectDCharacter* Character = Cast<AProjectDCharacter>(OwningInventory->GetOwner());
-	Character->GetPlayerStat()->SetHP( -ItemStatistics.HealthValue );
+	Character->GetPlayerStat()->SetHP( Character->GetPlayerStat()->GetHP() - ItemStatistics.HealthValue );
 }
 
 

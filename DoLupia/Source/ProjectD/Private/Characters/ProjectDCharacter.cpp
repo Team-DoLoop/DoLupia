@@ -24,6 +24,7 @@
 // engine
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/GadgetComponent.h"
 #include "Components/DecalComponent.h"
@@ -35,6 +36,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -112,6 +114,8 @@ void AProjectDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerController = Cast<AProjectDPlayerController>(GetController());
+	
 	HUD = Cast<ADoLupiaHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	
 	FOnTimelineFloat AimLerpAlphaValue;
@@ -130,7 +134,9 @@ void AProjectDCharacter::BeginPlay()
 		PlayerDefaultsWidget = CreateWidget<UPlayerDefaultsWidget>(GetWorld(), PlayerDefaultsWidgetFactory );
 		PlayerDefaultsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
 		FInputModeGameOnly InputMode;
+		InputMode.SetConsumeCaptureMouseDown( true );
 		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
+
 	}
 
 	// 초기 장비 착용
@@ -159,39 +165,42 @@ void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	
 }
 
-	// <---------------------- UI ---------------------->
+void AProjectDCharacter::TurnPlayer()
+{
+	if(!PlayerController) return;
+	
+	FHitResult Hit;
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	if(bHitSuccessful)
+	{
+		FVector DirVec = Hit.ImpactPoint - GetActorLocation();
+		FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ( DirVec , GetActorUpVector() );
+		FRotator PlayerRot = GetActorRotation();
+		FRotator TempRot = FRotator(PlayerRot.Pitch, TargetRot.Yaw, PlayerRot.Roll);
+		SetActorRotation( TempRot);
+	}
+}
+
+// <---------------------- UI ---------------------->
 void AProjectDCharacter::ToggleMenu()
 {
-	APlayerController* PlayerController = Cast<APlayerController>( GetController() );
+	if(!PlayerController) return;
+	// FInputModeGameAndUI InputMode;
+	// APlayerController* PlayerController = Cast<APlayerController>( GetController() );
 	
-
 	if(HUD->ToggleMenu())
 	{
 		FInputModeUIOnly InputMode;
+		InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
+		InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget());
 		PlayerController->SetInputMode( InputMode );
+
 		//InputMode.SetWidgetToFocus( HUD->GetMainMeun()->TakeWidget() );
 	}
 	else
 	{
 		FInputModeGameOnly InputMode;
-
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->TakeWidget() );
-
-		//UMainQuickSlotWidget* MainQuickSlotWidget = PlayerDefaultsWidget->GetMainQuickSlot();
-
-		//InputMode.SetWidgetToFocus( MainQuickSlotWidget->TakeWidget() );
-
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget0()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget1()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget2()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget3()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget4()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget5()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget6()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget7()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget8()->TakeWidget() );
-		//InputMode.SetWidgetToFocus( PlayerDefaultsWidget->GetMainQuickSlot()->GetQuickSlotWidget9()->TakeWidget() );
-
+		InputMode.SetConsumeCaptureMouseDown(true);
 		PlayerController->SetInputMode( InputMode );
 	}
 
@@ -200,6 +209,12 @@ void AProjectDCharacter::ToggleMenu()
 	if(HUD->IsMenuVisible())
 		StopAiming();
 }
+
+void AProjectDCharacter::UseQuickSlot(int32 SlotNumber)
+{
+	PlayerDefaultsWidget->UseQuickSlot( SlotNumber );
+}
+
 
 // <---------------------- Attack ---------------------->
 void AProjectDCharacter::Aim()

@@ -69,6 +69,7 @@ private:
 
 public:
 	FORCEINLINE EPlayerWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; }
+	void ChangePlayerWeaponState(EPlayerWeaponState _weaponState);
 
 
 	// <--------------------- IDLE --------------------->
@@ -97,7 +98,7 @@ public:
 private:
 
 public:
-	bool CanAttackState(EPlayerState _CurrentState);
+	bool CanAttackState(EPlayerState _CurrentState, EPlayerWeaponState _CurrentWeaponState);
 
 	
 	// <--------------------- Damage --------------------->

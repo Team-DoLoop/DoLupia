@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerState State;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlayerWeaponState WeaponState;
+
 	void PlayMontage(UAnimMontage* _Montage);
 
 	UFUNCTION()

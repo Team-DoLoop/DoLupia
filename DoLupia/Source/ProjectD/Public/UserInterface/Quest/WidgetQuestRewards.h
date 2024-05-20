@@ -34,7 +34,7 @@ public:
     FName QuestID;
 
     UPROPERTY( EditAnywhere )
-    UItemBase* ItemRewards;
+    TArray<UItemBase*> ItemRewards;
 
 protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
@@ -51,6 +51,9 @@ protected:
 
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
     class UButton* btn_Accept;
+
+    UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
+    class UHorizontalBox* box_RewardsItem;
 
     UPROPERTY( EditAnywhere )
     TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;

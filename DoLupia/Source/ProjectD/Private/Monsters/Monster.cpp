@@ -41,7 +41,6 @@ AMonster::AMonster()
 		Wheels->SetupAttachment( GetMesh() , WheelsSocket );
 	}
 
-	
 
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>(TEXT("MonsterFSM"));
 
@@ -120,33 +119,7 @@ void AMonster::IdleState()
 	}
 }
 
-void AMonster::PatrolState()
-{
-	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::PatrolState()" ) );
-	currentTime += GetWorld()->GetDeltaSeconds();
-	auto ns = UNavigationSystemV1::GetNavigationSystem( GetWorld() );
-	FPathFindingQuery query;
 
-	FAIMoveRequest req;
-	ai->BuildPathfindingQuery( req , query );
-	FPathFindingResult r = ns->FindPathSync( query );
-	GetRandomPositionInNavMesh( this->GetActorLocation() , 1500 , randomPos );
-
-	auto result = ai->MoveToLocation( randomPos );
-	if(result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
-	{
-		GetRandomPositionInNavMesh( this->GetActorLocation() , 1500 , randomPos );
-	}
-
-	//if(currentTime>patrolTime)
-	//{
-	//	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::Move로 전환!!" ) );
-	//	MonsterFSM->state = EMonsterState::Move;
-	//	anim->animState = MonsterFSM->state;
-	//}
-	
-	
-}
 
 void AMonster::MoveState()
 {
@@ -173,14 +146,13 @@ void AMonster::AttackState()
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
-		//bOnceAttack = true;
+
 	}
 
 	
 	if (TargetVector.Size() > AttackRange) {
 		MonsterFSM->state = EMonsterState::Move;
 		anim->animState = MonsterFSM->state;
-		bOnceAttack = false;
 		GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
 	
@@ -213,6 +185,10 @@ void AMonster::DieState()
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 4)
 	{
+		//플레이어 델리게이트 사용 : 킬 목표
+		AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
+		FString EnumValueAsString = EnumToString( EMonsterType::Strike );
+		player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
 		//아이템 드랍
 
 		this->Destroy();
@@ -233,7 +209,7 @@ void AMonster::MoveToTarget()
 	FPathFindingQuery query;
 
 	FAIMoveRequest req;
-	req.SetAcceptanceRadius( 3 );
+	req.SetAcceptanceRadius( 10 );
 	req.SetGoalLocation( destination );
 	ai->BuildPathfindingQuery( req , query );
 	FPathFindingResult r = ns->FindPathSync( query );

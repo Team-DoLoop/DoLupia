@@ -21,11 +21,17 @@ public:
 	// Update actor's material
 	void UpdateActorMaterial();
 
+	void LoadWebImage();
+
+	UFUNCTION()
+	void OnImageDownloaded( UTexture2DDynamic* DownloadedTexture );
+
+	UFUNCTION()
+	void OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture );
+
 protected:
 	virtual void BeginPlay() override;
-	UTexture2D* LoadTextureFromImage( const FString& ImagePath );
-	UMaterialInterface* CreateMaterialFromTexture( UTexture2D* Texture );
-	void ApplyMaterialToMesh( UMeshComponent* MeshComponent , UMaterialInterface* Material );
+	
 
 	UPROPERTY( EditDefaultsOnly )
 	class UStaticMeshComponent* meshComp;
@@ -35,6 +41,11 @@ protected:
 
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* MaterialTemplate;
+
+	UPROPERTY( EditAnywhere , Category = "Materials" )
+	UMaterialInterface* MaterialTemplate2;
+
+
 
 
 };

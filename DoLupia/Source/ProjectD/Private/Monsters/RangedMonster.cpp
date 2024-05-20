@@ -3,6 +3,7 @@
 
 #include "Monsters/RangedMonster.h"
 
+#include "AIController.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "Monsters/MonsterAnim.h"
@@ -41,39 +42,72 @@ void ARangedMonster::BeginPlay()
 	MonsterFSM->state = EMonsterState::Idle;
 	//원거리 몬스터 기본 설정
 	this->maxHP = 150;
-	this->AttackRange = 1000;
+	this->AttackRange = 850;
 	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 	UE_LOG( LogTemp , Warning , TEXT( "%f" ) , attackDelayTime );
 }
 
 
+void ARangedMonster::MoveState()
+{
+	//Super::MoveState();
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MoveState()" ) );
+
+	MoveToTarget();
+	
+	if (TargetVector.Size() < AttackRange) {
+		if(HasObstacle())
+		{
+			ai->StopMovement();
+			MonsterFSM->state = EMonsterState::Attack;
+			anim->animState = MonsterFSM->state;
+			anim->bAttackDelay = true;
+			currentTime = attackDelayTime;
+			UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격모드로 넘어갈게요" )  );
+			
+		}
+		else
+		{
+			MoveToTarget();
+			UE_LOG( LogTemp , Warning , TEXT( "공격범위안에 있지만 장애물 있어서 이동할게요" ) );
+		}
+		
+	}
+}
 
 void ARangedMonster::AttackState()
 {
 	//Super::AttackState();
-
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::AttackState()" ) );
+
 	currentTimeRM += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
-	bHasTarget = false;
-
-	if (currentTimeRM > attackDelayTime)
+	if(currentTimeRM > attackDelayTime)
 	{
-		currentTimeRM = 0;
-		anim->bAttackDelay = true;
-		bOnceAttack = true;
-		bHasTarget = true;
-	}
-
-	if (bOnceAttack)
-	{
-		if (TargetVector.Size() > AttackRange) {
+		if (HasObstacle())
+		{
+			currentTimeRM = 0;
+			anim->bAttackDelay = true;
+			bStartToAttack = false;
+			UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격하고 있어요" ) );
+		}
+		else
+		{
 			MonsterFSM->state = EMonsterState::Move;
 			anim->animState = MonsterFSM->state;
-			bOnceAttack = false;
+			UE_LOG( LogTemp , Warning , TEXT( "공격모드인데 장애물 있어서 이동모드로 전환할게요" ) );
+
 		}
 	}
+	
+
+	if (TargetVector.Size() > AttackRange) {
+			MonsterFSM->state = EMonsterState::Move;
+			anim->animState = MonsterFSM->state;
+			UE_LOG( LogTemp , Warning , TEXT( "공격범위 벗어나서 이동모드로 넘어갈게요" ) );
+	}
+	
 
 }
 
@@ -91,7 +125,7 @@ void ARangedMonster::RangedAttack()
 	}
 }
 
-void ARangedMonster::HasObstacle()
+bool ARangedMonster::HasObstacle()
 {
 	FHitResult outHit;
 
@@ -104,7 +138,7 @@ void ARangedMonster::HasObstacle()
 	// 레이캐스트를 수행하고 충돌 정보를 outHit에 저장.
 	bool bIsHit = GetWorld()->LineTraceSingleByChannel( outHit , Start , End , ECC_Visibility , CollisionParams );
 
-	if (bIsHit)
+	/*if (bIsHit)
 	{
 		DrawDebugLine( GetWorld() , Start , End , FColor::Red , false , 0.1f , 0 , 5.f );
 		UE_LOG( LogTemp , Warning , TEXT( "Obstacle detected!" ) );
@@ -113,7 +147,7 @@ void ARangedMonster::HasObstacle()
 	{
 		DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 0.1f , 0 , 5.f );
 		UE_LOG( LogTemp , Warning , TEXT( "No Obstacle detected!" ) );
-	}
+	}*/
 
 
 	if (bIsHit)
@@ -122,20 +156,20 @@ void ARangedMonster::HasObstacle()
 		AActor* HitActor = outHit.GetActor();
 		if (HitActor)
 		{
-			// 충돌한 액터가 플레이어가 아니라면
+			// 충돌한 액터가 플레이어라면
 			AProjectDCharacter* player = Cast<AProjectDCharacter>( HitActor );
 			if (player)
 			{
-				RangedAttack();
-				
+				//RangedAttack();
+				bStartToAttack= true;
+			
 			}
 			else
 			{
-				//PatrolState로 전환
-				MonsterFSM->state = EMonsterState::Move;
-				anim->animState = MonsterFSM->state;
+				bStartToAttack = false;
 			}
 		}
 	}
+	return bStartToAttack;
 
 }

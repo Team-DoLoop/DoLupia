@@ -34,8 +34,8 @@ public:
 	EMonsterType MonsterType;
 
 	UFUNCTION()
-	void OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , 
-		UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
+	virtual void OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , 
+	                                   UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* sphereComp;
@@ -70,7 +70,6 @@ public:
 
 	//State 함수
 	virtual void IdleState();
-	virtual void PatrolState();
 	virtual void MoveState();
 	virtual void AttackState();
 	virtual void DamageState();
@@ -84,7 +83,7 @@ public:
 
 	//일정 반경 안에 들어오면 공격모드로 전환
 	UPROPERTY( EditAnywhere )
-	float AttackRange = 500;
+	float AttackRange = 300;
 
 	void MoveToTarget();
 
@@ -97,11 +96,21 @@ public:
 
 	float patrolTime = 3;
 
-	bool bOnceAttack = false;
-
 	class AAIController* ai;
 
 	FVector randomPos;
 
 	bool GetRandomPositionInNavMesh( FVector centerLocation , float radius , FVector& dest );
+
+	//퀘스트 이넘 타입 스트링으로 변환하는 함수
+	FString EnumToString( EMonsterType EnumValue )
+	{
+		const UEnum* EnumPtr = FindObject<UEnum>( ANY_PACKAGE , TEXT( "EMonsterType" ) , true );
+		if (!EnumPtr)
+		{
+			return FString( "Invalid" );
+		}
+
+		return EnumPtr->GetDisplayNameTextByValue( static_cast<int64>(EnumValue) ).ToString();
+	}
 };

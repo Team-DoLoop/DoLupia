@@ -3,20 +3,58 @@
 
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 
+#include "Items/ItemBase.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+
+void UMainQuickSlotWidget::SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot)
+{
+	for(auto elem : QuickSlotArray)
+	{
+		if(elem->IsHoveredButton())
+		{
+			if(elem->HandleQuickSlot( OnClickedQuickSlot ))
+				return;
+		}
+	}
+
+	OnClickedQuickSlot->ReleaseQuickSlot( OnClickedQuickSlot );
+}
+
+bool UMainQuickSlotWidget::IsDraggingWidget()
+{
+	for (auto elem : QuickSlotArray)
+	{
+		if (elem->IsHoveredButton())
+			return true;
+	}
+
+	return false;
+}
 
 void UMainQuickSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	QuickSlot1->SetIndex( 0 );
-	QuickSlot2->SetIndex( 1 );
-	QuickSlot3->SetIndex( 2 );
-	QuickSlot4->SetIndex( 3 );
-	QuickSlot5->SetIndex( 4 );
-	QuickSlot6->SetIndex( 5 );
-	QuickSlot7->SetIndex( 6 );
-	QuickSlot8->SetIndex( 7 );
-	QuickSlot9->SetIndex( 8 );
-	QuickSlot0->SetIndex( 9 );
+	QuickSlot1->InitQuickSlotWidget( 0, this );
+	QuickSlot2->InitQuickSlotWidget( 1, this );
+	QuickSlot3->InitQuickSlotWidget( 2, this );
+	QuickSlot4->InitQuickSlotWidget( 3, this );
+	QuickSlot5->InitQuickSlotWidget( 4, this );
+	QuickSlot6->InitQuickSlotWidget( 5, this );
+	QuickSlot7->InitQuickSlotWidget( 6, this );
+	QuickSlot8->InitQuickSlotWidget( 7, this );
+	QuickSlot9->InitQuickSlotWidget( 8, this );
+	QuickSlot0->InitQuickSlotWidget( 9, this );
+
+	QuickSlotArray.Add( QuickSlot1 );
+	QuickSlotArray.Add( QuickSlot2 );
+	QuickSlotArray.Add( QuickSlot3 );
+	QuickSlotArray.Add( QuickSlot4 );
+	QuickSlotArray.Add( QuickSlot5 );
+	QuickSlotArray.Add( QuickSlot6 );
+	QuickSlotArray.Add( QuickSlot7 );
+	QuickSlotArray.Add( QuickSlot8 );
+	QuickSlotArray.Add( QuickSlot9 );
+	QuickSlotArray.Add( QuickSlot0 );
 }
+

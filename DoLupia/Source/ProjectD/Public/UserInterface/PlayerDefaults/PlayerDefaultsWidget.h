@@ -8,6 +8,8 @@
 
 class UMainQuickSlotWidget;
 class UQuickSlotWidget;
+class UItemBase;
+
 /**
  * 
  */
@@ -19,6 +21,9 @@ class PROJECTD_API UPlayerDefaultsWidget : public UUserWidget
 public:
 	FORCEINLINE UMainQuickSlotWidget* GetMainQuickSlot() const { return QuickSlot; }
 	//FORCEINLINE void SetMainQuickSlotWidget( UMainQuickSlotWidget* NewQuickSlot ) { QuickSlot = NewQuickSlot; }
+
+	void UseQuickSlot(int32 SlotNumber );
+	void RefreshQuickSlot( const FString& ItemName , int32 NewQuantity) const;
 
 	UQuickSlotWidget* FindQuickSlot(int32 FindIndex);
 

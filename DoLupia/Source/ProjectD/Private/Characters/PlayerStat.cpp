@@ -3,6 +3,8 @@
 
 #include "Characters/PlayerStat.h"
 
+#include "Items/ItemBase.h"
+
 
 APlayerStat::APlayerStat()
 	:	MaxHP(100.0f), MaxMP(100.0f),
@@ -21,4 +23,21 @@ void APlayerStat::initPlayerData()
 	CurrentMP = MaxMP;
 	ATK = 10.0f;
 	DEF = 5.0f;
+}
+
+void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextItemBase )
+{
+	if(CurrentItemBase)
+	{
+		ATK -= CurrentItemBase->GetItemStatistics().DamageValue;
+		DEF -= CurrentItemBase->GetItemStatistics().ArmorRating;
+	}
+
+	if(NextItemBase)
+	{
+		ATK += NextItemBase->GetItemStatistics().DamageValue;
+		DEF += NextItemBase->GetItemStatistics().ArmorRating;
+	}
+
+	
 }

@@ -1,6 +1,8 @@
 ﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Characters/ProjectDPlayerController.h"
+
+#include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
@@ -10,6 +12,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
+#include "AI/AIMarterialTestActor.h"
 #include "Characters/PlayerStateBase.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
@@ -19,6 +22,7 @@
 #include "UserInterface/MainMenu.h"
 #include "UserInterface/Quest/WidgetQuestLog.h"
 #include "Data/WidgetData.h"
+#include "Library/AIConnectionLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -77,8 +81,17 @@ void AProjectDPlayerController::SetupInputComponent()
 
 		// UI
 		EnhancedInputComponent->BindAction(ToggleAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToggleMenu);
-		EnhancedInputComponent->BindAction(QuickSlotAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction );
 
+		EnhancedInputComponent->BindAction( QuickSlot1Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 0 );
+		EnhancedInputComponent->BindAction( QuickSlot2Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 1 );
+		EnhancedInputComponent->BindAction( QuickSlot3Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 2 );
+		EnhancedInputComponent->BindAction( QuickSlot4Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 3 );
+		EnhancedInputComponent->BindAction( QuickSlot5Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 4 );
+		EnhancedInputComponent->BindAction( QuickSlot6Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 5 );
+		EnhancedInputComponent->BindAction( QuickSlot7Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 6 );
+		EnhancedInputComponent->BindAction( QuickSlot8Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 7 );
+		EnhancedInputComponent->BindAction( QuickSlot9Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 8 );
+		EnhancedInputComponent->BindAction( QuickSlot0Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 9 );
 
 		//QuestUI
 		EnhancedInputComponent->BindAction( QuestTabAction , ETriggerEvent::Started , this , &AProjectDPlayerController::QuestLogMenu );
@@ -113,7 +126,30 @@ void AProjectDPlayerController::TestAnyFunction()
 	// ControlledCharacter->moveComp->Die();
 
 	// TakeDamage Test
-	ControlledCharacter->TakeDamage(31.0f);
+	// ControlledCharacter->TakeDamage(31.0f);
+
+	// AI Test
+	auto AILibrary = NewObject<UAIConnectionLibrary>();
+	TestCount++;
+	if(TestCount == 1)
+	{
+		TMap<FString, FString> imgData;
+		
+		int32 tmpNum = 1;
+		AILibrary->SendImageKeywordToServer( tmpNum );
+	}
+	else
+	{
+		TestCount = 0;
+
+		for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+		{
+			UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
+			// Call the function on the actor
+			ActorItr->UpdateActorMaterial();
+		
+		}
+	}
 }
 
 
@@ -136,6 +172,8 @@ void AProjectDPlayerController::OnSetDestinationReleased()
 {
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->OnSetDestinationReleased();
+	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(true);
 	SetInputMode(FInputModeGameOnly());
 }
 
@@ -176,6 +214,12 @@ void AProjectDPlayerController::ToggleMenu()
 bool AProjectDPlayerController::IsHoverd()
 {
 	return Cast<ADoLupiaHUD>( GetHUD() )->GetMainMeun()->IsHovered();
+}
+
+void AProjectDPlayerController::UseQuickSlot(int32 QuickSlotNumber)
+{
+	if (ControlledCharacter)
+		ControlledCharacter->UseQuickSlot( QuickSlotNumber );
 }
 
 
@@ -229,8 +273,6 @@ void AProjectDPlayerController::Attack()
 	if(!ControlledCharacter) return;
 	
 	ControlledCharacter->attackComp->Attack();
-
-
 }
 
 void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)

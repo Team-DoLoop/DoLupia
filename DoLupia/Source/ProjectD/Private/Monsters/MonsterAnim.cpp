@@ -15,7 +15,7 @@ void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 	if(monster)
 	{
-		animState= monster->MonsterFSM->state;
+		//animState= monster->MonsterFSM->state;
 	}
 
 }
@@ -34,5 +34,5 @@ void UMonsterAnim::OnDoRangedAttackAnimation()
 {
 	auto ownerPawn = TryGetPawnOwner();
 	auto monster = Cast<ARangedMonster>( ownerPawn );
-	monster->HasObstacle();
+	monster->RangedAttack();
 }

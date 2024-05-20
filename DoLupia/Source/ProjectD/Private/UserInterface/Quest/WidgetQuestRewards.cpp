@@ -10,6 +10,11 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/Quest/WidgetQuestLog_Objective.h"
+#include <Components/Image.h>
+#include "Components/HorizontalBox.h"
+#include "Components/Spacer.h"
+#include <Components/SizeBoxSlot.h>
+#include <Components/SizeBox.h>
 
 void UWidgetQuestRewards::NativePreConstruct()
 {
@@ -30,6 +35,42 @@ void UWidgetQuestRewards::NativePreConstruct()
     {
         FText SD_MyText = FText::FromString( QuestDetails.Stages[0].Description );
         txt_StageDesc->SetText( SD_MyText );
+    }
+
+    if (!ItemRewards.IsEmpty())
+    {
+        for (const auto& itemImage : ItemRewards)
+        {
+            UTexture2D* IconTexture = itemImage->GetAssetData().Icon;
+
+            // SizeBox 생성
+            USizeBox* SizeBox = NewObject<USizeBox>( this );
+            if (SizeBox)
+            {
+                // SizeBox의 크기 설정
+                SizeBox->SetWidthOverride( 60.0f );
+                SizeBox->SetHeightOverride( 60.0f );
+
+                // UImage 생성
+                UImage* RewardItemIcon = NewObject<UImage>( this );
+                if (RewardItemIcon)
+                {
+                    RewardItemIcon->SetBrushFromTexture( IconTexture );
+                    SizeBox->AddChild( RewardItemIcon );
+
+                    // SizeBox를 HorizontalBox에 추가
+                    box_RewardsItem->AddChild( SizeBox );
+
+                    // Spacer 추가
+                    USpacer* Spacer = NewObject<USpacer>( this );
+                    if (Spacer)
+                    {
+                        Spacer->SetSize( FVector2D( 10.0f , 1.0f ) );  // Spacer 크기 설정
+                        box_RewardsItem->AddChild( Spacer );
+                    }
+                }
+            }
+        }
     }
 
 }
@@ -113,12 +154,16 @@ void UWidgetQuestRewards::OnAcceptClicked()
         {
             ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
         }
-        UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
+        //UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
 
         InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
     }
     
-    InvetoryComp->HandelAddItem( ItemRewards );
+    for (const auto& items : ItemRewards) {
+        //보상 아이템 추가
+        InvetoryComp->HandelAddItem( items);
+    }
+    
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();

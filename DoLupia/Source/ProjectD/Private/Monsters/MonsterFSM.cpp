@@ -37,7 +37,6 @@ void UMonsterFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	switch (state)
 	{
 	case EMonsterState::Idle:		me->IdleState();		break;
-	case EMonsterState::Patrol:		me->PatrolState();		break;
 	case EMonsterState::Move:		me->MoveState();		break;
 	case EMonsterState::Attack:		me->AttackState();		break;
 	case EMonsterState::Damage:		me->DamageState();		break;

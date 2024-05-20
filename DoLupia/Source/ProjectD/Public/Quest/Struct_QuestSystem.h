@@ -36,6 +36,18 @@ public:
 };
 
 USTRUCT( Atomic , BlueprintType )
+struct FRewardsDetails
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	TMap<FString , int32> RewardsItem;
+
+};
+
+USTRUCT( Atomic , BlueprintType )
 struct FObjectiveDetails
 {
 	GENERATED_BODY()
@@ -79,7 +91,7 @@ public:
 	TArray<FObjectiveDetails> Objectives;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
-	TMap<FString , int32> ItemRewards;
+	TArray<FRewardsDetails> ItemRewards;
 };
 
 USTRUCT( Atomic , BlueprintType )

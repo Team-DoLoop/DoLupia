@@ -4,6 +4,7 @@
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "Data/WidgetData.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 
 void UPlayerDefaultsWidget::NativeConstruct()
@@ -16,6 +17,25 @@ void UPlayerDefaultsWidget::NativeConstruct()
 		QuickSlot->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
 	}
 	
+}
+
+void UPlayerDefaultsWidget::UseQuickSlot(int32 SlotNumber)
+{
+	FindQuickSlot(SlotNumber)->UseItem();
+}
+
+void UPlayerDefaultsWidget::RefreshQuickSlot(const FString& ItemName, int32 NewQuantity) const
+{
+	QuickSlot->GetQuickSlotWidget1()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget2()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget3()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget4()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget5()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget6()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget7()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget8()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget9()->QuantityCalled.Execute( ItemName , NewQuantity );
+	QuickSlot->GetQuickSlotWidget0()->QuantityCalled.Execute( ItemName , NewQuantity );
 }
 
 UQuickSlotWidget* UPlayerDefaultsWidget::FindQuickSlot( int32 FindIndex )

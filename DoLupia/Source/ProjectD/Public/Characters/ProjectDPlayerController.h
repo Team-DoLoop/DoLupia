@@ -46,10 +46,11 @@ public:
 
 	// <---------------------- Test ---------------------->
 private:
+	int32 TestCount = 0;
 
 protected:
 	void TestAnyFunction();
-	
+	void GetInputModeString() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -107,12 +108,41 @@ public:
 private:
 	void ToggleMenu();
 	bool IsHoverd();
+	void UseQuickSlot(int32 QuickSlotNumber);
 
-public:
+private:
 	/* Toggle Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ToggleAction;
 	
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot1Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot2Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot3Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot4Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot5Action;
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot6Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot7Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot8Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot9Action;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* QuickSlot0Action;
 
 	
 	// <---------------------- Interaction ---------------------->
@@ -154,9 +184,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UltSkillAction;
-
-	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
-	UInputAction* QuickSlotAction; //FInputActionValue
 
 
 

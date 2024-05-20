@@ -33,6 +33,7 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if(!Player) return;
 
 	State =  Player->GetPlayerFSMComp()->GetCurrentState();
+	WeaponState = Player->GetPlayerFSMComp()->GetCurrentWeaponState();
 	Velocity = Player->GetVelocity();
 	Speed = UKismetMathLibrary::VSizeXY(Velocity);
 }

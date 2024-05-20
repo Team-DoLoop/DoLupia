@@ -3,7 +3,9 @@
 
 #include "Characters/Components/GadgetComponent.h"
 
+#include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
 #include "Items/EquipItemBase.h"
 #include "Items/ItemBase.h"
@@ -27,7 +29,8 @@ void UGadgetComponent::BeginPlay()
 
 void UGadgetComponent::InitEquip()
 {
-	AProjectDCharacter* Character = Cast<AProjectDCharacter>( GetOwner() );
+	Character = Cast<AProjectDCharacter>( GetOwner() );
+	
 	// GlovesSocket
 
 	// Head
@@ -91,6 +94,8 @@ void UGadgetComponent::TickComponent( float DeltaTime , ELevelTick TickType , FA
 
 UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 {
+	if(!Character) return nullptr;
+	
 	TObjectPtr<UItemBase> EquippedItem = nullptr;
 
 	switch (EItemType ItemType = ItemBase->GetItemType())
@@ -127,6 +132,7 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 	case EItemType::Weapon:
 		if (SwordBase)
 		{
+			Character->GetPlayerFSMComp()->ChangePlayerWeaponState(EPlayerWeaponState::SWORD);
 			EquippedItem = SwordBase->GetItemBase();
 			SwordBase->ReceiveItemData( ItemBase );
 		}
@@ -137,6 +143,8 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 	default: ;
 
 	}
+
+	Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
 
 	return EquippedItem;
 

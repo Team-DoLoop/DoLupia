@@ -21,7 +21,9 @@ class PROJECTD_API UAIConnectionLibrary : public UBlueprintFunctionLibrary
 */
 public:
 	void SendNPCConversationToServer( const FString& message );
-	void SendImageKeywordToServer( const FString& keyword );
+	//void SendImageKeywordToServer( const FString& keyword );
+	void SendImageKeywordToServer( int32 keywords );
+	void LoadImageToMaterial();
 	
 private:
 	void ReqMessage( const FString& url , const FString& msg );
