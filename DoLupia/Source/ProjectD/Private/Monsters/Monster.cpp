@@ -146,14 +146,13 @@ void AMonster::AttackState()
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
-		//bOnceAttack = true;
+
 	}
 
 	
 	if (TargetVector.Size() > AttackRange) {
 		MonsterFSM->state = EMonsterState::Move;
 		anim->animState = MonsterFSM->state;
-		bOnceAttack = false;
 		GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
 	
@@ -186,6 +185,10 @@ void AMonster::DieState()
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 4)
 	{
+		//플레이어 델리게이트 사용 : 킬 목표
+		AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
+		FString EnumValueAsString = EnumToString( EMonsterType::Strike );
+		player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
 		//아이템 드랍
 
 		this->Destroy();
@@ -206,7 +209,7 @@ void AMonster::MoveToTarget()
 	FPathFindingQuery query;
 
 	FAIMoveRequest req;
-	req.SetAcceptanceRadius( 3 );
+	req.SetAcceptanceRadius( 10 );
 	req.SetGoalLocation( destination );
 	ai->BuildPathfindingQuery( req , query );
 	FPathFindingResult r = ns->FindPathSync( query );

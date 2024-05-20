@@ -10,10 +10,11 @@
 //class UParticleSystem;
 
 UENUM(BlueprintType)
-enum class EStatusEffect : uint8
+enum class EStatusEffectType : uint8
 {
-	BLEED UMETA(DisplayName = "Bleed"),
-	POISON UMETA(DisplayName = "Poison")
+	NONE = 0 UMETA(DisplyaName = "None"),
+	BLEED = 1 UMETA(DisplayName = "Bleed"),
+	POISON = 2 UMETA(DisplayName = "Poison")
 };
 
 
@@ -45,14 +46,20 @@ protected:
 	//UPROPERTY(EditAnywhere)
 	// UParticleSystem* VFX;
 
+	UPROPERTY()
+	EStatusEffectType statusEffectType = EStatusEffectType::NONE;
+	
 public:
 	float TakeDamage = 0.0f;
 	bool IsDotAttack = false;
 
 	// 대상에게 줄 효과 Set
-	virtual void SetStatusEffect(EStatusEffect _statusEffect);
+	virtual void SetStatusEffect(EStatusEffectType _statusEffect);
 
 	// Target에게 상태 이상 효과 적용
 	virtual void AddStatusEffect(class ACharacter* Target);
 
+	
+	virtual void BleedingStatusEffect();
+	virtual void PoisonStatusEffect(); 
 };

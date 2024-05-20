@@ -15,7 +15,7 @@ void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 	if(monster)
 	{
-		animState= monster->MonsterFSM->state;
+		//animState= monster->MonsterFSM->state;
 	}
 
 }

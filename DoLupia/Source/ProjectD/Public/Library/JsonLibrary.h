@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,7 +16,8 @@ class PROJECTD_API UJsonLibrary : public UBlueprintFunctionLibrary
 
 public:
 	static FString JsonParse( const FString& data );
-	static FString MapToJson( const TMap<FString, FString>& map);
+	static FString MapToJsonInt( const TMap<FString, int32>& map);
+	static FString MapToJsonStr( const TMap<FString , FString>& map );
 	static bool SaveJson( const FString& filename, const FString& json );
 	
 };

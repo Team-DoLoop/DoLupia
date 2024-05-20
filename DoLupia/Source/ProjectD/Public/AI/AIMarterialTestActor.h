@@ -31,9 +31,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	UTexture2D* LoadTextureFromImage( const FString& ImagePath );
-	UMaterialInterface* CreateMaterialFromTexture( UTexture2D* Texture );
-	void ApplyMaterialToMesh( UMeshComponent* MeshComponent , UMaterialInterface* Material );
+	
 
 	UPROPERTY( EditDefaultsOnly )
 	class UStaticMeshComponent* meshComp;
