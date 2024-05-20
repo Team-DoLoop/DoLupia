@@ -89,6 +89,8 @@ private:
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
+	int32 PlayerMaxHP;
+
 protected:
 	
 public:
@@ -111,6 +113,9 @@ private:
 
 	UPROPERTY()
 	UPlayerDefaultsWidget* PlayerDefaultsWidget;
+
+	UPROPERTY()
+	class UPlayerBattleWidget* PlayerBattleWidget;
 	
 protected:
 	void ToggleMenu();
