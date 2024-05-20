@@ -174,7 +174,7 @@ void UQuickSlotWidget::MouseUpQuickSlotUI()
 
 bool UQuickSlotWidget::IsHoveredButton() const
 {
-	return HoveredButton->IsHovered();
+	return HoveredButton->IsHovered() || Clicked;
 }
 
 void UQuickSlotWidget::UseItem()
@@ -206,6 +206,14 @@ void UQuickSlotWidget::UseItem()
 bool UQuickSlotWidget::HandleQuickSlot( UQuickSlotWidget* OtherQuickSlot )
 {
 	return SwapQuickSlot( OtherQuickSlot );
+}
+
+void UQuickSlotWidget::ReleaseQuickSlot(UQuickSlotWidget* OtherQuickSlot) const
+{
+	OtherQuickSlot->ItemIcon->SetBrushFromTexture( nullptr );
+	OtherQuickSlot->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
+	OtherQuickSlot->ItemQuantity->SetText( FText::FromString(""));
+	OtherQuickSlot->ItemReference = nullptr;
 }
 
 void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity) const
@@ -245,4 +253,5 @@ bool UQuickSlotWidget::SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot )
 void UQuickSlotWidget::TimerSwapQuickSlot()
 {
 	MainQuickSlotWidget->SwapQuickSlot(this);
+	Clicked = false;
 }

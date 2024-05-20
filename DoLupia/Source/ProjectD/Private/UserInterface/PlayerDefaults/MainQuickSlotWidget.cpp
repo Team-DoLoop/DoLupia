@@ -10,15 +10,14 @@ void UMainQuickSlotWidget::SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot)
 {
 	for(auto elem : QuickSlotArray)
 	{
-		if(OnClickedQuickSlot == elem)
-			continue;
-
 		if(elem->IsHoveredButton())
 		{
 			if(elem->HandleQuickSlot( OnClickedQuickSlot ))
-				break;
+				return;
 		}
 	}
+
+	OnClickedQuickSlot->ReleaseQuickSlot( OnClickedQuickSlot );
 }
 
 bool UMainQuickSlotWidget::IsDraggingWidget()

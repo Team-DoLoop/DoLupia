@@ -52,6 +52,9 @@ protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
     class UButton* btn_Accept;
 
+    UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
+    class UHorizontalBox* box_RewardsItem;
+
     UPROPERTY( EditAnywhere )
     TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;
   
