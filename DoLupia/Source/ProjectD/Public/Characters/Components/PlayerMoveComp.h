@@ -9,6 +9,7 @@
 
 
 class UNiagaraSystem;
+class UPlayerDieWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UPlayerMoveComp : public UActorComponent
@@ -94,5 +95,11 @@ private:
 protected:
 	
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UPlayerDieWidget> PlayerDieUIFactory;
+
+	UPROPERTY()
+	UPlayerDieWidget* PlayerDieUI;
+	
 	void Die();
 };

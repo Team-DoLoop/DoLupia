@@ -6,6 +6,7 @@
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/Interaction/InteractionWidget.h"
 #include "Data/WidgetData.h"
+#include "UserInterface/Equipment/PlayerEquipmentWidget.h"
 
 ADoLupiaHUD::ADoLupiaHUD()
 {
@@ -53,19 +54,16 @@ bool ADoLupiaHUD::ToggleMenu()
 	if(MainMenuWidget->GetVisibility() == ESlateVisibility::Collapsed)
 	{
 		DisPlayMenu();
-
-		//APlayerController* PlayerController = GetOwningPlayerController();
-		//FInputModeGameAndUI InputMode;
-		//InputMode.SetWidgetToFocus(MainMenuWidget->TakeWidget());
-		//PlayerController->SetInputMode(InputMode);
-		//GetOwningPlayerController()->SetShowMouseCursor(true);
-
 		return true;
 	}
-	else
-		HideMenu();
 
+	HideMenu();
 	return false;
+}
+
+void ADoLupiaHUD::UpdateEquipmentWidget(UItemBase* ItemBase ) const
+{
+	MainMenuWidget->GetPlayerEquipmentWidget()->UpdateWidget( ItemBase );
 }
 
 void ADoLupiaHUD::ShowInteractionWidget() const
