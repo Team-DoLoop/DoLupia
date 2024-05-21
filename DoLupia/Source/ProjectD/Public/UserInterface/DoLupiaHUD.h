@@ -9,6 +9,7 @@
 struct FInteractableData;
 class UMainMenu;
 class UInteractionWidget;
+class UItemBase;
 
 /**
  * 
@@ -25,6 +26,8 @@ public:
 	void DisPlayMenu();
 	void HideMenu();
 	bool ToggleMenu();
+
+	void UpdateEquipmentWidget(UItemBase* ItemBase ) const;
 
 	void ShowInteractionWidget() const;
 	void HideInteractionWidget() const;

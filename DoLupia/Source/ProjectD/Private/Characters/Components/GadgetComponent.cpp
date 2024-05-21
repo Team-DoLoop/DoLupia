@@ -14,6 +14,7 @@
 #include "Items/Clothes_Shoes/Clothes_ShoesBase.h"
 #include "Items/Clothes_Top/Clothes_TopBase.h"
 #include "Items/Sword/SwordBase.h"
+#include "UserInterface/DoLupiaHUD.h"
 
 
 UGadgetComponent::UGadgetComponent()
@@ -73,6 +74,15 @@ void UGadgetComponent::InitEquip()
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale , ShoesSocket );
 	}
 
+	const FName& ShoesSocket_L( TEXT( "Foot_L" ) );
+	Shoes_L = Character->GetWorld()->SpawnActor<AClothes_ShoesBase>( FVector::ZeroVector , FRotator::ZeroRotator );
+
+	if (Shoes_L)
+	{
+		Shoes_L->AttachToComponent( Character->GetMesh() ,
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale , ShoesSocket_L );
+	}
+
 	// Sword
 	const FName& SwordSocket( TEXT( "SwordSocket" ) );
 	SwordBase = Character->GetWorld()->SpawnActor<ASwordBase>( FVector::ZeroVector , FRotator::ZeroRotator );
@@ -94,8 +104,6 @@ void UGadgetComponent::TickComponent( float DeltaTime , ELevelTick TickType , FA
 
 UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 {
-	if(!Character) return nullptr;
-	
 	TObjectPtr<UItemBase> EquippedItem = nullptr;
 
 	switch (EItemType ItemType = ItemBase->GetItemType())
@@ -127,6 +135,9 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 		{
 			EquippedItem = ShoesBase->GetItemBase();
 			ShoesBase->ReceiveItemData( ItemBase );
+
+			if (Shoes_L)
+				Shoes_L->ReceiveItemData( ItemBase , true );
 		}
 		break;
 	case EItemType::Weapon:
@@ -144,6 +155,7 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 
 	}
 
+	Character->GetDoLupiaHUD()->UpdateEquipmentWidget( ItemBase );
 	Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
 
 	return EquippedItem;

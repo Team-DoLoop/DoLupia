@@ -17,10 +17,13 @@ void AEquipItemBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AEquipItemBase::ReceiveItemData( UItemBase* NewItemBase )
+void AEquipItemBase::ReceiveItemData( UItemBase* NewItemBase , bool UsedSubMesh )
 {
 	ItemBase = NewItemBase;
-	OriginalMesh = ItemBase->GetAssetData().Mesh;
+
+	!UsedSubMesh
+		? OriginalMesh = ItemBase->GetAssetData().Mesh
+		: OriginalMesh = ItemBase->GetAssetData().SubMesh;
 
 	if(!USeAvatar)
 		ItemStaticMesh->SetStaticMesh( OriginalMesh );

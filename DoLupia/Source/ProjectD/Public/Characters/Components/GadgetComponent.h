@@ -48,6 +48,8 @@ private:
 	AClothes_PantsBase* PantsBase;
 	UPROPERTY( VisibleAnywhere, Category = "Equipment" )
 	AClothes_ShoesBase* ShoesBase;
+	UPROPERTY( VisibleAnywhere , Category = "Equipment" )
+	AClothes_ShoesBase* Shoes_L;
 	UPROPERTY( VisibleAnywhere, Category = "Equipment" )
 	ASwordBase* SwordBase;
 
