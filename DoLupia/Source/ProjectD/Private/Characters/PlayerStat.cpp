@@ -7,7 +7,7 @@
 
 
 APlayerStat::APlayerStat()
-	:	MaxHP(100.0f), MaxMP(100.0f),
+	:	MaxHP(100), MaxMP(100),
 		CurrentHP(MaxHP), CurrentMP(MaxMP),
 		ATK(10.0f),
 		DEF(5.0f)
@@ -40,4 +40,24 @@ void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextI
 	}
 
 	
+}
+
+
+// <---------------- MP & HP ---------------->
+void APlayerStat::SetHP(int32 _HP)
+{
+	// int32 NewHP = CurrentHP + _HP;
+
+	if(_HP > MaxHP)
+		_HP = MaxHP;
+
+	CurrentHP = _HP;
+}
+
+void APlayerStat::SetMP(int32 _MP)
+{
+	if (_MP > MaxHP)
+		_MP = MaxHP;
+
+	CurrentMP = _MP;
 }

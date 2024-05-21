@@ -51,24 +51,10 @@ public:
 	FORCEINLINE int32 GetMaxMP() const { return MaxMP; }
 	
 	FORCEINLINE int32 GetHP() const { return CurrentHP; }
-	FORCEINLINE void  SetHP(int32 _HP)
-	{
-		// int32 NewHP = CurrentHP + _HP;
-
-		if(_HP > MaxHP)
-			_HP = MaxHP;
-
-		CurrentHP = _HP;
-	}
+	void  SetHP(int32 _HP);
 	
 	FORCEINLINE int32 GetMP() const {return CurrentMP;}
-	FORCEINLINE void  SetMP( int32 _MP )
-	{
-		if (_MP > MaxHP)
-			_MP = MaxHP;
-
-		CurrentHP = _MP;
-	}
+	void  SetMP( int32 _MP );
 	
 	FORCEINLINE int32 GetATK() const {return ATK;}
 	FORCEINLINE void  SetATK(float _ATK) {ATK = _ATK;}

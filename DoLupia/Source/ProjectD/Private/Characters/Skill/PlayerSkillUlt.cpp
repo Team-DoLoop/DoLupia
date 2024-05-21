@@ -5,6 +5,11 @@
 
 UPlayerSkillUlt::UPlayerSkillUlt()
 {
+	SkillName = "Ult";
+	SkillLevel = 1;
+	SkillCost = 30;
+	SkillCoolTime = 40;
+	SkillDamage = 20;
 }
 
 void UPlayerSkillUlt::ExecuteSkill()

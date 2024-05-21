@@ -22,6 +22,7 @@
 #include "Items/Sword/LongSword.h"
 
 // engine
+#include "AI/NavigationSystemBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/ProjectDPlayerController.h"
@@ -39,6 +40,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -148,7 +150,10 @@ void AProjectDCharacter::BeginPlay()
 
 		PlayerBattleWidget = PlayerDefaultsWidget->GetPlayerBattleWidget();
 		if(PlayerBattleWidget && PlayerStat)
+		{
 			PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(PlayerStat->GetHP(), PlayerMaxHP);
+			PlayerBattleWidget->GetPlayerMPBar()->SetMPBar(PlayerStat->GetMP(), PlayerStat->GetMaxMP());
+		}
 	}
 
 	// 초기 장비 착용
