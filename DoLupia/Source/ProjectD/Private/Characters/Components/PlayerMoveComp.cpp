@@ -5,13 +5,16 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Blueprint/UserWidget.h"
 #include "Characters/PlayerStateBase.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Data/WidgetData.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UserInterface/Event/PlayerDieWidget.h"
 
 class AProjectDCharacter;
 // Sets default values for this component's properties
@@ -158,5 +161,13 @@ void UPlayerMoveComp::Die()
 
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerDieAnimation();
+
+	if(!PlayerDieUI && PlayerDieUIFactory)
+	{
+		PlayerDieUI = CreateWidget<UPlayerDieWidget>(GetWorld(), PlayerDieUIFactory);
+		PlayerDieUI->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
+	}
+
+	
 }
 

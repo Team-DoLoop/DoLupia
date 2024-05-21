@@ -47,6 +47,9 @@ public:
 
 	void ChangeStatsItem(UItemBase* CurrentItemBase, UItemBase* NextItemBase );
 
+	FORCEINLINE int32 GetMaxHP() const { return MaxHP; }
+	FORCEINLINE int32 GetMaxMP() const { return MaxMP; }
+	
 	FORCEINLINE int32 GetHP() const { return CurrentHP; }
 	FORCEINLINE void  SetHP(int32 _HP)
 	{
