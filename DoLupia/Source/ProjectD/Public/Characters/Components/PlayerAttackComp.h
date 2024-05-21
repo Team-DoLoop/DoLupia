@@ -20,17 +20,6 @@ public:
 	UPlayerAttackComp();
 
 private:
-	UPROPERTY()
-	class AProjectDCharacter* Player;
-
-	UPROPERTY()
-	class AProjectDPlayerController* PlayerController;
-	
-	UPROPERTY()
-	class UPlayerFSMComp* PlayerFSMComp;
-
-	UPROPERTY()
-	class UPlayerAnimInstance* PlayerAnim;
 	
 protected:
 	// Called when the game starts
@@ -44,7 +33,22 @@ public:
 
 	// <---------------------- Player ---------------------->
 private:
+	UPROPERTY()
+	class AProjectDCharacter* Player;
 
+	UPROPERTY()
+	class AProjectDPlayerController* PlayerController;
+	
+	UPROPERTY()
+	class UPlayerFSMComp* PlayerFSMComp;
+
+	UPROPERTY()
+	class UPlayerAnimInstance* PlayerAnim;
+
+	UPROPERTY()
+	class APlayerStat* PlayerStat;
+
+	
 public:
 
 
@@ -52,6 +56,12 @@ public:
 
 	// <---------------------- Attack ---------------------->
 private:
+	int32 PlayerMaxMP;
+	
+	float MPRegenRate;
+	float MPRegenTime;
+	float CurrentRegenTime;
+	
 	UPROPERTY()
 	TArray<class UPlayerSkillBase*> PlayerSkills;
 

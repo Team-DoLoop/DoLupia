@@ -5,7 +5,11 @@
 
 UPlayerSkillCastingHitDown::UPlayerSkillCastingHitDown()
 {
-	
+	SkillName = "CastingHitDown";
+	SkillLevel = 1;
+	SkillCost = 15;
+	SkillCoolTime = 20;
+	SkillDamage = 10;
 }
 
 void UPlayerSkillCastingHitDown::ExecuteSkill()
