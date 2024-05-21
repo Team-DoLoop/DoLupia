@@ -11,7 +11,7 @@
 
 UPlayerSkillBase::UPlayerSkillBase()
 	: SkillName(""),
-	  SkillLevel(0),
+	  SkillLevel(1),
 	  SkillCost(0),
 	  SkillCoolTime(0),
 	  SkillDamage(0)

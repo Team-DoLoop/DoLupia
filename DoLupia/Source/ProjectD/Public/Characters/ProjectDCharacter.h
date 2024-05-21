@@ -16,7 +16,7 @@ class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
-
+class UPlayerBattleWidget;
 
 USTRUCT()
 struct FInteractionData
@@ -115,7 +115,7 @@ private:
 	UPlayerDefaultsWidget* PlayerDefaultsWidget;
 
 	UPROPERTY()
-	class UPlayerBattleWidget* PlayerBattleWidget;
+	UPlayerBattleWidget* PlayerBattleWidget;
 	
 protected:
 	void ToggleMenu();
@@ -126,6 +126,7 @@ public:
 
 	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
 
+	UPlayerBattleWidget* GetPlayerBattleWidget() const {return PlayerBattleWidget;}
 	
 
 	// <---------------------- Move ---------------------->

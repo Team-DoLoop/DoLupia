@@ -7,11 +7,11 @@
 
 UPlayerSkillSpell::UPlayerSkillSpell()
 {
-	SkillName = "a";
-	SkillLevel = 0;
-	SkillCost = 0;
-	SkillCoolTime = 0;
-	SkillDamage = 0;
+	SkillName = "Spell";
+	SkillLevel = 1;
+	SkillCost = 10;
+	SkillCoolTime = 10;
+	SkillDamage = 3;
 }
 
 void UPlayerSkillSpell::ExecuteSkill()
