@@ -119,6 +119,8 @@ public:
 	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;}
 	void UseQuickSlot(int32 SlotNumber);
 
+	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
+
 	
 
 	// <---------------------- Move ---------------------->
