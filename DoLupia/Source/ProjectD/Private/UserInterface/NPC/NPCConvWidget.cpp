@@ -24,5 +24,6 @@ void UNPCConvWidget::SetupNPCConv( FString conv )
 
 void UNPCConvWidget::StartConversation()
 {
+	UE_LOG( LogTemp , Warning , TEXT( "gm->NPCConversation : [%s]" ) , *gm->NPCConversation )
 	SetupNPCConv( gm->NPCConversation );
 }

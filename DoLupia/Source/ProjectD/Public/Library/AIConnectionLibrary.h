@@ -23,6 +23,7 @@ public:
 	//void SendImageKeywordToServer( const FString& keyword );
 	void SendImageKeywordToServer( int32 keywords );
 	void LoadImageToMaterial();
+	FString SetupAITextureURL();
 
 	UPROPERTY( BlueprintAssignable )
 	FOnWebApiResponseReceived OnWebApiResponseReceived;
@@ -38,9 +39,9 @@ private:
 	void ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully );
 
 	/* IP Adress, Port */
-	FString LanIP = "192.168.75.246";
-	FString WifiIP = "172.16.216.55";
-	FString ServerPort = "8000";
+	static FString LanIP ;
+	static FString WifiIP ;
+	static FString ServerPort ;
 	
 
 

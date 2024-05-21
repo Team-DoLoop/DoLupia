@@ -12,6 +12,10 @@
 #include "Library/JsonLibrary.h"
 #include "NPC/NPCBase.h"
 
+FString UAIConnectionLibrary::LanIP = "192.168.75.246";
+FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
+FString UAIConnectionLibrary::ServerPort = "8000";
+
 
 void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 {
@@ -57,6 +61,14 @@ void UAIConnectionLibrary::LoadImageToMaterial()
 	}
 }
 
+FString UAIConnectionLibrary::SetupAITextureURL()
+{
+	/* AI Server Connection */
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/ShowAITexture";
+
+	return ServerURL;
+}
+
 void UAIConnectionLibrary::ReqMessage(const FString& url, const FString& msg)
 {
 	auto& httpModule = FHttpModule::Get();
@@ -75,8 +87,6 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 {
 	if (bConnectedSuccessfully && Response.IsValid())
 	{
-		//gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-
 		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 		
 		FString result = Response->GetContentAsString();

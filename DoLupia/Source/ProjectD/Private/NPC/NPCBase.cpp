@@ -50,7 +50,7 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 
 	if (player)
 	{
-		gm->InitializeNPCConvWidget();
+		//gm->InitializeNPCConvWidget();
 		UE_LOG( LogTemp , Warning , TEXT( "NPC - Overlap" ) );
 
 		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.

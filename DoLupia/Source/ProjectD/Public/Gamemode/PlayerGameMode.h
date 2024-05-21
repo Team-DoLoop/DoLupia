@@ -17,6 +17,8 @@ class PROJECTD_API APlayerGameMode : public AGameModeBase
 public:
 	APlayerGameMode();
 
+	virtual void StartPlay() override;
+
 	void InitializeNPCConvWidget();
 
 	void ReceiveNPCConv( FString Response );
