@@ -211,25 +211,6 @@ void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 }
 
 //WidgetQuestNotification위젯 생성!!
-void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
-{
-	int32* ValuePtr = CurrentObjectiveProgress.Find( ObjectiveID );
-
-	if (ValuePtr && (*ValuePtr >= GetObjectiveDataByID( ObjectiveID ).Quantity))
-	{
-		UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
-
-		if (QuestWidget)
-		{
-			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
-			QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
-			IsCompleted = AreObjectivesComplete();
-			if(IsCompleted)
-				UE_LOG( LogTemp , Error , TEXT( "IsCompleted = true;" ) );
-		}
-	}
-
-}
 
 bool AQuest_Base::AreObjectivesComplete()
 {
