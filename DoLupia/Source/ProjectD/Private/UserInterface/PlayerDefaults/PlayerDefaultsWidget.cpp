@@ -4,6 +4,7 @@
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "Data/WidgetData.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 
@@ -15,6 +16,12 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	{
 		QuickSlot = CreateWidget<UMainQuickSlotWidget>(GetWorld(), QuickSlotFactory );
 		QuickSlot->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
+	}
+	
+	if(PlayerBattleUIFactory)
+	{
+		PlayerBattleUI = CreateWidget<UPlayerBattleWidget>(GetWorld(), PlayerBattleUIFactory);
+		PlayerBattleUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
 	}
 	
 }

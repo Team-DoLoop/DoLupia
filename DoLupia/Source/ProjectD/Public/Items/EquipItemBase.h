@@ -18,7 +18,7 @@ class PROJECTD_API AEquipItemBase : public AActor
 public:
 	AEquipItemBase();
 
-	void ReceiveItemData(UItemBase* NewItemBase);
+	void ReceiveItemData(UItemBase* NewItemBase, bool UsedSubMesh = false);
 	UItemBase* GetItemBase() { return ItemBase; }
 
 	void ChangeAvatar( UStaticMesh* ItemMesh );

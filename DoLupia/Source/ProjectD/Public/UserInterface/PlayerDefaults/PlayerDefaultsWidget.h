@@ -6,9 +6,11 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerDefaultsWidget.generated.h"
 
+
 class UMainQuickSlotWidget;
 class UQuickSlotWidget;
 class UItemBase;
+class UPlayerBattleWidget;
 
 /**
  * 
@@ -37,4 +39,19 @@ protected:
 
 	UPROPERTY()
 	UMainQuickSlotWidget* QuickSlot;
+
+
+	// <------------------------- Player Battle Widget ------------------------->
+private:
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayerBattleWidget> PlayerBattleUIFactory;
+
+	UPROPERTY()
+	class UPlayerBattleWidget* PlayerBattleUI;
+
+public:
+	FORCEINLINE UPlayerBattleWidget* GetPlayerBattleWidget() const {return PlayerBattleUI;}
+	
 };

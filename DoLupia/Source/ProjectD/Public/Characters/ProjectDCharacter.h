@@ -89,6 +89,8 @@ private:
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
+	int32 PlayerMaxHP;
+
 protected:
 	
 public:
@@ -111,6 +113,9 @@ private:
 
 	UPROPERTY()
 	UPlayerDefaultsWidget* PlayerDefaultsWidget;
+
+	UPROPERTY()
+	class UPlayerBattleWidget* PlayerBattleWidget;
 	
 protected:
 	void ToggleMenu();
@@ -118,6 +123,8 @@ protected:
 public:
 	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;}
 	void UseQuickSlot(int32 SlotNumber);
+
+	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
 
 	
 
