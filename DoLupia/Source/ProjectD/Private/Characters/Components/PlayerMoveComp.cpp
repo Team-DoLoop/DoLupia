@@ -153,10 +153,12 @@ void UPlayerMoveComp::EvasionEnd()
 // <---------------------- Die ---------------------->
 void UPlayerMoveComp::Die()
 {
+	if(!PlayerController || !PlayerFSM) return;
+	PlayerController->StopMovement();
+	
 	state = EPlayerState::DIE;
 	if(!(PlayerFSM->CanChangeState(state))) return;
 	
-	if(!PlayerFSM) return;
 	PlayerFSM->ChangePlayerState(state);
 
 	if(!PlayerAnim) return;
