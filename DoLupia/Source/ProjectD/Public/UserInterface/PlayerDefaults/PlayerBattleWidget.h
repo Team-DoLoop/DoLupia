@@ -10,6 +10,7 @@
  * 
  */
 class UPlayerHPWidget;
+class UPlayerMPWidget;
 
 UCLASS()
 class PROJECTD_API UPlayerBattleWidget : public UUserWidget
@@ -28,7 +29,10 @@ public:
 
 	// <------------------ MP ------------------>
 private:
-
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	UPlayerMPWidget* PlayerMPBar;
+	
 public:
+	FORCEINLINE UPlayerMPWidget* GetPlayerMPBar() const {return PlayerMPBar;}
 	
 };

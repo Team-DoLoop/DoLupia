@@ -4,23 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerHPWidget.generated.h"
+#include "PlayerMPWidget.generated.h"
 
 /**
  * 
  */
+class UProgressBar;
+
 UCLASS()
-class PROJECTD_API UPlayerHPWidget : public UUserWidget
+class PROJECTD_API UPlayerMPWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-
-private :
+private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	class UProgressBar* HPBar;
-
-protected:
+	UProgressBar* MPBar;
 
 public:
-	void SetHPBar(int32 _HP, int32 _MaxHP);
+	void SetMPBar(int32 _MP, int32 _MaxMP);
 };

@@ -148,7 +148,7 @@ void AProjectDCharacter::BeginPlay()
 
 		PlayerBattleWidget = PlayerDefaultsWidget->GetPlayerBattleWidget();
 		if(PlayerBattleWidget && PlayerStat)
-			PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(static_cast<float>(PlayerMaxHP) / PlayerMaxHP);
+			PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(PlayerStat->GetHP(), PlayerMaxHP);
 	}
 
 	// 초기 장비 착용
@@ -293,7 +293,7 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	
 	// UI 반영
 	if(PlayerBattleWidget)
-		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(static_cast<float>(HP) / PlayerMaxHP);
+		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
 	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
