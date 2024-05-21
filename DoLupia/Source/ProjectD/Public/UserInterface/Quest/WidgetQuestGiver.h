@@ -37,6 +37,9 @@ public:
     UPROPERTY( EditAnywhere ) //expose on spawn
 	FName QuestID;
 
+    UPROPERTY(EditAnywhere)
+    int32 CurrentStage;
+
     UPROPERTY( meta = (BindWidget) )
     UVerticalBox* box_Objectives;
 	

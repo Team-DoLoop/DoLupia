@@ -3,7 +3,6 @@
 
 #include "Quest/Quest_Base.h"
 #include "Quest/QuestLogComponent.h"
-#include "Quest/QuestInventoryComponent.h" //지울 예정 
 #include <Characters/ProjectDCharacter.h>
 #include "Data/WidgetData.h"
 #include "UObject/ConstructorHelpers.h"
@@ -111,7 +110,7 @@ void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 {
 	UE_LOG( LogTemp , Warning , TEXT( "AQuest_Base::OnObjectiveIDHeard - %s , %d" ) , *BObjectiveID , Value );
 
-	//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!!!! 인벤토리와 연결해야할 부분이 있을듯
+	//여기서 드롭했을 경우 그 값을 목표에 적용하도록 해놓은 것이다!
 	int32* ValuePtr = CurrentObjectiveProgress.Find( BObjectiveID );
 
 	if (ValuePtr)
@@ -169,6 +168,7 @@ void AQuest_Base::GetQuestDetails()
 		return;
 	}
 
+	//현재 퀘스트 Stage를 CurrnetStageDetails 에 저장. 아래가 CurrentObjectiveProgress도 넣는 것.
 	CurrentStageDetails = QuestDetails.Stages[CurrentStage];
 
 	CurrentObjectiveProgress.Reset();
@@ -211,6 +211,43 @@ void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 }
 
 //WidgetQuestNotification위젯 생성!!
+void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
+{
+	int32* ValuePtr = CurrentObjectiveProgress.Find( ObjectiveID );
+
+	if (ValuePtr && (*ValuePtr >= GetObjectiveDataByID( ObjectiveID ).Quantity))
+	{
+		UWidgetQuestNotification* QuestWidget = CreateWidget<UWidgetQuestNotification>( GetWorld() , Notification_Widget );
+
+		if (QuestWidget)
+		{
+			QuestWidget->ObjectiveText = GetObjectiveDataByID( ObjectiveID ).Description;
+			QuestWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Quest) );
+			//IsCompleted = AreObjectivesComplete();
+			//if (IsCompleted)
+				//UE_LOG( LogTemp , Error , TEXT( "IsCompleted = true;" ) );
+
+			//남은 stage가 있는지 모두 다 완료했는지 확인
+			if (AreObjectivesComplete())
+			{
+				if (CurrentStage + 1 >= QuestDetails.Stages.Num())
+				{
+					//목표를 다 완수 했는데, 남은 stage가 없으면
+					IsCompleted = true;
+					UE_LOG( LogTemp , Error , TEXT( "Quest completed!" ) );
+				}
+				else
+				{
+					//목표를 다 완수했는데, 남은 stage가 있으면
+					CurrentStage++;
+					UE_LOG( LogTemp , Error , TEXT( "CurrentStage ++ " ) );
+					GetQuestDetails();
+					CheckItem();
+				}
+			}
+		}
+	}
+}
 
 bool AQuest_Base::AreObjectivesComplete()
 {
@@ -253,6 +290,5 @@ FObjectiveDetails AQuest_Base::GetObjectiveDataByID( FString ObjectiveID )
 			return Objective;
 		}
 	}
-	// 목표 ID와 일치하는 항목을 찾지 못한 경우 기본값을 반환하거나 오류 처리를 수행할 수 있습니다.
 	return FObjectiveDetails();
 }
