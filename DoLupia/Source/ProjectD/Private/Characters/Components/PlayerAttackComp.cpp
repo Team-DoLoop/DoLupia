@@ -79,10 +79,12 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		CurrentRegenTime += DeltaTime;
 		if(CurrentRegenTime >= MPRegenTime)
 		{
-			CurrentMP = CurrentMP + (MPRegenRate * DeltaTime);
+			CurrentMP = CurrentMP + (MPRegenRate * DeltaTime * 100);
 			PlayerStat->SetMP(CurrentMP);
 			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP, PlayerMaxMP);
 			CurrentRegenTime = 0;
+
+			UE_LOG(LogTemp, Log, TEXT("Player Use MP : %d"), CurrentMP);
 		}
 	}
 }
