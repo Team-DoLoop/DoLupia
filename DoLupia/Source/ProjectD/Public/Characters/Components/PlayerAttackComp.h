@@ -58,6 +58,10 @@ public:
 private:
 	int32 PlayerMaxMP;
 	
+	float MPRegenRate;
+	float MPRegenTime;
+	float CurrentRegenTime;
+	
 	UPROPERTY()
 	TArray<class UPlayerSkillBase*> PlayerSkills;
 
