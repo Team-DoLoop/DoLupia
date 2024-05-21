@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "NPCBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNPCMessageCalled , FString , Conversation );
+
 UCLASS()
 class PROJECTD_API ANPCBase : public ACharacter
 {
@@ -15,11 +17,8 @@ public:
 	// Sets default values for this character's properties
 	ANPCBase();
 
-protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -27,13 +26,22 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
 
-	void ReceiveNPCConv( FString conv );
+	// Event Dispatcher 선언
+	UPROPERTY( BlueprintAssignable , Category = "Events" )
+	FOnNPCMessageCalled OnNPCMessageCalled;
+
+	// Function to call delegate
+	void CallNPCMessageDelegate( const FString& Message );
+
 
 private:
+
 	UPROPERTY()
 	class APlayerGameMode* gm;
 
-	UPROPERTY( EditDefaultsOnly )
-	class UAIConnectionLibrary* AIlib;
+	//UPROPERTY( EditDefaultsOnly )
+	//class UAIConnectionLibrary* AIlib;
+
+	FString NPCConversation;
 
 };

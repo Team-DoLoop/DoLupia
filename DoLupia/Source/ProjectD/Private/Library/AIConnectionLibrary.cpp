@@ -8,10 +8,9 @@
 #include "Engine.h"
 #include "AI/AIMarterialTestActor.h"
 #include "UserInterface/NPC/NPCConvWidget.h"
-#include "Components/TextBlock.h"
 #include "Gamemode/PlayerGameMode.h"
-#include "UserInterface/NPC/NPCConvWidget.h"
 #include "Library/JsonLibrary.h"
+#include "NPC/NPCBase.h"
 
 
 void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
@@ -76,17 +75,14 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 {
 	if (bConnectedSuccessfully && Response.IsValid())
 	{
-		gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		//gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 		
 		FString result = Response->GetContentAsString();
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *result )
-
-		//나중에 여기서 받은 문자열을 NPC 혹은 gamemode 에 보내는 로직 필요
-		if (gm) {
-			gm->ReceiveNPCConv( result );
-		}
+		OnWebApiResponseReceived.Broadcast( result );
+	
 
 	}
 	else
@@ -100,7 +96,7 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 }
 
 
-void UAIConnectionLibrary::ReqAIImage(const FString& url, const FString& msg)
+void UAIConnectionLibrary::ReqAIImage(const FString& url, const FString& msg )
 {
 	auto& httpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = httpModule.CreateRequest();

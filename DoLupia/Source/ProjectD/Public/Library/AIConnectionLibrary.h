@@ -7,9 +7,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AIConnectionLibrary.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnWebApiResponseReceived , FString , ResponseData );
+
 UCLASS()
 class PROJECTD_API UAIConnectionLibrary : public UBlueprintFunctionLibrary
 {
@@ -25,13 +24,17 @@ public:
 	void SendImageKeywordToServer( int32 keywords );
 	void LoadImageToMaterial();
 
-	UPROPERTY()
-	class APlayerGameMode* gm;
-	
+	UPROPERTY( BlueprintAssignable )
+	FOnWebApiResponseReceived OnWebApiResponseReceived;
+
+	UPROPERTY( BlueprintReadOnly )
+	FString LastWebResponse;
+
+
 private:
 	void ReqMessage( const FString& url , const FString& msg );
 	void ResMessage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully );
-	void ReqAIImage( const FString& url , const FString& msg );
+	void ReqAIImage( const FString& url , const FString& msg);
 	void ResAIImage( FHttpRequestPtr Request , FHttpResponsePtr Response , bool bConnectedSuccessfully );
 
 	/* IP Adress, Port */
@@ -39,5 +42,6 @@ private:
 	FString WifiIP = "172.16.216.55";
 	FString ServerPort = "8000";
 	
+
 
 };

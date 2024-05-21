@@ -21,5 +21,16 @@ public:
 
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
 	class UTextBlock* txt_NPCConv;
+
+	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
+	class UButton* btn_startConversation;
+
+	UFUNCTION()
+	void StartConversation();
+
+private:
+	UPROPERTY()
+	class APlayerGameMode* gm;
+
 	
 };

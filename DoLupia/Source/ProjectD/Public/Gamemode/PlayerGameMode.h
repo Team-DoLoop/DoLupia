@@ -19,7 +19,7 @@ public:
 
 	void InitializeNPCConvWidget();
 
-	void ReceiveNPCConv( const FString& conv );
+	void ReceiveNPCConv( FString Response );
 
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
@@ -27,10 +27,9 @@ public:
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
-	FString test;
-
-//private:
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
+
+	FString NPCConversation;
 	
 };

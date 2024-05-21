@@ -21,7 +21,8 @@ void ANPCBase::BeginPlay()
 	Super::BeginPlay();
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-	AIlib = NewObject<UAIConnectionLibrary>();
+	//AIlib = NewObject<UAIConnectionLibrary>();
+	//NPCEventDispatcher = NewObject<UAINPCEventDispatcher>( this );
 	
 }
 
@@ -29,6 +30,8 @@ void ANPCBase::BeginPlay()
 void ANPCBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
 
 }
 
@@ -50,17 +53,30 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 		gm->InitializeNPCConvWidget();
 		UE_LOG( LogTemp , Warning , TEXT( "NPC - Overlap" ) );
 
-		FString testStr = "이게 무슨 일이죠?";
-		AIlib->SendNPCConversationToServer( testStr );
+		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
+		if (UWorld* World = GetWorld())
+		{
+			UAIConnectionLibrary* AIlib = NewObject<UAIConnectionLibrary>();
+			if (AIlib)
+			{
+				FString testStr = "이게 무슨 일이죠?";
+				AIlib->SendNPCConversationToServer( testStr );
+			}
+		}
 
-		UE_LOG( LogTemp , Warning , TEXT( "test : [%s]" ) , *gm->test )
+		//AIlib->SendNPCConversationToServer( testStr );
 
+		//AIlib->OnNPCMessageCalled.AddDynamic( this , &ANPCBase::NotifyActorBeginOverlap );
 
 	}
 }
 
-void ANPCBase::ReceiveNPCConv( FString conv )
+void ANPCBase::CallNPCMessageDelegate( const FString& Message )
 {
-	UE_LOG( LogTemp , Warning , TEXT( "conv : [%s]" ) , *conv )
+	NPCConversation = Message;
+	// Call delegate
+	OnNPCMessageCalled.Broadcast( Message );
+	UE_LOG( LogTemp , Warning , TEXT( "Message : [%s]" ) , *Message )
 }
+
 

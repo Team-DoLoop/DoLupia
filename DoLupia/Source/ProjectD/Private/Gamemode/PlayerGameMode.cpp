@@ -28,6 +28,11 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
+	AIlib = NewObject<UAIConnectionLibrary>();
+
+	// 게임 모드에서 델리게이트 구독
+	AIlib->OnWebApiResponseReceived.AddDynamic( this , &APlayerGameMode::ReceiveNPCConv );
+
 }
 
 void APlayerGameMode::InitializeNPCConvWidget()
@@ -39,12 +44,15 @@ void APlayerGameMode::InitializeNPCConvWidget()
 	}
 }
 
-void APlayerGameMode::ReceiveNPCConv( const FString& conv )
+void APlayerGameMode::ReceiveNPCConv( FString Response )
 {
-	UE_LOG( LogTemp , Warning , TEXT( "conv : [%s]" ) , *conv )
-
+	NPCConversation = Response;
+	UE_LOG( LogTemp , Warning , TEXT( "NPCConversation : [%s]" ) , *NPCConversation )
+	
+	/*
 	if (NPCConvUI)
     {
         NPCConvUI->txt_NPCConv->SetText(FText::FromString( conv ));
     }
+	*/
 }
