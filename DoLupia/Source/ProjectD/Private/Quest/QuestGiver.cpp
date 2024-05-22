@@ -76,7 +76,6 @@ FString UQuestGiver::InteractWith()
     auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass() ) );
     if (QuestComponent == nullptr)
     {
-        UE_LOG( LogTemp , Error , TEXT( "QuestComponent not found or cast failed." ) );
         return FString( TEXT( "QuestComponent not found or cast failed." ) );
     }
 
@@ -87,7 +86,6 @@ FString UQuestGiver::InteractWith()
     if (!ActiveQuest)
     {
         //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
-        UE_LOG( LogTemp , Error , TEXT( "!QuestComponent->QueryActiveQuest( QuestData.RowName )" ) );
         DisplayQuest(0);
         return GetOwner()->GetName();
     }
@@ -114,14 +112,12 @@ FString UQuestGiver::InteractWith()
             else 
             {
                 UE_LOG( LogTemp , Error , TEXT( " DisplayQuest(CompleteValuePtr->CurrnetStage);" ) );
-                //QuestBase의 IsCompleted가 false이면 -> 예로Stage가 여러개 인데, 다 완료되지 않았을 경우
-
-//  아직 Quest Base CurrentStage +1 하는거 안만들어 놨어
+ 
                 DisplayQuest( CompleteValuePtr->CurrnetStage );
                 return GetOwner()->GetName();
-            }
+            }  
             */
-               
+            
         }
 
         // 모든 조건을 처리한 후에도 값을 반환하지 않았으므로 기본값을 반환합니다.
