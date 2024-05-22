@@ -72,8 +72,13 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* attackMontage;
+	
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* LyingMontage;
 
 	void PlayerAttackAnimation(int32 SkillIndex);
+
+	void PlayerLyingAnimation();
 	
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentStart();

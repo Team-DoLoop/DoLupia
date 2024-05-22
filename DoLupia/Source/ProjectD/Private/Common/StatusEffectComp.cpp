@@ -32,15 +32,15 @@ void UStatusEffectComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
-void UStatusEffectComp::SetStatusEffect(EStatusEffectType _statusEffect)
+void UStatusEffectComp::SetStatusEffect(EEffectAttackType _statusEffect)
 {
 	// 어떤 StatusEffect인지에 따라
 	// Damage, IsDotAttack, VFX, SFX 설정
 	switch (_statusEffect)
 	{
-	case EStatusEffectType::NONE : break;
-	case EStatusEffectType::BLEED : BleedingStatusEffect(); break;
-	case EStatusEffectType::POISON : PoisonStatusEffect(); break;
+	case EEffectAttackType::NONE : break;
+	case EEffectAttackType::BLEED : BleedingStatusEffect(); break;
+	case EEffectAttackType::POISON : PoisonStatusEffect(); break;
 	}
 
 	// AddStatusEffect();
@@ -53,12 +53,12 @@ void UStatusEffectComp::AddStatusEffect(ACharacter* Target)
 
 void UStatusEffectComp::BleedingStatusEffect()
 {
-	statusEffectType = EStatusEffectType::BLEED;
+	statusEffectType = EEffectAttackType::BLEED;
 }
 
 void UStatusEffectComp::PoisonStatusEffect()
 {
-	statusEffectType = EStatusEffectType::POISON;
+	statusEffectType = EEffectAttackType::POISON;
 }
 
 

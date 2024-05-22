@@ -126,7 +126,7 @@ void AProjectDPlayerController::TestAnyFunction()
 	// ControlledCharacter->moveComp->Die();
 	
 	// TakeDamage Test
-	ControlledCharacter->TakeDamage(31.0f);
+	ControlledCharacter->TakeHit(EAttackType::LYING,31.0f);
 
 	// AI Test
 	auto AILibrary = NewObject<UAIConnectionLibrary>();

@@ -153,6 +153,8 @@ void AProjectDCharacter::BeginPlay()
 		}
 	}
 
+	PlayerAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+
 	// 초기 장비 착용
 	Gadget->InitEquip();
 
@@ -296,11 +298,29 @@ void AProjectDCharacter::CameraTimelineEnd()
 	}
 }
 
-void AProjectDCharacter::TakeDamage(float Damage)
+void AProjectDCharacter::TakeHit(EAttackType AttackType, float Damage)
 {
 	if(!PlayerFSM) return;
-	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
 	
+	if(AttackType == EAttackType::BASIC)
+	{
+		if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
+		
+	}
+
+	if(AttackType == EAttackType::LYING)
+	{
+		if(!(PlayerFSM->CanLyingState(EPlayerState::LYING))) return;
+		PlayerFSM->ChangePlayerState( EPlayerState::LYING );
+		if(!PlayerAnim) return;
+		PlayerAnim->PlayerLyingAnimation();
+	}
+
+	TakeDamage(Damage);
+}
+
+void AProjectDCharacter::TakeDamage(float Damage)
+{
 	// 데미지 받기
 	int32 HP = PlayerStat->GetHP() - Damage;
 	
@@ -321,6 +341,12 @@ void AProjectDCharacter::TakeDamage(float Damage)
 		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
 	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
+}
+
+void AProjectDCharacter::LyingEnd()
+{
+	if(!PlayerFSM) return;
+	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
 }
 
 

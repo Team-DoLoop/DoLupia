@@ -89,6 +89,9 @@ private:
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
+	UPROPERTY()
+	class UPlayerAnimInstance* PlayerAnim;
+
 	int32 PlayerMaxHP;
 
 protected:
@@ -175,7 +178,10 @@ protected:
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
+	virtual void TakeHit(EAttackType AttackType, float Damage) override;
 	virtual void TakeDamage( float Damage ) override;
+
+	void LyingEnd();
 
 	
 	// <---------------------- Interaction ---------------------->
