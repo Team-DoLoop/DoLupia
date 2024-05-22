@@ -14,7 +14,7 @@ AStrikeMonster::AStrikeMonster()
 	if (GetMesh()->DoesSocketExist( WeaponSocket ))
 	{
 		Weapon = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Weapon" ) );
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/Assets/Weapon/Swords_Group_ThinSword_Mesh.Swords_Group_ThinSword_Mesh" ) );
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/TrashMonster/Assets/Weapon/Swords_Group_ThinSword_Mesh.Swords_Group_ThinSword_Mesh" ) );
 		if (SK_WEAPON.Succeeded())
 		{
 			Weapon->SetStaticMesh( SK_WEAPON.Object );
@@ -22,8 +22,8 @@ AStrikeMonster::AStrikeMonster()
 		Weapon->SetupAttachment( GetMesh() , WeaponSocket );
 	}
 
-	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/Blueprints/ABP_StrikeMonster.ABP_StrikeMonster_C'" ) );
-	if (tempClass.Succeeded())
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_StrikeMonster.ABP_StrikeMonster_C'" ) );
+	if (tempClass.Succeeded()) 
 	{
 		GetMesh()->SetAnimInstanceClass( tempClass.Class );
 	}
