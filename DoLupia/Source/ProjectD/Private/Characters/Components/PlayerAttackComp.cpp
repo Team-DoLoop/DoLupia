@@ -55,7 +55,11 @@ void UPlayerAttackComp::BeginPlay()
 	if(PlayerStat)
 	{
 		PlayerMaxMP = PlayerStat->GetMaxMP();
+		MPRegenRate = PlayerStat->GetMPRegenRate();
+		MPRegenTime = PlayerStat->GetMPRegenTime();
+		CurrentRegenTime = 0;
 	}
+
 }
 
 
@@ -65,6 +69,22 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
+	// MP Regen
+	if(!PlayerStat) return;
+	int32 CurrentMP = PlayerStat ->GetMP();
+
+	if(CurrentMP < PlayerMaxMP)
+	{
+		CurrentRegenTime += DeltaTime;
+		if(CurrentRegenTime >= MPRegenTime)
+		{
+			CurrentMP = CurrentMP + (MPRegenRate * DeltaTime);
+			PlayerStat->SetMP(CurrentMP);
+			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP, PlayerMaxMP);
+			CurrentRegenTime = 0;
+		}
+	}
 }
 
 void UPlayerAttackComp::Attack()
@@ -91,8 +111,6 @@ void UPlayerAttackComp::AttackEnd()
 		InputMode.SetConsumeCaptureMouseDown(true);
 		PlayerController->SetInputMode( InputMode );
 	}
-
-	
 }
 
 
