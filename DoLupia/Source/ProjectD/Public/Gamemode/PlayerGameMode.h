@@ -19,8 +19,9 @@ public:
 
 	virtual void StartPlay() override;
 
-	void InitializeNPCConvWidget();
+	UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
+	void InitializeNPCConvWidget();
 	void ReceiveNPCConv( FString Response );
 
 	UPROPERTY( EditDefaultsOnly )
@@ -29,9 +30,11 @@ public:
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
+	FString NPCConversation;
+
+private:
+
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
 
-	FString NPCConversation;
-	
 };

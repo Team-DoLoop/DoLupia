@@ -16,6 +16,19 @@ FString UAIConnectionLibrary::LanIP = "192.168.75.246";
 FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
 FString UAIConnectionLibrary::ServerPort = "8000";
 
+UAIConnectionLibrary* UAIConnectionLibrary::Instance = nullptr;
+
+UAIConnectionLibrary* UAIConnectionLibrary::GetInstance( UObject* WorldContextObject )
+{
+	if (!Instance)
+	{
+		Instance = NewObject<UAIConnectionLibrary>();
+		Instance->AddToRoot();  // Prevents garbage collection
+		Instance->Initialize( WorldContextObject );
+	}
+
+	return Instance;
+}
 
 void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 {
@@ -92,6 +105,8 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 		FString result = Response->GetContentAsString();
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *result )
 		OnWebApiResponseReceived.Broadcast( result );
+
+		UE_LOG( LogTemp , Warning , TEXT( "result - delegate test : [%s]" ) , *result )
 	
 
 	}
@@ -138,4 +153,25 @@ void UAIConnectionLibrary::ResAIImage(FHttpRequestPtr Request, FHttpResponsePtr 
 			UE_LOG( LogTemp , Warning , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
 		}
 	}
+}
+
+void UAIConnectionLibrary::Initialize( UObject* WorldContextObject )
+{
+	if (!WorldContextObject)
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "UAIConnectionLibrary::Initialize - Invalid WorldContextObject" ) );
+		return;
+	}
+
+	// Store the WorldContextObject
+	WorldContext = WorldContextObject;
+
+	// Ensure the Http module is loaded and ready
+	if (!FModuleManager::Get().IsModuleLoaded( "Http" ))
+	{
+		FModuleManager::Get().LoadModule( "Http" );
+	}
+
+	// You can add additional initialization code here as needed
+	UE_LOG( LogTemp , Log , TEXT( "UAIConnectionLibrary initialized with WorldContextObject: %s" ) , *WorldContextObject->GetName() );
 }

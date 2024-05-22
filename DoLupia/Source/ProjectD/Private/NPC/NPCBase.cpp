@@ -21,8 +21,18 @@ void ANPCBase::BeginPlay()
 	Super::BeginPlay();
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-	//AIlib = NewObject<UAIConnectionLibrary>();
-	//NPCEventDispatcher = NewObject<UAINPCEventDispatcher>( this );
+
+	if (gm)
+	{
+		AIlib = gm->GetAIConnectionLibrary();
+	}
+
+	if (AIlib) {
+		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
+	}
+	else {
+		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load failed" ) );
+	}
 	
 }
 
@@ -51,27 +61,22 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 	if (player)
 	{
 		//gm->InitializeNPCConvWidget();
-		UE_LOG( LogTemp , Warning , TEXT( "NPC - Overlap" ) );
+		UE_LOG( LogTemp , Warning , TEXT( "NPC - Overlap Player" ) );
 
 		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
-		if (UWorld* World = GetWorld())
+		if (AIlib)
 		{
-			UAIConnectionLibrary* AIlib = NewObject<UAIConnectionLibrary>();
-			if (AIlib)
-			{
-				FString testStr = "이게 무슨 일이죠?";
-				AIlib->SendNPCConversationToServer( testStr );
-			}
+			FString testStr = "이게 무슨 일이죠?";
+			AIlib->SendNPCConversationToServer( testStr );
 		}
-
-		//AIlib->SendNPCConversationToServer( testStr );
-
-		//AIlib->OnNPCMessageCalled.AddDynamic( this , &ANPCBase::NotifyActorBeginOverlap );
+		else {
+			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
+		}
 
 	}
 }
 
-void ANPCBase::CallNPCMessageDelegate( const FString& Message )
+void ANPCBase::CallNPCMessageDelegate( FString Message )
 {
 	NPCConversation = Message;
 	// Call delegate

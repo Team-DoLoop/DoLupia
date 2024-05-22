@@ -28,6 +28,14 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
+	AIlib = UAIConnectionLibrary::GetInstance( this );
+
+	if (AIlib) {
+		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Success" ) )
+	}
+	else {
+		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Failed" ) )
+	}
 	
 
 }
@@ -35,15 +43,13 @@ APlayerGameMode::APlayerGameMode()
 void APlayerGameMode::StartPlay()
 {
 	Super::StartPlay();
-	/*
-	AIlib = NewObject<UAIConnectionLibrary>();
+	
+	
+}
 
-	InitializeNPCConvWidget();
-	// 게임 모드에서 델리게이트 구독
-	if (AIlib) {
-		AIlib->OnWebApiResponseReceived.AddDynamic( this , &APlayerGameMode::ReceiveNPCConv );
-	}
-	*/
+UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
+{
+	return AIlib;
 }
 
 void APlayerGameMode::InitializeNPCConvWidget()

@@ -31,7 +31,10 @@ public:
 	FOnNPCMessageCalled OnNPCMessageCalled;
 
 	// Function to call delegate
-	void CallNPCMessageDelegate( const FString& Message );
+	void CallNPCMessageDelegate( FString Message );
+
+	UPROPERTY()
+	class UAIConnectionLibrary* AIlib;
 
 
 private:
@@ -39,8 +42,7 @@ private:
 	UPROPERTY()
 	class APlayerGameMode* gm;
 
-	//UPROPERTY( EditDefaultsOnly )
-	//class UAIConnectionLibrary* AIlib;
+
 
 	FString NPCConversation;
 
