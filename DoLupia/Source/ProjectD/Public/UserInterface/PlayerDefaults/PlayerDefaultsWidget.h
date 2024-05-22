@@ -19,7 +19,7 @@ UCLASS()
 class PROJECTD_API UPlayerDefaultsWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
+	
 public:
 	FORCEINLINE UMainQuickSlotWidget* GetMainQuickSlot() const { return QuickSlot; }
 	//FORCEINLINE void SetMainQuickSlotWidget( UMainQuickSlotWidget* NewQuickSlot ) { QuickSlot = NewQuickSlot; }
@@ -28,6 +28,8 @@ public:
 	void RefreshQuickSlot( const FString& ItemName , int32 NewQuantity) const;
 
 	UQuickSlotWidget* FindQuickSlot(int32 FindIndex);
+
+	void UpdateMouseWidget( FVector2D MousePosition ) const;
 
 protected:
 	virtual void NativeConstruct() override;

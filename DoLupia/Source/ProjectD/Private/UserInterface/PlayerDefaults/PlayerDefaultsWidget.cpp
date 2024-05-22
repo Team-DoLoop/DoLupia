@@ -23,6 +23,8 @@ void UPlayerDefaultsWidget::NativeConstruct()
 		PlayerBattleUI = CreateWidget<UPlayerBattleWidget>(GetWorld(), PlayerBattleUIFactory);
 		PlayerBattleUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
 	}
+
+	SetIsFocusable( true );
 	
 }
 
@@ -60,4 +62,11 @@ UQuickSlotWidget* UPlayerDefaultsWidget::FindQuickSlot( int32 FindIndex )
 
 	check( false );
 	return nullptr;
+}
+
+void UPlayerDefaultsWidget::UpdateMouseWidget(FVector2D MousePosition) const
+{
+	if (QuickSlot)
+		QuickSlot->UpdateMouseWidget( MousePosition );
+
 }

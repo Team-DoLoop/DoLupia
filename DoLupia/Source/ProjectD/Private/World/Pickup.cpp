@@ -1,10 +1,13 @@
 ﻿
 
 #include "World/Pickup.h"
+#include "World/Pickup.h"
 
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Components/SphereComponent.h"
 #include "Items/ItemBase.h"
+#include "Spawner/ItemSpawner.h"
 
 APickup::APickup()
 {
@@ -13,6 +16,12 @@ APickup::APickup()
 	PickUpMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
 	PickUpMesh->SetSimulatePhysics(true);
 	SetRootComponent(PickUpMesh);
+
+	SphereComponent = CreateDefaultSubobject<USphereComponent>("Item Collision");
+	SphereComponent->InitSphereRadius( 50.0f );
+	SphereComponent->SetCollisionProfileName( TEXT( "OverlapAllDynamic" ) );
+	SphereComponent->SetupAttachment(GetRootComponent());
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APickup::BeginPlay()
@@ -28,26 +37,18 @@ void APickup::BeginPlay()
 			PickUpMesh->SetStaticMesh( ItemData->AssetData.Mesh );
 		}
 	}
-	
-}
 
-//void APickup::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-//{
-//	Super::PostEditChangeProperty(PropertyChangedEvent);
-//
-//	const FName ChangePropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-//
-//	if(ChangePropertyName == GET_MEMBER_NAME_CHECKED(APickup, DesiredItemID))
-//	{
-//		if(ItemDataTable)
-//		{
-//			if(const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(DesiredItemID, DesiredItemID.ToString()))
-//			{
-//				PickUpMesh->SetStaticMesh(ItemData->AssetData.Mesh);
-//			}
-//		}
-//	}
-//}
+	if(SphereComponent)
+	{
+		SphereComponent->OnComponentBeginOverlap.AddDynamic( this , &APickup::BezierBeginOverlap );
+	}
+
+	if(ItemSpawner)
+	{
+		ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( FVector::ZeroVector , FRotator::ZeroRotator );
+		ItemSpawner->AttachToActor( this , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
+	}
+}
 
 void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
 {
@@ -101,6 +102,11 @@ void APickup::EndFocus()
 	{
 		PickUpMesh->SetRenderCustomDepth(false);
 	}
+}
+
+void APickup::StartMovement(FVector StartPoint, FVector ControlPoint, FVector EndPoint, float Duration)
+{
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void APickup::Interact(AProjectDCharacter* PlayerCharacter)
@@ -164,5 +170,11 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 			UE_LOG(LogTemp, Warning, TEXT("Pickup internal item reference was somehow null!"));
 		}
 	}
+}
+
+void APickup::BezierBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
 }
 

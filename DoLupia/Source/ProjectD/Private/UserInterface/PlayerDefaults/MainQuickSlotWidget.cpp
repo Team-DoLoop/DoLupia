@@ -6,31 +6,6 @@
 #include "Items/ItemBase.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
-void UMainQuickSlotWidget::SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot)
-{
-	for(auto elem : QuickSlotArray)
-	{
-		if(elem->IsHoveredButton())
-		{
-			if(elem->HandleQuickSlot( OnClickedQuickSlot ))
-				return;
-		}
-	}
-
-	OnClickedQuickSlot->ReleaseQuickSlot( OnClickedQuickSlot );
-}
-
-bool UMainQuickSlotWidget::IsDraggingWidget()
-{
-	for (auto elem : QuickSlotArray)
-	{
-		if (elem->IsHoveredButton())
-			return true;
-	}
-
-	return false;
-}
-
 void UMainQuickSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -56,5 +31,53 @@ void UMainQuickSlotWidget::NativeConstruct()
 	QuickSlotArray.Add( QuickSlot8 );
 	QuickSlotArray.Add( QuickSlot9 );
 	QuickSlotArray.Add( QuickSlot0 );
+
+	PlayerController = GetWorld()->GetFirstPlayerController();
+
+	SetIsFocusable( true );
 }
+
+void UMainQuickSlotWidget::SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot)
+{
+	for(auto elem : QuickSlotArray)
+	{
+		if(elem->IsHoveredButton())
+		{
+			if(elem->HandleQuickSlot( OnClickedQuickSlot ))
+				return;
+		}
+	}
+
+	OnClickedQuickSlot->ReleaseQuickSlot( OnClickedQuickSlot );
+}
+
+bool UMainQuickSlotWidget::IsDraggingWidget()
+{
+	for (auto elem : QuickSlotArray)
+	{
+		if (elem->IsHoveredButton())
+			return true;
+	}
+
+	return false;
+}
+
+void UMainQuickSlotWidget::UpdateMouseWidget( const FVector2D& MousePosition )
+{
+	for (auto elem : QuickSlotArray)
+	{
+		if(elem->CheckHorveredQuickSlotUI( MousePosition ))
+			return;
+	}
+
+	if(PlayerController)
+	{
+		FInputModeGameOnly InputMode;
+		InputMode.SetConsumeCaptureMouseDown(true);
+		PlayerController->SetInputMode(InputMode);
+	}
+
+}
+
+
 

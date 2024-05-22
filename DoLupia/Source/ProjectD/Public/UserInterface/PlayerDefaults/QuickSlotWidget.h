@@ -41,7 +41,9 @@ public:
 
 	bool HandleQuickSlot( UQuickSlotWidget* OtherQuickSlot );
 
-	void ReleaseQuickSlot( UQuickSlotWidget* OtherQuickSlot ) const;
+	void ReleaseQuickSlot( UQuickSlotWidget* ReleasedQuickSlot ) const;
+
+	bool CheckHorveredQuickSlotUI( const FVector2D& MousePosition );
 
 	FItemDelegateQuantityCalled QuantityCalled;
 
@@ -52,13 +54,9 @@ protected:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
 private:
-	UFUNCTION()
 	void HorveredQuickSlotUI();
-	UFUNCTION()
-	void UnHorveredQuickSlotUI();
-	UFUNCTION()
+	void UnHorveredQuickSlotUI(bool IsInputModeGameOnly );
 	void DraggingQuickSlotUI();
-	UFUNCTION()
 	void MouseUpQuickSlotUI();
 
 	UFUNCTION()
@@ -70,9 +68,6 @@ private:
 	void TimerSwapQuickSlot();
 
 private:
-	UPROPERTY(meta = (BindWidget))
-	UButton* HoveredButton;
-
 	UPROPERTY(meta=(BindWidget))
 	UImage* ItemIcon;
 
@@ -94,7 +89,12 @@ private:
 	UPROPERTY()
 	UMainQuickSlotWidget* MainQuickSlotWidget;
 
+	UPROPERTY()
+	APlayerController* PlayerController;
+
 	int32 Index;
 
 	bool Clicked = false;
+	bool Hovered = false;
+	bool IsFullScreen = false;
 };

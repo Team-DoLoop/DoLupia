@@ -115,18 +115,23 @@ private:
 	UPlayerDefaultsWidget* PlayerDefaultsWidget;
 
 	UPROPERTY()
-	UPlayerBattleWidget* PlayerBattleWidget;
-	
-protected:
-	void ToggleMenu();
+	class UPlayerBattleWidget* PlayerBattleWidget;
 
 public:
-	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;}
-	void UseQuickSlot(int32 SlotNumber);
+	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget; }
+	void UseQuickSlot( int32 SlotNumber );
 
 	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
 
-	UPlayerBattleWidget* GetPlayerBattleWidget() const {return PlayerBattleWidget;}
+	UPlayerBattleWidget* GetPlayerBattleWidget() const { return PlayerBattleWidget; }
+
+protected:
+	void ToggleMenu();
+
+private:
+	void HoveredQuickSlot();
+	bool PossibleChangeGameMode();
+
 	
 
 	// <---------------------- Move ---------------------->

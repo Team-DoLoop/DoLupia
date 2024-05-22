@@ -6,9 +6,12 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Items/ItemBase.h"
+#include "UserInterface/DoLupiaHUD.h"
 #include "UserInterface/Inventory/InventoryItemSlot.h"
 #include "UserInterface/Inventory/InventoryPannel.h"
 #include "UserInterface/Inventory/ItemDragDropOperation.h"
+#include "UserInterface/PlayerDefaults/QuickSlotDragDropOperation.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 
 void UMainMenu::NativeOnInitialized()
@@ -35,8 +38,7 @@ FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& 
 
 		if (GetVisibility() == ESlateVisibility::Visible)
 		{
-			SetVisibility(ESlateVisibility::Collapsed);
-
+			PlayerCharacter->GetDoLupiaHUD()->HideMenu();
 			FInputModeGameOnly InputMode;
 			InputMode.SetConsumeCaptureMouseDown( true );
 			PC->SetInputMode(InputMode);
@@ -52,11 +54,6 @@ FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& 
 bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	// 플레이어가 아이템을 드래그 앤 드랍 할 수 있도록 설정
-	FInputModeGameOnly InputMode;
-	InputMode.SetConsumeCaptureMouseDown(true);
-	Cast<APlayerController>(PlayerCharacter->GetController())->SetInputMode(InputMode);
-
 	if(const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation))
 	{
 		UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
@@ -75,6 +72,11 @@ bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& 
 		}
 	}
 
+	if (const UQuickSlotDragDropOperation* QuickSlotDragDrop = Cast<UQuickSlotDragDropOperation>( InOperation ))
+	{
+		if(UQuickSlotWidget* QuickSlot = QuickSlotDragDrop->GetQuickSlotItem())
+			QuickSlot->ReleaseQuickSlot( QuickSlot );
+	}
 
 
 	return false;

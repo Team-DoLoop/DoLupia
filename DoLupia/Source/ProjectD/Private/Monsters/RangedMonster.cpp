@@ -16,7 +16,7 @@ ARangedMonster::ARangedMonster()
 	if (GetMesh()->DoesSocketExist( WeaponSocket ))
 	{
 		Weapon = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Weapon" ) );
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/Assets/Weapon/Swords_Group_MeteorSword_Mesh.Swords_Group_MeteorSword_Mesh" ) );
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/TrashMonster/Assets/Weapon/Swords_Group_MeteorSword_Mesh.Swords_Group_MeteorSword_Mesh" ) );
 		if (SK_WEAPON.Succeeded())
 		{
 			Weapon->SetStaticMesh( SK_WEAPON.Object );
@@ -24,7 +24,7 @@ ARangedMonster::ARangedMonster()
 		Weapon->SetupAttachment( GetMesh() , WeaponSocket );
 	}
 
-	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/Blueprints/ABP_RangedMonster.ABP_RangedMonster_C'" ) );
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_RangedMonster.ABP_RangedMonster_C'" ) );
 	if (tempClass.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass( tempClass.Class );

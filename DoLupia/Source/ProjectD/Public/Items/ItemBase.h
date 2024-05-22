@@ -64,7 +64,6 @@ protected:
 		return this->ID == OtherID;
 	}
 
-
 private:
 	UPROPERTY()
 	UInventoryComponent* OwningInventory;
