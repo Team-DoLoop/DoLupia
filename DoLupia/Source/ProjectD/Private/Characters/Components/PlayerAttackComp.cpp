@@ -92,7 +92,8 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 void UPlayerAttackComp::Attack()
 {
 	if(!Player || !PlayerFSMComp) return;
-	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
+	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) 
+		return;
 	
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 

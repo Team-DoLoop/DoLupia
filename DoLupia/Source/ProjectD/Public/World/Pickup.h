@@ -9,6 +9,9 @@
 
 class UItemBase;
 class UDataTable;
+class USphereComponent;
+class UStaticMeshComponent;
+class AItemSpawner;
 
 UCLASS()
 class PROJECTD_API APickup : public AActor, public IInteractionInterface
@@ -27,6 +30,9 @@ public:
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
 
+	// 인터페이스로 빼주자.
+	void StartMovement( FVector StartPoint , FVector ControlPoint , FVector EndPoint , float Duration );
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,7 +47,19 @@ protected:
 
 	void TakePickup(const AProjectDCharacter* Taker);
 
+	UFUNCTION()
+	void BezierBeginOverlap(UPrimitiveComponent* OverlappedComponent,  AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult );
+
+
 protected:
+	// 테스트용 나중에 지워야함.
+	UPROPERTY()
+	AItemSpawner* ItemSpawner;
+
+	UPROPERTY( EditDefaultsOnly , Category = "Pickup | Collisoin" )
+	USphereComponent* SphereComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Pickup | Components")
 	UStaticMeshComponent* PickUpMesh;
 
