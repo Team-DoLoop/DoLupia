@@ -17,8 +17,12 @@ class PROJECTD_API AItemSpawner : public AActor
 public:	
 	AItemSpawner();
 
-	//void MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem ,
-	//	FVector StartPoint , FVector ControlPoint , FVector EndPoint , float Duration );
+	static void MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem, FVector StartPoint, FVector ActorSpeed, float GravityScale );
+
+	TArray<UItemBase*> SpawnItemAll();
+
+public:
+	FORCEINLINE void AddItemID(const FString& ItemID ){ ItemIDArray.Push(ItemID); }
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,7 +31,7 @@ protected:
 protected:
 	/* Pooling */
 	UPROPERTY()
-	UItemPool* ItemPool;
+	TObjectPtr<UItemPool> ItemPool;
 
 	/* Item Bezier */
 

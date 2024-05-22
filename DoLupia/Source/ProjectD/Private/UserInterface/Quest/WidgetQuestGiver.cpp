@@ -61,13 +61,18 @@ void UWidgetQuestGiver::NativeConstruct()
         btn_Decline->OnClicked.AddDynamic( this , &UWidgetQuestGiver::OnDeclineClicked );
     }
 
+    SetIsFocusable( true );
+
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
 
     if (PlayerControllerD) {
         FInputModeUIOnly InputMode;
+        InputMode.SetWidgetToFocus(TakeWidget());
         PlayerControllerD->SetInputMode( InputMode );
     }
+
+
 }
 
 void UWidgetQuestGiver::NativeDestruct()
@@ -80,6 +85,7 @@ void UWidgetQuestGiver::NativeDestruct()
     {
 	    auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
         FInputModeGameOnly InputMode;
+        InputMode.SetConsumeCaptureMouseDown(true);
         PlayerControllerD->SetInputMode( InputMode );
     }
         

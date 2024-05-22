@@ -17,7 +17,7 @@ class PROJECTD_API UItemPool : public UObject
 	GENERATED_BODY()
 
 public:
-    UItemPool() {}
+    UItemPool();
 
     // 미리 생성해서 가져오기
     void CreateItem(int32 NumberOfCreate);

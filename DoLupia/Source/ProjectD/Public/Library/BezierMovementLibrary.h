@@ -16,10 +16,9 @@ class PROJECTD_API UBezierMovementLibrary : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION( BlueprintCallable , Category = "ItemMovement" )
-	static void MoveObjectAlongCurve( UObject* WorldContextObject , AActor* Item ,
-		FVector StartPoint , FVector ControlPoint , FVector EndPoint , float Duration );
+	static void MoveObjectAlongCurve( UObject* WorldContextObject , AActor* Item , FVector StartPoint, FVector ActorSpeed, float GravityScale );
 
 private:
-	static void UpdateObjectPosition( UObject* WorldContextObject , AActor* Item , 
-		FVector StartPoint , FVector ControlPoint , FVector EndPoint , float Duration , float Time );
+	static void UpdateObjectPosition( UObject* WorldContextObject , AActor* Item , FVector StartPoint, 
+		FVector ActorSpeed, float GravityScale, float Time );
 };

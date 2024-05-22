@@ -43,11 +43,10 @@ void APickup::BeginPlay()
 		SphereComponent->OnComponentBeginOverlap.AddDynamic( this , &APickup::BezierBeginOverlap );
 	}
 
-	if(ItemSpawner)
-	{
-		ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( FVector::ZeroVector , FRotator::ZeroRotator );
-		ItemSpawner->AttachToActor( this , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
-	}
+	ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( FVector::ZeroVector , FRotator::ZeroRotator );
+	ItemSpawner->AttachToActor( this , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
+	ItemSpawner->AddItemID( "regeneration potion" );
+	ItemSpawner->AddItemID( "regeneration potion" );
 }
 
 void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
@@ -104,7 +103,7 @@ void APickup::EndFocus()
 	}
 }
 
-void APickup::StartMovement(FVector StartPoint, FVector ControlPoint, FVector EndPoint, float Duration)
+void APickup::StartMovement(FVector StartPoint, FVector ActorSpeed )
 {
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
@@ -133,6 +132,37 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 {
 	if(!IsPendingKillPending())
 	{
+		// 테스트용
+		TArray<UItemBase*> Test = ItemSpawner->SpawnItemAll();
+
+		FVector StartPosition = GetActorLocation();
+
+		for(int32 i = 0; i < Test.Num(); ++i)
+		{
+			// 위치와 회전 값을 XOR 연산하여 고유한 시드 값 생성
+			// 나중에 확률 추가하려면 따로 구현 해야함.
+			uint32 Seed = StartPosition.X;
+			Seed = Seed ^ (uint32)StartPosition.Y;
+			Seed = Seed ^ (uint32)StartPosition.Z;
+
+			FRandomStream RandomStream( Seed );
+			FVector ActorSpeed =  FVector
+			( 
+				RandomStream.RandRange( -300 , 300 ), 
+				RandomStream.RandRange( 300 , 800 ), 
+				RandomStream.RandRange( -300 , 300 )
+			);
+
+
+			FTimerHandle TimerHandle;
+			ItemReference = Test[i];
+			InitializeDrop( ItemReference, 1);
+			ItemSpawner->MoveItemAlongCurve( this, this,  StartPosition, ActorSpeed, RandomStream.RandRange(45, 80) * 0.01f);
+		}
+			
+
+		
+
 		if(ItemReference)
 		{
 			if(UInventoryComponent* PlayerInventory = Taker->GetInventory())
@@ -149,7 +179,7 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 						Taker->UpdateInteractionWidget();
 						break;
 					case EItemAddResult::IAR_AllItemAdded:
-						Destroy();
+						//Destroy();
 						break;
 
 					default: ;

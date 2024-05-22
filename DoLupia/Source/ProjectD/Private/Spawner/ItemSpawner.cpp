@@ -8,17 +8,28 @@ AItemSpawner::AItemSpawner()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+    ItemPool = CreateDefaultSubobject<UItemPool>(TEXT("ItemPool"));
+
 	// 기본 드랍 지속 시간
-	//SpawnInterval = 1.0f;
-	//MaxItemsToSpawn = 10;
-	//DropDuration = 2.0f; 
+	SpawnInterval = 1.0f;
+	MaxItemsToSpawn = 10;
+	DropDuration = 2.0f; 
 }
 
-//void AItemSpawner::MoveItemAlongCurve( UObject* WorldContextObject , AActor* NewItem ,
-//    FVector StartPoint , FVector ControlPoint , FVector EndPoint , float Duration )
-//{
-//    UBezierMovementLibrary::MoveObjectAlongCurve( this , NewItem , StartPoint , ControlPoint , EndPoint , Duration );
-//}
+void AItemSpawner::MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem, FVector StartPoint, FVector ActorSpeed, float GravityScale )
+{
+    UBezierMovementLibrary::MoveObjectAlongCurve( WorldContextObject , NewItem , StartPoint, ActorSpeed, GravityScale );
+}
+
+TArray<UItemBase*> AItemSpawner::SpawnItemAll()
+{
+	TArray<TObjectPtr<UItemBase>> ItemBases;
+
+	for(int32 i = 0; i < ItemIDArray.Num(); ++i)
+        ItemBases.Push(ItemPool->GetItem( ItemIDArray[i]));
+
+	return ItemBases;
+}
 
 void AItemSpawner::BeginPlay()
 {
@@ -44,5 +55,5 @@ UItemBase* AItemSpawner::SpawnItem()
     //FRandomStream RandomStream( Seed );
 
     return nullptr;
-   // return ItemPool->GetItem( ItemIDArray[RandomStream.RandRange( 0 , ItemIDArray.Num() )] );
+	//return ItemPool->GetItem( ItemIDArray[RandomStream.RandRange( 0 , ItemIDArray.Num() )] );
 }
