@@ -15,7 +15,7 @@
 #include "UserInterface/DoLupiaHUD.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/MainMenu.h"
-#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 #include "World/Pickup.h"
 #include "Data/WidgetData.h"
@@ -142,9 +142,6 @@ void AProjectDCharacter::BeginPlay()
 	{
 		PlayerDefaultsWidget = CreateWidget<UPlayerDefaultsWidget>(GetWorld(), PlayerDefaultsWidgetFactory );
 		PlayerDefaultsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
-		FInputModeGameOnly InputMode;
-		InputMode.SetConsumeCaptureMouseDown( true );
-		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
 
 		PlayerBattleWidget = PlayerDefaultsWidget->GetPlayerBattleWidget();
 		if(PlayerBattleWidget && PlayerStat)
@@ -160,6 +157,8 @@ void AProjectDCharacter::BeginPlay()
 void AProjectDCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+	HoveredQuickSlot();
 
 	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
 	{
@@ -216,6 +215,27 @@ void AProjectDCharacter::ToggleMenu()
 
 	if(HUD->IsMenuVisible())
 		StopAiming();
+}
+
+// 퀵 슬롯 자연스럽게 하기 위한 함수
+void AProjectDCharacter::HoveredQuickSlot()
+{
+	if (PossibleChangeGameMode())
+	{
+		// 마우스 커서 위치를 감지
+		float MouseX , MouseY;
+		
+		if (PlayerController->GetMousePosition( MouseX , MouseY ))
+		{
+			// 사용자 정의 함수로 마우스 위치 업데이트
+			PlayerDefaultsWidget->UpdateMouseWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
+		}
+	}
+}
+
+bool AProjectDCharacter::PossibleChangeGameMode()
+{
+	return !HUD->IsMenuVisible();
 }
 
 void AProjectDCharacter::UseQuickSlot(int32 SlotNumber)
