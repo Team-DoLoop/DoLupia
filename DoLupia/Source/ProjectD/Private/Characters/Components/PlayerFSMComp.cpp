@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Components/PlayerFSMComp.h"
@@ -170,12 +170,12 @@ bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState, EPlayerWeaponSta
 	case EPlayerState::DIE : return false;
 	}
 
-	/*
+	
 	switch (_CurrentWeaponState)
 	{
-	case EPlayerWeaponState::UNARMED : return false;
+		case EPlayerWeaponState::UNARMED : return false;
 	}
-	*/
+	
 	
 	return true;
 }

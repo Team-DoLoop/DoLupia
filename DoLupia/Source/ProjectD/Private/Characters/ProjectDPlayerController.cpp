@@ -267,12 +267,18 @@ void AProjectDPlayerController::StopAiming()
 
 void AProjectDPlayerController::Attack()
 {
-	OnInputStarted();
-	
-	// AProjectDCharacter* ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
 	if(!ControlledCharacter) return;
-	
 	ControlledCharacter->attackComp->Attack();
+
+	if (ControlledCharacter->GetPlayerFSMComp()->GetCurrentState() == EPlayerState::ATTACK)
+		OnInputStarted();
+	else
+	{
+		FInputModeGameOnly InputMode;
+		InputMode.SetConsumeCaptureMouseDown( true );
+		SetInputMode( InputMode );
+	}
+
 }
 
 void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)

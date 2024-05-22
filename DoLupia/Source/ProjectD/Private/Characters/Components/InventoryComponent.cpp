@@ -17,24 +17,10 @@
 
 constexpr int32 NONFIND_INDEX = -1;
 
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-	FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime , TickType , ThisTickFunction);
-
-	if(GetWorld()->GetFirstPlayerController()->GetInputKeyTimeDown(FKey("L")))
-	{
-		TMap<FString, int32> Map;
-		Map.Emplace( "bucket", 2 );
-		Map.Emplace( "regeneration potion", 100 );
-
-		HandelRemoveItem(Map);
-	}
-}
 
 UInventoryComponent::UInventoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true; // 나중에 삭제
+	PrimaryComponentTick.bCanEverTick = false; // 나중에 삭제
 
 	ItemPool = CreateDefaultSubobject<UItemPool>(TEXT("ItemPool"));
 }
