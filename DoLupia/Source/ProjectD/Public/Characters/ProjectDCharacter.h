@@ -123,6 +123,8 @@ public:
 
 	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
 
+	UPlayerBattleWidget* GetPlayerBattleWidget() const { return PlayerBattleWidget; }
+
 protected:
 	void ToggleMenu();
 
@@ -130,8 +132,6 @@ private:
 	void HoveredQuickSlot();
 	bool PossibleChangeGameMode();
 
-
-	UPlayerBattleWidget* GetPlayerBattleWidget() const {return PlayerBattleWidget;}
 	
 
 	// <---------------------- Move ---------------------->
