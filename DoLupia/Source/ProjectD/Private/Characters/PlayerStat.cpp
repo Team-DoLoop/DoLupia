@@ -7,22 +7,30 @@
 
 
 APlayerStat::APlayerStat()
-	:	MaxHP(100.0f), MaxMP(100.0f),
-		CurrentHP(MaxHP), CurrentMP(MaxMP),
+	:	MaxHP(100),CurrentHP(MaxHP),
+		MaxMP(100), CurrentMP(MaxMP), MPRegenRate(5.0f), MPRegenTime(1.0f),
 		ATK(10.0f),
-		DEF(5.0f)
+		DEF(5.0f),
+		SkillPoint(0)
 {
 }
 
 void APlayerStat::initPlayerData()
 {
 	SetPlayerName(TEXT("Player"));
+	
 	MaxHP = 100;
-	MaxMP = 100;
 	CurrentHP = MaxHP;
+
+	MaxMP = 100;
 	CurrentMP = MaxMP;
+	MPRegenRate = 5.0f;
+	MPRegenTime = 1.0f;
+
 	ATK = 10.0f;
 	DEF = 5.0f;
+
+	SkillPoint = 0;
 }
 
 void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextItemBase )
@@ -38,6 +46,35 @@ void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextI
 		ATK += NextItemBase->GetItemStatistics().DamageValue;
 		DEF += NextItemBase->GetItemStatistics().ArmorRating;
 	}
-
-	
 }
+
+
+// <---------------- MP & HP ---------------->
+void APlayerStat::SetHP(int32 _HP)
+{
+	// int32 NewHP = CurrentHP + _HP;
+
+	if(_HP > MaxHP)
+		_HP = MaxHP;
+
+	CurrentHP = _HP;
+}
+
+void APlayerStat::SetMP(int32 _MP)
+{
+	if (_MP > MaxHP)
+		_MP = MaxHP;
+
+	CurrentMP = _MP;
+}
+
+void APlayerStat::SetMPRegenRate(float _MPRegenRate)
+{
+	MPRegenRate = _MPRegenRate;
+}
+
+void APlayerStat::SetMPRegenTime(float _MPRegenTime)
+{
+	MPRegenTime = _MPRegenTime;
+}
+

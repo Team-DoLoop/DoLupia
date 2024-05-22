@@ -35,7 +35,7 @@ protected:
 	FDataTableRowHandle QuestData;
 
 	UFUNCTION()
-	void DisplayQuest();
+	void DisplayQuest( int32 CurrentStage );
 
 	UFUNCTION()
 	void DisplayRewards();

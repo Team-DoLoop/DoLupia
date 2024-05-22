@@ -19,6 +19,15 @@ class PROJECTD_API APlayerStat : public APlayerState
 
 	APlayerStat();
 
+	// <---------------------- Player ---------------------->
+private:	
+
+public:
+	void initPlayerData();
+
+
+	
+	// <---------------------- HP ---------------------->
 private:
 	UPROPERTY( VisibleAnywhere )
 	int32 MaxHP;
@@ -26,54 +35,74 @@ private:
 	UPROPERTY( VisibleAnywhere )
 	int32 CurrentHP;
 
+public:
+	FORCEINLINE int32 GetMaxHP() const { return MaxHP; }
+	FORCEINLINE int32 GetHP() const { return CurrentHP; }
+	void  SetHP(int32 _HP);
+
+	
+	// <---------------------- MP ---------------------->
+private:
 	UPROPERTY( VisibleAnywhere )
 	int32 MaxMP;
 
 	UPROPERTY( VisibleAnywhere )
 	int32 CurrentMP;
+	
+	UPROPERTY(EditAnywhere)
+	float MPRegenRate;
 
+	UPROPERTY(EditAnywhere)
+	float MPRegenTime;
+
+public:
+	FORCEINLINE int32 GetMaxMP() const { return MaxMP; }
+	FORCEINLINE int32 GetMP() const {return CurrentMP;}
+	FORCEINLINE float GetMPRegenRate() const {return MPRegenRate;}
+	FORCEINLINE float GetMPRegenTime() const {return MPRegenTime;}
+	
+	void SetMP( int32 _MP );
+	void SetMPRegenRate(float _MPRegenRate);
+	void SetMPRegenTime(float _MPRegenTime);
+
+
+	
+	// <---------------------- ATK ---------------------->
+private:
 	UPROPERTY( VisibleAnywhere )
 	float ATK;
+	
+public:
+	FORCEINLINE int32 GetATK() const {return ATK;}
+	FORCEINLINE void  SetATK(float _ATK) {ATK = _ATK;}
 
+	
+	// <---------------------- DEF ---------------------->
+private:
 	UPROPERTY( VisibleAnywhere )
 	float DEF;
 
-	UPROPERTY( VisibleAnywhere )
-	int32 SkillPoint;
-
-
 public:
-	void initPlayerData();
-
-	void ChangeStatsItem(UItemBase* CurrentItemBase, UItemBase* NextItemBase );
-
-	FORCEINLINE int32 GetHP() const { return CurrentHP; }
-	FORCEINLINE void  SetHP(int32 _HP)
-	{
-		// int32 NewHP = CurrentHP + _HP;
-
-		if(_HP > MaxHP)
-			_HP = MaxHP;
-
-		CurrentHP = _HP;
-	}
-	
-	FORCEINLINE int32 GetMP() const {return CurrentMP;}
-	FORCEINLINE void  SetMP( int32 _MP )
-	{
-		if (_MP > MaxHP)
-			_MP = MaxHP;
-
-		CurrentHP = _MP;
-	}
-	
-	FORCEINLINE int32 GetATK() const {return ATK;}
-	FORCEINLINE void  SetATK(float _ATK) {ATK = _ATK;}
-	
 	FORCEINLINE int32 GetDEF() const {return DEF;}
 	FORCEINLINE void  SetDEF(float _DEF) {DEF = _DEF;}
 
+	
+
+	// <---------------------- SkillPoint ---------------------->
+private:
+	UPROPERTY( VisibleAnywhere )
+	int32 SkillPoint;
+	
+public:
 	FORCEINLINE int32 GetSkillPoint() const {return SkillPoint;}
 	FORCEINLINE void  SetSkillPoint(float _SkillPoint) {SkillPoint = _SkillPoint;}
+
+	
+
+	// <---------------------- Item ---------------------->
+private:
+
+public:
+	void ChangeStatsItem(UItemBase* CurrentItemBase, UItemBase* NextItemBase );
 
 };

@@ -16,7 +16,7 @@ class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
-
+class UPlayerBattleWidget;
 
 USTRUCT()
 struct FInteractionData
@@ -89,6 +89,8 @@ private:
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
+	int32 PlayerMaxHP;
+
 protected:
 	
 public:
@@ -111,6 +113,9 @@ private:
 
 	UPROPERTY()
 	UPlayerDefaultsWidget* PlayerDefaultsWidget;
+
+	UPROPERTY()
+	UPlayerBattleWidget* PlayerBattleWidget;
 	
 protected:
 	void ToggleMenu();
@@ -119,6 +124,9 @@ public:
 	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget;}
 	void UseQuickSlot(int32 SlotNumber);
 
+	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
+
+	UPlayerBattleWidget* GetPlayerBattleWidget() const {return PlayerBattleWidget;}
 	
 
 	// <---------------------- Move ---------------------->

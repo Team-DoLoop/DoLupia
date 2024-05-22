@@ -22,6 +22,7 @@
 #include "Items/Sword/LongSword.h"
 
 // engine
+#include "AI/NavigationSystemBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/ProjectDPlayerController.h"
@@ -37,6 +38,9 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -118,6 +122,13 @@ void AProjectDCharacter::BeginPlay()
 	
 	HUD = Cast<ADoLupiaHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	
+	PlayerStat = Cast<APlayerStat>(GetPlayerState());
+	if(PlayerStat)
+	{
+		PlayerStat->initPlayerData();
+		PlayerMaxHP = PlayerStat->GetMaxHP();
+	}
+	
 	FOnTimelineFloat AimLerpAlphaValue;
 	FOnTimelineEvent TimelineFinishedEvent;
 	AimLerpAlphaValue.BindUFunction(this, FName("UpdateCameraTimeline"));
@@ -137,15 +148,17 @@ void AProjectDCharacter::BeginPlay()
 		InputMode.SetConsumeCaptureMouseDown( true );
 		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
 
+		PlayerBattleWidget = PlayerDefaultsWidget->GetPlayerBattleWidget();
+		if(PlayerBattleWidget && PlayerStat)
+		{
+			PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(PlayerStat->GetHP(), PlayerMaxHP);
+			PlayerBattleWidget->GetPlayerMPBar()->SetMPBar(PlayerStat->GetMP(), PlayerStat->GetMaxMP());
+		}
 	}
 
 	// 초기 장비 착용
 	Gadget->InitEquip();
 
-	PlayerStat = Cast<APlayerStat>(GetPlayerState());
-
-	if(PlayerStat)
-		PlayerStat->initPlayerData();
 
 }
 
@@ -273,15 +286,20 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	
 	if (HP > 0)
 	{
-		PlayerStat->SetHP( HP );
 		// PlayerFSM->ChangePlayerState( EPlayerState::DAMAGE );
 	}
 	else
 	{
 		HP = 0;
-		PlayerStat->SetHP( HP );
 		moveComp->Die();
 	}
+
+	PlayerStat->SetHP( HP );
+	
+	// UI 반영
+	if(PlayerBattleWidget)
+		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
+	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
 
