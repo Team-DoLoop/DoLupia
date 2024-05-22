@@ -4,6 +4,7 @@
 #include "Characters/Components/PlayerAttackComp.h"
 
 #include "EnhancedInputComponent.h"
+#include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
@@ -16,6 +17,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
 // Sets default values for this component's properties
 UPlayerAttackComp::UPlayerAttackComp()
@@ -40,11 +43,23 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerController = Cast<AProjectDPlayerController>(Player->GetController());
 	PlayerFSMComp = Player->GetPlayerFSMComp();
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
-	
+	PlayerStat = Cast<APlayerStat>(Player->GetPlayerState());
+
+	// PlayerSkill
 	PlayerSkills.Add(NewObject<UPlayerSkillSwing>());
 	PlayerSkills.Add(NewObject<UPlayerSkillSpell>());
 	PlayerSkills.Add(NewObject<UPlayerSkillCastingHitDown>());
 	PlayerSkills.Add(NewObject<UPlayerSkillUlt>());
+
+	// PlayerMP
+	if(PlayerStat)
+	{
+		PlayerMaxMP = PlayerStat->GetMaxMP();
+		MPRegenRate = PlayerStat->GetMPRegenRate();
+		MPRegenTime = PlayerStat->GetMPRegenTime();
+		CurrentRegenTime = 0;
+	}
+
 }
 
 
@@ -54,6 +69,24 @@ void UPlayerAttackComp::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
+	// MP Regen
+	if(!PlayerStat) return;
+	int32 CurrentMP = PlayerStat ->GetMP();
+
+	if(CurrentMP < PlayerMaxMP)
+	{
+		CurrentRegenTime += DeltaTime;
+		if(CurrentRegenTime >= MPRegenTime)
+		{
+			CurrentMP = CurrentMP + (MPRegenRate * DeltaTime * 100);
+			PlayerStat->SetMP(CurrentMP);
+			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP, PlayerMaxMP);
+			CurrentRegenTime = 0;
+
+			UE_LOG(LogTemp, Log, TEXT("Player Use MP : %d"), CurrentMP);
+		}
+	}
 }
 
 void UPlayerAttackComp::Attack()
@@ -81,28 +114,37 @@ void UPlayerAttackComp::AttackEnd()
 		InputMode.SetConsumeCaptureMouseDown(true);
 		PlayerController->SetInputMode( InputMode );
 	}
-
-	
 }
 
 
 void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 {
-	if(!Player || !PlayerFSMComp) return;
+	if(!Player || !PlayerFSMComp || !PlayerStat) return;
 	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
-	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
-
-	Player->TurnPlayer();
-	
-	// 스킬 애니메이션 실행
-	PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
-	
 	// 스킬 기능 실행
 	if(SkillIndex >= 0 && SkillIndex < PlayerSkills.Num())
 	{
 		if(!PlayerSkills[SkillIndex]) return;
-		PlayerSkills[SkillIndex]->ExecuteSkill();
+		
+		// MP가 있다면
+		int32 CurrentMP = PlayerStat->GetMP() - PlayerSkills[SkillIndex]->GetSkillCost();
+		if(CurrentMP >= 0)
+		{
+			PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+			
+			Player->TurnPlayer();
+			
+			// 스킬 애니메이션 실행
+			PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
+
+			// 스킬 실행
+			PlayerSkills[SkillIndex]->ExecuteSkill();
+
+			// MP 소모
+			PlayerStat->SetMP(CurrentMP);
+			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP, PlayerMaxMP);
+		}
 	}
 }
 

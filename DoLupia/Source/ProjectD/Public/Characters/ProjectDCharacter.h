@@ -16,7 +16,7 @@ class UInventoryComponent;
 class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
-
+class UPlayerBattleWidget;
 
 USTRUCT()
 struct FInteractionData
@@ -123,13 +123,14 @@ public:
 
 	ADoLupiaHUD* GetDoLupiaHUD() { return HUD; }
 
+	UPlayerBattleWidget* GetPlayerBattleWidget() const { return PlayerBattleWidget; }
+
 protected:
 	void ToggleMenu();
 
 private:
 	void HoveredQuickSlot();
 	bool PossibleChangeGameMode();
-
 
 	
 

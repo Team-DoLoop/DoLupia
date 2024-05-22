@@ -22,6 +22,7 @@
 #include "Items/Sword/LongSword.h"
 
 // engine
+#include "AI/NavigationSystemBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/ProjectDPlayerController.h"
@@ -39,6 +40,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
 
 AProjectDCharacter::AProjectDCharacter()
@@ -145,7 +147,10 @@ void AProjectDCharacter::BeginPlay()
 
 		PlayerBattleWidget = PlayerDefaultsWidget->GetPlayerBattleWidget();
 		if(PlayerBattleWidget && PlayerStat)
-			PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(static_cast<float>(PlayerMaxHP) / PlayerMaxHP);
+		{
+			PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(PlayerStat->GetHP(), PlayerMaxHP);
+			PlayerBattleWidget->GetPlayerMPBar()->SetMPBar(PlayerStat->GetMP(), PlayerStat->GetMaxMP());
+		}
 	}
 
 	// 초기 장비 착용
@@ -313,7 +318,7 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	
 	// UI 반영
 	if(PlayerBattleWidget)
-		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(static_cast<float>(HP) / PlayerMaxHP);
+		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
 	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }

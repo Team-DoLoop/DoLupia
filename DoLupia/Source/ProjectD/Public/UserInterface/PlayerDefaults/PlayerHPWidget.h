@@ -22,5 +22,5 @@ private :
 protected:
 
 public:
-	void SetHPBar(float _HP);
+	void SetHPBar(int32 _HP, int32 _MaxHP);
 };
