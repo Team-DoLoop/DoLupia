@@ -6,8 +6,6 @@
 #include "GameFramework/Character.h"
 #include "NPCBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNPCMessageCalled , FString , Conversation );
-
 UCLASS()
 class PROJECTD_API ANPCBase : public ACharacter
 {
@@ -26,11 +24,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
 
-	// Event Dispatcher 선언
-	UPROPERTY( BlueprintAssignable , Category = "Events" )
-	FOnNPCMessageCalled OnNPCMessageCalled;
-
 	// Function to call delegate
+	UFUNCTION()
 	void CallNPCMessageDelegate( FString Message );
 
 	UPROPERTY()

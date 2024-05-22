@@ -7,10 +7,10 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AIConnectionLibrary.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnWebApiResponseReceived , FString , ResponseData );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnWebApiResponseReceived , FString , Response );
 
 UCLASS()
-class PROJECTD_API UAIConnectionLibrary : public UObject
+class PROJECTD_API UAIConnectionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

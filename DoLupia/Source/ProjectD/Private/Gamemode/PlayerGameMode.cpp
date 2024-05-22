@@ -28,6 +28,13 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
+}
+
+void APlayerGameMode::StartPlay()
+{
+	Super::StartPlay();
+	
+	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
 	if (AIlib) {
@@ -36,15 +43,6 @@ APlayerGameMode::APlayerGameMode()
 	else {
 		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Failed" ) )
 	}
-	
-
-}
-
-void APlayerGameMode::StartPlay()
-{
-	Super::StartPlay();
-	
-	
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const

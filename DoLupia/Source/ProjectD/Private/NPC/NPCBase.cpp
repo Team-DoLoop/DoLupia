@@ -24,15 +24,15 @@ void ANPCBase::BeginPlay()
 
 	if (gm)
 	{
-		AIlib = gm->GetAIConnectionLibrary();
-	}
+		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Success" ) );
+		
 
-	if (AIlib) {
-		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
 	}
 	else {
-		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load failed" ) );
+		UE_LOG( LogTemp , Warning , TEXT( "gm - Load failed" ) );
 	}
+
+	
 	
 }
 
@@ -58,6 +58,18 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 
 	UE_LOG( LogTemp , Warning , TEXT( "NPC Test" ) );
 
+	AIlib = gm->GetAIConnectionLibrary();
+
+	if (AIlib) {
+		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
+		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load Sucess" ) );
+	}
+	else {
+		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load failed" ) );
+	}
+
+	UE_LOG( LogTemp , Warning , TEXT( "NPCConversation : [%s]" ) , *NPCConversation )
+
 	if (player)
 	{
 		//gm->InitializeNPCConvWidget();
@@ -79,8 +91,6 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 void ANPCBase::CallNPCMessageDelegate( FString Message )
 {
 	NPCConversation = Message;
-	// Call delegate
-	OnNPCMessageCalled.Broadcast( Message );
 	UE_LOG( LogTemp , Warning , TEXT( "Message : [%s]" ) , *Message )
 }
 
