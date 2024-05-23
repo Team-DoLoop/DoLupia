@@ -20,7 +20,6 @@ void UQuestLogComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
 

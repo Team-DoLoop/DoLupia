@@ -73,7 +73,7 @@ void UQuestGiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 FString UQuestGiver::InteractWith()
 {
     // 캐스팅이 유효한지 확인
-    auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass() ) );
+    auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass()));
     if (QuestComponent == nullptr)
     {
         return FString( TEXT( "QuestComponent not found or cast failed." ) );
