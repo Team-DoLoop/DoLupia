@@ -7,11 +7,32 @@
 #include "ImageUtils.h"
 #include "Engine.h"
 #include "AI/AIMarterialTestActor.h"
+#include "UserInterface/NPC/NPCConvWidget.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Library/JsonLibrary.h"
+#include "NPC/NPCBase.h"
 
+FString UAIConnectionLibrary::LanIP = "192.168.75.246";
+FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
+FString UAIConnectionLibrary::ServerPort = "8000";
+
+UAIConnectionLibrary* UAIConnectionLibrary::Instance = nullptr;
+
+UAIConnectionLibrary* UAIConnectionLibrary::GetInstance( UObject* WorldContextObject )
+{
+	if (!Instance)
+	{
+		Instance = NewObject<UAIConnectionLibrary>();
+		Instance->AddToRoot();  // Prevents garbage collection
+		Instance->Initialize( WorldContextObject );
+	}
+
+	return Instance;
+}
 
 void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 {
+
 	TMap<FString , FString> msgData;
 	FString msg = message;
 	msgData.Add( TEXT( "message" ) , msg );
@@ -19,7 +40,7 @@ void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 	FString sendJson = UJsonLibrary::MapToJsonStr( msgData );
 
 	/* AI Server Connection */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/chat";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
 	ReqMessage( ServerURL , sendJson );
 }
 
@@ -36,7 +57,7 @@ void UAIConnectionLibrary::SendImageKeywordToServer( int32 keyword )
 	FString sendJson = UJsonLibrary::MapToJsonInt( imgData );
 
 	/* AI Server Image Request */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/imageAI";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
 	ReqAIImage( ServerURL , sendJson );
 
 
@@ -51,6 +72,14 @@ void UAIConnectionLibrary::LoadImageToMaterial()
 		ActorItr->LoadWebImage();
 
 	}
+}
+
+FString UAIConnectionLibrary::SetupAITextureURL()
+{
+	/* AI Server Connection */
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/ShowAITexture";
+
+	return ServerURL;
 }
 
 void UAIConnectionLibrary::ReqMessage(const FString& url, const FString& msg)
@@ -69,14 +98,17 @@ void UAIConnectionLibrary::ReqMessage(const FString& url, const FString& msg)
 void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr Response,
 	bool bConnectedSuccessfully)
 {
-	if (bConnectedSuccessfully)
+	if (bConnectedSuccessfully && Response.IsValid())
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 		
 		FString result = Response->GetContentAsString();
 		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *result )
+		OnWebApiResponseReceived.Broadcast( result );
 
-		//나중에 여기서 받은 문자열을 NPC 혹은 gamemode 에 보내는 로직 필요
+		UE_LOG( LogTemp , Warning , TEXT( "result - delegate test : [%s]" ) , *result )
+	
+
 	}
 	else
 	{
@@ -89,7 +121,7 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 }
 
 
-void UAIConnectionLibrary::ReqAIImage(const FString& url, const FString& msg)
+void UAIConnectionLibrary::ReqAIImage(const FString& url, const FString& msg )
 {
 	auto& httpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = httpModule.CreateRequest();
@@ -121,4 +153,25 @@ void UAIConnectionLibrary::ResAIImage(FHttpRequestPtr Request, FHttpResponsePtr 
 			UE_LOG( LogTemp , Warning , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
 		}
 	}
+}
+
+void UAIConnectionLibrary::Initialize( UObject* WorldContextObject )
+{
+	if (!WorldContextObject)
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "UAIConnectionLibrary::Initialize - Invalid WorldContextObject" ) );
+		return;
+	}
+
+	// Store the WorldContextObject
+	WorldContext = WorldContextObject;
+
+	// Ensure the Http module is loaded and ready
+	if (!FModuleManager::Get().IsModuleLoaded( "Http" ))
+	{
+		FModuleManager::Get().LoadModule( "Http" );
+	}
+
+	// You can add additional initialization code here as needed
+	UE_LOG( LogTemp , Log , TEXT( "UAIConnectionLibrary initialized with WorldContextObject: %s" ) , *WorldContextObject->GetName() );
 }
