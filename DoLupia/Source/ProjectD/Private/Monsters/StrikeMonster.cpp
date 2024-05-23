@@ -51,7 +51,7 @@ void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (OverlapPlayer->GetController())
 		{
 			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::플레이어 공격 성공!!" ) );
-			OverlapPlayer->TakeDamage( 30 );
+			OverlapPlayer->TakeHit( EAttackType::BASIC, 30 );
 
 			return;
 		}

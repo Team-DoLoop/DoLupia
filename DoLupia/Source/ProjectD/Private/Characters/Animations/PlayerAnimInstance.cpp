@@ -49,10 +49,13 @@ void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	UE_LOG(LogTemp, Log, TEXT("Player Animation Montage End"));
 	if(!Player) return;
-	
+
+	FName MontageName = Montage->GetFName();
 	// End Attack Montage
-	if(Montage->GetFName() == attackMontage->GetFName())
+	if(MontageName == attackMontage->GetFName())
 		Player->GetAttackComp()->AttackEnd();
+	else if(MontageName == LyingMontage->GetName())
+		Player->LyingEnd();
 }
 
 
@@ -89,6 +92,13 @@ void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 	
 	
 	// 안들고 있다면?
+}
+
+void UPlayerAnimInstance::PlayerLyingAnimation()
+{
+	if(!LyingMontage) return;
+
+	PlayMontage(LyingMontage);
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
