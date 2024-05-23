@@ -8,7 +8,7 @@ UPlayerStatusEffectComp::UPlayerStatusEffectComp()
 	
 }
 
-void UPlayerStatusEffectComp::SetStatusEffect(EStatusEffectType _statusEffect)
+void UPlayerStatusEffectComp::SetStatusEffect(EEffectAttackType _statusEffect)
 {
 	Super::SetStatusEffect(_statusEffect);
 
