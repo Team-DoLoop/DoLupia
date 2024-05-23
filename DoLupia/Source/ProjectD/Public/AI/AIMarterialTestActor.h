@@ -45,7 +45,7 @@ protected:
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* MaterialTemplate2;
 
-
-
+	UPROPERTY( EditDefaultsOnly )
+	class UAIConnectionLibrary* AIlib;
 
 };

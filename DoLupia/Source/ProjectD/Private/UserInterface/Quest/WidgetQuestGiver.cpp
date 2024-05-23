@@ -29,13 +29,13 @@ void UWidgetQuestGiver::NativePreConstruct()
 
     if (QuestDetails.Stages.Num() > 0 && !QuestDetails.Stages[0].Description.IsEmpty())
     {
-		FText SD_MyText = FText::FromString( QuestDetails.Stages[0].Description );
+		FText SD_MyText = FText::FromString( QuestDetails.Stages[CurrentStage].Description );
 		txt_StageDesc->SetText( SD_MyText );
     }
 
     if (QuestDetails.Stages.Num() > 0) // 배열이 비어 있지 않은지 확인
     {
-        const auto& FirstStage = QuestDetails.Stages[0]; // 첫 번째 요소에 접근
+        const auto& FirstStage = QuestDetails.Stages[CurrentStage]; // 첫 번째 요소에 접근
         for (const auto& Objective : FirstStage.Objectives) // 범위 기반 for 루프
         {
             UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );

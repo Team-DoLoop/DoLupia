@@ -31,6 +31,8 @@ public:
 	void SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot);
 	bool IsDraggingWidget();
 
+	void UpdateMouseWidget( const FVector2D& MousePosition );
+
 protected:
 	virtual void NativeConstruct() override;
 	//virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -70,6 +72,10 @@ protected:
 	TObjectPtr<UQuickSlotWidget> QuickSlot0;
 
 private:
+	UPROPERTY()
 	TArray<TObjectPtr<UQuickSlotWidget>> QuickSlotArray;
+
+	UPROPERTY()
+	class APlayerController* PlayerController;
 
 };

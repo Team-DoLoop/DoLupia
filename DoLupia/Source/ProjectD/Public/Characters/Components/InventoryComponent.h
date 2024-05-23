@@ -85,7 +85,6 @@ class PROJECTD_API UInventoryComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UInventoryComponent();
 
 	UFUNCTION( Category = "Inventory")

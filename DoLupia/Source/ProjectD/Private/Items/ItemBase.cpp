@@ -58,4 +58,3 @@ void UItemBase::Use()
 	Character->GetPlayerStat()->SetHP( Character->GetPlayerStat()->GetHP() - ItemStatistics.HealthValue );
 }
 
-

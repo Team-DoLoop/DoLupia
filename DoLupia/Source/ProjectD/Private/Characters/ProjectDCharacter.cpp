@@ -15,7 +15,7 @@
 #include "UserInterface/DoLupiaHUD.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/MainMenu.h"
-#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 #include "World/Pickup.h"
 #include "Data/WidgetData.h"
@@ -144,9 +144,6 @@ void AProjectDCharacter::BeginPlay()
 	{
 		PlayerDefaultsWidget = CreateWidget<UPlayerDefaultsWidget>(GetWorld(), PlayerDefaultsWidgetFactory );
 		PlayerDefaultsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
-		FInputModeGameOnly InputMode;
-		InputMode.SetConsumeCaptureMouseDown( true );
-		Cast<APlayerController>(Controller)->SetInputMode( InputMode );
 
 		PlayerBattleWidget = PlayerDefaultsWidget->GetPlayerBattleWidget();
 		if(PlayerBattleWidget && PlayerStat)
@@ -155,6 +152,8 @@ void AProjectDCharacter::BeginPlay()
 			PlayerBattleWidget->GetPlayerMPBar()->SetMPBar(PlayerStat->GetMP(), PlayerStat->GetMaxMP());
 		}
 	}
+
+	PlayerAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 
 	// 초기 장비 착용
 	Gadget->InitEquip();
@@ -165,6 +164,8 @@ void AProjectDCharacter::BeginPlay()
 void AProjectDCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+
+	HoveredQuickSlot();
 
 	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
 	{
@@ -223,6 +224,27 @@ void AProjectDCharacter::ToggleMenu()
 		StopAiming();
 }
 
+// 퀵 슬롯 자연스럽게 하기 위한 함수
+void AProjectDCharacter::HoveredQuickSlot()
+{
+	if (PossibleChangeGameMode())
+	{
+		// 마우스 커서 위치를 감지
+		float MouseX , MouseY;
+		
+		if (PlayerController->GetMousePosition( MouseX , MouseY ))
+		{
+			// 사용자 정의 함수로 마우스 위치 업데이트
+			PlayerDefaultsWidget->UpdateMouseWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
+		}
+	}
+}
+
+bool AProjectDCharacter::PossibleChangeGameMode()
+{
+	return !HUD->IsMenuVisible();
+}
+
 void AProjectDCharacter::UseQuickSlot(int32 SlotNumber)
 {
 	PlayerDefaultsWidget->UseQuickSlot( SlotNumber );
@@ -276,11 +298,29 @@ void AProjectDCharacter::CameraTimelineEnd()
 	}
 }
 
-void AProjectDCharacter::TakeDamage(float Damage)
+void AProjectDCharacter::TakeHit(EAttackType AttackType, float Damage)
 {
 	if(!PlayerFSM) return;
-	if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
 	
+	if(AttackType == EAttackType::BASIC)
+	{
+		if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
+		
+	}
+
+	if(AttackType == EAttackType::LYING)
+	{
+		if(!(PlayerFSM->CanLyingState(EPlayerState::LYING))) return;
+		PlayerFSM->ChangePlayerState( EPlayerState::LYING );
+		if(!PlayerAnim) return;
+		PlayerAnim->PlayerLyingAnimation();
+	}
+
+	TakeDamage(Damage);
+}
+
+void AProjectDCharacter::TakeDamage(float Damage)
+{
 	// 데미지 받기
 	int32 HP = PlayerStat->GetHP() - Damage;
 	
@@ -301,6 +341,12 @@ void AProjectDCharacter::TakeDamage(float Damage)
 		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
 	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
+}
+
+void AProjectDCharacter::LyingEnd()
+{
+	if(!PlayerFSM) return;
+	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
 }
 
 
