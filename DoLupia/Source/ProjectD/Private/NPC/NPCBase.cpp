@@ -25,15 +25,12 @@ void ANPCBase::BeginPlay()
 	if (gm)
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Success" ) );
-		
-
 	}
 	else {
-		UE_LOG( LogTemp , Warning , TEXT( "gm - Load failed" ) );
+		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
 	}
 
-	
-	
+	gm->InitializeNPCConvWidget();
 }
 
 // Called every frame
@@ -58,28 +55,19 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 
 	UE_LOG( LogTemp , Warning , TEXT( "NPC Test" ) );
 
-	AIlib = gm->GetAIConnectionLibrary();
-
-	if (AIlib) {
-		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
-		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load Sucess" ) );
-	}
-	else {
-		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load failed" ) );
-	}
+	
 
 	UE_LOG( LogTemp , Warning , TEXT( "NPCConversation : [%s]" ) , *NPCConversation )
 
 	if (player)
 	{
-		//gm->InitializeNPCConvWidget();
+		AIlib = gm->GetAIConnectionLibrary();
 		UE_LOG( LogTemp , Warning , TEXT( "NPC - Overlap Player" ) );
 
 		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
 		if (AIlib)
 		{
-			FString testStr = "이게 무슨 일이죠?";
-			AIlib->SendNPCConversationToServer( testStr );
+			BeginChat();
 		}
 		else {
 			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
@@ -88,10 +76,31 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 	}
 }
 
+void ANPCBase::BeginChat()
+{
+	
+
+	if (AIlib) {
+		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
+		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load Sucess" ) );
+
+		FString testStr = "이게 무슨 일이죠?";
+		AIlib->SendNPCConversationToServer( testStr );
+
+		
+	}
+	else {
+		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load failed" ) );
+	}
+}
+
 void ANPCBase::CallNPCMessageDelegate( FString Message )
 {
 	NPCConversation = Message;
 	UE_LOG( LogTemp , Warning , TEXT( "Message : [%s]" ) , *Message )
+
+	gm->ReceiveNPCMsg( NPCConversation );
+
 }
 
 

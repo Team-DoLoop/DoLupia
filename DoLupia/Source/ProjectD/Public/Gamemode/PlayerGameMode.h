@@ -22,15 +22,13 @@ public:
 	UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	void InitializeNPCConvWidget();
-	void ReceiveNPCConv( FString Response );
+	void ReceiveNPCMsg(FString msg);
 
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
 
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
-
-	FString NPCConversation;
 
 private:
 

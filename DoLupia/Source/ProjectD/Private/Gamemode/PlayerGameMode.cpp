@@ -28,12 +28,14 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
+
+
 }
 
 void APlayerGameMode::StartPlay()
 {
 	Super::StartPlay();
-	
+
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
@@ -43,6 +45,7 @@ void APlayerGameMode::StartPlay()
 	else {
 		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Failed" ) )
 	}
+	
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -57,19 +60,9 @@ void APlayerGameMode::InitializeNPCConvWidget()
 	{
 		NPCConvUI->AddToViewport(); 
 	}
-
-
 }
 
-void APlayerGameMode::ReceiveNPCConv( FString Response )
+void APlayerGameMode::ReceiveNPCMsg( FString msg )
 {
-	NPCConversation = Response;
-	UE_LOG( LogTemp , Warning , TEXT( "NPCConversation : [%s]" ) , *NPCConversation )
-	
-	
-	if (NPCConvUI)
-    {
-        NPCConvUI->SetupNPCConv( Response );
-    }
-	
+	NPCConvUI->SetupNPCConv( msg );
 }
