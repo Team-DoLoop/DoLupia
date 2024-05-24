@@ -78,8 +78,6 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 
 void ANPCBase::BeginChat()
 {
-	
-
 	if (AIlib) {
 		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
 		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load Sucess" ) );

@@ -38,14 +38,6 @@ void APlayerGameMode::StartPlay()
 
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
-
-	if (AIlib) {
-		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Success" ) )
-	}
-	else {
-		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Failed" ) )
-	}
-	
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const

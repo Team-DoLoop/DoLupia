@@ -24,9 +24,6 @@ public:
 	void InitializeNPCConvWidget();
 	void ReceiveNPCMsg(FString msg);
 
-	UPROPERTY( EditDefaultsOnly )
-	TSubclassOf<class UUserWidget> NPCUIFactory;
-
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
@@ -34,5 +31,8 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
+
+	UPROPERTY( EditDefaultsOnly )
+	TSubclassOf<class UUserWidget> NPCUIFactory;
 
 };
