@@ -18,6 +18,7 @@ class PROJECTD_API UAIConnectionLibrary : public UBlueprintFunctionLibrary
 	2024.05.14 함수 호출할 때 , string으로 매개변수 선언되어 있음. 
 	2024.05.16 매개변수 int 로 변경 완료
 	2024.05.22 Library 싱글톤 패턴 적용
+	2024.05.26 이미지 생성 요청 Player / Boss Status Effects 분기
 */
 public:
 	//
@@ -25,9 +26,13 @@ public:
 
 	void SendNPCConversationToServer( const FString& message );
 	//void SendImageKeywordToServer( const FString& keyword );
-	void SendImageKeywordToServer( int32 keywords );
+	void SendImageKeywordToServer( int32 keyword );
 	void LoadImageToMaterial();
 	FString SetupAITextureURL();
+
+	void SendPImgToSrv( int32 keyword );
+	void SendBImgToSrv( int32 keyword );
+	
 
 	UPROPERTY( BlueprintAssignable )
 	FOnWebApiResponseReceived OnWebApiResponseReceived;

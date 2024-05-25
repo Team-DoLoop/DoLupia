@@ -24,8 +24,13 @@ public:
 	void InitializeNPCConvWidget();
 	void ReceiveNPCMsg(FString msg);
 
+	// 2024.05.26 Player / Boss 텍스처 변경 분기처리
+	void ApplyAITxtP();
+	void ApplyAITxtB();
+
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
+
 
 private:
 
@@ -34,5 +39,6 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
+
 
 };

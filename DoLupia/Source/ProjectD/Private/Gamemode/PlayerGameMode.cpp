@@ -5,9 +5,10 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/ProjectDCharacter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Components/TextBlock.h"
 #include "Library/AIConnectionLibrary.h"
 #include "UserInterface/NPC/NPCConvWidget.h"
+#include "AI/AITxtPlayer.h"
+#include "Engine.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -57,4 +58,17 @@ void APlayerGameMode::InitializeNPCConvWidget()
 void APlayerGameMode::ReceiveNPCMsg( FString msg )
 {
 	NPCConvUI->SetupNPCConv( msg );
+}
+
+void APlayerGameMode::ApplyAITxtP()
+{
+	for (TActorIterator<AAITxtPlayer> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->UpdateActorMaterial();
+	}
+}
+
+void APlayerGameMode::ApplyAITxtB()
+{
 }
