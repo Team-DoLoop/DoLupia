@@ -8,6 +8,33 @@
 
 class UItemPool;
 class UItemBase;
+class ADroppedItem;
+
+USTRUCT( BlueprintType )
+struct FItemSpawnerInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	// 아이템 이름
+	UPROPERTY( EditAnywhere , Category = "Spawner Infomation" )
+	FString ItemName;
+
+	// 아이템 드랍 확률 
+	UPROPERTY( EditAnywhere , Category = "Spawner Infomation" )
+	float DropPercentage;
+
+	/*
+		Min -> 1, Max -> 5
+		1개 이상 5개 미만으로 드랍개수가 정해짐
+	*/
+
+	UPROPERTY( EditAnywhere , Category = "Spawner Infomation" )
+	int32 MinItemTodrop;
+
+	UPROPERTY( EditAnywhere , Category = "Spawner Infomation" )
+	int32 MaxItemTodrop;
+
+};
 
 UCLASS()
 class PROJECTD_API AItemSpawner : public AActor
@@ -17,18 +44,31 @@ class PROJECTD_API AItemSpawner : public AActor
 public:	
 	AItemSpawner();
 
-	static void MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem, FVector StartPoint, FVector ActorSpeed, float GravityScale );
+	static void MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem, FVector StartPoint, 
+		FVector ActorSpeed = FVector(0.0, 0.0, 0.0) , float GravityScale = 0.5f);
 
-	TArray<UItemBase*> SpawnItemAll();
+	UItemBase* GetItem( const FString& ID );
+	//TArray<UItemBase*> GetItemAll();
+
+	void CreateItem( const FString& ID, int32 ItemDropPercentage );
+	void ReturnItem( ADroppedItem* DroppedItem );
+	void SpawnItem( AActor* SpawneItemActor );
+
+	void SetActive( AActor* Actor , bool IsActive );
 
 public:
-	FORCEINLINE void AddItemID(const FString& ItemID ){ ItemIDArray.Push(ItemID); }
+	//FORCEINLINE void AddItemID(const FString& ItemID ) { ItemIDArray.Push(ItemID); }
+	FORCEINLINE void EditItemSpawnerInfo( FItemSpawnerInfo NewItemSpawnerInfo )
+	{ ItemSpawnerInfos.Emplace( NewItemSpawnerInfo.ItemName, NewItemSpawnerInfo ); }
 
 protected:
 	virtual void BeginPlay() override;
 
 
 protected:
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* MyComponent;
+
 	/* Pooling */
 	UPROPERTY()
 	TObjectPtr<UItemPool> ItemPool;
@@ -56,7 +96,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FString> ItemIDArray;
 
+	UPROPERTY()
+	TArray<TObjectPtr<ADroppedItem>> DroppedItems;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FString, FItemSpawnerInfo> ItemSpawnerInfos;
+
 private:
-	UItemBase* SpawnItem();
+	void SpawnItemStackable( const FString& ID, int32 ItemCont, AActor* SpawneItemActor );
+	void SpawnItemNoneStackable( const FString& ID, int32 ItemCont, AActor* SpawneItemActor );
 
 };

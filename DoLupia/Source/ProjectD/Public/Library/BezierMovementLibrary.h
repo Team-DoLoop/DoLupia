@@ -15,8 +15,10 @@ class PROJECTD_API UBezierMovementLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION( BlueprintCallable , Category = "ItemMovement" )
-	static void MoveObjectAlongCurve( UObject* WorldContextObject , AActor* Item , FVector StartPoint, FVector ActorSpeed, float GravityScale );
+	static void MoveObjectAlongCurve( UObject* WorldContextObject , AActor* Item , FVector StartPoint, 
+		FVector ActorSpeed, float GravityScale );
+
+	static FVector VectorSeed( AActor* ContextActor);
 
 private:
 	static void UpdateObjectPosition( UObject* WorldContextObject , AActor* Item , FVector StartPoint, 

@@ -241,7 +241,7 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
-	if(!HUD->IsMenuVisible())
+	if(HUD->IsMenuVisible())
 		return false;
 
 	if(SpecificActor)

@@ -16,12 +16,6 @@ APickup::APickup()
 	PickUpMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
 	PickUpMesh->SetSimulatePhysics(true);
 	SetRootComponent(PickUpMesh);
-
-	SphereComponent = CreateDefaultSubobject<USphereComponent>("Item Collision");
-	SphereComponent->InitSphereRadius( 50.0f );
-	SphereComponent->SetCollisionProfileName( TEXT( "OverlapAllDynamic" ) );
-	SphereComponent->SetupAttachment(GetRootComponent());
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APickup::BeginPlay()
@@ -42,11 +36,6 @@ void APickup::BeginPlay()
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic( this , &APickup::BezierBeginOverlap );
 	}
-
-	ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( FVector::ZeroVector , FRotator::ZeroRotator );
-	ItemSpawner->AttachToActor( this , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
-	ItemSpawner->AddItemID( "regeneration potion" );
-	ItemSpawner->AddItemID( "regeneration potion" );
 }
 
 void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
@@ -132,36 +121,6 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 {
 	if(!IsPendingKillPending())
 	{
-		// 테스트용
-		TArray<UItemBase*> Test = ItemSpawner->SpawnItemAll();
-
-		FVector StartPosition = GetActorLocation();
-
-		for(int32 i = 0; i < Test.Num(); ++i)
-		{
-			// 위치와 회전 값을 XOR 연산하여 고유한 시드 값 생성
-			// 나중에 확률 추가하려면 따로 구현 해야함.
-			uint32 Seed = StartPosition.X;
-			Seed = Seed ^ (uint32)StartPosition.Y;
-			Seed = Seed ^ (uint32)StartPosition.Z;
-
-			FRandomStream RandomStream( Seed );
-			FVector ActorSpeed =  FVector
-			( 
-				RandomStream.RandRange( -300 , 300 ), 
-				RandomStream.RandRange( 300 , 800 ), 
-				RandomStream.RandRange( -300 , 300 )
-			);
-
-
-			FTimerHandle TimerHandle;
-			ItemReference = Test[i];
-			InitializeDrop( ItemReference, 1);
-			ItemSpawner->MoveItemAlongCurve( this, this,  StartPosition, ActorSpeed, RandomStream.RandRange(45, 80) * 0.01f);
-		}
-			
-
-		
 
 		if(ItemReference)
 		{
@@ -179,7 +138,7 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 						Taker->UpdateInteractionWidget();
 						break;
 					case EItemAddResult::IAR_AllItemAdded:
-						//Destroy();
+						Destroy();
 						break;
 
 					default: ;
