@@ -22,19 +22,23 @@ public:
 	UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	void InitializeNPCConvWidget();
-	void ReceiveNPCConv( FString Response );
+	void ReceiveNPCMsg(FString msg);
 
-	UPROPERTY( EditDefaultsOnly )
-	TSubclassOf<class UUserWidget> NPCUIFactory;
+	// 2024.05.26 Player / Boss 텍스처 변경 분기처리
+	void ApplyAITxtP();
+	void ApplyAITxtB();
 
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
-	FString NPCConversation;
 
 private:
 
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
+
+	UPROPERTY( EditDefaultsOnly )
+	TSubclassOf<class UUserWidget> NPCUIFactory;
+
 
 };

@@ -19,18 +19,9 @@ public:
 	virtual void BeginPlay() override;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
-
-	// Function to call delegate
-	UFUNCTION()
-	void CallNPCMessageDelegate( FString Message );
-
-	UPROPERTY()
-	class UAIConnectionLibrary* AIlib;
-
 
 private:
 
@@ -38,7 +29,15 @@ private:
 	class APlayerGameMode* gm;
 
 
+	UPROPERTY()
+	class UAIConnectionLibrary* AIlib;
 
 	FString NPCConversation;
 
+	//Player 상호작용 시 호출
+	void BeginChat();
+
+	// Function to call delegate
+	UFUNCTION()
+	void CallNPCMessageDelegate( FString Message );
 };

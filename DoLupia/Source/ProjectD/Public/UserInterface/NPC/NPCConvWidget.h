@@ -16,21 +16,11 @@ class PROJECTD_API UNPCConvWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
-
 	void SetupNPCConv(FString conv);
 
+private:
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
 	class UTextBlock* txt_NPCConv;
-
-	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
-	class UButton* btn_startConversation;
-
-	UFUNCTION()
-	void StartConversation();
-
-private:
-	UPROPERTY()
-	class APlayerGameMode* gm;
 
 	
 };

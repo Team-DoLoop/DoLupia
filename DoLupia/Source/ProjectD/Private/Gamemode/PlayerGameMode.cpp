@@ -5,9 +5,10 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/ProjectDCharacter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Components/TextBlock.h"
 #include "Library/AIConnectionLibrary.h"
 #include "UserInterface/NPC/NPCConvWidget.h"
+#include "AI/AITxtPlayer.h"
+#include "Engine.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -28,21 +29,16 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
+
+
 }
 
 void APlayerGameMode::StartPlay()
 {
 	Super::StartPlay();
-	
+
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
-
-	if (AIlib) {
-		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Success" ) )
-	}
-	else {
-		UE_LOG( LogTemp , Warning , TEXT( "APlayerGameMode::StartPlay - AIlib Failed" ) )
-	}
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -57,19 +53,22 @@ void APlayerGameMode::InitializeNPCConvWidget()
 	{
 		NPCConvUI->AddToViewport(); 
 	}
-
-
 }
 
-void APlayerGameMode::ReceiveNPCConv( FString Response )
+void APlayerGameMode::ReceiveNPCMsg( FString msg )
 {
-	NPCConversation = Response;
-	UE_LOG( LogTemp , Warning , TEXT( "NPCConversation : [%s]" ) , *NPCConversation )
-	
-	
-	if (NPCConvUI)
-    {
-        NPCConvUI->SetupNPCConv( Response );
-    }
-	
+	NPCConvUI->SetupNPCConv( msg );
+}
+
+void APlayerGameMode::ApplyAITxtP()
+{
+	for (TActorIterator<AAITxtPlayer> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->UpdateActorMaterial();
+	}
+}
+
+void APlayerGameMode::ApplyAITxtB()
+{
 }

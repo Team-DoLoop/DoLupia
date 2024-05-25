@@ -9,6 +9,7 @@
 #include "Library/JsonLibrary.h"
 #include "ImageUtils.h"
 #include "AI/AIMarterialTestActor.h"
+#include "AI/AITxtPlayer.h"
 #include "Components/Image.h"
 #include "Engine.h"
 #include "Library/AIConnectionLibrary.h"
@@ -74,11 +75,11 @@ void UAITestWidget::ChangeMaterial()
 {
 	UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial" ) );
 	// Find the actor of type AYourActor
-	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	for (TActorIterator<AAITxtPlayer> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
 		// Call the function on the actor
-		ActorItr->LoadWebImage();
+		ActorItr->UpdateActorMaterial();
 		
 	}
 }

@@ -10,20 +10,9 @@
 void UNPCConvWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-
-	btn_startConversation->OnClicked.AddDynamic( this , &UNPCConvWidget::StartConversation );
-
 }
 
 void UNPCConvWidget::SetupNPCConv( FString conv )
 {
 	txt_NPCConv->SetText( FText::FromString( conv ) );
-}
-
-void UNPCConvWidget::StartConversation()
-{
-	UE_LOG( LogTemp , Warning , TEXT( "gm->NPCConversation : [%s]" ) , *gm->NPCConversation )
-	SetupNPCConv( gm->NPCConversation );
 }
