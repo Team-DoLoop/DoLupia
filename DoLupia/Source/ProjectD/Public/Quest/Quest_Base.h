@@ -11,7 +11,7 @@
 class AQuestLogComponent;
 class UWidgetQuestNotification;
 
-DECLARE_DYNAMIC_DELEGATE( FOnObjectiveHeard );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnObjectiveHeard );
 UCLASS()
 class AQuest_Base : public AActor
 {

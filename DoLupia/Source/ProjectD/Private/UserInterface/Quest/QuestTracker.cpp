@@ -57,7 +57,7 @@ void UQuestTracker::WidgetUpdate()
     if (QuestActor)
     {
         //퀘스트 엑터에서 온 델리게이트 받기
-        QuestActor->OnObjectiveHeard.BindDynamic( this , &UQuestTracker::OnObjectiveHeard );
+        QuestActor->OnObjectiveHeard.AddDynamic( this , &UQuestTracker::OnObjectiveHeard );
         if (txt_QuestName)
         {
             FText QN_MyText = FText::FromString( QuestActor->QuestDetails.QuestName );

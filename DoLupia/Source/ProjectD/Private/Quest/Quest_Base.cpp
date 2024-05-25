@@ -123,7 +123,8 @@ void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 				int32 PluValue = *ValuePtr + Value;
 				CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
 				IsObjectiveComplete( BObjectiveID );
-
+				//Tracker Widget에 보내는 델리게이트
+				OnObjectiveHeard.Broadcast();
 				return;
 			}
 		}
