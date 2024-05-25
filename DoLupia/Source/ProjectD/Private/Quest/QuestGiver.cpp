@@ -85,9 +85,18 @@ FString UQuestGiver::InteractWith()
 
     if (!ActiveQuest)
     {
-        //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
-        DisplayQuest(0);
-        return GetOwner()->GetName();
+        FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+
+        if (Row->AutoAccept) {
+            //자동으로 AddNewQuest 실행 ( Logcomp 에 있는
+            QuestComponent->AddNewQuest( QuestData.RowName );
+            return GetOwner()->GetName();
+        }
+        else {
+            //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
+            DisplayQuest(0);
+            return GetOwner()->GetName();
+        }        
     }
     else
     {

@@ -11,6 +11,7 @@
 class AQuestLogComponent;
 class UWidgetQuestNotification;
 
+DECLARE_DYNAMIC_DELEGATE( FOnObjectiveHeard );
 UCLASS()
 class AQuest_Base : public AActor
 {
@@ -28,6 +29,10 @@ protected:
 	class AProjectDCharacter* ProjectDCharacter;
 
 public:	
+
+	//UPROPERTY()
+	FOnObjectiveHeard OnObjectiveHeard;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

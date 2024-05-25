@@ -10,11 +10,6 @@
 
 void UQuestTracker::NativePreConstruct()
 {
-    WidgetUpdate();
-}
-
-void UQuestTracker::NativeConstruct()
-{
     // 플레이어 컨트롤러 및 캐릭터 획득
     APlayerController* OwningPlayer = GetOwningPlayer();
     if (!IsObjectValid( OwningPlayer , "OwningPlayer" ))
@@ -42,6 +37,11 @@ void UQuestTracker::NativeConstruct()
     }
 }
 
+void UQuestTracker::NativeConstruct()
+{
+    WidgetUpdate();
+}
+
 void UQuestTracker::NativeDestruct()
 {
 }
@@ -56,6 +56,8 @@ void UQuestTracker::WidgetUpdate()
 
     if (QuestActor)
     {
+        //퀘스트 엑터에서 온 델리게이트 받기
+        QuestActor->OnObjectiveHeard.BindDynamic( this , &UQuestTracker::OnObjectiveHeard );
         if (txt_QuestName)
         {
             FText QN_MyText = FText::FromString( QuestActor->QuestDetails.QuestName );
@@ -110,4 +112,9 @@ void UQuestTracker::QuestCompleted( AQuest_Base* QC_QuestActor)
     if (QuestActor == QC_QuestActor) {
         RemoveFromParent();
     }
+}
+
+void UQuestTracker::OnObjectiveHeard()
+{
+    Update( QuestActor );
 }

@@ -33,6 +33,9 @@ public:
 	UFUNCTION()
 	void QuestCompleted( AQuest_Base* QC_QuestActor );
 
+	UFUNCTION()
+	void OnObjectiveHeard();
+
 protected:
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
 	class UTextBlock* txt_QuestName;

@@ -123,6 +123,7 @@ void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 				int32 PluValue = *ValuePtr + Value;
 				CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
 				IsObjectiveComplete( BObjectiveID );
+
 				return;
 			}
 		}
@@ -230,12 +231,13 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 			//남은 stage가 있는지 모두 다 완료했는지 확인
 			if (AreObjectivesComplete())
 			{
-				if (CurrentStage + 1 >= QuestDetails.Stages.Num())
-				{
+				//if (CurrentStage + 1 >= QuestDetails.Stages.Num())
+				//{
 					//목표를 다 완수 했는데, 남은 stage가 없으면
 					IsCompleted = true;
 					UE_LOG( LogTemp , Error , TEXT( "Quest completed!" ) );
-				}
+				//}
+				/*
 				else
 				{
 					//목표를 다 완수했는데, 남은 stage가 있으면
@@ -244,6 +246,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 					GetQuestDetails();
 					CheckItem();
 				}
+				*/
 			}
 		}
 	}

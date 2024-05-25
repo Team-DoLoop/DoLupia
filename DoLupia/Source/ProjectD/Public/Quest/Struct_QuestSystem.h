@@ -114,4 +114,7 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	TArray<FStageDetails> Stages;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	bool AutoAccept;
 };
