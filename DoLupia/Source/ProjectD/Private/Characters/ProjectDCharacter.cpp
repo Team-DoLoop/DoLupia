@@ -45,6 +45,9 @@
 
 AProjectDCharacter::AProjectDCharacter()
 {
+	// Mesh
+	GetMesh()->SetWorldScale3D(FVector(3.0f));
+	
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
