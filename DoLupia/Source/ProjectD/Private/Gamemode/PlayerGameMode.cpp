@@ -7,7 +7,9 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Library/AIConnectionLibrary.h"
 #include "UserInterface/NPC/NPCConvWidget.h"
+#include "UserInterface/Test/AITestWidget.h"
 #include "AI/AITxtPlayer.h"
+#include "Data/WidgetData.h"
 #include "Engine.h"
 
 APlayerGameMode::APlayerGameMode()
@@ -39,6 +41,30 @@ void APlayerGameMode::StartPlay()
 
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
+
+	AITestUI = CreateWidget<UAITestWidget>( GetWorld() , NPCUIFactory );
+	if (AITestUI)
+	{
+		AITestUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Interaction)  );
+		
+		// Set input mode to UI only and set the widget to focus
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			//FInputModeUIOnly InputMode;
+			FInputModeGameOnly InputMode;
+
+			//InputMode.SetWidgetToFocus( AITestUI->TakeWidget() );
+			//PlayerController->SetInputMode( InputMode );
+			//PlayerController->bShowMouseCursor = true;
+
+			InputMode.SetConsumeCaptureMouseDown( true );
+			PlayerController->SetInputMode( FInputModeGameOnly() );
+
+		}
+
+	}
+
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const

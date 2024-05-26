@@ -30,7 +30,7 @@ void ANPCBase::BeginPlay()
 		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
 	}
 
-	gm->InitializeNPCConvWidget();
+	//gm->InitializeNPCConvWidget();
 }
 
 // Called every frame

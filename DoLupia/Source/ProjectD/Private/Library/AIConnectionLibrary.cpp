@@ -13,7 +13,8 @@
 #include "NPC/NPCBase.h"
 
 FString UAIConnectionLibrary::LanIP = "192.168.75.246";
-FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
+//FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
+FString UAIConnectionLibrary::WifiIP = "192.168.45.20";
 FString UAIConnectionLibrary::ServerPort = "8000";
 
 UAIConnectionLibrary* UAIConnectionLibrary::Instance = nullptr;

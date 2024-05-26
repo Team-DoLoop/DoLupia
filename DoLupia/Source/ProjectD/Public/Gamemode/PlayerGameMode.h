@@ -31,6 +31,9 @@ public:
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
+	UPROPERTY( BlueprintReadOnly )
+	class UAITestWidget* AITestUI;
+
 
 private:
 
@@ -39,6 +42,9 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
+
+	UPROPERTY( EditDefaultsOnly )
+	TSubclassOf<class UUserWidget> AITestUIFactory;
 
 
 };
