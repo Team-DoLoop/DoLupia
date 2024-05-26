@@ -5,6 +5,8 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Library/AIConnectionLibrary.h"
+#include "Engine.h"
+#include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values
@@ -67,7 +69,13 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
 		if (AIlib)
 		{
-			BeginChat();
+			//BeginChat();
+
+			for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+			{
+				// Call the function on the actor
+				ActorItr->UpdateActorMaterial();
+			}
 		}
 		else {
 			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
