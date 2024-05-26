@@ -129,7 +129,7 @@ void AItemSpawner::SpawnItemStackable(const FString& ID, int32 ItemCont, AActor*
 		{
 			SetActive( DroppedItems[i] , true );
 			DroppedItems[i]->SetMyItemSpawner( this );
-			DroppedItems[i]->GetItemReference()->SetQuantity( ItemCount );
+			DroppedItems[i]->GetItemReference()->SetQuantity( ItemCount, false );
 			DroppedItems[i]->SetActorLocation( GetActorLocation() );
 			// 몬스터 풀링 시 켜주세요.
 			//DroppedItem = DroppedItems[i];
@@ -170,7 +170,7 @@ void AItemSpawner::SpawnItemNoneStackable(const FString& ID, int32 ItemCont, AAc
 		{
 			SetActive( DroppedItems[i] , true );
 			DroppedItems[i]->SetMyItemSpawner( this );
-			DroppedItems[i]->GetItemReference()->SetQuantity( 1 );
+			DroppedItems[i]->GetItemReference()->SetQuantity( 1, false );
 			DroppedItems[i]->SetActorLocation( GetActorLocation() );
 			MoveItemAlongCurve( this , DroppedItems[i] , SpawneItemActor->GetActorLocation() , FVector( 0.0 , 0.0 , 0.0 ) , 0.77f );
 			//DroppedItem = DroppedItems[i];
