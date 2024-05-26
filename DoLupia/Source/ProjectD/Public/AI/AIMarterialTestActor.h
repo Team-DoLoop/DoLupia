@@ -71,4 +71,7 @@ protected:
 	// New texture to transition to
 	class UTexture2DDynamic* NewTexture;
 
+	UPROPERTY()
+	UTexture* InitialTexture;
+
 };

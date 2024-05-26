@@ -60,6 +60,18 @@ void AAIMarterialTestActor::BeginPlay()
     TimelineComponent->PlayFromStart();
 
     NewTexture = nullptr;
+
+    // 초기 머티리얼을 가져옵니다.
+    UMaterialInterface* InitialMaterial = meshComp->GetMaterial( 0 );
+    if (InitialMaterial)
+    {
+        UMaterialInstanceDynamic* TempMaterial = UMaterialInstanceDynamic::Create( InitialMaterial , this );
+        if (TempMaterial)
+        {
+            TempMaterial->GetTextureParameterValue( FName( "A1-2345" ) , InitialTexture );
+            NewTexture = Cast<UTexture2DDynamic>( InitialTexture );
+        }
+    }
 }
 
 // Called every frame
@@ -97,6 +109,8 @@ void AAIMarterialTestActor::OnImageDownloaded(UTexture2DDynamic* DownloadedTextu
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );  
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
         DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate );
+        TimelineComponent->PlayFromStart();
+
         // UTexture로 캐스팅
         UTexture* testTexture = Cast<UTexture>( DownloadedTexture );
         NewTexture = DownloadedTexture;
@@ -105,7 +119,7 @@ void AAIMarterialTestActor::OnImageDownloaded(UTexture2DDynamic* DownloadedTextu
 
         if (DynamicMaterial && TimelineComponent)
         {
-            DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
+            //DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
 
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
             TimelineComponent->PlayFromStart();
@@ -134,6 +148,21 @@ void AAIMarterialTestActor::UpdateAlpha( float Alpha )
             DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
         }
     }
+
+    /*
+    if (DynamicMaterial)
+    {
+        DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Alpha);
+    }
+
+    if (InitialTexture)
+    {
+        UMaterialInstanceDynamic* InitialDynamicMaterial = UMaterialInstanceDynamic::Create(MaterialTemplate, this);
+        InitialDynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.0f - Alpha);
+        InitialDynamicMaterial->SetTextureParameterValue(FName("A1-2345"), InitialTexture);
+        MeshComp->SetMaterial(0, InitialDynamicMaterial);
+    }
+    */
 }
 
 void AAIMarterialTestActor::OnTimelineFinished()
@@ -141,4 +170,12 @@ void AAIMarterialTestActor::OnTimelineFinished()
     // Handle timeline finished event
     // For example, you can loop the timeline
     TimelineComponent->PlayFromStart();
+
+    /*
+    if (MeshComp && DynamicMaterial)
+    {
+        MeshComp->SetMaterial(0, DynamicMaterial);
+        InitialTexture = nullptr;
+    }
+    */
 }
