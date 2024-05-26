@@ -77,6 +77,8 @@ public:
 
 	bool bHasTarget = false;
 
+	bool bIsAttackComplete = false;
+
 	//일정 반경 안에 들어오면 플레이어를 향해 이동
 	UPROPERTY( EditAnywhere )
 	float TargetRange = 1500;

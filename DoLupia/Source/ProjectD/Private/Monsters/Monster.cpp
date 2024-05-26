@@ -21,7 +21,7 @@ AMonster::AMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh(TEXT("/Game/Monsters/TrashMonster/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem.SK_Ancient_Golem"));
+	/*ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh(TEXT("/Game/Monsters/TrashMonster/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem.SK_Ancient_Golem"));
 	RootComponent->SetWorldScale3D(FVector(1.5f));
 	if (MonsterMesh.Succeeded()) {
 		GetMesh()->SetSkeletalMesh(MonsterMesh.Object);
@@ -39,7 +39,7 @@ AMonster::AMonster()
 			Wheels->SetSkeletalMesh( SK_WHEELS.Object );
 		}
 		Wheels->SetupAttachment( GetMesh() , WheelsSocket );
-	}
+	}*/
 
 
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>(TEXT("MonsterFSM"));
@@ -138,6 +138,11 @@ void AMonster::MoveState()
 
 void AMonster::AttackState()
 {
+	if (target == nullptr)
+	{
+		return;
+	}
+
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 	currentTime += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
@@ -146,14 +151,14 @@ void AMonster::AttackState()
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
-
 	}
 
 	
-	if (TargetVector.Size() > AttackRange) {
+	if (TargetVector.Size() > AttackRange && anim->bIsAttackComplete) {
 		MonsterFSM->state = EMonsterState::Move;
 		anim->animState = MonsterFSM->state;
-		GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
+		anim->bIsAttackComplete = false;
+		//GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
 	
 
@@ -235,7 +240,6 @@ void AMonster::OnMyTakeDamage(int damage)
 {
 	currentHP -= damage;
 	monsterHPWidget->SetHP( currentHP , maxHP );
-	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 
 	if (currentHP < 0)
 	{

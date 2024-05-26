@@ -28,6 +28,9 @@ public:
 	UPROPERTY( EditDefaultsOnly , BlueprintReadWrite )
 	bool bAttackDelay = false;
 
+	UPROPERTY( EditDefaultsOnly , BlueprintReadWrite )
+	bool bIsAttackComplete = false;
+
 	UFUNCTION(BlueprintCallable)
 	void OnEndHitAttackAnimation();
 
