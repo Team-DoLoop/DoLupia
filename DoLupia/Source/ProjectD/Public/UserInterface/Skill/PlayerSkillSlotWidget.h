@@ -13,5 +13,14 @@ UCLASS()
 class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+	virtual void NativeOnInitialized ( ) override;
+	
+private:
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UProgressBar* CoolTimeBar;
+	
+public:
+	void InitUI();
 	
 };
