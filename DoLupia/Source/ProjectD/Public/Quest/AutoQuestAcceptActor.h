@@ -27,7 +27,7 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FDataTableRowHandle QuestData;
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void GiveQuest();
 
 	UPROPERTY()
