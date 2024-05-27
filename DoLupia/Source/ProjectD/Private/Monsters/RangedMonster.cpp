@@ -41,7 +41,6 @@ void ARangedMonster::BeginPlay()
 	this->AttackRange = 850;
 	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
-	UE_LOG( LogTemp , Warning , TEXT( "%f" ) , attackDelayTime );
 }
 
 
@@ -60,13 +59,13 @@ void ARangedMonster::MoveState()
 			anim->animState = MonsterFSM->state;
 			anim->bAttackDelay = true;
 			currentTime = attackDelayTime;
-			UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격모드로 넘어갈게요" )  );
+			//UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격모드로 넘어갈게요" )  );
 			
 		}
 		else
 		{
 			MoveToTarget();
-			UE_LOG( LogTemp , Warning , TEXT( "공격범위안에 있지만 장애물 있어서 이동할게요" ) );
+			//UE_LOG( LogTemp , Warning , TEXT( "공격범위안에 있지만 장애물 있어서 이동할게요" ) );
 		}
 		
 	}
