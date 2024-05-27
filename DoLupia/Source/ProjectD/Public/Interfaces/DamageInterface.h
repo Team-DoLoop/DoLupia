@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Common/AttackType.h"
 #include "UObject/Interface.h"
 #include "DamageInterface.generated.h"
 
@@ -22,5 +23,6 @@ class PROJECTD_API IDamageInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual void TakeHit(EAttackType AttackType, float Damage);
 	virtual void TakeDamage(float Damage);
 };

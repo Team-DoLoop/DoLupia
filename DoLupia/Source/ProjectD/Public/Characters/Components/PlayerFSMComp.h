@@ -105,6 +105,7 @@ public:
 private:
 
 public:
+	bool CanLyingState(EPlayerState _CurrentState);
 	bool CanDamageState(EPlayerState _CurrentState);
 
 

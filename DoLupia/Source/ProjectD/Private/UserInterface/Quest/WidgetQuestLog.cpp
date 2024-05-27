@@ -180,15 +180,13 @@ void UWidgetQuestLog::OnTracked( AQuest_Base* QuestActor )
 
 void UWidgetQuestLog::AddQuestToScrollBox(UWidgetQuestLog_QuestEntry* QuestWidget, FQuestDetails* QuestDetailsRow, FName QuestID)
 {
-    if (!IsValid( scroll_MainQuests ))
+    if (IsValid( scroll_MainQuests ))
     {
-        UE_LOG( LogTemp , Error , TEXT( "scroll_MainQuests is not valid." ) );
-        return;
+        scroll_MainQuests->ClearChildren();
     }
-    if (!IsValid( scroll_SideQuests ))
+    if (IsValid( scroll_SideQuests ))
     {
-        UE_LOG( LogTemp , Error , TEXT( "scroll_SideQuests is not valid." ) );
-        return;
+        scroll_SideQuests->ClearChildren();
     }
 
     UScrollBox* SelectedScrollBox = nullptr;

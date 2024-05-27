@@ -4,14 +4,31 @@
 #include "Monsters/StrikeMonster.h"
 
 #include "Characters/ProjectDCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "Monsters/MonsterSword.h"
 #include "Monsters/MonsterFSM.h"
 
 
 AStrikeMonster::AStrikeMonster()
 {
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh( TEXT( "/Game/Asset/Character/Sword_Robot/Sword_Robot.Sword_Robot" ) );
+	RootComponent->SetWorldScale3D( FVector( 1.5f ) );
+	if (MonsterMesh.Succeeded()) {
+		GetMesh()->SetSkeletalMesh( MonsterMesh.Object );
+		GetMesh()->SetRelativeLocationAndRotation( FVector( 0 , 0 , -189 ) , FRotator( 0 , -90 , 0 ) );
+
+	}
+
+	SwordCollision = CreateDefaultSubobject<UCapsuleComponent>( TEXT( "SwordCollision" ) );
+
 	FName WeaponSocket( TEXT( "hand_rSocket" ) );
 	if (GetMesh()->DoesSocketExist( WeaponSocket ))
+	{
+		SwordCollision->SetupAttachment( GetMesh() , WeaponSocket );
+	}
+
+
+	/*if (GetMesh()->DoesSocketExist( WeaponSocket ))
 	{
 		Weapon = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Weapon" ) );
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/TrashMonster/Assets/Weapon/Swords_Group_ThinSword_Mesh.Swords_Group_ThinSword_Mesh" ) );
@@ -20,9 +37,10 @@ AStrikeMonster::AStrikeMonster()
 			Weapon->SetStaticMesh( SK_WEAPON.Object );
 		}
 		Weapon->SetupAttachment( GetMesh() , WeaponSocket );
-	}
+	}*/
 
-	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_StrikeMonster.ABP_StrikeMonster_C'" ) );
+	
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_StrikeMonster1.ABP_StrikeMonster1_C'" ) );
 	if (tempClass.Succeeded()) 
 	{
 		GetMesh()->SetAnimInstanceClass( tempClass.Class );
@@ -39,7 +57,7 @@ void AStrikeMonster::BeginPlay()
 	this->maxHP = 150;
 	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , this->maxHP );
 
-	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
+	SwordCollision->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
 }
 
 
@@ -51,7 +69,7 @@ void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (OverlapPlayer->GetController())
 		{
 			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::플레이어 공격 성공!!" ) );
-			OverlapPlayer->TakeDamage( 30 );
+			OverlapPlayer->TakeHit( EAttackType::BASIC, 30 );
 
 			return;
 		}

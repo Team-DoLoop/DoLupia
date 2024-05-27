@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttackType.h"
 #include "Components/ActorComponent.h"
 #include "StatusEffectComp.generated.h"
 
 //class USoundBase;
 //class UParticleSystem;
 
+// -> AttackType으로 이동
+/*
 UENUM(BlueprintType)
 enum class EStatusEffectType : uint8
 {
@@ -16,7 +19,7 @@ enum class EStatusEffectType : uint8
 	BLEED = 1 UMETA(DisplayName = "Bleed"),
 	POISON = 2 UMETA(DisplayName = "Poison")
 };
-
+*/
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UStatusEffectComp : public UActorComponent
@@ -47,14 +50,14 @@ protected:
 	// UParticleSystem* VFX;
 
 	UPROPERTY()
-	EStatusEffectType statusEffectType = EStatusEffectType::NONE;
+	EEffectAttackType statusEffectType = EEffectAttackType::NONE;
 	
 public:
 	float TakeDamage = 0.0f;
 	bool IsDotAttack = false;
 
 	// 대상에게 줄 효과 Set
-	virtual void SetStatusEffect(EStatusEffectType _statusEffect);
+	virtual void SetStatusEffect(EEffectAttackType _statusEffect);
 
 	// Target에게 상태 이상 효과 적용
 	virtual void AddStatusEffect(class ACharacter* Target);

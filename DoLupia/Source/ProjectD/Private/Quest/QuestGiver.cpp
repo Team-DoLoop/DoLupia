@@ -88,7 +88,7 @@ FString UQuestGiver::InteractWith()
     {
         //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
         UE_LOG( LogTemp , Error , TEXT( "!QuestComponent->QueryActiveQuest( QuestData.RowName )" ) );
-        DisplayQuest();
+        DisplayQuest(0);
         return GetOwner()->GetName();
     }
     else
@@ -111,11 +111,13 @@ FString UQuestGiver::InteractWith()
                 return GetOwner()->GetName();
             }
             /*
-                else 
+            else 
             {
-                UE_LOG( LogTemp , Error , TEXT( " DisplayQuest();" ) );
-                //false이면
-                DisplayQuest();
+                UE_LOG( LogTemp , Error , TEXT( " DisplayQuest(CompleteValuePtr->CurrnetStage);" ) );
+                //QuestBase의 IsCompleted가 false이면 -> 예로Stage가 여러개 인데, 다 완료되지 않았을 경우
+
+//  아직 Quest Base CurrentStage +1 하는거 안만들어 놨어
+                DisplayQuest( CompleteValuePtr->CurrnetStage );
                 return GetOwner()->GetName();
             }
             */
@@ -127,7 +129,7 @@ FString UQuestGiver::InteractWith()
     }
 }
 
-void UQuestGiver::DisplayQuest()
+void UQuestGiver::DisplayQuest(int32 CurrentStage)
 {
     FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
 
@@ -138,6 +140,7 @@ void UQuestGiver::DisplayQuest()
         {
 	        QuestWidget->QuestDetails = *Row;
             QuestWidget->QuestID = QuestData.RowName;
+            QuestWidget->CurrentStage = CurrentStage;
 			QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest)); // 위젯을 화면에 추가
         }
     }

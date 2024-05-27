@@ -8,6 +8,7 @@
 #include "UObject/Package.h"
 #include "ImageUtils.h"
 #include "Materials/MaterialInstance.h"
+#include "Library/AIConnectionLibrary.h"
 #include "Materials/MaterialExpressionTextureSample.h"
 #include "Engine/Texture2DDynamic.h" 
 #include "Blueprint/AsyncTaskDownloadImage.h"
@@ -35,6 +36,8 @@ AAIMarterialTestActor::AAIMarterialTestActor()
 void AAIMarterialTestActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+    AIlib = NewObject<UAIConnectionLibrary>();
 	
 }
 
@@ -52,19 +55,17 @@ void AAIMarterialTestActor::UpdateActorMaterial()
 
 void AAIMarterialTestActor::LoadWebImage()
 {
-    UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Call" ) );
-    
-    // URL을 통해 이미지를 다운로드
-    FString testURL = "http://192.168.75.246:8000/ShowAITexture";
-    UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( testURL );
+    // Image Load URL Setting
+    FString ServerURL = AIlib->SetupAITextureURL();
+
+    // Image Downloading..
+    UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
     if (DownloadTask)
     {
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
         DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
     }
-
-    //UMaterialInstanceDynamic* testMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate2 );
 
 }
 
