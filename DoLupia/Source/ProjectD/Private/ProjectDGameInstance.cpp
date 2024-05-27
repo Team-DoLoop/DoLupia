@@ -8,7 +8,10 @@ UProjectDGameInstance::UProjectDGameInstance()
 {
 	FString PlayerSkillDataPath = TEXT("/Script/Engine.DataTable'/Game/Player/Data/DT_PlayerSkill.DT_PlayerSkill'");
 	static ConstructorHelpers::FObjectFinder<UDataTable> DT_PlayerSkill(*PlayerSkillDataPath);
-	PlayerSkillTable = DT_PlayerSkill.Object;
+	if(DT_PlayerSkill.Succeeded())
+	{
+		PlayerSkillTable = DT_PlayerSkill.Object;
+	}
 }
 
 void UProjectDGameInstance::Init()
@@ -16,9 +19,7 @@ void UProjectDGameInstance::Init()
 	Super::Init();
 }
 
-FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)
+FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 ID)
 {
-	if(!PlayerSkillTable) return nullptr;
-
-	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(SkillID), TEXT(""));
+	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(ID), TEXT(""));
 }

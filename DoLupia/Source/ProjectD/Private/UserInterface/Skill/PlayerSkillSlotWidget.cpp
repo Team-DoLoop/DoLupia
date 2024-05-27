@@ -18,5 +18,8 @@ void UPlayerSkillSlotWidget::InitUI()
 
 void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* PlayerSkillData)
 {
-	SkillThumnail->SetBrushFromTexture(PlayerSkillData->SkillThumnail);
+	if(PlayerSkillData && PlayerSkillData->SkillThumnail)
+	{
+		SkillThumnail->SetBrushFromTexture(PlayerSkillData->SkillThumnail);
+	}
 }

@@ -23,14 +23,15 @@ void UPlayerSkillWidget::InitSkillSlot()
 	for(int i = 0; i < 4; i++)
 	{
 		auto PlayerSkillSlot = CreateWidget<UPlayerSkillSlotWidget>(this, PlayerSkillSlotFactory);
-		PlayerSkillSlotArray.Add(PlayerSkillSlot);
-		PlayerSkillSlot->SetUI(GI->GetPlayerSkillData(i));
-		
-		if(UHorizontalBoxSlot* SkillSlot = SkillBox->AddChildToHorizontalBox(PlayerSkillSlot))
+		if(PlayerSkillSlot)
 		{
-			SkillSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
-			SkillSlot->SetHorizontalAlignment(HAlign_Fill);
-			SkillSlot->SetVerticalAlignment(VAlign_Fill);
+			PlayerSkillSlotArray.Add(PlayerSkillSlot);
+			PlayerSkillSlot->SetUI(GI->GetPlayerSkillData(i));
+			
+			if(UHorizontalBoxSlot* SkillSlot = SkillBox->AddChildToHorizontalBox(PlayerSkillSlot))
+			{
+				SkillSlot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+			}
 		}
 	}
 }

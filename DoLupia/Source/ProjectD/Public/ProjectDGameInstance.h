@@ -20,7 +20,7 @@ public:
 	UProjectDGameInstance();
 
 	virtual void Init() override;
-	FPlayerSkillData* GetPlayerSkillData(int32 SkillID);
+	FPlayerSkillData* GetPlayerSkillData(int32 ID);
 
 private:
 	UPROPERTY()
