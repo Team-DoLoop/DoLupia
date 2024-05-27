@@ -4,6 +4,7 @@
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 #include "Blueprint/SlateBlueprintLibrary.h"
+#include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -177,7 +178,7 @@ void UQuickSlotWidget::UseItem()
 					{
 						const FString& ItemID = ItemReference->GetID().ToString();
 
-						ItemBase->Use();
+						ItemBase->Use(Cast<AProjectDCharacter>(InventoryComponent->GetOwner()));
 						InventoryComponent->HandelRemoveItem( ItemReference->GetTextData().Name.ToString(), 1, true);
 
 						if(!ItemReference->GetQuantity())

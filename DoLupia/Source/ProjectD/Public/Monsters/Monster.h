@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
+struct FItemSpawnerInfo;
+
 UENUM( BlueprintType )
 enum class EMonsterType : uint8
 {
@@ -115,4 +117,13 @@ public:
 
 		return EnumPtr->GetDisplayNameTextByValue( static_cast<int64>(EnumValue) ).ToString();
 	}
+
+protected:
+	// 아이템 스포너
+	UPROPERTY(EditAnywhere)
+	class AItemSpawner* ItemSpawner;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FItemSpawnerInfo> ItemTuples;
+
 };

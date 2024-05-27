@@ -16,12 +16,6 @@ APickup::APickup()
 	PickUpMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
 	PickUpMesh->SetSimulatePhysics(true);
 	SetRootComponent(PickUpMesh);
-
-	SphereComponent = CreateDefaultSubobject<USphereComponent>("Item Collision");
-	SphereComponent->InitSphereRadius( 50.0f );
-	SphereComponent->SetCollisionProfileName( TEXT( "OverlapAllDynamic" ) );
-	SphereComponent->SetupAttachment(GetRootComponent());
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APickup::BeginPlay()
@@ -41,12 +35,6 @@ void APickup::BeginPlay()
 	if(SphereComponent)
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic( this , &APickup::BezierBeginOverlap );
-	}
-
-	if(ItemSpawner)
-	{
-		ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( FVector::ZeroVector , FRotator::ZeroRotator );
-		ItemSpawner->AttachToActor( this , FAttachmentTransformRules::SnapToTargetNotIncludingScale );
 	}
 }
 
@@ -69,7 +57,7 @@ void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int
 		// 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
 		FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
 		ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
-		InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
+		InQuantity <= 0 ? ItemReference->SetQuantity(1, false) : ItemReference->SetQuantity(InQuantity, false);
 
 		PickUpMesh->SetStaticMesh(ItemData->AssetData.Mesh);
 
@@ -81,7 +69,7 @@ void APickup::InitializeDrop(UItemBase* ItemToDrop, const int32 InQuantity)
 {
 	ItemReference = ItemToDrop;
 
-	InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
+	InQuantity <= 0 ? ItemReference->SetQuantity(1, false) : ItemReference->SetQuantity(InQuantity, false);
 	ItemReference->GetNumericData().Weight = ItemToDrop->GetItemSingleWeight();
 	ItemReference->SetOwningInventory(nullptr);
 	PickUpMesh->SetStaticMesh(ItemToDrop->GetAssetData().Mesh);
@@ -104,7 +92,7 @@ void APickup::EndFocus()
 	}
 }
 
-void APickup::StartMovement(FVector StartPoint, FVector ControlPoint, FVector EndPoint, float Duration)
+void APickup::StartMovement(FVector StartPoint, FVector ActorSpeed )
 {
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
@@ -133,6 +121,7 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 {
 	if(!IsPendingKillPending())
 	{
+
 		if(ItemReference)
 		{
 			if(UInventoryComponent* PlayerInventory = Taker->GetInventory())

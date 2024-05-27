@@ -31,7 +31,7 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 	this->bIsPickup = true;
 }
 
-void UItemBase::SetQuantity(const int32 NewQuantity)
+void UItemBase::SetQuantity(const int32 NewQuantity, bool IsRemoveItem)
 {
 	if(NewQuantity != Quantity)
 	{
@@ -41,7 +41,7 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 		{
 			if(Quantity <= 0)
 			{
-				OwningInventory->RemoveSingleInstanceOfItem(this);
+				OwningInventory->RemoveSingleInstanceOfItem(this,IsRemoveItem);
 			}
 		}
 		else
@@ -52,9 +52,8 @@ void UItemBase::SetQuantity(const int32 NewQuantity)
 
 }
 
-void UItemBase::Use()
+void UItemBase::Use(AProjectDCharacter* Character)
 {
-	AProjectDCharacter* Character = Cast<AProjectDCharacter>(OwningInventory->GetOwner());
 	Character->GetPlayerStat()->SetHP( Character->GetPlayerStat()->GetHP() - ItemStatistics.HealthValue );
 }
 

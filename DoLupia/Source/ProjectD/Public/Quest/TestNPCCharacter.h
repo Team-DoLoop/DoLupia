@@ -15,26 +15,23 @@ class PROJECTD_API ATestNPCCharacter : public ACharacter, public IQuestInteracti
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ATestNPCCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	FORCEINLINE UQuestGiver* GetQuestGiver() const { return QuestGiverComp; };
 
-	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
-	UQuestGiver* QuestGiverComp;
-
 	virtual FString InteractWith() override;
 
-	virtual void LookAt() override; 
+	virtual void LookAt() override;
+
+private:
+	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
+	UQuestGiver* QuestGiverComp;
 };
