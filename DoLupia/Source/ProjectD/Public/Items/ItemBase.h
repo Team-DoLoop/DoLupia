@@ -33,7 +33,7 @@ public:
 	FORCEINLINE bool IsFullItemStack() const { return Quantity == NumericData.MaxStackSize; };
 
 	UFUNCTION(Category = "Item")
-	void SetQuantity(const int32 NewQuantity);
+	void SetQuantity(const int32 NewQuantity , bool IsRemoveItem );
 
 	FORCEINLINE void SetID(FName _ID) { ID = _ID; }
 	FORCEINLINE void SetItemType(EItemType _ItemType) { ItemType = _ItemType; }
@@ -56,7 +56,7 @@ public:
 	FORCEINLINE void SetOwningInventory(UInventoryComponent* NewOwningInventory) { OwningInventory = NewOwningInventory; };
 
 	UFUNCTION( Category = "Item" )
-	void Use();
+	void Use(class AProjectDCharacter* Character);
 
 protected:
 	bool operator==(const FName& OtherID) const

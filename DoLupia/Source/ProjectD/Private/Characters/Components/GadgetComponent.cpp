@@ -89,6 +89,7 @@ void UGadgetComponent::InitEquip()
 
 	if (SwordBase)
 	{
+		SwordBase->SetActorScale3D(FVector(0.3f));
 		SwordBase->AttachToComponent( Character->GetMesh() ,
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale , SwordSocket );
 	}

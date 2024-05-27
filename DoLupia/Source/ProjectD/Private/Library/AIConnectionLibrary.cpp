@@ -82,6 +82,34 @@ FString UAIConnectionLibrary::SetupAITextureURL()
 	return ServerURL;
 }
 
+void UAIConnectionLibrary::SendPImgToSrv( int32 keyword )
+{
+	TMap<FString , int32> playerData;
+	int32 PImgKeyword = keyword;
+
+	playerData.Add( TEXT( "Img_keywords" ) , PImgKeyword );
+
+	FString sendJson = UJsonLibrary::MapToJsonInt( playerData );
+
+	/* AI Server Image Request */
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/CreatePlayerCapeTxt";
+	ReqAIImage( ServerURL , sendJson );
+}
+
+void UAIConnectionLibrary::SendBImgToSrv( int32 keyword )
+{
+	TMap<FString , int32> bossimgData;
+	int32 BImgKeyword = keyword;
+
+	bossimgData.Add( TEXT( "Img_keywords" ) , BImgKeyword );
+
+	FString sendJson = UJsonLibrary::MapToJsonInt( bossimgData );
+
+	/* AI Server Image Request */
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/CreateBossEffectsTxt";
+	ReqAIImage( ServerURL , sendJson );
+}
+
 void UAIConnectionLibrary::ReqMessage(const FString& url, const FString& msg)
 {
 	auto& httpModule = FHttpModule::Get();

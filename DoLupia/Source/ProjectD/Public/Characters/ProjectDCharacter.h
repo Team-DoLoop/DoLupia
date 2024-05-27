@@ -17,6 +17,7 @@ class UTimelineComponent;
 class UQuestLogComponent;
 class UQuestInventoryComponent;
 class UPlayerBattleWidget;
+class ATestNPCCharacter;
 
 USTRUCT()
 struct FInteractionData
@@ -242,6 +243,9 @@ private:
 	// Quest 변수
 	UPROPERTY()
 	AActor* LookAtActor;
+
+	UPROPERTY()
+	ATestNPCCharacter* SpecificActor;
 	
 protected:
 	

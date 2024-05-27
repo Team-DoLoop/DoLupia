@@ -165,6 +165,18 @@ UItemBase* UInventoryComponent::FindNextPartialStack(UItemBase* ItemIn) const
 	return nullptr;
 }
 
+int32 UInventoryComponent::FindItemQuantity(const FString& InKey)
+{
+	const int32* ElemValue = InventoryCount.Find( InKey );
+
+	int32 Result = 0;
+
+	if (ElemValue)
+		Result = *ElemValue;
+
+	return Result;
+}
+
 int32 UInventoryComponent::CalculateWeightAddAmount(UItemBase* ItemIn, int32 RequestedAddAmount)
 {
 	// (인벤토리 무게 - 인벤토리 들고 있는 현재 무게) / 아이템의 무게
@@ -212,7 +224,7 @@ int32 UInventoryComponent::CalculateNumberForFullStack(UItemBase* StackableItem,
 	return FMath::Min(InitialRequestedAddAmount, AddAmountToMakeFullStack);
 }
 
-void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
+void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove, bool IsRemoveItem )
 {
 	// 아이템과 같은 주소를 가지고 있다면 그 아이템을 지우고 업데이트 시켜주자.
 
@@ -234,8 +246,12 @@ void UInventoryComponent::RemoveSingleInstanceOfItem(UItemBase* ItemToRemove)
 					
 			}
 
-			ItemPool->ReturnItem(InventoryContents[i]);
-			InventoryContents[i] = nullptr;
+			if(IsRemoveItem)
+			{
+				ItemPool->ReturnItem( InventoryContents[i] );
+				InventoryContents[i] = nullptr;
+			}
+
 			return;
 		}
 	}
@@ -253,7 +269,7 @@ int32 UInventoryComponent::RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAm
 	const int32 ActualAmountToRemove = FMath::Min(DesiredAmountToRemove, Quantity);
 
 	// 삭제할 양 만큼 아이템의 수량을 맞춰준다.
-	ItemIn->SetQuantity(Quantity - ActualAmountToRemove);
+	ItemIn->SetQuantity(Quantity - ActualAmountToRemove, true);
 
 	// 삭제할 양 만큼 인벤토리의 무게를 맞춰준다.
 	InventoryTotalWeight -= ActualAmountToRemove * ItemIn->GetItemSingleWeight();
@@ -388,7 +404,7 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 			{
 				// 다 넣지 못한 수량만큼 아이템의 수량을 업데이트(감소) 시켜주자.
 				AmountToDistribute -= WeightLimitAddAmount;
-				ItemIn->SetQuantity( AmountToDistribute );
+				ItemIn->SetQuantity( AmountToDistribute, false );
 
 				// 필요한 양의 아이템을 모두 못 넣기 때문에 데이터를 카피해서 넣어주자.
 				AddNewItem(ExistingItemStack , WeightLimitAddAmount , FindItemIdx );
@@ -399,7 +415,7 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 			AmountToDistribute -= WeightLimitAddAmount;
 
 			// 내가 옮긴 아이템 남은 수량으로 바꿔준다.
-			ItemIn->SetQuantity( AmountToDistribute );
+			ItemIn->SetQuantity( AmountToDistribute, false );
 
 			// 만약 최대 무게에 도달하면 루프를 실행할 필요가 없기 때문에 반환한다.
 			if (InventoryTotalWeight >= InventoryWeightCapacity)
@@ -623,9 +639,9 @@ void UInventoryComponent::AddNewItem(UItemBase* Item, const int32 AmountToAdd, c
 	const int32 AddQuantity = AmountToAdd + ItemSourQuantity;
 
 	if(AddQuantity > MaxStackSize)
-		NewItem->SetQuantity( MaxStackSize );
+		NewItem->SetQuantity( MaxStackSize, false );
 	else
-		NewItem->SetQuantity( AddQuantity );
+		NewItem->SetQuantity( AddQuantity, false );
 	
 
 	// 인벤토리에 아이템 데이터를 아이템 데이터가 없는 인덱스에 추가한다.
@@ -686,8 +702,8 @@ void UInventoryComponent::DeleteItem(const FString& ItemName, const int32 Amount
 		InventoryTotalWeight -= ExistingItemStack->GetItemSingleWeight() * Quantity;
 
 		QuickSlotItemDelete
-			? ExistingItemStack->SetQuantity( ExistingItemStack->GetQuantity() - 1)
-			: ExistingItemStack->SetQuantity( FMath::Min( 0 , ExistingItemStack->GetQuantity() - ToAdd ));
+			? ExistingItemStack->SetQuantity( ExistingItemStack->GetQuantity() - 1, false )
+			: ExistingItemStack->SetQuantity( FMath::Min( 0 , ExistingItemStack->GetQuantity() - ToAdd ), false);
 
 		if (int32* ElemPtr = InventoryCount.Find( ItemName ))
 		{
@@ -783,8 +799,8 @@ void UInventoryComponent::SortItem_Name()
 			while (Iterate.Value)
 			{
 				const int32 AddNum = FMath::Min( Iterate.Value , CopyItemBase->GetNumericData().MaxStackSize );
-				CopyItemBase->SetQuantity( AddNum );
 				Iterate.Value -= AddNum;
+				CopyItemBase->SetQuantity( AddNum , false);
 				HandelStackableItems( CopyItemBase , AddNum );
 				CopyItemBase->ResetItemFlags();
 				CopyItemBase = ItemPool->GetItem( Iterate.Key );
@@ -794,7 +810,7 @@ void UInventoryComponent::SortItem_Name()
 		{
 			while (Iterate.Value--)
 			{
-				CopyItemBase->SetQuantity( 1 );
+				CopyItemBase->SetQuantity( 1, false );
 				HandelNonStackableItems( CopyItemBase );
 				CopyItemBase->ResetItemFlags();
 				CopyItemBase = ItemPool->GetItem( Iterate.Key );

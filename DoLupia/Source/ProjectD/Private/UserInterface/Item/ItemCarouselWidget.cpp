@@ -46,6 +46,7 @@ void UItemCarouselWidget::MoveItemsUp(float DeltaTime)
     // 아이템을 부드럽게 스크롤하기 위해 속도를 조절
 
     bool IsViewWidget = false;
+    FVector2D Original( 0 , 300 );  // 이미지 위젯의 위치를 조정하여 자연스럽게 위로 이동
 
     for (int32 i = 0; i < WidgetBox->GetChildrenCount(); ++i)
     {
@@ -54,8 +55,8 @@ void UItemCarouselWidget::MoveItemsUp(float DeltaTime)
 			if(LootingItemWidget->GetVisibility() == ESlateVisibility::Hidden)
                 LootingItemWidget->SetVisibility(ESlateVisibility::Visible);
 
-            FVector2D Original( 0 , 300);  // 이미지 위젯의 위치를 조정하여 자연스럽게 위로 이동
-            FVector2D Offset( 0.0 , -1000.f * DeltaTime ); // 각 아이템을 위로 20픽셀씩 이동
+            
+            FVector2D Offset( 0.0 , 0.0 ); // 각 아이템을 위로 20픽셀씩 이동
             float& LifeTime = LootingItemWidget->GetLifeTime();
 
             if (LifeTime >= 1.5f)
@@ -69,8 +70,6 @@ void UItemCarouselWidget::MoveItemsUp(float DeltaTime)
             float& WidgetSpeed = LootingItemWidget->GetSmoothScrollSpeed();
             WidgetSpeed += DeltaTime * 100.f;
             Offset.Y -= WidgetSpeed;
-
-            UE_LOG( LogTemp , Warning , TEXT( "%f" ) , (1.5f / LifeTime) - 1.f );
 
             LootingItemWidget->SetRenderOpacity( 1.5f / LifeTime - 1.f );
             LootingItemWidget->SetRenderTranslation( Original + Offset );
