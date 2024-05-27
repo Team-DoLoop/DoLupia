@@ -14,7 +14,7 @@
 
 FString UAIConnectionLibrary::LanIP = "192.168.75.108";
 //FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
-FString UAIConnectionLibrary::WifiIP = "192.168.45.20";
+FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
 FString UAIConnectionLibrary::ServerPort = "8000";
 
 UAIConnectionLibrary* UAIConnectionLibrary::Instance = nullptr;
@@ -41,7 +41,7 @@ void UAIConnectionLibrary::SendNPCConversationToServer( const FString& message )
 	FString sendJson = UJsonLibrary::MapToJsonStr( msgData );
 
 	/* AI Server Connection */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/chat";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/chat";
 	ReqMessage( ServerURL , sendJson );
 }
 
@@ -58,7 +58,7 @@ void UAIConnectionLibrary::SendImageKeywordToServer( int32 keyword )
 	FString sendJson = UJsonLibrary::MapToJsonInt( imgData );
 
 	/* AI Server Image Request */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/imageAI";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/imageAI";
 	ReqAIImage( ServerURL , sendJson );
 
 
@@ -78,7 +78,7 @@ void UAIConnectionLibrary::LoadImageToMaterial()
 FString UAIConnectionLibrary::SetupAITextureURL()
 {
 	/* AI Server Connection */
-	FString ServerURL = "http://" + LanIP + ":" + ServerPort + "/ShowAITexture";
+	FString ServerURL = "http://" + WifiIP + ":" + ServerPort + "/ShowAITexture";
 
 	return ServerURL;
 }

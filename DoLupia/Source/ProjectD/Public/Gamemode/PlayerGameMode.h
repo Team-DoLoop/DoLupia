@@ -6,6 +6,11 @@
 #include "GameFramework/GameModeBase.h"
 #include "PlayerGameMode.generated.h"
 
+
+class UAIConnectionLibrary;
+class UNPCConvWidget; 
+class UAITestWidget; 
+
 /**
  * 
  */

@@ -50,4 +50,7 @@ private:
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* connectionLibrary;
 
+	UPROPERTY()
+	class APlayerGameMode* gm;
+
 };
