@@ -15,6 +15,7 @@
 #include "Items/Sword/SwordBase.h"
 #include "Monsters/MonsterAnim.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Spawner/ItemSpawner.h"
 // Sets default values
 AMonster::AMonster()
 {
@@ -49,9 +50,6 @@ AMonster::AMonster()
 	healthUI->SetupAttachment( RootComponent );
 	healthUI->SetCastShadow( false );
 
-	
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -66,6 +64,30 @@ void AMonster::BeginPlay()
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 
 	ai = Cast<AAIController>( this->GetController() );
+
+
+	if(!ItemSpawner)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.bNoFail = true;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		const FVector& SpawnLocation{ GetActorLocation() + (GetActorForwardVector() * 50.f) + FVector(0.0, 0.0, 200.0)};
+		const FTransform SpawnTransform( GetActorRotation() , SpawnLocation );
+
+		ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( AItemSpawner::StaticClass() , SpawnTransform , SpawnParams );
+		ItemSpawner->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+
+		if(ItemSpawner)
+		{
+			for (auto& elem : ItemTuples)
+			{
+				ItemSpawner->EditItemSpawnerInfo( elem );
+				ItemSpawner->CreateItem( elem.ItemName , elem.DropPercentage );
+			}
+		}
+	}
 
 }
 
@@ -194,8 +216,11 @@ void AMonster::DieState()
 		AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
 		FString EnumValueAsString = EnumToString( EMonsterType::Strike );
 		player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
-		//아이템 드랍
 
+		//아이템 드랍
+		if (ItemSpawner)
+			ItemSpawner->SpawnItem( ItemSpawner );
+		
 		this->Destroy();
 		currentTime = 0;
 	}

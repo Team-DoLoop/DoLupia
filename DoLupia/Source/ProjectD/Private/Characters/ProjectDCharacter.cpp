@@ -38,6 +38,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Quest/QuestGiver.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -45,6 +46,9 @@
 
 AProjectDCharacter::AProjectDCharacter()
 {
+	// Mesh
+	GetMesh()->SetWorldScale3D(FVector(3.0f));
+	
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -242,7 +246,18 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
-	return !HUD->IsMenuVisible();
+	if(HUD->IsMenuVisible())
+		return false;
+
+	if(SpecificActor)
+	{
+		UQuestGiver* QuestGiver = SpecificActor->GetQuestGiver();
+
+		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver())
+			return false;
+	}
+
+	return true;
 }
 
 void AProjectDCharacter::UseQuickSlot(int32 SlotNumber)
@@ -397,7 +412,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
-				ATestNPCCharacter* SpecificActor = Cast<ATestNPCCharacter>( LookAtActor );
+				SpecificActor = Cast<ATestNPCCharacter>( LookAtActor );
 				if (SpecificActor)
 				{
 					SpecificActor->LookAt(); // 인터페이스 메서드 호출

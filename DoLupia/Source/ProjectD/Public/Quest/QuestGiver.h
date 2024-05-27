@@ -19,16 +19,16 @@ class PROJECTD_API UQuestGiver : public UActorComponent, public IQuestInteractio
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UQuestGiver();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	FORCEINLINE UWidgetQuestGiver*		GetWidgetQuestGiver() const { return QuestWidget; }
+	FORCEINLINE UWidgetQuestRewards*	GetRewardQuestGiver() const { return RewardsWidget; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

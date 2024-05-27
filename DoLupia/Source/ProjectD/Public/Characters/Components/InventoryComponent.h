@@ -109,20 +109,10 @@ public:
 	UFUNCTION(Category = "Inventory")
 	UItemBase* FindNextPartialStack(UItemBase* ItemIn) const;
 	UFUNCTION( Category = "Inventory" )
-	int32 FindItemQuantity(const FString& InKey)
-	{
-		const int32* ElemValue = InventoryCount.Find( InKey );
-
-		int32 Result = 0;
-
-		if (ElemValue)
-			Result = *ElemValue;
-
-		return Result;
-	}
+	int32 FindItemQuantity(const FString& InKey);
 
 	UFUNCTION(Category = "Inventory")
-	void RemoveSingleInstanceOfItem(UItemBase* ItemToRemove);
+	void RemoveSingleInstanceOfItem(UItemBase* ItemToRemove, bool IsRemoveItem );
 	UFUNCTION(Category = "Inventory")
 	int32 RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAmountToRemove);
 	UFUNCTION(Category = "Inventory")
