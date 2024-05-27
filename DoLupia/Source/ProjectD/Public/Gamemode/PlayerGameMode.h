@@ -6,9 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "PlayerGameMode.generated.h"
 
-/**
- * 
- */
+class UAIConnectionLibrary; // UAIConnectionLibrary 클래스 전방 선언
+
 UCLASS()
 class PROJECTD_API APlayerGameMode : public AGameModeBase
 {

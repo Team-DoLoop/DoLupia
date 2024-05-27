@@ -82,6 +82,9 @@ public:
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UWidgetQuestNotification> Notification_Widget;
 
+	UPROPERTY(EditAnywhere)
+	bool IsTurnedIn;
+
 protected:
 	bool Local_AllComplete;
 

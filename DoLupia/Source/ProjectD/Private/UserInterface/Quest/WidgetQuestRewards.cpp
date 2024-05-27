@@ -136,29 +136,38 @@ void UWidgetQuestRewards::OnAcceptClicked()
         return;
     }
 
+    //QuestLogComp->CompleteQuest(QuestID);
+
     if (QuestID.IsNone())
     {
         UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ WidgetQuestGiver" ) );
     }
+
     //아이템 삭제, 제공
 
     // UInventoryComponent 찾기
     UInventoryComponent* InvetoryComp = Cast<UInventoryComponent>( PlayerCharacterD->GetComponentByClass( UInventoryComponent::StaticClass() ) );
 
     //Delete(ObjectiveItems)
+
+    //아이템 지울 게 있을 때
     auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
-    for (const auto& removeItem : RemoveItem)
+    if (!RemoveItem.IsEmpty())
     {
-        FString ItemLog;
-        for (const auto& Pair : removeItem.ItemObjectives)
-        {
-            ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
-        }
-        //UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
+    	for (const auto& removeItem : RemoveItem)
+	    {
+	        FString ItemLog;
+	        for (const auto& Pair : removeItem.ItemObjectives)
+	        {
+	            ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
+	        }
+	        //UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
 
-        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
+	        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
+	    }  
     }
-
+    
+    //보상이 있을 때
     if(!ItemRewards.IsEmpty())
     {
 		for (const auto& items : ItemRewards) {

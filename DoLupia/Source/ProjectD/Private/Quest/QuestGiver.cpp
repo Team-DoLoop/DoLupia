@@ -82,8 +82,9 @@ FString UQuestGiver::InteractWith()
     UE_LOG( LogTemp , Error , TEXT( "QuestData.RowName %s" ) , *QuestData.RowName.ToString() );
 
     bool ActiveQuest = QuestComponent->QueryActiveQuest( QuestData.RowName );
-
-    if (!ActiveQuest)
+    bool CompleteQuest = QuestComponent->QueryCompleteQuests( QuestData.RowName );
+    //bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn( QuestData.RowName );
+    if (!ActiveQuest && !CompleteQuest)
     {
         FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
 
@@ -110,7 +111,7 @@ FString UQuestGiver::InteractWith()
         if (CompleteValuePtr)
         {
             UE_LOG( LogTemp , Error , TEXT( "AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName )" ) );
-            if (CompleteValuePtr->IsCompleted) 
+            if (CompleteValuePtr->IsCompleted && !CompleteValuePtr->IsTurnedIn) 
             {
                 UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
                 //완료가 true이면
@@ -162,12 +163,16 @@ void UQuestGiver::DisplayRewards()
             RewardsWidget->QuestDetails = *Row;
             RewardsWidget->QuestID = QuestData.RowName;
 
-            //보상 아이템 들 이름, 수량
-            for (auto& Pair : Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem)
+            //보상 아이템 들 이름, 수량이 있을 때 보내기
+            auto RewardItems = Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem;
+            if(!RewardItems.IsEmpty())
             {
-                //아이템 종류 선택ID 수량 연동 해야할듯
-                DesiredItemID = FName(Pair.Key);
-                RewardsWidget->ItemRewards.Add(CreateItem( UItemBase::StaticClass() , Pair.Value ));
+	            for (auto& Pair : Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem)
+	            {
+	                //아이템 종류 선택ID 수량 연동 해야할듯
+	                DesiredItemID = FName(Pair.Key);
+	                RewardsWidget->ItemRewards.Add(CreateItem( UItemBase::StaticClass() , Pair.Value ));
+	            }
             }
 
             RewardsWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));

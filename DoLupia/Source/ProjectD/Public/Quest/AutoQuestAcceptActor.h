@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
+#include "Quest/QuestInteractionInterface.h"
 #include "AutoQuestAcceptActor.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
-class PROJECTD_API AAutoQuestAcceptActor : public AActor
+class PROJECTD_API AAutoQuestAcceptActor : public AActor, public IQuestInteractionInterface
 {
 	GENERATED_BODY()
 	
@@ -24,6 +27,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
+
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FDataTableRowHandle QuestData;
 	
@@ -32,5 +37,8 @@ public:
 
 	UPROPERTY()
 	class AProjectDCharacter* MyPlayerCharacter;
+
+	UPROPERTY( VisibleAnywhere )
+	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
 
 };

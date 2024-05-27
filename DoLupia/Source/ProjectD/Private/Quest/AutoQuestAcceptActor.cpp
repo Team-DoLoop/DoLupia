@@ -6,12 +6,15 @@
 #include <Characters/ProjectDCharacter.h>
 #include <Kismet/GameplayStatics.h>
 #include "Quest/QuestLogComponent.h"
+#include <Components/BoxComponent.h>
 
 // Sets default values
 AAutoQuestAcceptActor::AAutoQuestAcceptActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
 
 	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
 	if (DataTable)
@@ -45,6 +48,30 @@ void AAutoQuestAcceptActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AAutoQuestAcceptActor::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	if (OtherActor) {
+		AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
+		if (player) {
+			/*
+			UQuestLogComponent* Questcomponent = player->FindComponentByClass<UQuestLogComponent>();
+
+			bool ActiveQuest = Questcomponent->QueryActiveQuest( QuestData.RowName );
+
+			if (!ActiveQuest) {
+				Questcomponent->AddNewQuest( QuestData.RowName );
+			}
+
+			auto QuestID = QuestData.RowName.ToString();
+			player->OnObjectiveIDCalled.Broadcast( QuestID , 1 );
+			*/
+			GiveQuest();
+		}
+	}
 }
 
 void AAutoQuestAcceptActor::GiveQuest()
