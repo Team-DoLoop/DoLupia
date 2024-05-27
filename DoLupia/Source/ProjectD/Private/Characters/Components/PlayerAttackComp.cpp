@@ -154,7 +154,8 @@ void UPlayerAttackComp::SwapSkill()
 	for(int i = 0; i < 2; i++)
 	{
 		if(CurrentSkillData[i] -> ID < 2) jumpSize = 4;
-		else if(CurrentSkillData[i] ->ID < 10) jumpSize = 2;
+		else if(CurrentSkillData[i] ->ID < 8) jumpSize = 2;
+		else if(CurrentSkillData[i] -> ID >= 8) jumpSize= -4;
 		
 		CurrentSkillData[i] = GI -> GetPlayerSkillData(CurrentSkillData[i]->ID + jumpSize);
 		//PlayerSkills[i]->ChangeSkillData(CurrentSkillData[i]);
