@@ -117,4 +117,7 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	bool AutoAccept;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	bool AutoComplete;
 };

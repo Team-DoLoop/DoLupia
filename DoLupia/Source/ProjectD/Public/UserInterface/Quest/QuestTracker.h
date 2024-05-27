@@ -41,6 +41,9 @@ protected:
 	class UTextBlock* txt_QuestName;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
+	class UTextBlock* txt_Complete;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
 	class UVerticalBox* box_Objectives;
 	
 	UPROPERTY( EditAnywhere )

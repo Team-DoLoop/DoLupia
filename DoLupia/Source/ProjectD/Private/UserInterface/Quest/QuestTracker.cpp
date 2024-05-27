@@ -76,21 +76,27 @@ void UQuestTracker::WidgetUpdate()
 
         if (QuestActor->QuestDetails.Stages.Num() > 0) // 배열이 비어 있지 않은지 확인
         {
-            const auto& FirstStage = QuestActor->QuestDetails.Stages[0]; // 첫 번째 요소에 접근
-            for (const auto& Objective : FirstStage.Objectives) // 범위 기반 for 루프
-            {
-                UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );
-                if (IsValid( ObjectiveWidget ))
+            if (QuestActor->QuestDetails.Stages.IsValidIndex( QuestActor->CurrentStage )) {
+
+                const auto& FirstStage = QuestActor->QuestDetails.Stages[QuestActor->CurrentStage]; // 첫 번째 요소에 접근
+                for (const auto& Objective : FirstStage.Objectives) // 범위 기반 for 루프
                 {
-                    ObjectiveWidget->ObjectiveData = Objective;
-                    ObjectiveWidget->QuestActor = QuestActor;
-                    box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
+                    UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );
+                    if (IsValid( ObjectiveWidget ))
+                    {
+                        ObjectiveWidget->ObjectiveData = Objective;
+                        ObjectiveWidget->QuestActor = QuestActor;
+                        box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
+                    }
                 }
+
+                //반복 완료
+
+                QuestLogComp->QuestCompleted.AddDynamic( this , &UQuestTracker::QuestCompleted );
             }
-
-            //반복 완료
-
-            QuestLogComp->QuestCompleted.AddDynamic( this , &UQuestTracker::QuestCompleted );
+            else {
+                txt_Complete->SetVisibility(ESlateVisibility::Visible);
+            }
         }
     }
 }

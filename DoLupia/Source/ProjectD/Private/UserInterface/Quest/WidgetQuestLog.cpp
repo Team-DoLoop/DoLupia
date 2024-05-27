@@ -123,7 +123,7 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
 		txt_QuestName->SetText( QN_MyText );
 		FText TD_MyText = FText::FromString( QuestDetialsRow->TrackingDescription );
     	txt_QuestDesc->SetText( TD_MyText );
-    	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[0].Description );
+    	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[CurrentQuestActor->CurrentStage].Description );
     	txt_StageDesc->SetText( SD_MyText );
 
         for (const auto& Objective : QuestDetialsRow->Stages[0].Objectives) // 범위 기반 for 루프

@@ -63,7 +63,7 @@ public:
 	UPROPERTY()
 	FQuestDetails QuestDetails;
 
-	UPROPERTY()
+	UPROPERTY( EditAnywhere )
 	int32 CurrentStage;
 
 	UPROPERTY()
