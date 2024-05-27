@@ -87,7 +87,7 @@ public:
 
 	//일정 반경 안에 들어오면 공격모드로 전환
 	UPROPERTY( EditAnywhere )
-	float AttackRange = 300;
+	float AttackRange = 200;
 
 	void MoveToTarget();
 
