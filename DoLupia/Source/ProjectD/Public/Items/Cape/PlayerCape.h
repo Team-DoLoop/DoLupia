@@ -6,14 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "PlayerCape.generated.h"
 
-UENUM(BlueprintType)
-enum class EPlayerCapeColor : uint8
-{
-	RED UMETA(DisplayName = "Red"),
-	YELLOW UMETA(DisplayName = "Yellow"),
-	BLUE UMETA(DisplayName = "Blue"),
-};
-
 
 UCLASS()
 class PROJECTD_API APlayerCape : public AActor
