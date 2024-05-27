@@ -4,20 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Characters/Skill/PlayerSkillBase.h"
-#include "PlayerSkillMelee.generated.h"
+#include "PlayerSkillSwap.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTD_API UPlayerSkillMelee : public UPlayerSkillBase
+class PROJECTD_API UPlayerSkillSwap : public UPlayerSkillBase
 {
 	GENERATED_BODY()
 
+public:
 
 private:
-
-public:
 	virtual void ExecuteSkill() override;
-	virtual void ChangeSkillData(FPlayerSkillData* _PlayerSkillData) override;
 };

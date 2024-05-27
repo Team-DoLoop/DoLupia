@@ -17,6 +17,7 @@ enum class EUseColor : uint8
 	RED UMETA(DisplayName = "Red"),
 	YELLOW UMETA(DisplayName = "Yellow"),
 	BLUE UMETA(DisplayName = "Blue"),
+	COLOR UMETA(DisplayName = "Color"),
 };
 
 UCLASS()

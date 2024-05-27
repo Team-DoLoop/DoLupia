@@ -3,14 +3,16 @@
 
 #include "Characters/Skill/PlayerSkillMelee.h"
 
-void UPlayerSkillMelee::SetSkillUI()
-{
-	Super::SetSkillUI();
-}
-
 void UPlayerSkillMelee::ExecuteSkill()
 {
 	Super::ExecuteSkill();
 
 	//if()
+}
+
+void UPlayerSkillMelee::ChangeSkillData(FPlayerSkillData* _PlayerSkillData)
+{
+	Super::ChangeSkillData(_PlayerSkillData);
+
+	
 }

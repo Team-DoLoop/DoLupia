@@ -3,7 +3,9 @@
 
 #include "UserInterface/Skill/PlayerSkillSlotWidget.h"
 
+#include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Data/PlayerSkillDataStructs.h"
 
 void UPlayerSkillSlotWidget::NativeOnInitialized()
 {
@@ -12,4 +14,9 @@ void UPlayerSkillSlotWidget::NativeOnInitialized()
 
 void UPlayerSkillSlotWidget::InitUI()
 {
+}
+
+void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* PlayerSkillData)
+{
+	SkillThumnail->SetBrushFromTexture(PlayerSkillData->SkillThumnail);
 }

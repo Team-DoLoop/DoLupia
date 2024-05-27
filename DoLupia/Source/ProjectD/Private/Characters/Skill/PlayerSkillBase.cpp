@@ -6,14 +6,11 @@
 #include "Characters/PlayerStateBase.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Data/PlayerSkillDataStructs.h"
 
 UPlayerSkillBase::UPlayerSkillBase()
 {
 	
-}
-
-void UPlayerSkillBase::SetSkillUI()
-{
 }
 
 void UPlayerSkillBase::ExecuteSkill()
@@ -23,4 +20,9 @@ void UPlayerSkillBase::ExecuteSkill()
 
 void UPlayerSkillBase::ApplySkill(ACharacter* Target)
 {
+}
+
+void UPlayerSkillBase::ChangeSkillData(FPlayerSkillData* _PlayerSkillData)
+{
+	
 }

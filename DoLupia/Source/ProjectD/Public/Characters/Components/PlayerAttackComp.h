@@ -9,7 +9,8 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
-
+struct FPlayerSkillData;
+class UProjectDGameInstance;
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UPlayerAttackComp : public UActorComponent, public ISkillInterface
 {
@@ -31,7 +32,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+	// <---------------------- Game ---------------------->
+private:
+	UProjectDGameInstance* GI;
 
 	// <---------------------- Player ---------------------->
 private:
@@ -66,6 +69,7 @@ private:
 
 	int PlayerAttackStatus = 0;
 	EUseColor CurrentSkillColor = EUseColor::NONE; // X, 빨, 노, 파
+	TArray<FPlayerSkillData*> CurrentSkillData;
 	
 	UPROPERTY()
 	TArray<class UPlayerSkillBase*> PlayerSkills;
@@ -78,9 +82,13 @@ public:
 	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
 	
+	void SetSkillUI(FPlayerSkillData* PlayerSkillData);
+	void SwapSkill();
 	void PlayerExecuteSkill(int32 SkillIndex);
 
 	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
+	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
+	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
 
-
+	
 };

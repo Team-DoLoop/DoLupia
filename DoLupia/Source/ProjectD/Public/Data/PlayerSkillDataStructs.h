@@ -8,7 +8,6 @@
 UENUM(BlueprintType)
 enum class ESkillType : uint8
 {
-	NONE UMETA(DisplayName = "None"),
 	MELEE UMETA(DisplayName = "Melee"),
 	RANGED UMETA(DisplayName = "Ranged"),
 	SWAP UMETA(DisplayName = "Swap"),
@@ -20,6 +19,9 @@ struct FPlayerSkillData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
+	FPlayerSkillData() : SkillID(1), SkillLevel(1), SkillCost(10), SkillCoolTime(5), SkillDamage(10){}
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillID;
 	
