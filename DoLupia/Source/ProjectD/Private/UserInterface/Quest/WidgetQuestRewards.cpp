@@ -158,11 +158,15 @@ void UWidgetQuestRewards::OnAcceptClicked()
 
         InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
     }
-    
-    for (const auto& items : ItemRewards) {
+
+    if(!ItemRewards.IsEmpty())
+    {
+		for (const auto& items : ItemRewards) {
         //보상 아이템 추가
         InvetoryComp->HandelAddItem( items);
+		}    
     }
+    
     
 
     // 위젯을 화면에서 제거합니다.
