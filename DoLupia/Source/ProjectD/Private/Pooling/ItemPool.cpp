@@ -4,6 +4,16 @@
 #include "Pooling/ItemPool.h"
 #include "Items/ItemBase.h"
 
+UItemPool::UItemPool()
+{
+    static ConstructorHelpers::FObjectFinder<UDataTable> DataTable( TEXT( "/Game/ItemData/MundaneItems" ) );
+
+	if (DataTable.Succeeded())
+    {
+        ItemDataTable = DataTable.Object;
+    }
+}
+
 void UItemPool::CreateItem(int32 NumberOfCreate)
 {
     for (int32 i = 0; i < NumberOfCreate; ++i)

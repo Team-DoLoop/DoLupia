@@ -15,13 +15,14 @@
 #include "Items/Sword/SwordBase.h"
 #include "Monsters/MonsterAnim.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Spawner/ItemSpawner.h"
 // Sets default values
 AMonster::AMonster()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh(TEXT("/Game/Monsters/TrashMonster/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem.SK_Ancient_Golem"));
+	/*ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh(TEXT("/Game/Monsters/TrashMonster/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem.SK_Ancient_Golem"));
 	RootComponent->SetWorldScale3D(FVector(1.5f));
 	if (MonsterMesh.Succeeded()) {
 		GetMesh()->SetSkeletalMesh(MonsterMesh.Object);
@@ -39,7 +40,7 @@ AMonster::AMonster()
 			Wheels->SetSkeletalMesh( SK_WHEELS.Object );
 		}
 		Wheels->SetupAttachment( GetMesh() , WheelsSocket );
-	}
+	}*/
 
 
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>(TEXT("MonsterFSM"));
@@ -48,9 +49,6 @@ AMonster::AMonster()
 
 	healthUI->SetupAttachment( RootComponent );
 	healthUI->SetCastShadow( false );
-
-	
-	
 
 }
 
@@ -66,6 +64,30 @@ void AMonster::BeginPlay()
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 
 	ai = Cast<AAIController>( this->GetController() );
+
+
+	if(!ItemSpawner)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.bNoFail = true;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		const FVector& SpawnLocation{ GetActorLocation() + (GetActorForwardVector() * 50.f) + FVector(0.0, 0.0, 200.0)};
+		const FTransform SpawnTransform( GetActorRotation() , SpawnLocation );
+
+		ItemSpawner = GetWorld()->SpawnActor<AItemSpawner>( AItemSpawner::StaticClass() , SpawnTransform , SpawnParams );
+		ItemSpawner->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+
+		if(ItemSpawner)
+		{
+			for (auto& elem : ItemTuples)
+			{
+				ItemSpawner->EditItemSpawnerInfo( elem );
+				ItemSpawner->CreateItem( elem.ItemName , elem.DropPercentage );
+			}
+		}
+	}
 
 }
 
@@ -138,6 +160,11 @@ void AMonster::MoveState()
 
 void AMonster::AttackState()
 {
+	if (target == nullptr)
+	{
+		return;
+	}
+
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 	currentTime += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
@@ -146,14 +173,14 @@ void AMonster::AttackState()
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
-
 	}
 
 	
-	if (TargetVector.Size() > AttackRange) {
+	if (TargetVector.Size() > AttackRange && anim->bIsAttackComplete) {
 		MonsterFSM->state = EMonsterState::Move;
 		anim->animState = MonsterFSM->state;
-		GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
+		anim->bIsAttackComplete = false;
+		//GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
 	
 
@@ -189,8 +216,11 @@ void AMonster::DieState()
 		AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
 		FString EnumValueAsString = EnumToString( EMonsterType::Strike );
 		player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
-		//아이템 드랍
 
+		//아이템 드랍
+		if (ItemSpawner)
+			ItemSpawner->SpawnItem( ItemSpawner );
+		
 		this->Destroy();
 		currentTime = 0;
 	}
@@ -235,7 +265,6 @@ void AMonster::OnMyTakeDamage(int damage)
 {
 	currentHP -= damage;
 	monsterHPWidget->SetHP( currentHP , maxHP );
-	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 
 	if (currentHP < 0)
 	{

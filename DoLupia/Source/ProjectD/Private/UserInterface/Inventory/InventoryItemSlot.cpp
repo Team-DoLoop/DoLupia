@@ -81,7 +81,7 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 					/*const int32 Quantity = ItemReference->GetQuantity() - 1;
 					ItemReference->SetQuantity( Quantity );*/
 					ItemReference->GetOwningInventory()->RemoveAmountOfItem( ItemReference, 1);
-					ItemReference->Use();
+					ItemReference->Use( MyCharacter );
 					ItemReference->GetQuantity() == 0 ? ResetItemSlot() : RefreshItemSlot();
 				}
 					

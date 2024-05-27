@@ -12,19 +12,15 @@
 
 ARangedMonster::ARangedMonster()
 {
-	FName WeaponSocket( TEXT( "hand_rSocket" ) );
-	if (GetMesh()->DoesSocketExist( WeaponSocket ))
-	{
-		Weapon = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Weapon" ) );
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/TrashMonster/Assets/Weapon/Swords_Group_MeteorSword_Mesh.Swords_Group_MeteorSword_Mesh" ) );
-		if (SK_WEAPON.Succeeded())
-		{
-			Weapon->SetStaticMesh( SK_WEAPON.Object );
-		}
-		Weapon->SetupAttachment( GetMesh() , WeaponSocket );
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh( TEXT( "/Game/Asset/Character/Spider_Robot/Spider3/Spider_Robot_3.Spider_Robot_3" ) );
+	RootComponent->SetWorldScale3D( FVector( 1.5f ) );
+	if (MonsterMesh.Succeeded()) {
+		GetMesh()->SetSkeletalMesh( MonsterMesh.Object );
+		//GetMesh()->SetRelativeLocationAndRotation( FVector( 0 , 0 , -189 ) , FRotator( 0 , -90 , 0 ) );
+
 	}
 
-	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_RangedMonster.ABP_RangedMonster_C'" ) );
+	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_RangedMonster1.ABP_RangedMonster1_C'" ) );
 	if (tempClass.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass( tempClass.Class );
@@ -90,22 +86,23 @@ void ARangedMonster::AttackState()
 			currentTimeRM = 0;
 			anim->bAttackDelay = true;
 			bStartToAttack = false;
-			UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격하고 있어요" ) );
+			//UE_LOG( LogTemp , Warning , TEXT( "장애물 없어서 공격하고 있어요" ) );
 		}
 		else
 		{
 			MonsterFSM->state = EMonsterState::Move;
 			anim->animState = MonsterFSM->state;
-			UE_LOG( LogTemp , Warning , TEXT( "공격모드인데 장애물 있어서 이동모드로 전환할게요" ) );
+			//UE_LOG( LogTemp , Warning , TEXT( "공격모드인데 장애물 있어서 이동모드로 전환할게요" ) );
 
 		}
 	}
 	
 
-	if (TargetVector.Size() > AttackRange) {
+	if (TargetVector.Size() > AttackRange && anim->bIsAttackComplete) {
 			MonsterFSM->state = EMonsterState::Move;
 			anim->animState = MonsterFSM->state;
-			UE_LOG( LogTemp , Warning , TEXT( "공격범위 벗어나서 이동모드로 넘어갈게요" ) );
+			anim->bIsAttackComplete = false;
+			//UE_LOG( LogTemp , Warning , TEXT( "공격범위 벗어나서 이동모드로 넘어갈게요" ) );
 	}
 	
 
@@ -116,7 +113,7 @@ void ARangedMonster::RangedAttack()
 	// notify 시점에 투사체 발사, 
 	// 만약 플레이어와 충돌하면 플레이어 hp 감소
 	// 10초 뒤 투사체 파괴
-	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::MagicAttack()" ) );
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARangedMonster::Attack()" ) );
 
 	if(ProjectileClass)
 	{

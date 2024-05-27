@@ -23,11 +23,13 @@ void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 void UMonsterAnim::OnEndHitAttackAnimation()
 {
 	bAttackDelay = false;
+	bIsAttackComplete = true;
 }
 
 void UMonsterAnim::OnEndRangedAttackAnimation()
 {
 	bAttackDelay = false;
+	bIsAttackComplete = true;
 }
 
 void UMonsterAnim::OnDoRangedAttackAnimation()
