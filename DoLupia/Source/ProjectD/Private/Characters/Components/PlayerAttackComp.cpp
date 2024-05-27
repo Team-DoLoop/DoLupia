@@ -10,10 +10,7 @@
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Skill/PlayerSkillBase.h"
-#include "Characters/Skill/PlayerSkillCastingHitDown.h"
-#include "Characters/Skill/PlayerSkillSpell.h"
-#include "Characters/Skill/PlayerSkillSwing.h"
-#include "Characters/Skill/PlayerSkillUlt.h"
+#include "Characters/Skill/PlayerSkillMelee.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
@@ -46,11 +43,10 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerStat = Cast<APlayerStat>(Player->GetPlayerState());
 
 	// PlayerSkill
-	PlayerSkills.Add(NewObject<UPlayerSkillSwing>());
-	PlayerSkills.Add(NewObject<UPlayerSkillSpell>());
-	PlayerSkills.Add(NewObject<UPlayerSkillCastingHitDown>());
-	PlayerSkills.Add(NewObject<UPlayerSkillUlt>());
+	PlayerSkills.Add(NewObject<UPlayerSkillMelee>());
+	//PlayerSkills.Add(NewObject<UPlayerSkillSpell>());
 
+	
 	// PlayerMP
 	if(PlayerStat)
 	{
@@ -103,9 +99,20 @@ void UPlayerAttackComp::Attack()
 	PlayerAnim->PlayerAttackAnimation(0);
 }
 
-void UPlayerAttackComp::AttackEnd()
+void UPlayerAttackComp::CancelSkill()
+{
+	PlayerAttackStatus = -1;
+}
+
+void UPlayerAttackComp::ReadySkill()
+{
+	PlayerAttackStatus = 1;
+}
+
+void UPlayerAttackComp::CompleteSkill()
 {
 	if(!PlayerFSMComp) return;
+	PlayerAttackStatus = 3;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
 
 	if(!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
@@ -121,16 +128,19 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 {
 	if(!Player || !PlayerFSMComp || !PlayerStat) return;
 	if(!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
-
+	
 	// 스킬 기능 실행
 	if(SkillIndex >= 0 && SkillIndex < PlayerSkills.Num())
 	{
 		if(!PlayerSkills[SkillIndex]) return;
 		
 		// MP가 있다면
-		int32 CurrentMP = PlayerStat->GetMP() - PlayerSkills[SkillIndex]->GetSkillCost();
+		int32 CurrentMP = PlayerStat->GetMP();
+		//- PlayerSkills[SkillIndex]->GetSkillCost();
 		if(CurrentMP >= 0)
 		{
+			PlayerAttackStatus = 2;
+			
 			PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 			
 			Player->TurnPlayer();
@@ -146,5 +156,6 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP, PlayerMaxMP);
 		}
 	}
+	
 }
 

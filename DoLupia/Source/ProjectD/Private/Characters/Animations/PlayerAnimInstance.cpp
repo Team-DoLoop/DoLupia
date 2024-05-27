@@ -53,7 +53,7 @@ void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	FName MontageName = Montage->GetFName();
 	// End Attack Montage
 	if(MontageName == attackMontage->GetFName())
-		Player->GetAttackComp()->AttackEnd();
+		Player->GetAttackComp()->CompleteSkill();
 	else if(MontageName == LyingMontage->GetName())
 		Player->LyingEnd();
 }

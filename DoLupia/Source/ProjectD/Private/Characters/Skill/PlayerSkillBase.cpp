@@ -7,19 +7,18 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
 
-
-
 UPlayerSkillBase::UPlayerSkillBase()
-	: SkillName(""),
-	  SkillLevel(1),
-	  SkillCost(0),
-	  SkillCoolTime(0),
-	  SkillDamage(0)
+{
+	
+}
+
+void UPlayerSkillBase::SetSkillUI()
 {
 }
 
 void UPlayerSkillBase::ExecuteSkill()
 {
+	
 }
 
 void UPlayerSkillBase::ApplySkill(ACharacter* Target)
