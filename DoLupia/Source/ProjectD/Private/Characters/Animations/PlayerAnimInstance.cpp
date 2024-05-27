@@ -80,7 +80,7 @@ void UPlayerAnimInstance::PlayerDieAnimation()
 
 
 // <---------------------- Attack ---------------------->
-
+/*
 void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 {
 	if(!attackMontage) return;
@@ -92,6 +92,13 @@ void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 	
 	
 	// 안들고 있다면?
+}
+*/
+
+void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
+{
+	if(!_Montage) return;
+	PlayMontage(_Montage);
 }
 
 void UPlayerAnimInstance::PlayerLyingAnimation()

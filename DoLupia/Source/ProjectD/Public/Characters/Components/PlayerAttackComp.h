@@ -71,8 +71,8 @@ private:
 	EUseColor CurrentSkillColor = EUseColor::NONE; // X, 빨, 노, 파
 	TArray<FPlayerSkillData*> CurrentSkillData;
 	
-	UPROPERTY()
-	TArray<class UPlayerSkillBase*> PlayerSkills;
+	//UPROPERTY()
+	//TArray<class UPlayerSkillBase*> PlayerSkills;
 
 protected:
 	void Attack();
@@ -86,7 +86,11 @@ public:
 	void SwapSkill();
 	void PlayerExecuteSkill(int32 SkillIndex);
 
-	FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
+	void MeleeSkill();
+	void RangedSkill();
+	void UltSkill();
+
+	// FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
 

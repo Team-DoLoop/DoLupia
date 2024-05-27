@@ -50,11 +50,12 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
 	PlayerStat = Cast<APlayerStat>(Player->GetPlayerState());
 
+	/*
 	// PlayerSkill
 	PlayerSkills.Add(NewObject<UPlayerSkillMelee>());
 	PlayerSkills.Add(NewObject<UPlayerSkillMelee>());
 	PlayerSkills.Add(NewObject<UPlayerSkillSwap>());
-
+*/
 
 	// PlayerMP
 	if (PlayerStat)
@@ -63,6 +64,14 @@ void UPlayerAttackComp::BeginPlay()
 		MPRegenRate = PlayerStat->GetMPRegenRate();
 		MPRegenTime = PlayerStat->GetMPRegenTime();
 		CurrentRegenTime = 0;
+	}
+
+	if(GI)
+	{
+		CurrentSkillData.Add(GI->GetPlayerSkillData(0));
+		CurrentSkillData.Add(GI->GetPlayerSkillData(1));
+		CurrentSkillData.Add(GI->GetPlayerSkillData(2));
+		CurrentSkillData.Add(GI->GetPlayerSkillData(3));
 	}
 }
 
@@ -105,7 +114,7 @@ void UPlayerAttackComp::Attack()
 	Player->TurnPlayer();
 
 	if (!PlayerAnim) return;
-	PlayerAnim->PlayerAttackAnimation(0);
+	// PlayerAnim->PlayerAttackAnimation(0);
 }
 
 void UPlayerAttackComp::CancelSkill()
@@ -144,11 +153,11 @@ void UPlayerAttackComp::SwapSkill()
 	int jumpSize = 0;
 	for(int i = 0; i < 2; i++)
 	{
-		if(CurrentSkillData[i] -> SkillID < 2) jumpSize = 4;
-		else if(CurrentSkillData[i] ->SkillID < 10) jumpSize = 2;
+		if(CurrentSkillData[i] -> ID < 2) jumpSize = 4;
+		else if(CurrentSkillData[i] ->ID < 10) jumpSize = 2;
 		
-		CurrentSkillData[i] = GI -> GetPlayerSkillData(CurrentSkillData[i]->SkillID + jumpSize);
-		PlayerSkills[i]->ChangeSkillData(CurrentSkillData[i]);
+		CurrentSkillData[i] = GI -> GetPlayerSkillData(CurrentSkillData[i]->ID + jumpSize);
+		//PlayerSkills[i]->ChangeSkillData(CurrentSkillData[i]);
 		SetSkillUI(CurrentSkillData[i]);
 	}
 }
@@ -159,31 +168,51 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
 	// 스킬 기능 실행
-	if (SkillIndex >= 0 && SkillIndex < PlayerSkills.Num())
+	UE_LOG(LogTemp, Log, TEXT("SkillIndex : %d"), SkillIndex)
+
+	// MP가 있다면
+	int32 CurrentMP = PlayerStat->GetMP() - CurrentSkillData[SkillIndex]->SkillCost;
+	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), CurrentSkillData[SkillIndex]->SkillCost)
+	
+	if (CurrentMP >= 0)
 	{
-		if (!PlayerSkills[SkillIndex]) return;
-		
-		// MP가 있다면
-		int32 CurrentMP = PlayerStat->GetMP();
-		//- PlayerSkills[SkillIndex]->GetSkillCost();
-		if (CurrentMP >= 0)
+		PlayerAttackStatus = 2;
+
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+
+		Player->TurnPlayer();
+
+		// 스킬 애니메이션 실행
+		//PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
+		PlayerAnim->PlayAttackAnimation(CurrentSkillData[SkillIndex]->SkillMontage);
+
+		// 스킬 실행
+		switch (SkillIndex)
 		{
-			PlayerAttackStatus = 2;
-
-			PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
-
-			Player->TurnPlayer();
-
-			// 스킬 애니메이션 실행
-			PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
-
-			// 스킬 실행
-			if(SkillIndex == 2) SwapSkill();
-			else PlayerSkills[SkillIndex]->ExecuteSkill();
-
-			// MP 소모
-			PlayerStat->SetMP(CurrentMP);
-			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
+		case 0 : MeleeSkill(); break;
+		case 1 : RangedSkill(); break;
+		case 2 : SwapSkill(); break;
+		case 3 : UltSkill(); break;
 		}
+
+		// MP 소모
+		PlayerStat->SetMP(CurrentMP);
+		Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 	}
+}
+
+
+void UPlayerAttackComp::MeleeSkill()
+{
+	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
+}
+
+void UPlayerAttackComp::RangedSkill()
+{
+	UE_LOG(LogTemp, Log, TEXT("Ranged Skill : %s"),  *(CurrentSkillData[1]->SkillName));
+}
+
+void UPlayerAttackComp::UltSkill()
+{
+	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
 }
