@@ -40,4 +40,7 @@ public:
 	float speed = 3000;
 
 	class AProjectDCharacter* player;
+
+	UPROPERTY( EditAnywhere )
+	class UParticleSystem* expVFX;
 };

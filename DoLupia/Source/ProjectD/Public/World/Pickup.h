@@ -31,7 +31,7 @@ public:
 	virtual void EndFocus() override;
 
 	// 인터페이스로 빼주자.
-	void StartMovement( FVector StartPoint , FVector ControlPoint , FVector EndPoint , float Duration );
+	void StartMovement( FVector StartPoint , FVector ActorSpeed );
 
 
 protected:
@@ -54,7 +54,7 @@ protected:
 
 protected:
 	// 테스트용 나중에 지워야함.
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	AItemSpawner* ItemSpawner;
 
 	UPROPERTY( EditDefaultsOnly , Category = "Pickup | Collisoin" )

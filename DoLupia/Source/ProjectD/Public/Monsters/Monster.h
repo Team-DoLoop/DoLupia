@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
+struct FItemSpawnerInfo;
+
 UENUM( BlueprintType )
 enum class EMonsterType : uint8
 {
@@ -85,7 +87,7 @@ public:
 
 	//일정 반경 안에 들어오면 공격모드로 전환
 	UPROPERTY( EditAnywhere )
-	float AttackRange = 300;
+	float AttackRange = 200;
 
 	void MoveToTarget();
 
@@ -115,4 +117,13 @@ public:
 
 		return EnumPtr->GetDisplayNameTextByValue( static_cast<int64>(EnumValue) ).ToString();
 	}
+
+protected:
+	// 아이템 스포너
+	UPROPERTY(EditAnywhere)
+	class AItemSpawner* ItemSpawner;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FItemSpawnerInfo> ItemTuples;
+
 };

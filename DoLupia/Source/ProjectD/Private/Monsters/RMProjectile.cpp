@@ -5,6 +5,8 @@
 #include "../../../../../../../Source/Runtime/Engine/Classes/Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Monsters/DamageTestActor.h"
 
 // Sets default values
 ARMProjectile::ARMProjectile()
@@ -19,13 +21,6 @@ ARMProjectile::ARMProjectile()
 	meshComp = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp" ) );
 	meshComp->SetupAttachment( RootComponent );
 	meshComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
-
-	/*ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>( TEXT( "ProjectileMovementComponent" ) );
-	ProjectileMovementComponent->SetUpdatedComponent( CollisionComponent );
-	ProjectileMovementComponent->InitialSpeed = 3000.0f;
-	ProjectileMovementComponent->MaxSpeed = 3000.0f;
-	ProjectileMovementComponent->bRotationFollowsVelocity = true;
-	ProjectileMovementComponent->bShouldBounce = false;*/
 }
 
 // Called when the game starts or when spawned
@@ -51,15 +46,24 @@ void ARMProjectile::OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedCompone
 
 		if (OverlapPlayer->GetController())
 		{
-			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARMProjectile::플레이어 공격 성공!!" ) );
+			//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARMProjectile::플레이어 공격 성공!!" ) );
 			OverlapPlayer->TakeDamage(30);
-
+			UGameplayStatics::SpawnEmitterAtLocation( GetWorld() , expVFX , this->GetActorLocation() );
+			this->Destroy();
 			return;
 		}
 
-		//플레이어 Damage 처리
-		UE_LOG( LogTemp , Warning , TEXT( "!OverlapPlayer->GetController()" ) );
+	}
 
+	if (ADamageTestActor* DamageTestActor = Cast<ADamageTestActor>( OtherActor )) {
+
+		if (DamageTestActor)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation( GetWorld() , expVFX , this->GetActorLocation() );
+
+			this->Destroy();
+			return;
+		}
 	}
 }
 
