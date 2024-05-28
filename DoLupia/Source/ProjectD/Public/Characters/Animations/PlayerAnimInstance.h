@@ -70,8 +70,8 @@ private:
 	TArray<FName> SkillAnimationName;
 
 public:
-	UPROPERTY(EditDefaultsOnly)
-	class UAnimMontage* attackMontage;
+	UPROPERTY()
+	class UAnimMontage* AttackMontage;
 	
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* LyingMontage;

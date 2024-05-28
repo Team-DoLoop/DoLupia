@@ -52,9 +52,9 @@ void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 
 	FName MontageName = Montage->GetFName();
 	// End Attack Montage
-	if(MontageName == attackMontage->GetFName())
+	if(AttackMontage && MontageName == AttackMontage->GetFName())
 		Player->GetAttackComp()->CompleteSkill();
-	else if(MontageName == LyingMontage->GetName())
+	else if(LyingMontage && MontageName == LyingMontage->GetName())
 		Player->LyingEnd();
 }
 
@@ -98,6 +98,8 @@ void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
 {
 	if(!_Montage) return;
+	UE_LOG(LogTemp, Log, TEXT("PlayAttackAnimation : %s"), *_Montage->GetFName().ToString());
+	AttackMontage = _Montage;
 	PlayMontage(_Montage);
 }
 

@@ -82,7 +82,7 @@ public:
 	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
 	
-	void SetSkillUI(FPlayerSkillData* PlayerSkillData);
+	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
 	void SwapSkill();
 	void PlayerExecuteSkill(int32 SkillIndex);
 

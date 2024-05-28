@@ -141,40 +141,16 @@ void UPlayerAttackComp::CompleteSkill()
 	}
 }
 
-void UPlayerAttackComp::SetSkillUI(FPlayerSkillData* PlayerSkillData)
-{
-	if (!Player) return;
-	
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(PlayerSkillData);
-}
-
-void UPlayerAttackComp::SwapSkill()
-{
-	int jumpSize = 0;
-	for(int i = 0; i < 2; i++)
-	{
-		if(CurrentSkillData[i] -> ID < 2) jumpSize = 4;
-		else if(CurrentSkillData[i] ->ID < 8) jumpSize = 2;
-		else if(CurrentSkillData[i] -> ID >= 8) jumpSize= -4;
-		
-		CurrentSkillData[i] = GI -> GetPlayerSkillData(CurrentSkillData[i]->ID + jumpSize);
-		//PlayerSkills[i]->ChangeSkillData(CurrentSkillData[i]);
-		SetSkillUI(CurrentSkillData[i]);
-	}
-}
-
 void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 {
 	if (!Player || !PlayerFSMComp || !PlayerStat) return;
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
-	// 스킬 기능 실행
-	UE_LOG(LogTemp, Log, TEXT("SkillIndex : %d"), SkillIndex)
-
 	// MP가 있다면
 	int32 CurrentMP = PlayerStat->GetMP() - CurrentSkillData[SkillIndex]->SkillCost;
 	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), CurrentSkillData[SkillIndex]->SkillCost)
 	
+	// 스킬 기능 실행
 	if (CurrentMP >= 0)
 	{
 		PlayerAttackStatus = 2;
@@ -202,7 +178,6 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 	}
 }
 
-
 void UPlayerAttackComp::MeleeSkill()
 {
 	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
@@ -211,6 +186,29 @@ void UPlayerAttackComp::MeleeSkill()
 void UPlayerAttackComp::RangedSkill()
 {
 	UE_LOG(LogTemp, Log, TEXT("Ranged Skill : %s"),  *(CurrentSkillData[1]->SkillName));
+}
+
+void UPlayerAttackComp::SwapSkill()
+{
+	int jumpSize = 0;
+	for(int i = 0; i < 2; i++)
+	{
+		// 스킬 습득에 따라 수정 예정
+		if(CurrentSkillData[i] -> ID < 2) jumpSize = 4;
+		else if(CurrentSkillData[i] ->ID < 8) jumpSize = 2;
+		else if(CurrentSkillData[i] -> ID >= 8) jumpSize= -4;
+		
+		CurrentSkillData[i] = GI -> GetPlayerSkillData(CurrentSkillData[i]->ID + jumpSize);
+		//PlayerSkills[i]->ChangeSkillData(CurrentSkillData[i]);
+		SetSkillUI(i, CurrentSkillData[i]);
+	}
+}
+
+void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData)
+{
+	if (!Player) return;
+	
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillData);
 }
 
 void UPlayerAttackComp::UltSkill()
