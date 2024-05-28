@@ -134,6 +134,7 @@ void AAIMarterialTestActor::OnImageDownloadFailed(UTexture2DDynamic* DownloadedT
 
 void AAIMarterialTestActor::UpdateAlpha( float Alpha )
 {
+    /*
     if (DynamicMaterial)
     {
         DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , Alpha );
@@ -148,8 +149,9 @@ void AAIMarterialTestActor::UpdateAlpha( float Alpha )
             DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
         }
     }
+    */
 
-    /*
+    
     if (DynamicMaterial)
     {
         DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Alpha);
@@ -160,9 +162,9 @@ void AAIMarterialTestActor::UpdateAlpha( float Alpha )
         UMaterialInstanceDynamic* InitialDynamicMaterial = UMaterialInstanceDynamic::Create(MaterialTemplate, this);
         InitialDynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.0f - Alpha);
         InitialDynamicMaterial->SetTextureParameterValue(FName("A1-2345"), InitialTexture);
-        MeshComp->SetMaterial(0, InitialDynamicMaterial);
+        meshComp->SetMaterial(0, InitialDynamicMaterial);
     }
-    */
+    
 }
 
 void AAIMarterialTestActor::OnTimelineFinished()
@@ -171,11 +173,11 @@ void AAIMarterialTestActor::OnTimelineFinished()
     // For example, you can loop the timeline
     TimelineComponent->PlayFromStart();
 
-    /*
-    if (MeshComp && DynamicMaterial)
+    
+    if (meshComp && DynamicMaterial)
     {
-        MeshComp->SetMaterial(0, DynamicMaterial);
+        meshComp->SetMaterial(0, DynamicMaterial);
         InitialTexture = nullptr;
     }
-    */
+    
 }
