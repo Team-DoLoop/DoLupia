@@ -5,8 +5,6 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
-#include "Characters/Skill/PlayerSkillSpell.h"
-#include "Characters/Skill/PlayerSkillSwing.h"
 #include "Characters/PlayerStat.h"
 #include "Monsters/Monster.h"
 #include "Quest/QuestLogComponent.h"

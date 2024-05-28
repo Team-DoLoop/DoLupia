@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerSkillSlotWidget.generated.h"
 
+struct FPlayerSkillData;
 /**
  * 
  */
@@ -18,9 +19,13 @@ class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
 	
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UImage* SkillThumnail;
+	
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UProgressBar* CoolTimeBar;
 	
 public:
 	void InitUI();
+	void SetUI(FPlayerSkillData* PlayerSkillData);
 	
 };

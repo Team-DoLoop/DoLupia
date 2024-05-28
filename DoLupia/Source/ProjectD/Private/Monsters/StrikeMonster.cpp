@@ -2,10 +2,8 @@
 
 
 #include "Monsters/StrikeMonster.h"
-
 #include "Characters/ProjectDCharacter.h"
 #include "Components/CapsuleComponent.h"
-#include "Monsters/MonsterSword.h"
 #include "Monsters/MonsterFSM.h"
 
 
@@ -19,25 +17,19 @@ AStrikeMonster::AStrikeMonster()
 
 	}
 
-	SwordCollision = CreateDefaultSubobject<UCapsuleComponent>( TEXT( "SwordCollision" ) );
-
-	FName WeaponSocket( TEXT( "hand_rSocket" ) );
+	FName WeaponSocket( TEXT( "WeaponSocket" ) );
 	if (GetMesh()->DoesSocketExist( WeaponSocket ))
 	{
-		SwordCollision->SetupAttachment( GetMesh() , WeaponSocket );
-	}
-
-
-	/*if (GetMesh()->DoesSocketExist( WeaponSocket ))
-	{
 		Weapon = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "Weapon" ) );
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/TrashMonster/Assets/Weapon/Swords_Group_ThinSword_Mesh.Swords_Group_ThinSword_Mesh" ) );
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SK_WEAPON( TEXT( "/Game/Monsters/TrashMonster/Assets/SM_Baton.SM_Baton" ) );
 		if (SK_WEAPON.Succeeded())
 		{
 			Weapon->SetStaticMesh( SK_WEAPON.Object );
 		}
 		Weapon->SetupAttachment( GetMesh() , WeaponSocket );
-	}*/
+		Weapon -> SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+		Weapon->SetGenerateOverlapEvents( true );
+	}
 
 	
 	ConstructorHelpers::FClassFinder<UAnimInstance>tempClass( TEXT( "AnimBlueprint'/Game/Monsters/TrashMonster/Blueprints/ABP_StrikeMonster1.ABP_StrikeMonster1_C'" ) );
@@ -54,10 +46,9 @@ void AStrikeMonster::BeginPlay()
 	this->MonsterType= EMonsterType::Strike;
 	this->MonsterFSM->state = EMonsterState::Idle;
 	//근거리 몬스터 체력 설정
-	this->maxHP = 150;
-	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , this->maxHP );
+	this->maxHP = 30;
 
-	SwordCollision->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
+	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
 }
 
 
@@ -68,15 +59,10 @@ void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 		if (OverlapPlayer->GetController())
 		{
-			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::플레이어 공격 성공!!" ) );
-			OverlapPlayer->TakeHit( EAttackType::BASIC, 30 );
-
-			return;
+			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster:: 단거리 공격 성공!!" ) );
+			OverlapPlayer->TakeHit( EAttackType::BASIC , 10 );
+			
 		}
-
-		//플레이어 Damage 처리
-		UE_LOG( LogTemp , Warning , TEXT( "!OverlapPlayer->GetController()" ) );
-
 	}
 }
 
@@ -85,5 +71,7 @@ void AStrikeMonster::AttackState()
 	Super::AttackState();
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
 }
+
+
 
 
