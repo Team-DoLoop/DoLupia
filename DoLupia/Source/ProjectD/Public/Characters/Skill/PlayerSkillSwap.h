@@ -4,24 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Characters/Skill/PlayerSkillBase.h"
-#include "PlayerSkillUlt.generated.h"
+#include "PlayerSkillSwap.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTD_API UPlayerSkillUlt : public UPlayerSkillBase
+class PROJECTD_API UPlayerSkillSwap : public UPlayerSkillBase
 {
 	GENERATED_BODY()
-	
-private:
-		
-
-protected:
 
 public:
-	UPlayerSkillUlt();
-	
+
+private:
 	virtual void ExecuteSkill() override;
-	virtual void ApplySkill(class ACharacter* Target) override;
 };

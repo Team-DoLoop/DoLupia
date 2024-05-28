@@ -53,7 +53,7 @@ void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	FName MontageName = Montage->GetFName();
 	// End Attack Montage
 	if(MontageName == attackMontage->GetFName())
-		Player->GetAttackComp()->AttackEnd();
+		Player->GetAttackComp()->CompleteSkill();
 	else if(MontageName == LyingMontage->GetName())
 		Player->LyingEnd();
 }
@@ -80,7 +80,7 @@ void UPlayerAnimInstance::PlayerDieAnimation()
 
 
 // <---------------------- Attack ---------------------->
-
+/*
 void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 {
 	if(!attackMontage) return;
@@ -92,6 +92,13 @@ void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 	
 	
 	// 안들고 있다면?
+}
+*/
+
+void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
+{
+	if(!_Montage) return;
+	PlayMontage(_Montage);
 }
 
 void UPlayerAnimInstance::PlayerLyingAnimation()
