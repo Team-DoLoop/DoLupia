@@ -16,6 +16,8 @@
 #include <Components/SizeBoxSlot.h>
 #include <Components/SizeBox.h>
 
+#include "Gamemode/PlayerGameMode.h"
+
 void UWidgetQuestRewards::NativePreConstruct()
 {
 
@@ -112,6 +114,12 @@ void UWidgetQuestRewards::NativeDestruct()
 
 void UWidgetQuestRewards::OnAcceptClicked()
 {
+    //AI 망토 이미지 적용
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    auto AIlib = gm->GetAIConnectionLibrary();
+    gm->ApplyAITxtP();
+    //AI
+
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (!IsValid( PlayerController ))
     {
