@@ -19,7 +19,7 @@ APlayerGameMode::APlayerGameMode()
 	PlayerControllerClass = AProjectDPlayerController::StaticClass();
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass( TEXT( "/Game/Player/Blueprint/BP_Player" ) );
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass( TEXT( "/Game/TopDown/Blueprints/BP_TopDownCharacter" ) );
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -43,7 +43,7 @@ void APlayerGameMode::StartPlay()
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
-	AITestUI = CreateWidget<UAITestWidget>( GetWorld() , AITestUIFactory );
+	//AITestUI = CreateWidget<UAITestWidget>( GetWorld() , AITestUIFactory );
 	if (AITestUI)
 	{
 		AITestUI->AddToViewport( 999 );
