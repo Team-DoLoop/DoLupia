@@ -28,6 +28,6 @@ void AStrangeObject::Tick(float DeltaTime)
 FString AStrangeObject::InteractWith()
 {
 	//QuestData 에 있는 Objective ID와 같아야함.
-	return FString("StrangeObject");
+	return ObjectID;
 }
 

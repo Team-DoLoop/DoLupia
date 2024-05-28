@@ -86,7 +86,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
             auto* QuestActor = GetQuestActor( QuestID );
             if (QuestActor != nullptr)
             {
-                // Set IsTurnedIn to true and broadcast the event
+                // 여기서 True 시켜서 다시 상호작용했을 때 위젯 안나오게 하는건데
                 QuestActor->IsTurnedIn = true;
                 //QuestTracker로 받음.
                 QuestCompleted.Broadcast( QuestActor );
@@ -127,14 +127,17 @@ bool UQuestLogComponent::QueryActiveQuest(FName QuestID)
 
 bool UQuestLogComponent::QueryCompleteQuests(FName QuestID)
 {
-    //현재 퀘스트에 특정 퀘스트 아이디가 있는지에 대한 bool 값
-    bool QuestExist = CompletedQuests.Contains( QuestID );
-    if (QuestExist) {
-        UE_LOG( LogTemp , Error , TEXT( "True CompletedQuests(FName %s)" ) , *QuestID.ToString() );
+    if (IsValid( GetQuestActor( QuestID ) ) )
+    {
+        GetQuestActor( QuestID )->IsTurnedIn = false;
     }
     else {
-        UE_LOG( LogTemp , Error , TEXT( "False CompletedQuestst(FName %s)" ) , *QuestID.ToString() );
+        //GetQuestActor( QuestID )->IsTurnedIn = true;
     }
+
+    //현재 퀘스트에 특정 퀘스트 아이디가 있는지에 대한 bool 값
+    bool QuestExist = CompletedQuests.Contains( QuestID );
+
     return QuestExist;
 }
 

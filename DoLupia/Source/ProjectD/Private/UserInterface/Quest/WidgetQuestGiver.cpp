@@ -129,7 +129,7 @@ void UWidgetQuestGiver::OnAcceptClicked()
     // 수락을 하면!!!!!
     QuestLogComp->AddNewQuest( QuestID );
 
-    //AI 서버에 보내기 ( 망토 색깔 )
+    /*AI 서버에 보내기(망토 색깔)
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     FString tmpString = QuestID.ToString();
