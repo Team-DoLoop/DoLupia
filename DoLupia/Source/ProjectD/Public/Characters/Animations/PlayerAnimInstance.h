@@ -70,13 +70,14 @@ private:
 	TArray<FName> SkillAnimationName;
 
 public:
-	UPROPERTY(EditDefaultsOnly)
-	class UAnimMontage* attackMontage;
+	UPROPERTY()
+	class UAnimMontage* AttackMontage;
 	
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* LyingMontage;
 
-	void PlayerAttackAnimation(int32 SkillIndex);
+	// void PlayerAttackAnimation(int32 SkillIndex);
+	void PlayAttackAnimation(class UAnimMontage* _Montage);
 
 	void PlayerLyingAnimation();
 	

@@ -123,6 +123,8 @@ void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 				int32 PluValue = *ValuePtr + Value;
 				CurrentObjectiveProgress.Add( BObjectiveID , PluValue );
 				IsObjectiveComplete( BObjectiveID );
+				//Tracker Widget에 보내는 델리게이트
+				OnObjectiveHeard.Broadcast();
 				return;
 			}
 		}
@@ -230,19 +232,19 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 			//남은 stage가 있는지 모두 다 완료했는지 확인
 			if (AreObjectivesComplete())
 			{
-				if (CurrentStage + 1 >= QuestDetails.Stages.Num())
+				CurrentStage += 1;
+				if (QuestDetails.Stages.IsValidIndex( CurrentStage ))
 				{
-					//목표를 다 완수 했는데, 남은 stage가 없으면
-					IsCompleted = true;
-					UE_LOG( LogTemp , Error , TEXT( "Quest completed!" ) );
-				}
-				else
-				{
-					//목표를 다 완수했는데, 남은 stage가 있으면
-					CurrentStage++;
 					UE_LOG( LogTemp , Error , TEXT( "CurrentStage ++ " ) );
 					GetQuestDetails();
 					CheckItem();
+				}
+				else {
+					IsCompleted = true;
+					if (QuestDetails.AutoComplete) {
+						UQuestLogComponent* QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
+						QuestLogComponent->TurnInQuest( QuestID );
+					}
 				}
 			}
 		}

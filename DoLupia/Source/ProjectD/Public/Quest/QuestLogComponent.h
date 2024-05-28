@@ -8,6 +8,8 @@
 #include "QuestLogComponent.generated.h"
 
 
+class UQuestTracker;
+
 // 예시: FName 타입을 전달하는 델리게이트 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
 
@@ -61,7 +63,21 @@ public:
 	bool QueryActiveQuest(FName QuestID);
 
 	UFUNCTION()
+	bool QueryCompleteQuests( FName QuestID );
+
+	UFUNCTION()
+	bool QueryCompleteQuestsTurnedIn( FName QuestID );
+
+	UFUNCTION()
 	AQuest_Base* GetQuestActor(FName QuestID);
 
+	UFUNCTION()
+	void TrackQuest( AQuest_Base* QuestActor );
+
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UQuestTracker> QuestTracker_Widget;
+
+	UPROPERTY()
+	class UQuestTracker* Tracker;
 
 };

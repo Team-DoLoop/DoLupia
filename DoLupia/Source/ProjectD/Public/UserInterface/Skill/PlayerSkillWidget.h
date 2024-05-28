@@ -6,16 +6,22 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerSkillWidget.generated.h"
 
+struct FPlayerSkillData;
 /**
  * 
  */
+class UPlayerSkillSlotWidget;
+class UProjectDGameInstance;
 UCLASS()
 class PROJECTD_API UPlayerSkillWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 	virtual void NativeOnInitialized ( ) override;
-
+	
+private:
+	UProjectDGameInstance* GI;
+	
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UHorizontalBox* SkillBox;
@@ -24,9 +30,12 @@ private:
 	TSubclassOf<class UPlayerSkillSlotWidget> PlayerSkillSlotFactory;
 
 	UPROPERTY ( VisibleDefaultsOnly )
-	TArray<class UPlayerSkillSlotWidget*> PlayerSkillSlotArray;
+	TArray<UPlayerSkillSlotWidget*> PlayerSkillSlotArray;
 	
 public:
 	void InitSkillSlot();
+	void UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
+	
+	FORCEINLINE TArray<UPlayerSkillSlotWidget*> GetPlayerSkillSlotArr() const {return PlayerSkillSlotArray;}
 	
 };

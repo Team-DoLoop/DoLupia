@@ -8,6 +8,9 @@
 #include "Components/TextBlock.h"
 #include "Characters/ProjectDPlayerController.h"
 #include "Components/VerticalBox.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Library/AIConnectionLibrary.h"
 #include "Quest/QuestLogComponent.h"
 #include "UserInterface/Quest/WidgetQuestLog_Objective.h"
 
@@ -93,6 +96,14 @@ void UWidgetQuestGiver::NativeDestruct()
 
 void UWidgetQuestGiver::OnAcceptClicked()
 {
+    //AI 서버에 보내기 ( 망토 색깔 )
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    auto AIlib = gm->GetAIConnectionLibrary();
+    int32 tmpNum = QuestID.GetComparisonIndex().ToUnstableInt();
+    AIlib->SendPImgToSrv( tmpNum );
+
+    //AI
+
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (!IsValid( PlayerController ))
     {

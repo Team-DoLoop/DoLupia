@@ -22,9 +22,9 @@ ASwordBase::ASwordBase()
 	collisionComp->SetupAttachment(RootComponent);
 	collisionComp->SetGenerateOverlapEvents(true);
 	collisionComp->SetCollisionProfileName(TEXT("Sword"));
-	collisionComp->SetRelativeLocation(FVector(0,0, 390));
-	collisionComp->SetCapsuleHalfHeight(80.0f);
-	collisionComp->SetCapsuleRadius(40.0f);
+	collisionComp->SetRelativeLocation(FVector(0,0, -50));
+	collisionComp->SetCapsuleHalfHeight(120.0f);
+	collisionComp->SetCapsuleRadius(80.0f);
 }
 
 // Called when the game starts or when spawned

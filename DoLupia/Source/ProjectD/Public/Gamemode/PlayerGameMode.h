@@ -6,6 +6,11 @@
 #include "GameFramework/GameModeBase.h"
 #include "PlayerGameMode.generated.h"
 
+
+class UAIConnectionLibrary;
+class UNPCConvWidget; 
+class UAITestWidget; 
+
 /**
  * 
  */
@@ -19,7 +24,7 @@ public:
 
 	virtual void StartPlay() override;
 
-	UAIConnectionLibrary* GetAIConnectionLibrary() const;
+	class UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	void InitializeNPCConvWidget();
 	void ReceiveNPCMsg(FString msg);
@@ -31,6 +36,9 @@ public:
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
+	UPROPERTY( BlueprintReadOnly )
+	class UAITestWidget* AITestUI;
+
 
 private:
 
@@ -39,6 +47,9 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
+
+	UPROPERTY( EditDefaultsOnly )
+	TSubclassOf<class UUserWidget> AITestUIFactory;
 
 
 };

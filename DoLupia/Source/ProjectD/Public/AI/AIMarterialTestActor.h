@@ -29,6 +29,15 @@ public:
 	UFUNCTION()
 	void OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture );
 
+	// Function to update the Alpha value
+	UFUNCTION()
+	void UpdateAlpha( float Alpha );
+
+	// Function to handle timeline finished
+	UFUNCTION()
+	void OnTimelineFinished();
+
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -39,13 +48,24 @@ protected:
 	UPROPERTY( EditDefaultsOnly )
 	class UBoxComponent* boxComp;
 
+	// Dynamic Material Instance
+	UMaterialInstanceDynamic* DynamicMaterial;
+
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* MaterialTemplate;
 
-	UPROPERTY( EditAnywhere , Category = "Materials" )
-	UMaterialInterface* MaterialTemplate2;
-
-	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
+
+	// Timeline component
+	UPROPERTY()
+	class UTimelineComponent* TimelineComponent;
+
+	// Curve for timeline
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	class UCurveFloat* AlphaCurve;
+
+	UTexture2DDynamic* NewTexture;
+	UTexture* InitialTexture;
+	UMaterialInterface* InitialMaterial;
 
 };

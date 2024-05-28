@@ -12,7 +12,8 @@
 #include "Library/JsonLibrary.h"
 #include "NPC/NPCBase.h"
 
-FString UAIConnectionLibrary::LanIP = "192.168.75.246";
+FString UAIConnectionLibrary::LanIP = "192.168.75.108";
+//FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
 FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
 FString UAIConnectionLibrary::ServerPort = "8000";
 

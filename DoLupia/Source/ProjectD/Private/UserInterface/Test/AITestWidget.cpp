@@ -12,6 +12,7 @@
 #include "AI/AITxtPlayer.h"
 #include "Components/Image.h"
 #include "Engine.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Library/AIConnectionLibrary.h"
 
 void UAITestWidget::NativeConstruct()
@@ -19,6 +20,7 @@ void UAITestWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	connectionLibrary = NewObject<UAIConnectionLibrary>();
+	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 	btn_chatbot->OnClicked.AddDynamic(this, &UAITestWidget::SendChatbotSV);
 	btn_imgAI->OnClicked.AddDynamic(this, &UAITestWidget::SendImgaiSV);
@@ -73,13 +75,15 @@ void UAITestWidget::SendImgaiSV()
 
 void UAITestWidget::ChangeMaterial()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial" ) );
 	// Find the actor of type AYourActor
-	for (TActorIterator<AAITxtPlayer> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
 		// Call the function on the actor
 		ActorItr->UpdateActorMaterial();
 		
 	}
+	
+
+	//gm->ApplyAITxtP();
 }

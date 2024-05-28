@@ -14,6 +14,7 @@
 #include "Blueprint/AsyncTaskDownloadImage.h"
 #include "Async/Async.h"
 #include "TextureResource.h"
+#include <Components/TimelineComponent.h>
 
 // Sets default values
 AAIMarterialTestActor::AAIMarterialTestActor()
@@ -30,6 +31,14 @@ AAIMarterialTestActor::AAIMarterialTestActor()
     boxComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
     meshComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
 
+    // Create Timeline component
+    TimelineComponent = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
+
+    NewTexture = nullptr;
+    InitialMaterial = nullptr;
+    InitialTexture = nullptr;
+    DynamicMaterial = nullptr;
+
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +47,33 @@ void AAIMarterialTestActor::BeginPlay()
 	Super::BeginPlay();
 
     AIlib = NewObject<UAIConnectionLibrary>();
-	
+
+    // Bind UpdateAlpha function to the timeline
+    FOnTimelineFloat TimelineProgress;
+    TimelineProgress.BindUFunction( this , FName( "UpdateAlpha" ) );
+    TimelineComponent->AddInterpFloat( AlphaCurve , TimelineProgress );
+
+    // Bind OnTimelineFinished function to the timeline's finished event
+    FOnTimelineEvent TimelineFinished;
+    TimelineFinished.BindUFunction( this , FName( "OnTimelineFinished" ) );
+    TimelineComponent->SetTimelineFinishedFunc( TimelineFinished );
+
+    // Get the initial material
+    
+    InitialMaterial = meshComp->GetMaterial(0);
+    if (InitialMaterial)
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "BeginPlay::InitialMaterial" ) );
+        DynamicMaterial = UMaterialInstanceDynamic::Create( InitialMaterial , this );
+        if (DynamicMaterial)
+        {
+            meshComp->SetMaterial( 0 , DynamicMaterial );
+        }
+    }
+
+    // Start the timeline
+    TimelineComponent->PlayFromStart();
+
 }
 
 // Called every frame
@@ -62,7 +97,6 @@ void AAIMarterialTestActor::LoadWebImage()
     UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
     if (DownloadTask)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
         DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
     }
@@ -75,17 +109,47 @@ void AAIMarterialTestActor::OnImageDownloaded(UTexture2DDynamic* DownloadedTextu
     {
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );  
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
-        UMaterialInstanceDynamic* DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate );
-        // UTexture로 캐스팅
-        UTexture* testTexture = Cast<UTexture>( DownloadedTexture );
-        if (DynamicMaterial)
+        DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate );
+
+        NewTexture = DownloadedTexture;
+
+        if (DynamicMaterial && TimelineComponent && NewTexture)
         {
-            DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , testTexture );
+            UE_LOG( LogTemp , Warning , TEXT( "OnImageDownloaded - DynamicMaterial && TimelineComponent" ) );
+
+            DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
+            TimelineComponent->PlayFromStart();
+            
+           
+            UE_LOG( LogTemp , Warning , TEXT( "TimelineComponent::PlayFromStart" ) );
         }
+
     }
 }
 
 void AAIMarterialTestActor::OnImageDownloadFailed(UTexture2DDynamic* DownloadedTexture)
 {
     UE_LOG( LogTemp , Error , TEXT( "Failed to download image" ) );
+}
+
+void AAIMarterialTestActor::UpdateAlpha( float Alpha )
+{   
+    if (DynamicMaterial)
+    {
+        DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Alpha);
+    }
+    
+}
+
+void AAIMarterialTestActor::OnTimelineFinished()
+{
+    // Handle timeline finished event
+    // For example, you can loop the timeline
+    
+    if (DynamicMaterial)
+    {
+        DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 1.0f );
+    }
+    
 }

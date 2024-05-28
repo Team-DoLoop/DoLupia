@@ -9,15 +9,19 @@
 /**
  * 
  */
+enum class EUseColor : uint8;
 class UPlayerHPWidget;
 class UPlayerMPWidget;
+class UPlayerSkillWidget;
+class UProjectDGameInstance;
 
 UCLASS()
 class PROJECTD_API UPlayerBattleWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-
+	virtual void NativeOnInitialized ( ) override;
+	
 	// <------------------ HP ------------------>
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
@@ -34,5 +38,13 @@ private:
 	
 public:
 	FORCEINLINE UPlayerMPWidget* GetPlayerMPBar() const {return PlayerMPBar;}
+
+
+	// <------------------ Skill ------------------>
+private:
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	UPlayerSkillWidget* PlayerSkillUI;
 	
+public:
+	FORCEINLINE UPlayerSkillWidget* GetPlayerSkillUI() const {return PlayerSkillUI;}
 };

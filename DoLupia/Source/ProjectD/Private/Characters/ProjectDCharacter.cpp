@@ -5,8 +5,6 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
-#include "Characters/Skill/PlayerSkillSpell.h"
-#include "Characters/Skill/PlayerSkillSwing.h"
 #include "Characters/PlayerStat.h"
 #include "Monsters/Monster.h"
 #include "Quest/QuestLogComponent.h"
@@ -512,7 +510,6 @@ void AProjectDCharacter::BeginInteract()
 		{
 			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
 			const FString& ActorObjectID = QuestInterface->InteractWith();
-			//UE_LOG( LogTemp , Warning , TEXT( "QuestInterface->InteractWith(): %s" ) , *ActorObjectID );
 
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			//캐릭터가 베이스 한테
