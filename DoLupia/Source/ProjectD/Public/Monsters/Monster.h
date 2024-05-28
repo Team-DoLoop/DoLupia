@@ -91,7 +91,7 @@ public:
 
 	void MoveToTarget();
 
-	void OnMyTakeDamage(int damage);
+	void OnMyTakeDamage(int32 damage);
 
 	UPROPERTY( EditAnywhere )
 	float attackDelayTime = 3;

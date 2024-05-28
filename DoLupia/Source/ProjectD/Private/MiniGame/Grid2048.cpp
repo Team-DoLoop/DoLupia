@@ -10,7 +10,7 @@ AGrid2048::AGrid2048()
 {
     PrimaryActorTick.bCanEverTick = true;
     NewGrid();
-    NewNumber();
+    //NewNumber();
 }
 
 void AGrid2048::BeginPlay()
@@ -19,9 +19,9 @@ void AGrid2048::BeginPlay()
 
     if (GridWidgetClass)
     {
-		for(int x = 0; x < 4; ++x)
+		for(int32 x = 0; x < 4; ++x)
 		{
-			for(int y = 0; y < 4; ++y)
+			for(int32 y = 0; y < 4; ++y)
 			{
 				if (UMiniGameTile2048Widget* Widget = CreateWidget<UMiniGameTile2048Widget>( GetWorld() , GridWidgetClass ))
                 {
@@ -35,6 +35,9 @@ void AGrid2048::BeginPlay()
 
     }
 
+    PreGrid = Grid;
+    NewNumber();
+    NewNumber();
     Draw();
 }
 
@@ -80,6 +83,7 @@ void AGrid2048::NewNumber()
         int32 y = FMath::RandRange( 0 , 3 );
         if (Grid[x][y] == 0)
         {
+            GridWidget[x * 4 + y]->PlayScaleAnimation(50.f);
             Grid[x][y] = 2;
             return;
         }
@@ -99,28 +103,9 @@ bool AGrid2048::IsFull() const
     return true;
 }
 
-FVector AGrid2048::CalculateLocation( int32 X , int32 Y ) const
-{
-    // 가로와 세로 간격
-    float CellSizeX = 100.0f; // 셀 가로 크기
-    float CellSizeY = 100.0f; // 셀 세로 크기
-
-    // 그리드의 시작 위치
-    float StartX = 0.0f; // 그리드 시작 위치 X
-    float StartY = 0.0f; // 그리드 시작 위치 Y
-
-    // 셀의 중심 위치 계산
-    float CellCenterX = StartX + (X + 0.5f) * CellSizeX; // 셀 중심 X 위치
-    float CellCenterY = StartY + (Y + 0.5f) * CellSizeY; // 셀 중심 Y 위치
-
-    // 실제 위치 반환
-    return FVector( CellCenterX , CellCenterY , 0.0f ); // 2D 그리드이므로 Z는 0으로 설정합니다.
-}
-
 void AGrid2048::Draw()
 {
     if (GridWidget.Num() <= 0) return;
-
 
     for (int32 x = 0; x < 4; ++x)
     {
@@ -159,6 +144,11 @@ void AGrid2048::FlipVertically()
     {
         Swap( Grid[x][0] , Grid[x][3] );
         Swap( Grid[x][1] , Grid[x][2] );
+
+      /*  if (Grid[x][0] != 0) GridWidget[x * 4 + 0]->PlayMoveAnimation( 1.0f );
+        if (Grid[x][1] != 0) GridWidget[x * 4 + 1]->PlayMoveAnimation( 1.0f );
+        if (Grid[x][2] != 0) GridWidget[x * 4 + 2]->PlayMoveAnimation( 1.0f );
+        if (Grid[x][3] != 0) GridWidget[x * 4 + 3]->PlayMoveAnimation( 1.0f );*/
     }
 }
 
@@ -170,6 +160,11 @@ void AGrid2048::FlipDiagonally()
     Swap( Grid[2][1] , Grid[1][2] );
     Swap( Grid[3][1] , Grid[1][3] );
     Swap( Grid[3][2] , Grid[2][3] );
+
+   /* for(int32 x = 0; x < 4; ++x)
+        for(int32 y = 0; y < 4; ++y)
+            if(Grid[x][y] != 0)
+                GridWidget[x * 4 + y]->PlayMoveAnimation(1.0f);*/
 }
 
 void AGrid2048::Squash( int32 Key )
@@ -206,6 +201,7 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
         if (Value != 0)
         {
             Tile2048Widget->SetTileValue(Value);
+            Tile2048Widget->PlayMergeAnimation(3.f);
 
             CellTextBlock->SetText( FText::FromString( FString::FromInt( Value ) ) );
 

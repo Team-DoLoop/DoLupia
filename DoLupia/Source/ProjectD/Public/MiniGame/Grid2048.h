@@ -22,6 +22,7 @@ protected:
 public:
     virtual void Tick( float DeltaTime ) override;
 
+    TArray<TArray<int32>> PreGrid;
     TArray<TArray<int32>> Grid;
 
     UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "UI" )
@@ -55,7 +56,5 @@ public:
     void Squash( int32 Key );
 
     void UpdateCell(int32 x, int32 y, int32 Value);
-
-    FVector CalculateLocation( int32 X , int32 Y ) const;
 
 };

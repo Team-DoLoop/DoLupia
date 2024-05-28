@@ -38,11 +38,22 @@ public:
 
 	void ReStartMiniGame();
 
+	void PlayScaleAnimation( float TargetScale );
+	void PlayMergeAnimation( float Duration );
+	void PlayMoveAnimation( float Duration );
+
+	UFUNCTION()
+	void OnScaleAnimationFinished();
+
+	UFUNCTION()
+	void OnMoveAnimationFinished();
+
 	UPROPERTY( meta = (BindWidget) )
 	class UTextBlock* Test;
 
+
 protected:
-	virtual void NativeConstruct() override;
+	virtual void NativeConstruct() override; 
 
 protected:
 	UPROPERTY( meta = (BindWidget) )
@@ -71,7 +82,18 @@ protected:
 	UPROPERTY( EditDefaultsOnly )
 	UTexture2D* Texture8;
 
+	UPROPERTY( BlueprintReadOnly , Category = "BindAnimation" , meta = (BindWidgetAnim) , Transient )
+	class UWidgetAnimation* ScaleAnimation; // 애니메이션 변수 선언
+
+	UPROPERTY( BlueprintReadOnly , Category = "BindAnimation" , meta = (BindWidgetAnim) , Transient )
+	class UWidgetAnimation* MoveAnimation; // 애니메이션 변수 선언
+
+	UPROPERTY( BlueprintReadOnly , Category = "BindAnimation" , meta = (BindWidgetAnim) , Transient )
+	class UWidgetAnimation* MergeAnimation; // 애니메이션 변수 선언
+	
+
 private:
 	E2048Color TileValue;
-
+	FWidgetAnimationDynamicEvent EndDelegate;
+	FWidgetAnimationDynamicEvent MoveEndDelegate;
 };
