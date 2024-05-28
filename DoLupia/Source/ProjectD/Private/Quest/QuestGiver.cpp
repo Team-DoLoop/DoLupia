@@ -73,23 +73,31 @@ void UQuestGiver::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 FString UQuestGiver::InteractWith()
 {
     // 캐스팅이 유효한지 확인
-    auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass() ) );
+    auto QuestComponent = Cast<UQuestLogComponent>( MyPlayerCharacter->FindComponentByClass( UQuestLogComponent::StaticClass()));
     if (QuestComponent == nullptr)
     {
-        UE_LOG( LogTemp , Error , TEXT( "QuestComponent not found or cast failed." ) );
         return FString( TEXT( "QuestComponent not found or cast failed." ) );
     }
 
     UE_LOG( LogTemp , Error , TEXT( "QuestData.RowName %s" ) , *QuestData.RowName.ToString() );
 
     bool ActiveQuest = QuestComponent->QueryActiveQuest( QuestData.RowName );
-
-    if (!ActiveQuest)
+    bool CompleteQuest = QuestComponent->QueryCompleteQuests( QuestData.RowName );
+    //bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn( QuestData.RowName );
+    if (!ActiveQuest && !CompleteQuest)
     {
-        //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
-        UE_LOG( LogTemp , Error , TEXT( "!QuestComponent->QueryActiveQuest( QuestData.RowName )" ) );
-        DisplayQuest(0);
-        return GetOwner()->GetName();
+        FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+
+        if (Row->AutoAccept) {
+            //자동으로 AddNewQuest 실행 ( Logcomp 에 있는
+            QuestComponent->AddNewQuest( QuestData.RowName );
+            return GetOwner()->GetName();
+        }
+        else {
+            //여기서 UWidgetQuestGiver 생성함. QuestID 넘김.
+            DisplayQuest(0);
+            return GetOwner()->GetName();
+        }        
     }
     else
     {
@@ -103,7 +111,7 @@ FString UQuestGiver::InteractWith()
         if (CompleteValuePtr)
         {
             UE_LOG( LogTemp , Error , TEXT( "AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName )" ) );
-            if (CompleteValuePtr->IsCompleted) 
+            if (CompleteValuePtr->IsCompleted && !CompleteValuePtr->IsTurnedIn) 
             {
                 UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
                 //완료가 true이면
@@ -114,14 +122,12 @@ FString UQuestGiver::InteractWith()
             else 
             {
                 UE_LOG( LogTemp , Error , TEXT( " DisplayQuest(CompleteValuePtr->CurrnetStage);" ) );
-                //QuestBase의 IsCompleted가 false이면 -> 예로Stage가 여러개 인데, 다 완료되지 않았을 경우
-
-//  아직 Quest Base CurrentStage +1 하는거 안만들어 놨어
+ 
                 DisplayQuest( CompleteValuePtr->CurrnetStage );
                 return GetOwner()->GetName();
-            }
+            }  
             */
-               
+            
         }
 
         // 모든 조건을 처리한 후에도 값을 반환하지 않았으므로 기본값을 반환합니다.
@@ -157,12 +163,16 @@ void UQuestGiver::DisplayRewards()
             RewardsWidget->QuestDetails = *Row;
             RewardsWidget->QuestID = QuestData.RowName;
 
-            //보상 아이템 들 이름, 수량
-            for (auto& Pair : Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem)
+            //보상 아이템 들 이름, 수량이 있을 때 보내기
+            auto RewardItems = Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem;
+            if(!RewardItems.IsEmpty())
             {
-                //아이템 종류 선택ID 수량 연동 해야할듯
-                DesiredItemID = FName(Pair.Key);
-                RewardsWidget->ItemRewards.Add(CreateItem( UItemBase::StaticClass() , Pair.Value ));
+	            for (auto& Pair : Row->Stages.GetData()->ItemRewards.GetData()->RewardsItem)
+	            {
+	                //아이템 종류 선택ID 수량 연동 해야할듯
+	                DesiredItemID = FName(Pair.Key);
+	                RewardsWidget->ItemRewards.Add(CreateItem( UItemBase::StaticClass() , Pair.Value ));
+	            }
             }
 
             RewardsWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));

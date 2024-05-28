@@ -48,7 +48,6 @@ FString ATestNPCCharacter::InteractWith()
     // QuestGiverComp가 UQuestInteractionInterface를 구현하는지 확인
     if (!QuestGiverComp->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
     {
-        UE_LOG( LogTemp , Error , TEXT( "QuestGiverComp does not implement UQuestInteractionInterface." ) );
         return FString( TEXT( "QuestGiverComp does not implement UQuestInteractionInterface." ) );
     }
 
