@@ -7,7 +7,9 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Library/AIConnectionLibrary.h"
 #include "UserInterface/NPC/NPCConvWidget.h"
+#include "UserInterface/Test/AITestWidget.h"
 #include "AI/AITxtPlayer.h"
+#include "Data/WidgetData.h"
 #include "Engine.h"
 #include "Items/Cape/PlayerCape.h"
 
@@ -17,7 +19,7 @@ APlayerGameMode::APlayerGameMode()
 	PlayerControllerClass = AProjectDPlayerController::StaticClass();
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass( TEXT( "/Game/TopDown/Blueprints/BP_TopDownCharacter" ) );
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass( TEXT( "/Game/Player/Blueprint/BP_Player" ) );
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -40,6 +42,30 @@ void APlayerGameMode::StartPlay()
 
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
+
+	AITestUI = CreateWidget<UAITestWidget>( GetWorld() , AITestUIFactory );
+	if (AITestUI)
+	{
+		AITestUI->AddToViewport( 999 );
+		
+		// Set input mode to UI only and set the widget to focus
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			//FInputModeUIOnly InputMode;
+			FInputModeGameOnly InputMode;
+
+			//InputMode.SetWidgetToFocus( AITestUI->TakeWidget() );
+			//PlayerController->SetInputMode( InputMode );
+			//PlayerController->bShowMouseCursor = true;
+
+			InputMode.SetConsumeCaptureMouseDown( true );
+			PlayerController->SetInputMode( FInputModeUIOnly() );
+
+		}
+
+	}
+
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const

@@ -23,6 +23,8 @@
 #include "UserInterface/Quest/WidgetQuestLog.h"
 #include "Data/WidgetData.h"
 #include "Library/AIConnectionLibrary.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -126,29 +128,23 @@ void AProjectDPlayerController::TestAnyFunction()
 	// ControlledCharacter->moveComp->Die();
 	
 	// TakeDamage Test
-	ControlledCharacter->TakeHit(EAttackType::LYING,31.0f);
+	//ControlledCharacter->TakeHit(EAttackType::LYING,31.0f);
 
 	// AI Test
-	auto AILibrary = NewObject<UAIConnectionLibrary>();
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	auto AIlib = gm->GetAIConnectionLibrary();
+
 	TestCount++;
 	if(TestCount == 1)
 	{
-		TMap<FString, FString> imgData;
-		
 		int32 tmpNum = 1;
-		AILibrary->SendImageKeywordToServer( tmpNum );
+		AIlib->SendPImgToSrv( tmpNum );
 	}
 	else
 	{
 		TestCount = 0;
 
-		for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
-		{
-			UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
-			// Call the function on the actor
-			ActorItr->UpdateActorMaterial();
-		
-		}
+		gm->ApplyAITxtP();
 	}
 }
 

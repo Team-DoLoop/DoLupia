@@ -6,8 +6,14 @@
 #include "GameFramework/GameModeBase.h"
 #include "PlayerGameMode.generated.h"
 
-class UAIConnectionLibrary; // UAIConnectionLibrary 클래스 전방 선언
 
+class UAIConnectionLibrary;
+class UNPCConvWidget; 
+class UAITestWidget; 
+
+/**
+ * 
+ */
 UCLASS()
 class PROJECTD_API APlayerGameMode : public AGameModeBase
 {
@@ -30,6 +36,9 @@ public:
 	UPROPERTY( BlueprintReadOnly )
 	class UNPCConvWidget* NPCConvUI;
 
+	UPROPERTY( BlueprintReadOnly )
+	class UAITestWidget* AITestUI;
+
 
 private:
 
@@ -38,6 +47,9 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
+
+	UPROPERTY( EditDefaultsOnly )
+	TSubclassOf<class UUserWidget> AITestUIFactory;
 
 
 };
