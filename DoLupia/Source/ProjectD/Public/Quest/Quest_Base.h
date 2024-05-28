@@ -11,6 +11,7 @@
 class AQuestLogComponent;
 class UWidgetQuestNotification;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnObjectiveHeard );
 UCLASS()
 class AQuest_Base : public AActor
 {
@@ -28,6 +29,10 @@ protected:
 	class AProjectDCharacter* ProjectDCharacter;
 
 public:	
+
+	//UPROPERTY()
+	FOnObjectiveHeard OnObjectiveHeard;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -58,7 +63,7 @@ public:
 	UPROPERTY()
 	FQuestDetails QuestDetails;
 
-	UPROPERTY()
+	UPROPERTY( EditAnywhere )
 	int32 CurrentStage;
 
 	UPROPERTY()
@@ -76,6 +81,9 @@ public:
 	//블루프린트에서 넣어줘야해!!!!!
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UWidgetQuestNotification> Notification_Widget;
+
+	UPROPERTY(EditAnywhere)
+	bool IsTurnedIn;
 
 protected:
 	bool Local_AllComplete;

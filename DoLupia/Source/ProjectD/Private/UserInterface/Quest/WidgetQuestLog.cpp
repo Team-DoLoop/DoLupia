@@ -7,7 +7,6 @@
 #include "Quest/QuestLogComponent.h" // QuestLogComponent에 대한 헤더
 #include "UserInterface/Quest/WidgetQuestLog_QuestEntry.h"
 #include "UserInterface/Quest/WidgetQuestLog_Objective.h"
-#include "UserInterface/Quest/QuestTracker.h"
 
 // 필요하다면 다른 인클루드 추가
 #include "Components/Button.h" // 버튼 사용
@@ -39,7 +38,7 @@ void UWidgetQuestLog::NativePreConstruct()
         return;
     }
 
-    AProjectDCharacter* PlayerCharacterD = Cast<AProjectDCharacter>(PlayerCharacter);
+    PlayerCharacterD = Cast<AProjectDCharacter>(PlayerCharacter);
     if (!IsObjectValid( PlayerCharacterD , "PlayerCharacterD" ))
     {
         return;
@@ -124,7 +123,7 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
 		txt_QuestName->SetText( QN_MyText );
 		FText TD_MyText = FText::FromString( QuestDetialsRow->TrackingDescription );
     	txt_QuestDesc->SetText( TD_MyText );
-    	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[0].Description );
+    	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[CurrentQuestActor->CurrentStage].Description );
     	txt_StageDesc->SetText( SD_MyText );
 
         for (const auto& Objective : QuestDetialsRow->Stages[0].Objectives) // 범위 기반 for 루프
@@ -142,40 +141,8 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
 
 void UWidgetQuestLog::OnTracked( AQuest_Base* QuestActor )
 {
-    if (IsValid( Tracker ))
-    {
-        UE_LOG( LogTemp , Error , TEXT( "Tracker is valid." ) );
-
-        // Tracker가 이미 존재하면 Update 호출
-        Tracker->Remove();
-        Tracker = nullptr;
-        Tracker = CreateWidget<UQuestTracker>( GetWorld() , QuestTracker_Widget );
-
-        if (IsValid( Tracker ))
-        {
-            Tracker->QuestActor = QuestActor;
-            Tracker->AddToViewport( -1 );
-
-            // 초기화 호출
-            Tracker->WidgetUpdate();
-        }
-    }
-    else
-    {
-        UE_LOG( LogTemp , Error , TEXT( "Tracker is not valid." ) );
-
-        // Tracker가 존재하지 않으면 새로 생성
-        Tracker = CreateWidget<UQuestTracker>( GetWorld() , QuestTracker_Widget );
-
-        if (IsValid( Tracker ))
-        {
-            Tracker->QuestActor = QuestActor;
-            Tracker->AddToViewport( -1 );
-
-            // 초기화 호출
-            Tracker->WidgetUpdate();
-        }
-    }
+    UQuestLogComponent* QuestLogComp = Cast<UQuestLogComponent>( PlayerCharacterD->GetComponentByClass( UQuestLogComponent::StaticClass() ) );
+    QuestLogComp->TrackQuest( QuestActor );
 }
 
 void UWidgetQuestLog::AddQuestToScrollBox(UWidgetQuestLog_QuestEntry* QuestWidget, FQuestDetails* QuestDetailsRow, FName QuestID)

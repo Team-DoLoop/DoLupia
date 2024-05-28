@@ -14,6 +14,7 @@ class UWidgetSwitcher;
 class UButton;
 class UWidgetQuestLog_QuestEntry;
 class UQuestTracker;
+class UProjectDCharacter;
 
 UCLASS()
 class PROJECTD_API UWidgetQuestLog : public UUserWidget
@@ -87,6 +88,9 @@ protected:
     void AddQuestToScrollBox( UWidgetQuestLog_QuestEntry* QuestWidget , FQuestDetails* QuestDetailsRow , FName QuestID );
 
     void SetupPlayerController();
+
+    UPROPERTY()
+    class AProjectDCharacter* PlayerCharacterD;
 
     template <typename T>
     bool IsObjectValid( T* Object , const FString& ObjectName ); // 유효성 검사 함수

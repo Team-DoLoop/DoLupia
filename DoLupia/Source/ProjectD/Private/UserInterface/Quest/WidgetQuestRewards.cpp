@@ -16,6 +16,8 @@
 #include <Components/SizeBoxSlot.h>
 #include <Components/SizeBox.h>
 
+#include "Gamemode/PlayerGameMode.h"
+
 void UWidgetQuestRewards::NativePreConstruct()
 {
 
@@ -112,6 +114,12 @@ void UWidgetQuestRewards::NativeDestruct()
 
 void UWidgetQuestRewards::OnAcceptClicked()
 {
+    //AI 망토 이미지 적용
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    auto AIlib = gm->GetAIConnectionLibrary();
+    gm->ApplyAITxtP();
+    //AI
+
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (!IsValid( PlayerController ))
     {
@@ -136,33 +144,46 @@ void UWidgetQuestRewards::OnAcceptClicked()
         return;
     }
 
+    //QuestLogComp->CompleteQuest(QuestID);
+
     if (QuestID.IsNone())
     {
         UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ WidgetQuestGiver" ) );
     }
+
     //아이템 삭제, 제공
 
     // UInventoryComponent 찾기
     UInventoryComponent* InvetoryComp = Cast<UInventoryComponent>( PlayerCharacterD->GetComponentByClass( UInventoryComponent::StaticClass() ) );
 
     //Delete(ObjectiveItems)
-    auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
-    for (const auto& removeItem : RemoveItem)
-    {
-        FString ItemLog;
-        for (const auto& Pair : removeItem.ItemObjectives)
-        {
-            ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
-        }
-        //UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
 
-        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
+    //아이템 지울 게 있을 때
+    auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
+    if (!RemoveItem.IsEmpty())
+    {
+    	for (const auto& removeItem : RemoveItem)
+	    {
+	        FString ItemLog;
+	        for (const auto& Pair : removeItem.ItemObjectives)
+	        {
+	            ItemLog += FString::Printf( TEXT( "(%s, %d) " ) , *Pair.Key , Pair.Value );
+	        }
+	        //UE_LOG( LogTemp , Warning , TEXT( "Removing item: %s" ) , *ItemLog );
+
+	        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
+	    }  
     }
     
-    for (const auto& items : ItemRewards) {
+    //보상이 있을 때
+    if(!ItemRewards.IsEmpty())
+    {
+		for (const auto& items : ItemRewards) {
         //보상 아이템 추가
         InvetoryComp->HandelAddItem( items);
+		}    
     }
+    
     
 
     // 위젯을 화면에서 제거합니다.
