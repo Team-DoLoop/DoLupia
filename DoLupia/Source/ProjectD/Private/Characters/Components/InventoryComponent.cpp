@@ -520,7 +520,7 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
 		// 인벤토리에 담을 수 있는 양 > 0 -> 인벤토리가 비어 있는 지 확인.
 		if (StackableAmountAdded < InitialRequestedAddAmount && StackableAmountAdded > 0)
 		{
-			int AddedAmount = InitialRequestedAddAmount - StackableAmountAdded;
+			int32 AddedAmount = InitialRequestedAddAmount - StackableAmountAdded;
 			ItemCarouselWidget->AddItemWidget( InputItem->GetTextData().Name , AddedAmount , InputItem->GetAssetData().Icon );
 
 			const FString& ItemName = InputItem->GetTextData().Name.ToString();

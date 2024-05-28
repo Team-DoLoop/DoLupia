@@ -56,7 +56,7 @@ AMonster::AMonster()
 void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	int yaw = rand() % 360;
+	int32 yaw = rand() % 360;
 	SetActorRotation( FRotator( 0 , yaw ,0 ) );
 	monsterHPWidget = Cast<UMonsterHPWidget>( healthUI->GetWidget() );
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic( this , &AMonster::OnMyCompBeginOverlap );
@@ -261,7 +261,7 @@ void AMonster::MoveToTarget()
 	}*/
 }
 
-void AMonster::OnMyTakeDamage(int damage)
+void AMonster::OnMyTakeDamage(int32 damage)
 {
 	currentHP -= damage;
 	monsterHPWidget->SetHP( currentHP , maxHP );
