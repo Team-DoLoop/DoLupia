@@ -54,4 +54,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillDamage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector SKillRange;
 };

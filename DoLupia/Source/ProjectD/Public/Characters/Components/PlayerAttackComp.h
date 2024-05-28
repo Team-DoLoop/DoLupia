@@ -73,6 +73,8 @@ private:
 	
 	//UPROPERTY()
 	//TArray<class UPlayerSkillBase*> PlayerSkills;
+	FVector AttackRange;
+	int32 AttackDamage;
 
 protected:
 	void Attack();
@@ -94,5 +96,7 @@ public:
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
 
+	FORCEINLINE FVector GetAttackRange() const {return AttackRange;}
+	FORCEINLINE int32 GetAttackDamage() const {return AttackDamage;}
 	
 };

@@ -3,6 +3,7 @@
 
 #include "Characters/Components/PlayerAttackComp.h"
 
+#include "CollisionDebugDrawingPublic.h"
 #include "EnhancedInputComponent.h"
 #include "ProjectDGameInstance.h"
 #include "Characters/PlayerStat.h"
@@ -14,8 +15,10 @@
 #include "Characters/Skill/PlayerSkillMelee.h"
 #include "Characters/Skill/PlayerSkillSwap.h"
 #include "Data/PlayerSkillDataStructs.h"
+#include "GameFramework/GameSession.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Monsters/Monster.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
@@ -181,6 +184,9 @@ void UPlayerAttackComp::PlayerExecuteSkill(int32 SkillIndex)
 void UPlayerAttackComp::MeleeSkill()
 {
 	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
+
+	AttackRange = CurrentSkillData[0]->SKillRange;
+	AttackDamage = CurrentSkillData[0]->SkillDamage;
 }
 
 void UPlayerAttackComp::RangedSkill()
