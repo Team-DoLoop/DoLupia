@@ -96,13 +96,13 @@ void UWidgetQuestGiver::NativeDestruct()
 
 void UWidgetQuestGiver::OnAcceptClicked()
 {
-    //AI 서버에 보내기 ( 망토 색깔 )
+    /*AI 서버에 보내기 ( 망토 색깔 )
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     int32 tmpNum = QuestID.GetComparisonIndex().ToUnstableInt();
     AIlib->SendPImgToSrv( tmpNum );
 
-    //AI
+    //AI*/
 
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (!IsValid( PlayerController ))

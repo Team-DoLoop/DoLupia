@@ -111,31 +111,52 @@ void UWidgetQuestLog::DisplayQuest( FName QuestID , AQuest_Base* QuestActor )
 {
     CurrentQuestActor = QuestActor;
 
+    // 위젯 스위처의 활성화된 위젯 인덱스를 1로 설정
     WidgetSwitcher->SetActiveWidgetIndex( 1 );
 
+    // 기존의 모든 자식 위젯 제거
     box_Objectives->ClearChildren();
 
-    FQuestDetails* QuestDetialsRow = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
+    // QuestData.DataTable에서 QuestID에 해당하는 행을 찾음
+    FQuestDetails* QuestDetailsRow = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
 
-    if(QuestDetialsRow)
+    // 행이 유효한지 확인
+    if (QuestDetailsRow)
     {
-	    FText QN_MyText = FText::FromString( QuestDetialsRow->QuestName );
-		txt_QuestName->SetText( QN_MyText );
-		FText TD_MyText = FText::FromString( QuestDetialsRow->TrackingDescription );
-    	txt_QuestDesc->SetText( TD_MyText );
-    	FText SD_MyText = FText::FromString( QuestDetialsRow->Stages[CurrentQuestActor->CurrentStage].Description );
-    	txt_StageDesc->SetText( SD_MyText );
+        // QuestName 설정
+        FText QN_MyText = FText::FromString( QuestDetailsRow->QuestName );
+        txt_QuestName->SetText( QN_MyText );
 
-        for (const auto& Objective : QuestDetialsRow->Stages[0].Objectives) // 범위 기반 for 루프
+        // TrackingDescription 설정
+        FText TD_MyText = FText::FromString( QuestDetailsRow->TrackingDescription );
+        txt_QuestDesc->SetText( TD_MyText );
+
+        // CurrentStage가 Stages 배열의 유효한 인덱스인지 확인
+        if (QuestDetailsRow->Stages.IsValidIndex( CurrentQuestActor->CurrentStage ))
         {
-            UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );
-            if (IsValid( ObjectiveWidget ))
+            FText SD_MyText = FText::FromString( QuestDetailsRow->Stages[CurrentQuestActor->CurrentStage].Description );
+            txt_StageDesc->SetText( SD_MyText );
+
+            // Objectives를 순회하면서 위젯 생성 및 추가
+            for (const auto& Objective : QuestDetailsRow->Stages[CurrentQuestActor->CurrentStage].Objectives)
             {
-                ObjectiveWidget->ObjectiveData = Objective;
-                ObjectiveWidget->QuestActor = CurrentQuestActor;
-                box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
+                UWidgetQuestLog_Objective* ObjectiveWidget = CreateWidget<UWidgetQuestLog_Objective>( GetWorld() , Objective_Widget );
+                if (IsValid( ObjectiveWidget ))
+                {
+                    ObjectiveWidget->ObjectiveData = Objective;
+                    ObjectiveWidget->QuestActor = CurrentQuestActor;
+                    box_Objectives->AddChildToVerticalBox( ObjectiveWidget );
+                }
             }
         }
+        else
+        {
+            UE_LOG( LogTemp , Error , TEXT( "CurrentStage %d is out of bounds for Stages array of size %d" ) , CurrentQuestActor->CurrentStage , QuestDetailsRow->Stages.Num() );
+        }
+    }
+    else
+    {
+        UE_LOG( LogTemp , Error , TEXT( "QuestDetailsRow is null for QuestID %s" ) , *QuestID.ToString() );
     }
 }
 
