@@ -11,6 +11,7 @@
 #include "AI/AITxtPlayer.h"
 #include "Data/WidgetData.h"
 #include "Engine.h"
+#include "Items/Cape/PlayerCape.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -88,7 +89,7 @@ void APlayerGameMode::ReceiveNPCMsg( FString msg )
 
 void APlayerGameMode::ApplyAITxtP()
 {
-	for (TActorIterator<AAITxtPlayer> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	for (TActorIterator<APlayerCape> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		// Call the function on the actor
 		ActorItr->UpdateActorMaterial();

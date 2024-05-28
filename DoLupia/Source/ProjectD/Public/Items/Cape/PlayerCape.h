@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AI/AITxtHandlerBase.h"
 #include "GameFramework/Actor.h"
 #include "PlayerCape.generated.h"
 
 
 UCLASS()
-class PROJECTD_API APlayerCape : public AActor
+class PROJECTD_API APlayerCape : public AAITxtHandlerBase
 {
 	GENERATED_BODY()
 	
