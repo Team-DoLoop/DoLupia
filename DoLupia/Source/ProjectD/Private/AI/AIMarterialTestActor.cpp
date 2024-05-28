@@ -31,11 +31,13 @@ AAIMarterialTestActor::AAIMarterialTestActor()
     boxComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
     meshComp->SetCollisionEnabled( ECollisionEnabled::PhysicsOnly );
 
-    // Create dynamic material instance
-    DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate );
-
     // Create Timeline component
     TimelineComponent = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
+
+    NewTexture = nullptr;
+    InitialMaterial = nullptr;
+    InitialTexture = nullptr;
+    DynamicMaterial = nullptr;
 
 }
 
@@ -56,22 +58,22 @@ void AAIMarterialTestActor::BeginPlay()
     TimelineFinished.BindUFunction( this , FName( "OnTimelineFinished" ) );
     TimelineComponent->SetTimelineFinishedFunc( TimelineFinished );
 
-    // Play the timeline
-    TimelineComponent->PlayFromStart();
-
-    NewTexture = nullptr;
-
-    // 초기 머티리얼을 가져옵니다.
-    UMaterialInterface* InitialMaterial = meshComp->GetMaterial( 0 );
+    // Get the initial material
+    
+    InitialMaterial = meshComp->GetMaterial(0);
     if (InitialMaterial)
     {
-        UMaterialInstanceDynamic* TempMaterial = UMaterialInstanceDynamic::Create( InitialMaterial , this );
-        if (TempMaterial)
+        UE_LOG( LogTemp , Warning , TEXT( "BeginPlay::InitialMaterial" ) );
+        DynamicMaterial = UMaterialInstanceDynamic::Create( InitialMaterial , this );
+        if (DynamicMaterial)
         {
-            TempMaterial->GetTextureParameterValue( FName( "A1-2345" ) , InitialTexture );
-            NewTexture = Cast<UTexture2DDynamic>( InitialTexture );
+            meshComp->SetMaterial( 0 , DynamicMaterial );
         }
     }
+
+    // Start the timeline
+    TimelineComponent->PlayFromStart();
+
 }
 
 // Called every frame
@@ -95,7 +97,6 @@ void AAIMarterialTestActor::LoadWebImage()
     UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
     if (DownloadTask)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
         DownloadTask->OnSuccess.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAIMarterialTestActor::OnImageDownloadFailed );
     }
@@ -109,21 +110,21 @@ void AAIMarterialTestActor::OnImageDownloaded(UTexture2DDynamic* DownloadedTextu
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );  
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
         DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , MaterialTemplate );
-        TimelineComponent->PlayFromStart();
 
-        // UTexture로 캐스팅
-        UTexture* testTexture = Cast<UTexture>( DownloadedTexture );
         NewTexture = DownloadedTexture;
 
-        
-
-        if (DynamicMaterial && TimelineComponent)
+        if (DynamicMaterial && TimelineComponent && NewTexture)
         {
-            //DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
+            UE_LOG( LogTemp , Warning , TEXT( "OnImageDownloaded - DynamicMaterial && TimelineComponent" ) );
 
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
             TimelineComponent->PlayFromStart();
+            
+           
+            UE_LOG( LogTemp , Warning , TEXT( "TimelineComponent::PlayFromStart" ) );
         }
+
     }
 }
 
@@ -133,49 +134,22 @@ void AAIMarterialTestActor::OnImageDownloadFailed(UTexture2DDynamic* DownloadedT
 }
 
 void AAIMarterialTestActor::UpdateAlpha( float Alpha )
-{
-    if (DynamicMaterial)
-    {
-        DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , Alpha );
-
-        if (Alpha >= 1.0f && NewTexture)
-        {
-            // Set the new texture when Alpha is fully transitioned
-            DynamicMaterial->SetTextureParameterValue( FName( "TextureParameter" ) , NewTexture );
-            NewTexture = nullptr;
-
-            // Reset alpha for next transition
-            DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
-        }
-    }
-
-    /*
+{   
     if (DynamicMaterial)
     {
         DynamicMaterial->SetScalarParameterValue(FName("Alpha"), Alpha);
     }
-
-    if (InitialTexture)
-    {
-        UMaterialInstanceDynamic* InitialDynamicMaterial = UMaterialInstanceDynamic::Create(MaterialTemplate, this);
-        InitialDynamicMaterial->SetScalarParameterValue(FName("Alpha"), 1.0f - Alpha);
-        InitialDynamicMaterial->SetTextureParameterValue(FName("A1-2345"), InitialTexture);
-        MeshComp->SetMaterial(0, InitialDynamicMaterial);
-    }
-    */
+    
 }
 
 void AAIMarterialTestActor::OnTimelineFinished()
 {
     // Handle timeline finished event
     // For example, you can loop the timeline
-    TimelineComponent->PlayFromStart();
-
-    /*
-    if (MeshComp && DynamicMaterial)
+    
+    if (DynamicMaterial)
     {
-        MeshComp->SetMaterial(0, DynamicMaterial);
-        InitialTexture = nullptr;
+        DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 1.0f );
     }
-    */
+    
 }

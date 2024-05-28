@@ -12,6 +12,7 @@
 #include "Data/WidgetData.h"
 #include "Engine.h"
 #include "Items/Cape/PlayerCape.h"
+#include <AI/AITxtBossAttack.h>
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -98,4 +99,9 @@ void APlayerGameMode::ApplyAITxtP()
 
 void APlayerGameMode::ApplyAITxtB()
 {
+	for (TActorIterator<AAITxtBossAttack> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->UpdateActorMaterial();
+	}
 }
