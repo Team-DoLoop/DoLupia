@@ -54,10 +54,6 @@ protected:
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* MaterialTemplate;
 
-	UPROPERTY( EditAnywhere , Category = "Materials" )
-	UMaterialInterface* MaterialTemplate2;
-
-	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
 
 	// Timeline component
@@ -68,10 +64,8 @@ protected:
 	UPROPERTY( EditAnywhere , Category = "Timeline" )
 	class UCurveFloat* AlphaCurve;
 
-	// New texture to transition to
-	class UTexture2DDynamic* NewTexture;
-
-	UPROPERTY()
+	UTexture2DDynamic* NewTexture;
 	UTexture* InitialTexture;
+	UMaterialInterface* InitialMaterial;
 
 };
