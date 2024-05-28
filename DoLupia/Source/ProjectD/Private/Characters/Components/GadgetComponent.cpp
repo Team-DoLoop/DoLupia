@@ -85,11 +85,12 @@ void UGadgetComponent::InitEquip()
 
 	// Sword
 	const FName& SwordSocket( TEXT( "SwordSocket" ) );
-	SwordBase = Character->GetWorld()->SpawnActor<ASwordBase>( FVector::ZeroVector , FRotator::ZeroRotator );
+	SwordBase = Character->GetWorld()->SpawnActor<ASwordBase>( FVector(-2.52, 21.64, 3.34),
+		FRotator(10, 0.0, -170) );
 
 	if (SwordBase)
 	{
-		SwordBase->SetActorScale3D(FVector(0.3f));
+		SwordBase->SetActorScale3D(FVector(0.1f));
 		SwordBase->AttachToComponent( Character->GetMesh() ,
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale , SwordSocket );
 	}
