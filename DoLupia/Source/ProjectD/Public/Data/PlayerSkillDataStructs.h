@@ -8,11 +8,14 @@
 UENUM(BlueprintType)
 enum class ESkillType : uint8
 {
+	NONE UMETA(DisplayName = "None"),
+	AUTO UMETA(DisplayName = "Auto"),
 	MELEE UMETA(DisplayName = "Melee"),
 	RANGED UMETA(DisplayName = "Ranged"),
 	SWAP UMETA(DisplayName = "Swap"),
-	ULT UMETA(DisplayName = "Ult"),
+	ULT UMETA(DisplayName = "Ult")
 };
+
 
 USTRUCT(BlueprintType)
 struct FPlayerSkillData : public FTableRowBase
@@ -20,10 +23,11 @@ struct FPlayerSkillData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
-	FPlayerSkillData() : ID(1), SkillLevel(1), SkillCost(10), SkillCoolTime(5), SkillDamage(10){}
+	FPlayerSkillData() : SkillID(1), SkillLevel(1), SkillCost(10), SkillCoolTime(5),
+	SkillDamage(10), SkillRange(FVector(100.0f, 100.0f, 20.0f)){}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ID;
+	int32 SkillID;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EUseColor SkillColor;
@@ -45,7 +49,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillLevel;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillCost;
 
@@ -56,5 +60,5 @@ public:
 	int32 SkillDamage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector SKillRange;
+	FVector SkillRange;
 };

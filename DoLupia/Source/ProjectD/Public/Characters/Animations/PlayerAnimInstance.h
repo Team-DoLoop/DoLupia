@@ -76,7 +76,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	class UAnimMontage* LyingMontage;
 
-	// void PlayerAttackAnimation(int32 SkillIndex);
 	void PlayAttackAnimation(class UAnimMontage* _Montage);
 
 	void PlayerLyingAnimation();

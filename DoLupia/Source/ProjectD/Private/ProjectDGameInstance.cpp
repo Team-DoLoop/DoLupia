@@ -19,7 +19,7 @@ void UProjectDGameInstance::Init()
 	Super::Init();
 }
 
-FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 ID)
+FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)
 {
-	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(ID), TEXT(""));
+	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(SkillID), TEXT(""));
 }

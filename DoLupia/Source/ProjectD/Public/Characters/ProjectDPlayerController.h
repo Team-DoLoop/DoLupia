@@ -163,7 +163,7 @@ private:
 	void StopAiming();
 
 protected:
-	void Attack();
+	// void Attack();
 	void ExecuteSkill(int32 SkillIndex);
 	
 private:

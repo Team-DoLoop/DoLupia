@@ -9,8 +9,11 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+
 struct FPlayerSkillData;
+enum class ESkillType : uint8;
 class UProjectDGameInstance;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTD_API UPlayerAttackComp : public UActorComponent, public ISkillInterface
 {
@@ -55,10 +58,9 @@ private:
 
 	
 public:
-
-
 	
-
+	
+	
 	// <---------------------- Attack ---------------------->
 private:
 	int32 PlayerMaxMP;
@@ -66,15 +68,10 @@ private:
 	float MPRegenRate;
 	float MPRegenTime;
 	float CurrentRegenTime;
-
 	int PlayerAttackStatus = 0;
-	EUseColor CurrentSkillColor = EUseColor::NONE; // X, 빨, 노, 파
-	TArray<FPlayerSkillData*> CurrentSkillData;
 	
-	//UPROPERTY()
-	//TArray<class UPlayerSkillBase*> PlayerSkills;
-	FVector AttackRange;
-	int32 AttackDamage;
+	UPROPERTY()
+	class UAnimMontage* AutoAttackMontage;
 
 protected:
 	void Attack();
@@ -85,18 +82,70 @@ public:
 	virtual void CompleteSkill() override;
 	
 	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
-	void SwapSkill();
-	void PlayerExecuteSkill(int32 SkillIndex);
+	void PlayerExecuteAttack(int32 AttackIndex);
+	void MeleeSkillAttackJudgement();
 
 	void MeleeSkill();
 	void RangedSkill();
+	void SwapSkill();
 	void UltSkill();
 
+
 	// FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
-	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
 
-	FORCEINLINE FVector GetAttackRange() const {return AttackRange;}
-	FORCEINLINE int32 GetAttackDamage() const {return AttackDamage;}
+
 	
+	// <---------------------- Skill Use - Color ---------------------->
+public:
+	void InitCanUseColor();
+	void SetColorUseState(EUseColor _Color, bool bCanUse);
+
+private:
+	TMap<EUseColor, int32> CanUseColor;
+
+
+	
+	// <---------------------- Skill Use - Weapon ---------------------->
+public:
+	void SetSkillUseState(bool bCanUse);
+	
+	
+	
+	// <---------------------- Skill Data ---------------------->
+public:
+	void SetSkillAttackData( FPlayerSkillData* PlayerSkillData );
+	//void CheckNextColor();
+	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
+	
+	FORCEINLINE virtual FString GetSkillName() const {return SkillName;}
+	FORCEINLINE virtual int32 GetSkillLevel() const {return SkillLevel;}
+	FORCEINLINE virtual int32 GetSkillCost() const {return SkillCost;}
+	FORCEINLINE virtual int32 GetSkillCoolTime() const {return SkillCoolTime;}
+	FORCEINLINE virtual int32 GetSkillDamage() const {return SkillDamage;}
+
+	
+private:
+	TArray<FPlayerSkillData*> CurrentSkillData;
+	EUseColor CurrentSkillColor = EUseColor::NONE; // X, 빨, 노, 파
+
+	int32 SkillCount = 4;						// 플레이어 스킬 개수
+	
+	int32 SkillID;
+	EUseColor SkillColor;
+	ESkillType SkillType;
+	FString SkillName;
+
+	UPROPERTY()
+	UTexture2D* SkillThumnail;
+	UPROPERTY()
+	UAnimMontage* SkillMontage;
+	
+	FText SkillDescription;
+	int32 SkillLevel; //
+	int32 SkillCost; //
+	int32 SkillCoolTime; //
+	int32 SkillDamage; //
+	FVector SkillRange; //
+	 
 };
