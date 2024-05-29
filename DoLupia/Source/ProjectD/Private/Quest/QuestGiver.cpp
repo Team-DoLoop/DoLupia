@@ -83,7 +83,7 @@ FString UQuestGiver::InteractWith()
 
     bool ActiveQuest = QuestComponent->QueryActiveQuest( QuestData.RowName );
     bool CompleteQuest = QuestComponent->QueryCompleteQuests( QuestData.RowName );
-    //bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn( QuestData.RowName );
+    bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn( QuestData.RowName );
     if (!ActiveQuest && !CompleteQuest)
     {
         FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
@@ -111,8 +111,8 @@ FString UQuestGiver::InteractWith()
         if (CompleteValuePtr)
         {
             UE_LOG( LogTemp , Error , TEXT( "AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName )" ) );
-            //이쪽에서 IsTurnedIn이 안돼용
-            if (CompleteValuePtr->IsCompleted && !CompleteValuePtr->IsTurnedIn) 
+            //이쪽에서 IsTurnedIn이 안돼
+            if (CompleteValuePtr->IsCompleted && !CompleteValuePtr->IsTurnedIn && !CompleteQuestTurnedIn)
             {
                 UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
                 //완료가 true이면

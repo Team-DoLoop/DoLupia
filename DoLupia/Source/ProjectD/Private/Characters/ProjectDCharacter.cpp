@@ -251,7 +251,7 @@ bool AProjectDCharacter::PossibleChangeGameMode()
 	{
 		UQuestGiver* QuestGiver = SpecificActor->GetQuestGiver();
 
-		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver())
+		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver() || GetQuestLogComponent())
 			return false;
 	}
 

@@ -154,7 +154,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
         return;
     }
 
-    //QuestLogComp->CompleteQuest(QuestID);
+    QuestLogComp->CompleteQuest(QuestID);
 
     if (QuestID.IsNone())
     {
