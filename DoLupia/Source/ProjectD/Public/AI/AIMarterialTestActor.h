@@ -68,4 +68,6 @@ protected:
 	UTexture* InitialTexture;
 	UMaterialInterface* InitialMaterial;
 
+	float TimelineLength;
+
 };
