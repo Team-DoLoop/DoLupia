@@ -14,8 +14,6 @@
 #include "Monsters/Monster.h"
 
 
-class AMonster;
-
 void UPlayerAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
@@ -84,20 +82,6 @@ void UPlayerAnimInstance::PlayerDieAnimation()
 
 
 // <---------------------- Attack ---------------------->
-/*
-void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
-{
-	if(!attackMontage) return;
-
-	// 검 소지 중인지 아닌지 나눠주기
-	// 검을 들고 있다면?
-	PlayMontage(attackMontage);
-	Montage_JumpToSection(SkillAnimationName[SkillIndex],attackMontage);
-	
-	
-	// 안들고 있다면?
-}
-*/
 
 void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
 {
@@ -124,25 +108,7 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 	//if(!Sword) return;
 	//Sword->CollisionOn();
 	
-	TArray<AActor*> TargetActors;
-	FVector AttackRange = Player->GetAttackComp()->GetAttackRange();
-	FVector PlayerLoc = Player->GetActorLocation();
-	FVector BoxPos = FVector(AttackRange.X + PlayerLoc.X, AttackRange.Y + PlayerLoc.Y, PlayerLoc.Z);
-
-	int32 AttackDamage = Player->GetAttackComp()->GetAttackDamage();
-	
-	DrawDebugBox(GetWorld(), BoxPos, AttackRange, FColor::Red, false, 3.0f);
-	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, AttackRange,
-		TArray<TEnumAsByte<EObjectTypeQuery>>(), nullptr, TArray<AActor*>(),
-		TargetActors);
-	for(auto TargetActor : TargetActors)
-	{
-		if (AMonster* Monster = Cast<AMonster>(TargetActor))
-		{
-			Monster->OnMyTakeDamage(AttackDamage);
-			UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
-		}
-	}
+	Player->GetAttackComp()->MeleeSkillAttackJudgement();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()

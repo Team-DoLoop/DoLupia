@@ -26,7 +26,7 @@ void UPlayerSkillWidget::InitSkillSlot()
 		if(PlayerSkillSlot)
 		{
 			PlayerSkillSlotArray.Add(PlayerSkillSlot);
-			PlayerSkillSlot->SetUI(GI->GetPlayerSkillData(i));
+			PlayerSkillSlot->SetUI(GI->GetPlayerSkillData(0));	// 모두 스킬 사용 X로 초기화
 			
 			if(UHorizontalBoxSlot* SkillSlot = SkillBox->AddChildToHorizontalBox(PlayerSkillSlot))
 			{

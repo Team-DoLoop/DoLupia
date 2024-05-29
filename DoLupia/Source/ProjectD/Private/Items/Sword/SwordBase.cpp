@@ -37,6 +37,9 @@ void ASwordBase::BeginPlay()
 
 void ASwordBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
+
+	// 공격 판정 - Player Attack Comp로 이동
+	/*
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	AProjectDCharacter* Player = Cast<AProjectDCharacter>(GetAttachParentActor());
@@ -55,6 +58,7 @@ void ASwordBase::NotifyActorBeginOverlap(AActor* OtherActor)
 			}
 		}
 	}
+	*/
 }
 
 void ASwordBase::CollisionOn()

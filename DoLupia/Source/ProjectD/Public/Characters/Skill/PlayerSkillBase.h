@@ -29,6 +29,7 @@ public:
 	virtual void ApplySkill(ACharacter* Target) override;
 	virtual void ChangeSkillData(FPlayerSkillData* _PlayerSkillData);
 
+	/*
 	FORCEINLINE virtual FString GetSkillName() const {return SkillName;}
 	FORCEINLINE virtual int32 GetSkillLevel() const {return SkillLevel;}
 	FORCEINLINE virtual int32 GetSkillCost() const {return SkillCost;}
@@ -40,42 +41,7 @@ public:
 	FORCEINLINE virtual void SetSkillCost(int32 _SkillCost) {SkillCost = _SkillCost;}
 	FORCEINLINE virtual void SetSkillCoolTime(int32 _SkillCoolTime) {SkillCoolTime = _SkillCoolTime;}
 	FORCEINLINE virtual void SetSkillDamage(int32 _SkillDamage) {SkillDamage = _SkillDamage;}
+	*/
+
 	
-
-	// <---------------------- Skill ---------------------->
-private:
-	FPlayerSkillData* PlayerSkillData;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillID;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	EUseColor SkillColor;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	ESkillType SkillType;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	FString SkillName;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	UTexture2D* SkillThumnail;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	UAnimMontage* SkillMontage;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	FText SkillDescription;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillLevel;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillCost;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillCoolTime;
-
-	UPROPERTY(VisibleAnywhere, Category = "Skill")
-	int32 SkillDamage;
 };

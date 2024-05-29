@@ -101,12 +101,12 @@ void AProjectDPlayerController::SetupInputComponent()
 		// Attack
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Attack);
 
-		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);
-		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);
-		EnhancedInputComponent->BindAction(CastingHitDownSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 2);
-		EnhancedInputComponent->BindAction(UltSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 3);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);
+		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);
+		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 2);
+		EnhancedInputComponent->BindAction(CastingHitDownSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 3);
+		EnhancedInputComponent->BindAction(UltSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 4);
 
 		// Test
 		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
@@ -130,6 +130,7 @@ void AProjectDPlayerController::TestAnyFunction()
 	// TakeDamage Test
 	//ControlledCharacter->TakeHit(EAttackType::LYING,31.0f);
 
+	/*
 	// AI Test
 	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	auto AIlib = gm->GetAIConnectionLibrary();
@@ -146,6 +147,15 @@ void AProjectDPlayerController::TestAnyFunction()
 
 		gm->ApplyAITxtP();
 	}
+	*/
+
+	// 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
+	ControlledCharacter->GetAttackComp()->SetSkillUseState(true);
+
+	// 각 색깔 열리게
+	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
+	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
+	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
 }
 
 	
@@ -261,6 +271,7 @@ void AProjectDPlayerController::StopAiming()
 
 }
 
+/*
 void AProjectDPlayerController::Attack()
 {
 	if(!ControlledCharacter) return;
@@ -276,12 +287,13 @@ void AProjectDPlayerController::Attack()
 	}
 
 }
+*/
 
 void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)
 {
 	if(!ControlledCharacter) return;
 
-	ControlledCharacter->attackComp->PlayerExecuteSkill(SkillIndex);
+	ControlledCharacter->attackComp->PlayerExecuteAttack(SkillIndex);
 }
 
 // <---------------------- Quest UI ---------------------->
