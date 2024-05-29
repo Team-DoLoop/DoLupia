@@ -24,6 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY( EditAnywhere )
+	FString ObjectID;
+
 	virtual FString InteractWith() override;
 
 };

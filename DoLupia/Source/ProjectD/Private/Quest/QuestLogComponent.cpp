@@ -127,8 +127,17 @@ bool UQuestLogComponent::QueryActiveQuest(FName QuestID)
 
 bool UQuestLogComponent::QueryCompleteQuests(FName QuestID)
 {
+    if (IsValid( GetQuestActor( QuestID ) ))
+    {
+        GetQuestActor( QuestID )->IsTurnedIn = false;
+    }
+    else {
+        //GetQuestActor( QuestID )->IsTurnedIn = true;
+    }
+
     //현재 퀘스트에 특정 퀘스트 아이디가 있는지에 대한 bool 값
     bool QuestExist = CompletedQuests.Contains( QuestID );
+
     if (QuestExist) {
         UE_LOG( LogTemp , Error , TEXT( "True CompletedQuests(FName %s)" ) , *QuestID.ToString() );
     }

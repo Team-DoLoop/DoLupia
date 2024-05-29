@@ -1,4 +1,5 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Gamemode/PlayerGameMode.h"
@@ -44,7 +45,7 @@ void APlayerGameMode::StartPlay()
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
-	AITestUI = CreateWidget<UAITestWidget>( GetWorld() , AITestUIFactory );
+	//AITestUI = CreateWidget<UAITestWidget>( GetWorld() , AITestUIFactory );
 	if (AITestUI)
 	{
 		AITestUI->AddToViewport( 999 );

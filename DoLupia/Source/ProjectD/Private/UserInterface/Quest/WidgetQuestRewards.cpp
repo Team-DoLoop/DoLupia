@@ -43,7 +43,17 @@ void UWidgetQuestRewards::NativePreConstruct()
     {
         for (const auto& itemImage : ItemRewards)
         {
+            if (itemImage == nullptr)  // itemImage가 null인지 확인
+            {
+                continue;
+            }
+
             UTexture2D* IconTexture = itemImage->GetAssetData().Icon;
+
+            if (IconTexture == nullptr)
+            {
+                continue;
+            }
 
             // SizeBox 생성
             USizeBox* SizeBox = NewObject<USizeBox>( this );
@@ -144,7 +154,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
         return;
     }
 
-    //QuestLogComp->CompleteQuest(QuestID);
+    QuestLogComp->CompleteQuest(QuestID);
 
     if (QuestID.IsNone())
     {
