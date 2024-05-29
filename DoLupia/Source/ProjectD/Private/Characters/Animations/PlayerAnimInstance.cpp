@@ -10,7 +10,11 @@
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Items/Sword/SwordBase.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Monsters/Monster.h"
 
+
+class AMonster;
 
 void UPlayerAnimInstance::NativeInitializeAnimation()
 {
@@ -52,9 +56,9 @@ void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 
 	FName MontageName = Montage->GetFName();
 	// End Attack Montage
-	if(MontageName == attackMontage->GetFName())
+	if(AttackMontage && MontageName == AttackMontage->GetFName())
 		Player->GetAttackComp()->CompleteSkill();
-	else if(MontageName == LyingMontage->GetName())
+	else if(LyingMontage && MontageName == LyingMontage->GetName())
 		Player->LyingEnd();
 }
 
@@ -98,6 +102,8 @@ void UPlayerAnimInstance::PlayerAttackAnimation(int32 SkillIndex)
 void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
 {
 	if(!_Montage) return;
+	UE_LOG(LogTemp, Log, TEXT("PlayAttackAnimation : %s"), *_Montage->GetFName().ToString());
+	AttackMontage = _Montage;
 	PlayMontage(_Montage);
 }
 
@@ -114,9 +120,29 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment Start"));
 	if(!Player || !Gadget) return;
 
-	ASwordBase* Sword = Gadget->GetSword();
-	if(!Sword) return;
-	Sword->CollisionOn();
+	//ASwordBase* Sword = Gadget->GetSword();
+	//if(!Sword) return;
+	//Sword->CollisionOn();
+	
+	TArray<AActor*> TargetActors;
+	FVector AttackRange = Player->GetAttackComp()->GetAttackRange();
+	FVector PlayerLoc = Player->GetActorLocation();
+	FVector BoxPos = FVector(AttackRange.X + PlayerLoc.X, AttackRange.Y + PlayerLoc.Y, PlayerLoc.Z);
+
+	int32 AttackDamage = Player->GetAttackComp()->GetAttackDamage();
+	
+	DrawDebugBox(GetWorld(), BoxPos, AttackRange, FColor::Red, false, 3.0f);
+	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, AttackRange,
+		TArray<TEnumAsByte<EObjectTypeQuery>>(), nullptr, TArray<AActor*>(),
+		TargetActors);
+	for(auto TargetActor : TargetActors)
+	{
+		if (AMonster* Monster = Cast<AMonster>(TargetActor))
+		{
+			Monster->OnMyTakeDamage(AttackDamage);
+			UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
+		}
+	}
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
@@ -124,7 +150,7 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 	// 공격 판정 끝
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment End"));
 
-	ASwordBase* Sword = Gadget->GetSword();
-	if(!Sword) return;
-	Sword->CollisionOff();
+	//ASwordBase* Sword = Gadget->GetSword();
+	//if(!Sword) return;
+	//Sword->CollisionOff();
 }

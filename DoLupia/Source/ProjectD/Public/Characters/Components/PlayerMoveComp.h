@@ -79,7 +79,7 @@ public:
 
 	// <---------------------- Evasion ---------------------->
 private:
-	float EvasionRange = 10000.0f;
+	float EvasionRange = 5000.0f;
 
 protected:
 	

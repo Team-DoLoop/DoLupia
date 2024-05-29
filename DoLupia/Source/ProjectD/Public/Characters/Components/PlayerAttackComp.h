@@ -73,6 +73,8 @@ private:
 	
 	//UPROPERTY()
 	//TArray<class UPlayerSkillBase*> PlayerSkills;
+	FVector AttackRange;
+	int32 AttackDamage;
 
 protected:
 	void Attack();
@@ -82,7 +84,7 @@ public:
 	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
 	
-	void SetSkillUI(FPlayerSkillData* PlayerSkillData);
+	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
 	void SwapSkill();
 	void PlayerExecuteSkill(int32 SkillIndex);
 
@@ -94,5 +96,7 @@ public:
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
 
+	FORCEINLINE FVector GetAttackRange() const {return AttackRange;}
+	FORCEINLINE int32 GetAttackDamage() const {return AttackDamage;}
 	
 };

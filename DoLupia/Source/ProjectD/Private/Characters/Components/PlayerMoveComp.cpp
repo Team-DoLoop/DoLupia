@@ -133,8 +133,14 @@ void UPlayerMoveComp::Evasion()
 	if(bHitSuccessful)
 	{
 		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
+		EvasionVec.Z = 0.0f;
+		
+		FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(EvasionVec, Player->GetActorUpVector());
+		FRotator PlayerRot = Player->GetActorRotation();
+		FRotator TempRot = FRotator(PlayerRot.Pitch, TargetRot.Yaw, PlayerRot.Roll);
+
 		Player->LaunchCharacter(EvasionVec.GetSafeNormal() * EvasionRange, false, false);
-		Player->SetActorRotation( UKismetMathLibrary::MakeRotFromXZ( EvasionVec , Player->GetActorUpVector() ) );
+		Player->SetActorRotation( TempRot );
 	}
 	
 	if(!PlayerAnim) return;

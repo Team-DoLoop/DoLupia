@@ -36,10 +36,7 @@ void UPlayerSkillWidget::InitSkillSlot()
 	}
 }
 
-void UPlayerSkillWidget::UpdateSkillUI(FPlayerSkillData* PlayerSkillData)
+void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData)
 {
-	for(int i = 0; i < 2; i++)
-	{
-		PlayerSkillSlotArray[i]->SetUI(PlayerSkillData);
-	}
+	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillData);
 }

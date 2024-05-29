@@ -34,7 +34,7 @@ private:
 	
 public:
 	void InitSkillSlot();
-	void UpdateSkillUI(FPlayerSkillData* PlayerSkillData);
+	void UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
 	
 	FORCEINLINE TArray<UPlayerSkillSlotWidget*> GetPlayerSkillSlotArr() const {return PlayerSkillSlotArray;}
 	

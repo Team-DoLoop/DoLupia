@@ -24,7 +24,7 @@ public:
 
 	virtual void StartPlay() override;
 
-	UAIConnectionLibrary* GetAIConnectionLibrary() const;
+	class UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	void InitializeNPCConvWidget();
 	void ReceiveNPCMsg(FString msg);
