@@ -6,6 +6,7 @@
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/Interaction/InteractionWidget.h"
 #include "Data/WidgetData.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/Equipment/PlayerEquipmentWidget.h"
 #include "UserInterface/SystemCall/GameSystemCallWidget.h"
 

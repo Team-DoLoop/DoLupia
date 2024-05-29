@@ -2,9 +2,8 @@
 
 
 #include "UserInterface/SystemCall/GameSystemCallWidget.h"
-
-#include "Animation/WidgetAnimation.h"
 #include "Components/TextBlock.h"
+#include "Pooling/SoundManager.h"
 
 void UGameSystemCallWidget::NativeConstruct()
 {
@@ -21,32 +20,13 @@ void UGameSystemCallWidget::DisplayMessage( const FText& Message )
 
 void UGameSystemCallWidget::DisplayMessage( const FText& Message , USoundCue* SoundCue )
 {
-    if (SoundCue)
-    {
-        //USoundBase* PooledSound = GetPooledSound();
-        //if (PooledSound)
-        {
-            // 사운드 플레이
-            //UGameplayStatics::PlaySound( this , SoundCue , Location );
-        }
-    }
-
+    ASoundManager::GetInstance( GetWorld() )->PlaySoundCue2D( SoundCue );
     DisplayMessage( Message );
 }
 
 void UGameSystemCallWidget::DisplayMessage( const FText& Message , USoundWave* SoundWave )
 {
-    //if (SoundWave)
-    //{
-    //    USoundBase* PooledSound = GetPooledSound();
-    //    if (PooledSound)
-    //    {
-    //        // 사운드 플레이
-    //        UGameplayStatics::PlaySoundAtLocation( this , SoundWave , Location );
-    //        ReturnSoundToPool( PooledSound );
-    //    }
-    //}
-
+    ASoundManager::GetInstance(GetWorld())->PlaySoundWave2D( SoundWave );
     DisplayMessage( Message );
 }
 
