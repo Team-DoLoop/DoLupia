@@ -111,23 +111,14 @@ FString UQuestGiver::InteractWith()
         if (CompleteValuePtr)
         {
             UE_LOG( LogTemp , Error , TEXT( "AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName )" ) );
+            //이쪽에서 IsTurnedIn이 안돼용
             if (CompleteValuePtr->IsCompleted && !CompleteValuePtr->IsTurnedIn) 
             {
                 UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
                 //완료가 true이면
                 DisplayRewards();
                 return GetOwner()->GetName();
-            }
-            /*
-            else 
-            {
-                UE_LOG( LogTemp , Error , TEXT( " DisplayQuest(CompleteValuePtr->CurrnetStage);" ) );
- 
-                DisplayQuest( CompleteValuePtr->CurrnetStage );
-                return GetOwner()->GetName();
-            }  
-            */
-            
+            }           
         }
 
         // 모든 조건을 처리한 후에도 값을 반환하지 않았으므로 기본값을 반환합니다.

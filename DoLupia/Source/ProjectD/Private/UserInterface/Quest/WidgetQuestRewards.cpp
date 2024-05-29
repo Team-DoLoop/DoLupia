@@ -43,7 +43,17 @@ void UWidgetQuestRewards::NativePreConstruct()
     {
         for (const auto& itemImage : ItemRewards)
         {
+            if (itemImage == nullptr)  // itemImage가 null인지 확인
+            {
+                continue;
+            }
+
             UTexture2D* IconTexture = itemImage->GetAssetData().Icon;
+
+            if (IconTexture == nullptr)
+            {
+                continue;
+            }
 
             // SizeBox 생성
             USizeBox* SizeBox = NewObject<USizeBox>( this );
@@ -114,7 +124,7 @@ void UWidgetQuestRewards::NativeDestruct()
 
 void UWidgetQuestRewards::OnAcceptClicked()
 {
-    //AI 망토 이미지 적용
+    /*/AI 망토 이미지 적용
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     gm->ApplyAITxtP();
@@ -180,7 +190,10 @@ void UWidgetQuestRewards::OnAcceptClicked()
     {
 		for (const auto& items : ItemRewards) {
         //보상 아이템 추가
-        InvetoryComp->HandelAddItem( items);
+            if (IsValid( items )) {
+                InvetoryComp->HandelAddItem( items);
+            }
+        
 		}    
     }
     
