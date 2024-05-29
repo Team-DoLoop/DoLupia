@@ -33,6 +33,7 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector( AMonsterAIController::PatrolPosKey , NextPatrol.Location );
 		return EBTNodeResult::Succeeded;
+
 	}
 
 	return EBTNodeResult::Failed;

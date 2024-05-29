@@ -18,9 +18,8 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (nullptr == Boss)
 		return EBTNodeResult::Failed;
 
-	UE_LOG( LogTemp , Warning , TEXT( "UBTTask_Attack::ExecuteTask" ) );
 
-	Boss->Attack();
+	Boss->state = EBossState::Attack;
 	
 	//IsAttacking = true;
 

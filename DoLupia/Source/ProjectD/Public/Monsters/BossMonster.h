@@ -10,7 +10,15 @@
 #include "Components/ActorComponent.h"
 #include "BossMonster.generated.h"
 
-DECLARE_MULTICAST_DELEGATE( FOnAttackEndDelegate );
+UENUM( BlueprintType )
+enum class EBossState : uint8
+{
+	Idle ,
+	Move ,
+	Attack ,
+	Damage ,
+	Die ,
+};
 
 UCLASS()
 class PROJECTD_API ABossMonster : public ACharacter
@@ -30,13 +38,27 @@ public:
 
 	//UPROPERTY( EditAnywhere , Category = "Components" )
 	//UOctopusBackpackComponent* OctopusBackpackComponent;
-	//
+	
 	//UPROPERTY( EditAnywhere,BlueprintReadWrite , Category = "Components" )
 	//UChildActorComponent* ChildActorComponent;
 
-	UFUNCTION()
-	void Attack();
-	FOnAttackEndDelegate OnAttackEnd;
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EBossState state;
 
-	float currentTime = 0;
+	UPROPERTY( EditAnywhere , BlueprintReadOnly )
+	int32 BossMaxHP = 100;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly )
+	int32 BossCurrentHP = BossMaxHP;
+
+	bool IsAlive = true;
+
+	void IdleState();
+	void MoveState();
+	void AttackState();
+	void DamageState();
+	void DieState();
+
+
+	
 };

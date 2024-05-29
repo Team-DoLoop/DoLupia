@@ -29,7 +29,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (nullptr == World) return;
 
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.0f;
+	float DetectRadius = 3000.0f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam( NAME_None , false , ControllingPawn ); 
@@ -41,6 +41,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		FCollisionShape::MakeSphere( DetectRadius ) , 
 		CollisionQueryParam
 	);
+
+
+	auto Boss = Cast<ABossMonster>( OwnerComp.GetAIOwner()->GetPawn() );
+
 
 	if(bResult)
 	{
@@ -54,12 +58,14 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 				DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Green , false , 0.2f );
 				DrawDebugPoint( World , player->GetActorLocation() , 10 , FColor::Blue , false , 0.2f );
 				DrawDebugLine( World , ControllingPawn->GetActorLocation() ,player->GetActorLocation(), FColor::Blue , false , 0.2f );
-				
-
+				Boss->state = EBossState::Move;
+				return;
 			}
 		}
 	}
 
-	DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Red , false , 0.2f );
+	OwnerComp.GetBlackboardComponent()->SetValueAsObject( AMonsterAIController::TargetKey , nullptr );
 
+	DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Red , false , 0.2f );
+	
 }

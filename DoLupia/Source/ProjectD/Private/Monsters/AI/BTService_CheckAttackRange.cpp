@@ -1,0 +1,40 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Monsters/AI/BTService_CheckAttackRange.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Monsters/MonsterAIController.h"
+#include "Characters/ProjectDCharacter.h"
+
+UBTService_CheckAttackRange::UBTService_CheckAttackRange()
+{
+	NodeName = TEXT( "CheckAttackRange" );
+	Interval = 1.0f;
+}
+13
+void UBTService_CheckAttackRange::TickNode( UBehaviorTreeComponent& OwnerComp , uint8* NodeMemory , float DeltaSeconds )
+{
+	Super::TickNode( OwnerComp , NodeMemory , DeltaSeconds );
+	
+	bool bResult = false;
+
+	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+	if (nullptr == ControllingPawn)
+		return ;
+
+	auto Target = Cast<AProjectDCharacter>( OwnerComp.GetBlackboardComponent()->GetValueAsObject( AMonsterAIController::TargetKey ) );
+	if (nullptr == Target)
+		return ;
+
+	bResult = (Target->GetDistanceTo( ControllingPawn ) < 1300.0f);
+
+	if (bResult) {
+
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool( AMonsterAIController::IsInAttackRangeKey , true );
+		return;
+	}
+	else {
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool( AMonsterAIController::IsInAttackRangeKey , NULL );
+		return;
+	}
+}

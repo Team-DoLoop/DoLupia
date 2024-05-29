@@ -9,6 +9,8 @@
 const FName AMonsterAIController::HomePosKey( TEXT( "HomePos" ) );
 const FName AMonsterAIController::PatrolPosKey( TEXT( "PatrolPos" ) );
 const FName AMonsterAIController::TargetKey( TEXT( "Target" ) );
+const FName AMonsterAIController::IsAliveKey( TEXT( "IsAlive" ) );
+const FName AMonsterAIController::IsInAttackRangeKey( TEXT( "IsInAttackRange" ) );
 
 AMonsterAIController::AMonsterAIController()
 {

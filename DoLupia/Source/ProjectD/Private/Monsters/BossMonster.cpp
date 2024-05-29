@@ -45,10 +45,8 @@ ABossMonster::ABossMonster()
 void ABossMonster::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//auto BTTask_Attack= Cast<UBTTask_Attack>()
-	//BTTask_Attack->OnAttackEndHandle.AddDynamic( this , &ABossMonster::Attack );
-	//if (GetMesh())ChildActorComponent->SetupAttachment( GetMesh() );
+	IsAlive = true;
+	state = EBossState::Idle;
 }
 
 // Called every frame
@@ -56,13 +54,40 @@ void ABossMonster::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	switch (state)
+	{
+	case EBossState::Idle:		IdleState();		break;
+	case EBossState::Move:		MoveState();		break;
+	case EBossState::Attack:	AttackState();		break;
+	case EBossState::Damage:	DamageState();		break;
+	case EBossState::Die:		DieState();			break;
+	}
 }
 
-void ABossMonster::Attack()
+void ABossMonster::IdleState()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Attack() - 공격 시작" ) );
-	//OnAttackEnd.Broadcast();
+	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::IdleState()" ) );
 
-	
 }
+
+void ABossMonster::MoveState()
+{
+	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::MoveState()" ) );
+}
+
+void ABossMonster::AttackState()
+{
+	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::AttackState()" ) );
+}
+
+void ABossMonster::DamageState()
+{
+}
+
+void ABossMonster::DieState()
+{
+	IsAlive = false;
+}
+
+
 
