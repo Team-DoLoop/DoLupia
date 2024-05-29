@@ -8,6 +8,7 @@
 
 struct FInteractableData;
 class UMainMenu;
+class UGameSystemCallWidget;
 class UInteractionWidget;
 class UItemBase;
 
@@ -36,6 +37,10 @@ public:
 	FORCEINLINE bool IsMenuVisible() const { return bISMenuVisible; }
 	FORCEINLINE UMainMenu* GetMainMeun() const { return MainMenuWidget; }
 
+	void OnSystemCall( const FText& Message ) const;
+	void OnSystemCallSoundCue( const FText& Message , class USoundCue* SoundCue ) const;
+	void OnSystemCallSoundWave( const FText& Message , class USoundWave* SoundWave ) const;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -46,7 +51,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
 	TSubclassOf<UInteractionWidget> InteractionWidgetFactory;
 
-	bool bISMenuVisible;
+	UPROPERTY( EditDefaultsOnly , Category = "Widgets" )
+	TSubclassOf<UGameSystemCallWidget> GameSystemCallFactory;
 
 	UPROPERTY()
 	UMainMenu* MainMenuWidget;
@@ -54,4 +60,8 @@ protected:
 	UPROPERTY()
 	UInteractionWidget* InteractionWidget;
 
+	UPROPERTY()
+	UGameSystemCallWidget* GameSystemCall;
+
+	bool bISMenuVisible;
 };

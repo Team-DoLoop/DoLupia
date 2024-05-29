@@ -130,6 +130,10 @@ public:
 
 	UPlayerBattleWidget* GetPlayerBattleWidget() const { return PlayerBattleWidget; }
 
+	void OnSystemCall( const FText& Message ) const;
+	void OnSystemCallSoundCue( const FText& Message, class USoundCue* SoundCue) const;
+	void OnSystemCallSoundWave(const FText& Message , class USoundWave* SoundWave ) const;
+
 protected:
 	void ToggleMenu();
 

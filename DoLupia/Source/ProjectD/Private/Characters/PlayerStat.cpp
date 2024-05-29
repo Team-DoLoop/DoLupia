@@ -2,6 +2,11 @@
 
 
 #include "Characters/PlayerStat.h"
+#include "Characters/ProjectDCharacter.h"
+
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
 #include "Items/ItemBase.h"
 
@@ -11,8 +16,10 @@ APlayerStat::APlayerStat()
 		MaxMP(100), CurrentMP(MaxMP), MPRegenRate(5.0f), MPRegenTime(1.0f),
 		ATK(10.0f),
 		DEF(5.0f),
-		SkillPoint(0)
+		SkillLevelMelee(0),
+		SkillLevelRange(0)
 {
+	
 }
 
 void APlayerStat::initPlayerData()
@@ -30,21 +37,38 @@ void APlayerStat::initPlayerData()
 	ATK = 10.0f;
 	DEF = 5.0f;
 
-	SkillPoint = 0;
+	SkillLevelMelee = 0;
+	SkillLevelRange = 0;
+}
+
+void APlayerStat::AddSkillLevelMelee( int32 SkillPoint )
+{
+	SkillLevelMelee += SkillPoint;
+}
+
+void APlayerStat::AddSkillLevelRange( int32 SkillPoint )
+{
+	SkillLevelRange += SkillPoint;
 }
 
 void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextItemBase )
 {
 	if(CurrentItemBase)
 	{
-		ATK -= CurrentItemBase->GetItemStatistics().DamageValue;
-		DEF -= CurrentItemBase->GetItemStatistics().ArmorRating;
+		const FItemStatistics& ItemStatistics = CurrentItemBase->GetItemStatistics();
+
+		ATK -= ItemStatistics.DamageValue;
+		DEF -= ItemStatistics.ArmorRating;
+		MaxHP -= ItemStatistics.HealthValue;
 	}
 
 	if(NextItemBase)
 	{
-		ATK += NextItemBase->GetItemStatistics().DamageValue;
-		DEF += NextItemBase->GetItemStatistics().ArmorRating;
+		const FItemStatistics& ItemStatistics = NextItemBase->GetItemStatistics();
+
+		ATK += ItemStatistics.DamageValue;
+		DEF += ItemStatistics.ArmorRating;
+		MaxHP += ItemStatistics.HealthValue;
 	}
 }
 
@@ -52,20 +76,36 @@ void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextI
 // <---------------- MP & HP ---------------->
 void APlayerStat::SetHP(int32 _HP)
 {
-	// int32 NewHP = CurrentHP + _HP;
+	if (CurrentHP != _HP)
+	{
+		if (_HP > MaxHP)
+			_HP = MaxHP;
 
-	if(_HP > MaxHP)
-		_HP = MaxHP;
+		CurrentHP = _HP;
 
-	CurrentHP = _HP;
+		if (AProjectDCharacter* Character = Cast<AProjectDCharacter>( GetOwner() ))
+			if(UPlayerBattleWidget* BattleWidget = Character->GetPlayerBattleWidget())
+				if(UPlayerHPWidget* HpWidget = BattleWidget->GetPlayerHPBar())
+					HpWidget->SetHPBar( CurrentHP , MaxHP );
+	}
+
 }
 
 void APlayerStat::SetMP(int32 _MP)
 {
-	if (_MP > MaxHP)
-		_MP = MaxHP;
+	if (CurrentMP != _MP)
+	{
 
-	CurrentMP = _MP;
+		if (_MP > MaxHP)
+			_MP = MaxHP;
+
+		CurrentMP = _MP;
+
+		if (AProjectDCharacter* Character = Cast<AProjectDCharacter>( GetOwner() ))
+			if (UPlayerBattleWidget* BattleWidget = Character->GetPlayerBattleWidget())
+				if (UPlayerMPWidget* HpWidget = BattleWidget->GetPlayerMPBar())
+					HpWidget->SetMPBar( CurrentMP , MaxMP );
+	}
 }
 
 void APlayerStat::SetMPRegenRate(float _MPRegenRate)
