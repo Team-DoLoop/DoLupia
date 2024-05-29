@@ -20,18 +20,9 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	UE_LOG( LogTemp , Warning , TEXT( "UBTTask_Attack::ExecuteTask" ) );
 
-	//Boss->OnAttackEnd.AddDynamic( this , &UBTTask_Attack::OnAttackEndHandle );
 	Boss->Attack();
-	IsAttacking = true;
-
-	//ct += GetWorld()->GetDeltaSeconds();
-	//if(ct>3)
-	//{
-	//	//IsAttacking = false;
-	//	ct = 0;
-	//	return EBTNodeResult::Succeeded;
-
-	//}
+	
+	//IsAttacking = true;
 
 	/*if (!IsAttacking)
 	{
@@ -41,7 +32,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}*/
 	return EBTNodeResult::Succeeded;
 
-	//return EBTNodeResult::InProgress;
+	
 }
 
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
