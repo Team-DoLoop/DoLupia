@@ -100,11 +100,11 @@ public:
 public:
 	void InitCanUseColor();
 	void SetColorUseState(EUseColor _Color, bool bCanUse);
+	EUseColor FindSkillColor(EUseColor _CurrentColor);
 
 private:
-	TMap<EUseColor, int32> CanUseColor;
-
-
+	TMap<EUseColor, bool> CanUseColor;
+	TMap<EUseColor, int32> StartIndexColor;
 	
 	// <---------------------- Skill Use - Weapon ---------------------->
 public:

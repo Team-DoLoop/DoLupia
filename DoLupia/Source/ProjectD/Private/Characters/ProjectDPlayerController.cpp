@@ -130,6 +130,7 @@ void AProjectDPlayerController::TestAnyFunction()
 	// TakeDamage Test
 	//ControlledCharacter->TakeHit(EAttackType::LYING,31.0f);
 
+	/*
 	// AI Test
 	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	auto AIlib = gm->GetAIConnectionLibrary();
@@ -146,6 +147,15 @@ void AProjectDPlayerController::TestAnyFunction()
 
 		gm->ApplyAITxtP();
 	}
+	*/
+
+	// 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
+	ControlledCharacter->GetAttackComp()->SetSkillUseState(true);
+
+	// 각 색깔 열리게
+	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
+	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
+	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
 }
 
 	

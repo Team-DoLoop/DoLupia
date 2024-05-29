@@ -114,11 +114,15 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 void UPlayerAttackComp::InitCanUseColor()
 {
 	UEnum* ColorEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUseColor"), true);
-	if(ColorEnum) return;
+	if(!ColorEnum) return;
 
-	for(int i = 0; i < ColorEnum->NumEnums()-1; i++)
+	UE_LOG(LogTemp, Log, TEXT("ColorEnum->NumEnums() : %d"), ColorEnum->NumEnums());
+	for(int i = 0; i < ColorEnum->NumEnums(); i++)
 	{
-		CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), -1);
+		CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), false);
+
+		// 0, 2, 4, 6, 8 : None, Red, Yellow, Blue, Color
+		StartIndexColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), i * 2); 
 	}
 }
 
@@ -133,11 +137,13 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 	// 스킬 사용 가능
 	if(bCanUse)
 	{
-		// UI 모두 활성화
-		CurrentSkillData[1] = GI->GetPlayerSkillData(1);
-		CurrentSkillData[2] = GI->GetPlayerSkillData(2);
+		// UI 모두 활성화 (Red로)
+		CurrentSkillData[1] = GI->GetPlayerSkillData(2);
+		CurrentSkillData[2] = GI->GetPlayerSkillData(3);
 		CurrentSkillData[3] = GI->GetPlayerSkillData(8);
 		CurrentSkillData[4] = GI->GetPlayerSkillData(9);
+
+		CurrentSkillColor = EUseColor::RED;
 	}
 	else
 	{
@@ -148,9 +154,9 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 		}
 	}
 
-	for(int i = 1; i <= SkillCount; i++)
+	for(int i = 0; i < SkillCount; i++)
 	{
-		SetSkillUI(i, CurrentSkillData[i]);
+		SetSkillUI(i, CurrentSkillData[i+1]);
 	}
 }
 
@@ -242,7 +248,10 @@ void UPlayerAttackComp::MeleeSkillAttackJudgement()
 {
 	TArray<AActor*> TargetActors;
 	FVector PlayerLoc = Player->GetActorLocation();
-	FVector BoxPos = FVector(SkillRange.X + PlayerLoc.X, SkillRange.Y + PlayerLoc.Y, PlayerLoc.Z);
+	FVector PlayerVec = Player->GetActorForwardVector();
+	PlayerVec.Z = 0;
+	PlayerVec.Normalize();
+	FVector BoxPos = FVector((SkillRange.X * PlayerVec.X)+ PlayerLoc.X, (SkillRange.Y * PlayerVec.Y) + PlayerLoc.Y, PlayerLoc.Z);
 
 	// 확인용 박스
 	DrawDebugBox(GetWorld(), BoxPos, SkillRange, FColor::Red, false, 3.0f);
@@ -271,40 +280,41 @@ void UPlayerAttackComp::RangedSkill()
 	UE_LOG(LogTemp, Log, TEXT("Ranged Skill : %s"),  *(CurrentSkillData[1]->SkillName));
 }
 
+EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
+{
+	EUseColor _NextColor = static_cast<EUseColor>(static_cast<int32>(_CurrentColor) + 1);
+
+	switch (_CurrentColor)
+	{
+	case EUseColor::RED : _NextColor = EUseColor::YELLOW; break;
+	case EUseColor::YELLOW : _NextColor = EUseColor::BLUE; break;
+	case EUseColor::BLUE : _NextColor = EUseColor::RED; break;
+	}
+
+	// 해금이 안되어 있다면 무조건 Red 반환
+	if(!CanUseColor[_NextColor]) return EUseColor::RED;
+	
+	return _NextColor;
+}
+
 void UPlayerAttackComp::SwapSkill()
 {
-	int32 SwitchUINum = 0;				// 바꿀 UI 개수
-	int32 NextSkillIndex = 0;			// 다음 스킬 Index
-
-	switch (CurrentSkillColor)
-	{
-	case EUseColor::NONE : break;		// 스킬에서는 NONE에서 시작할 수가 없음
-	case EUseColor::RED : break;
-	case EUseColor::YELLOW : break;
-	case EUseColor::BLUE : break;
-	}
+	CurrentSkillColor = FindSkillColor(CurrentSkillColor);
+	int32 NextSkillIndex = StartIndexColor[CurrentSkillColor];
 	
-	int jumpSize = 0;
-		/*
-	for(int i = 1; i < 3; i++)
+	for(int i = 0; i < 2; i++)
 	{
-		// 스킬 습득에 따라 수정 예정
-		if(CurrentSkillData[i] -> ID < 2) jumpSize = 4;
-		else if(CurrentSkillData[i] ->ID < 8) jumpSize = 2;
-		else if(CurrentSkillData[i] -> ID >= 8) jumpSize= -4;
-		
-		CurrentSkillData[i] = GI -> GetPlayerSkillData(CurrentSkillData[i]->ID + jumpSize);
-		//PlayerSkills[i]->ChangeSkillData(CurrentSkillData[i]);
-		SetSkillUI(i, CurrentSkillData[i]);
+		// 0은 기본 공격이라 1부터 시작
+		CurrentSkillData[i+1] = GI -> GetPlayerSkillData(NextSkillIndex + i);
+		SetSkillUI(i, CurrentSkillData[i+1]);
 	}
-	*/
 }
 
 void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData)
 {
 	if (!Player) return;
 	
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex-1, PlayerSkillData);
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillData);
 }
 
 void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
