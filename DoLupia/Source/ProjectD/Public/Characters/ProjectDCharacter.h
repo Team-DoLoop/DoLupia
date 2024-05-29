@@ -105,6 +105,7 @@ public:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	void TurnPlayer();
+
 	
 
 	// <---------------------- UI ---------------------->
@@ -136,8 +137,17 @@ private:
 	void HoveredQuickSlot();
 	bool PossibleChangeGameMode();
 
-	
 
+	
+	// <---------------------- Cape ---------------------->
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Child")
+	class UChildActorComponent* CapeComp;
+	
+public:
+
+
+	
 	// <---------------------- Move ---------------------->
 private:
 	UPROPERTY(EditDefaultsOnly)

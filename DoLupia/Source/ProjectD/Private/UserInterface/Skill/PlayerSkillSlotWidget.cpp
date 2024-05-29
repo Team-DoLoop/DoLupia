@@ -23,3 +23,5 @@ void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* PlayerSkillData)
 		SkillThumnail->SetBrushFromTexture(PlayerSkillData->SkillThumnail);
 	}
 }
+
+

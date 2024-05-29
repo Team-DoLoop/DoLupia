@@ -35,6 +35,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Items/Cape/PlayerCape.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Quest/QuestGiver.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
@@ -84,6 +85,14 @@ AProjectDCharacter::AProjectDCharacter()
 
 	// Collision
 	GetCapsuleComponent()->SetCollisionProfileName( TEXT( "Player" ) );
+
+	// Cape
+	const FName& CapeSocket( TEXT( "CapeSocket" ) );
+	CapeComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("CapeComp"));
+	CapeComp->SetupAttachment(GetMesh(), CapeSocket);
+	CapeComp->SetRelativeLocation(FVector(0.0f, 10.0f, -9.4f));
+	CapeComp->SetRelativeRotation(FRotator(40.0f, -90.0f, 180.0f));
+	CapeComp->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.3333f));
 	
 	// State
 	PlayerFSM = CreateDefaultSubobject<UPlayerFSMComp>(TEXT("PlayerFSM"));
