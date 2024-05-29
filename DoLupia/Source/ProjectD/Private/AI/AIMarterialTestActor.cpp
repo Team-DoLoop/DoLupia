@@ -39,6 +39,8 @@ AAIMarterialTestActor::AAIMarterialTestActor()
     InitialTexture = nullptr;
     DynamicMaterial = nullptr;
 
+    TimelineLength = 10.0f; // 설정하고자 하는 재생 시간
+
 }
 
 // Called when the game starts or when spawned
@@ -52,6 +54,12 @@ void AAIMarterialTestActor::BeginPlay()
     FOnTimelineFloat TimelineProgress;
     TimelineProgress.BindUFunction( this , FName( "UpdateAlpha" ) );
     TimelineComponent->AddInterpFloat( AlphaCurve , TimelineProgress );
+    TimelineComponent->SetTimelineLength( TimelineLength );
+    TimelineComponent->SetTimelineLengthMode( ETimelineLengthMode::TL_LastKeyFrame );
+
+    TimelineComponent->SetLooping( false );
+    TimelineComponent->SetPlayRate( TimelineComponent->GetTimelineLength() / TimelineLength );
+    //TimelineComponent->SetPlayRate( 0.5f ); // Example setting, change as needed
 
     // Bind OnTimelineFinished function to the timeline's finished event
     FOnTimelineEvent TimelineFinished;
@@ -119,6 +127,8 @@ void AAIMarterialTestActor::OnImageDownloaded(UTexture2DDynamic* DownloadedTextu
 
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
             DynamicMaterial->SetScalarParameterValue( FName( "Alpha" ) , 0.0f );
+            TimelineComponent->SetNewTime( 20.0f );
+            TimelineComponent->SetPlayRate( 0.25f );
             TimelineComponent->PlayFromStart();
             
            
