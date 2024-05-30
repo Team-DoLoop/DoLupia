@@ -11,7 +11,7 @@ UBTService_CheckAttackRange::UBTService_CheckAttackRange()
 	NodeName = TEXT( "CheckAttackRange" );
 	Interval = 1.0f;
 }
-13
+
 void UBTService_CheckAttackRange::TickNode( UBehaviorTreeComponent& OwnerComp , uint8* NodeMemory , float DeltaSeconds )
 {
 	Super::TickNode( OwnerComp , NodeMemory , DeltaSeconds );
