@@ -4,7 +4,9 @@
 #include "Monsters/StrikeMonster.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Monsters/MonsterFSM.h"
+#include "Monsters/MonsterHPWidget.h"
 
 
 AStrikeMonster::AStrikeMonster()
@@ -38,6 +40,7 @@ AStrikeMonster::AStrikeMonster()
 		GetMesh()->SetAnimInstanceClass( tempClass.Class );
 	}
 
+	
 }
 
 void AStrikeMonster::BeginPlay()
@@ -45,21 +48,26 @@ void AStrikeMonster::BeginPlay()
 	Super::BeginPlay();
 	this->MonsterType= EMonsterType::Strike;
 	this->MonsterFSM->state = EMonsterState::Idle;
-	//근거리 몬스터 체력 설정
-	this->maxHP = 30;
 
+	//근거리 몬스터 체력 설정
+	maxHP = 30;
+	currentHP = maxHP;
+	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , currentHP );
 	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
 }
 
 
+
+
+
 void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
 
 		if (OverlapPlayer->GetController())
 		{
-			GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster:: 단거리 공격 성공!!" ) );
+			//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster:: 단거리 공격 성공!!" ) );
 			OverlapPlayer->TakeHit( EAttackType::BASIC , 10 );
 			
 		}
@@ -71,6 +79,7 @@ void AStrikeMonster::AttackState()
 	Super::AttackState();
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster::AttackState()" ) );
 }
+
 
 
 

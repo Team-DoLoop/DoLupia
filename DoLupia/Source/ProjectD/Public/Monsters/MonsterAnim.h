@@ -35,8 +35,14 @@ public:
 	void OnEndHitAttackAnimation();
 
 	UFUNCTION( BlueprintCallable )
+	void OnDoStrikeDieAnimation();
+
+	UFUNCTION( BlueprintCallable )
 	void OnEndRangedAttackAnimation();
 
 	UFUNCTION( BlueprintCallable )
 	void OnDoRangedAttackAnimation();
+
+	UFUNCTION( BlueprintCallable )
+	void OnDoRangedDieAnimation();
 };
