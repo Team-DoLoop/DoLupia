@@ -6,10 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerSkillSlotWidget.generated.h"
 
-struct FPlayerSkillData;
 /**
  * 
  */
+struct FPlayerSkillData;
 UCLASS()
 class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
 {
@@ -27,5 +27,6 @@ private:
 public:
 	void InitUI();
 	void SetUI(FPlayerSkillData* PlayerSkillData);
+	void SetCoolTimeBar(float CoolTime);
 	
 };

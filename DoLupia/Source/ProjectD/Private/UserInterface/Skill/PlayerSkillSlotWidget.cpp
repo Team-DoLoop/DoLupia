@@ -24,4 +24,9 @@ void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* PlayerSkillData)
 	}
 }
 
+void UPlayerSkillSlotWidget::SetCoolTimeBar(float CoolTime)
+{
+	CoolTimeBar->SetPercent(CoolTime);
+}
+
 

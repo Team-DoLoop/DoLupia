@@ -61,6 +61,8 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerSkills.Add(NewObject<UPlayerSkillSwap>());
 */
 
+	Skills.SetNum(5);
+	
 	// PlayerMP
 	if (PlayerStat)
 	{
@@ -76,6 +78,7 @@ void UPlayerAttackComp::BeginPlay()
 		for(int i = 0; i < SkillCount; i++)
 		{
 			CurrentSkillData.Add(GI->GetPlayerSkillData(0));	// 스킬 사용 못할 때 data 넣기
+			Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
 		}
 	}
 
@@ -95,8 +98,6 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 
 	// MP Regen
 	if (!PlayerStat) return;
-	int32 CurrentMP = PlayerStat->GetMP();
-
 	if (CurrentMP < PlayerMaxMP)
 	{
 		CurrentRegenTime += DeltaTime;
@@ -106,6 +107,19 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 			PlayerStat->SetMP(CurrentMP);
 			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 			CurrentRegenTime = 0;
+		}
+	}
+
+	// Skill CoolTime
+	for (FSkillInfo& Skill : Skills)
+	{
+		if (Skill.bIsOnCooldown)
+		{
+			Skill.CooldownRemain -= DeltaTime;
+			if (Skill.CooldownRemain < 0.0f)
+			{
+				Skill.CooldownRemain = 0.0f;
+			}
 		}
 	}
 }
@@ -214,13 +228,19 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 
 	SetSkillAttackData(CurrentSkillData[AttackIndex]);
 
-	// MP가 있다면
-	int32 CurrentMP = PlayerStat->GetMP() - SkillCost;
-	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), SkillCost)
-
-	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
-	if (AttackIndex == 0 || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
+	if(Skills.IsValidIndex(AttackIndex-1) && CanUseSkill(AttackIndex))
 	{
+		// 쿨다운 시작
+		Skills[AttackIndex].bIsOnCooldown = true;
+		Skills[AttackIndex].CooldownRemain = Skills[AttackIndex].CooldownTime;
+		GetWorld()->GetTimerManager().SetTimer(Skills[AttackIndex].CooldownTimerHandle,
+			FTimerDelegate::CreateUObject(this, &UPlayerAttackComp::ResetCooldown, AttackIndex), Skills[AttackIndex].CooldownTime, false);
+        
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
+		{
+			UpdateCooldown(AttackIndex);
+		});
+		
 		PlayerAttackStatus = 2;
 		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
@@ -348,3 +368,58 @@ void UPlayerAttackComp::UltSkill()
 	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
 }
 
+void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex) && Skills[AttackIndex].bIsOnCooldown)
+	{
+		Skills[AttackIndex].CooldownRemain -= GetWorld()->GetDeltaSeconds();
+
+		if (Skills[AttackIndex].CooldownRemain <= 0.0f)
+		{
+			ResetCooldown(AttackIndex);
+		}
+		else
+		{
+			Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(AttackIndex, GetCooldownPercent(AttackIndex));
+
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
+			{
+				UpdateCooldown(AttackIndex);
+			});
+		}
+	}
+}
+
+void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex))
+	{
+		Skills[AttackIndex].bIsOnCooldown = false;
+		Skills[AttackIndex].CooldownRemain = 0.0f;
+		UpdateCooldown(AttackIndex); // Ensure UI update
+		UE_LOG(LogTemp, Warning, TEXT("Skill %d cooldown reset."), AttackIndex);
+	}
+}
+
+bool UPlayerAttackComp::CanUseSkill(int32 AttackIndex)
+{
+	// MP가 있다면
+	CurrentMP = PlayerStat->GetMP() - SkillCost;
+	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), SkillCost)
+
+	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
+	if (AttackIndex == 0 || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
+	{
+		if(!Skills[AttackIndex].bIsOnCooldown) return true;
+	}
+	return false;
+}
+
+float UPlayerAttackComp::GetCooldownPercent(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex) && Skills[AttackIndex].CooldownTime > 0)
+	{
+		return 1.0f - (Skills[AttackIndex].CooldownRemain / Skills[AttackIndex].CooldownTime);
+	}
+	return 0.0f;
+}
