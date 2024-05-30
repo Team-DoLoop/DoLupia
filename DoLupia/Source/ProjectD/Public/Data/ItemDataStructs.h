@@ -51,6 +51,12 @@ struct FItemStatistics
 	UPROPERTY( EditAnywhere, Category = "Level")
 	int32 ItemLevel;
 
+	UPROPERTY( EditAnywhere , Category = "Level" )
+	int32 SkillPointMelee;
+
+	UPROPERTY( EditAnywhere , Category = "Level" )
+	int32 SkillPointRange;
+
 	UPROPERTY( EditAnywhere , Category = "Equipment" )
 	float DefenseIncreaseAmount;
 
@@ -74,8 +80,6 @@ struct FItemStatistics
 
 	UPROPERTY(EditAnywhere, Category = "Store" )
 	float SellValue;
-
-
 };
 
 USTRUCT()

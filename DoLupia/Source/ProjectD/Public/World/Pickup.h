@@ -55,7 +55,7 @@ protected:
 protected:
 	// 테스트용 나중에 지워야함.
 	UPROPERTY(EditDefaultsOnly)
-	AItemSpawner* ItemSpawner;
+	class USoundWave* SoundWave;
 
 	UPROPERTY( EditDefaultsOnly , Category = "Pickup | Collisoin" )
 	USphereComponent* SphereComponent;
