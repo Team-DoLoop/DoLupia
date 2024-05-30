@@ -80,6 +80,8 @@ void UPlayerAttackComp::BeginPlay()
 	}
 
 	InitCanUseColor();
+	
+	IgnoreAttackActors.AddUnique(Player);
 }
 
 
@@ -194,6 +196,8 @@ void UPlayerAttackComp::CompleteSkill()
 	if (!PlayerFSMComp) return;
 	PlayerAttackStatus = 3;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+	IgnoreAttackActors.Empty();
+	IgnoreAttackActors.AddUnique(Player);
 
 	if (!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
 	{
@@ -244,7 +248,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 }
 
 // 애니메이션 노티파이로 호출하는 근거리 스킬 공격 생성 함수
-void UPlayerAttackComp::MeleeSkillAttackJudgement()
+void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 {
 	TArray<AActor*> TargetActors;
 	FVector PlayerLoc = Player->GetActorLocation();
@@ -264,10 +268,21 @@ void UPlayerAttackComp::MeleeSkillAttackJudgement()
 	{
 		if (AMonster* Monster = Cast<AMonster>(TargetActor))
 		{
-			Monster->OnMyTakeDamage(SkillDamage);
-			UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
+			// IgnoreAttackActors에 없다면
+			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(Monster)))
+			{
+				IgnoreAttackActors.AddUnique(Monster);
+				Monster->OnMyTakeDamage(SkillDamage);
+				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
+			}
 		}
 	}
+}
+
+void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
+{
+	IgnoreAttackActors.Empty();
+	IgnoreAttackActors.AddUnique(Player);
 }
 
 void UPlayerAttackComp::MeleeSkill()

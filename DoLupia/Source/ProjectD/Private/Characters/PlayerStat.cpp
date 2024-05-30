@@ -12,7 +12,7 @@
 
 
 APlayerStat::APlayerStat()
-	:	MaxHP(100),CurrentHP(MaxHP),
+	:	MaxHP(1000),CurrentHP(MaxHP),
 		MaxMP(100), CurrentMP(MaxMP), MPRegenRate(5.0f), MPRegenTime(1.0f),
 		ATK(10.0f),
 		DEF(5.0f),
@@ -26,7 +26,7 @@ void APlayerStat::initPlayerData()
 {
 	SetPlayerName(TEXT("Player"));
 	
-	MaxHP = 100;
+	MaxHP = 1000;
 	CurrentHP = MaxHP;
 
 	MaxMP = 100;

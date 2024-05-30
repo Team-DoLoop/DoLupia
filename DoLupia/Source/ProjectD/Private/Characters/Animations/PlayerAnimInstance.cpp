@@ -108,14 +108,15 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 	//if(!Sword) return;
 	//Sword->CollisionOn();
 	
-	Player->GetAttackComp()->MeleeSkillAttackJudgement();
+	Player->GetAttackComp()->MeleeSkillAttackJudgementStart();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 {
 	// 공격 판정 끝
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment End"));
-
+	Player->GetAttackComp()->MeleeSkillAttackJudgementEnd();
+	
 	//ASwordBase* Sword = Gadget->GetSword();
 	//if(!Sword) return;
 	//Sword->CollisionOff();

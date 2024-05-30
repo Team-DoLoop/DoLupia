@@ -69,6 +69,9 @@ private:
 	float MPRegenTime;
 	float CurrentRegenTime;
 	int PlayerAttackStatus = 0;
+
+	UPROPERTY()
+	TArray<AActor*> IgnoreAttackActors;
 	
 	UPROPERTY()
 	class UAnimMontage* AutoAttackMontage;
@@ -83,7 +86,8 @@ public:
 	
 	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
 	void PlayerExecuteAttack(int32 AttackIndex);
-	void MeleeSkillAttackJudgement();
+	void MeleeSkillAttackJudgementStart();
+	void MeleeSkillAttackJudgementEnd();
 
 	void MeleeSkill();
 	void RangedSkill();

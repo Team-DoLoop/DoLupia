@@ -97,15 +97,17 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//HP Widget 빌보드 처리
-	FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
-	FVector dir = camLoc - healthUI->GetComponentLocation();
-	dir.Normalize();
-	healthUI->SetWorldRotation( dir.ToOrientationRotator() );
+	
 
 	//항상 플레이어를 바라보도록 회전
 	if(IsAlive)
 	{
+		//HP Widget 빌보드 처리
+		FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
+		FVector dir = camLoc - healthUI->GetComponentLocation();
+		dir.Normalize();
+
+		healthUI->SetWorldRotation( dir.ToOrientationRotator() );
 		FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
 		rot.Normalize();
 		if (bHasTarget)
