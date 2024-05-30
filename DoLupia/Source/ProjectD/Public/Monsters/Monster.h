@@ -77,6 +77,8 @@ public:
 	virtual void DamageState();
 	virtual void DieState();
 
+	bool IsAlive = true;
+
 	bool bHasTarget = false;
 
 	bool bIsAttackComplete = false;
@@ -91,7 +93,9 @@ public:
 
 	void MoveToTarget();
 
-	void OnMyTakeDamage(int32 damage);
+	virtual void OnMyTakeDamage(int32 damage) ;
+
+	void DestroyMonster();
 
 	UPROPERTY( EditAnywhere )
 	float attackDelayTime = 3;
