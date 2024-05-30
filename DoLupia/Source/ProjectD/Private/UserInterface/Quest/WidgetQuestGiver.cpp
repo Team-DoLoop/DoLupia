@@ -7,6 +7,8 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Characters/ProjectDPlayerController.h"
+#include "Characters/Components/PlayerAttackComp.h"
+#include "Common/UseColor.h"
 #include "Components/VerticalBox.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -111,6 +113,15 @@ void UWidgetQuestGiver::OnAcceptClicked()
     }
 
 	AProjectDCharacter* PlayerCharacterD = Cast<AProjectDCharacter>( PlayerCharacter );
+
+
+    // 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
+    PlayerCharacterD->GetAttackComp()->SetSkillUseState( true );
+
+    // 각 색깔 열리게
+    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
+    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
 
     // 캐릭터에서 QuestLogComponent를 찾습니다.
     UQuestLogComponent* QuestLogComp = Cast<UQuestLogComponent>( PlayerCharacterD->GetComponentByClass( UQuestLogComponent::StaticClass() ) );
