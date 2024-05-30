@@ -37,7 +37,8 @@ void ARangedMonster::BeginPlay()
 	this->MonsterType = EMonsterType::Ranged;
 	MonsterFSM->state = EMonsterState::Idle;
 	//원거리 몬스터 기본 설정
-	this->maxHP = 150;
+	maxHP = 30;
+	currentHP = maxHP;
 	this->AttackRange = 850;
 	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
