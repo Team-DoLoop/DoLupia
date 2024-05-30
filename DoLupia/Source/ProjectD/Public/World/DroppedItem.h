@@ -52,6 +52,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Drop | Components" )
 	UStaticMeshComponent* ItemMesh;
 
+private:
+	void PerformBoxTrace();
+
+
+private:
 	UPROPERTY()
 	UItemBase* ItemReference;
 
@@ -62,8 +67,5 @@ protected:
 
 	FRotator OriRotator;
 	FRotator SpinRotator;
-
-private:
-	void PerformBoxTrace();
 
 };

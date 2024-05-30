@@ -385,7 +385,6 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ExistingItemStack : is not null!"));
 	}
-		
 
 	// 인벤토리가 수용할 수 있을 정도로 다 찰 때 까지 루프를 돌리자.
 	while (AmountToDistribute)
@@ -465,12 +464,15 @@ int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 Request
 	return RequestedAddAmount - AmountToDistribute;
 }
 
-FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem)
+FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem, bool bResetFlag )
 {
 	if(GetOwner())
 	{
 		// 아이템의 수량
 		int32 InitialRequestedAddAmount = InputItem->Quantity;
+
+		if (bResetFlag)
+			InputItem->ResetItemFlags();
 
 		// 스택에 쌓이지 않는 아이템 반환 ex) 무기, 방어구 등
 		if(!InputItem->NumericData.bIsStackable)

@@ -91,7 +91,7 @@ public:
 	void SortItem_Name();
 
 	UFUNCTION(Category = "Inventory")
-	FItemAddResult HandelAddItem(UItemBase* InputItem);
+	FItemAddResult HandelAddItem(UItemBase* InputItem, bool bResetFlag = false);
 
 	UFUNCTION( Category = "Inventory" )
 	void HandelRemoveItem(const TMap<FString , int32>& RemoveToITem);
