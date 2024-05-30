@@ -54,6 +54,15 @@ void UItemBase::SetQuantity(const int32 NewQuantity, bool IsRemoveItem)
 
 void UItemBase::Use(AProjectDCharacter* Character)
 {
-	Character->GetPlayerStat()->SetHP( Character->GetPlayerStat()->GetHP() - ItemStatistics.HealthValue );
+	if (Character)
+	{
+		if (APlayerStat* PlayerStat = Character->GetPlayerStat())
+		{
+			PlayerStat->AddSkillLevelMelee( ItemStatistics.SkillPointMelee );
+			PlayerStat->AddSkillLevelRange( ItemStatistics.SkillPointRange );
+			PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+			PlayerStat->SetMP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+		}
+	}	
 }
 

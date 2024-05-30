@@ -6,6 +6,7 @@
 
 enum class ViewPortPriority : uint8
 {
+	Behind,
 	Interaction,
 	Default,
 	Inventory,

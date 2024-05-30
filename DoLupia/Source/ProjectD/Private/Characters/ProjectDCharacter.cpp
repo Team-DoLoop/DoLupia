@@ -205,8 +205,23 @@ void AProjectDCharacter::TurnPlayer()
 		SetActorRotation( TempRot);
 	}
 }
-
 // <---------------------- UI ---------------------->
+
+void AProjectDCharacter::OnSystemCall( const FText& Message ) const
+{
+	HUD->OnSystemCall( Message );
+}
+
+void AProjectDCharacter::OnSystemCallSoundCue( const FText& Message , USoundCue* SoundCue ) const
+{
+	HUD->OnSystemCallSoundCue( Message , SoundCue );
+}
+
+void AProjectDCharacter::OnSystemCallSoundWave( const FText& Message , USoundWave* SoundWave ) const
+{
+	HUD->OnSystemCallSoundWave( Message , SoundWave );
+}
+
 void AProjectDCharacter::ToggleMenu()
 {
 	if(!PlayerController) return;

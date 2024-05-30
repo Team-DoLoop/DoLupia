@@ -131,7 +131,7 @@ void APickup::TakePickup(const AProjectDCharacter* Taker)
 				switch (AddResult.OperationResult)
 				{
 					case EItemAddResult::IAR_NoItemAdded:
-
+						Taker->OnSystemCallSoundWave( AddResult.ResultMessage, SoundWave );
 						break;
 					case EItemAddResult::IAR_PartialAmoutItemAdded:
 						UpdateInteractableData();

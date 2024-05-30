@@ -91,12 +91,15 @@ public:
 	// <---------------------- SkillPoint ---------------------->
 private:
 	UPROPERTY( VisibleAnywhere )
-	int32 SkillPoint;
+	int32 SkillLevelMelee;
+
+	UPROPERTY( VisibleAnywhere )
+	int32 SkillLevelRange;
+
 	
 public:
-	FORCEINLINE int32 GetSkillPoint() const {return SkillPoint;}
-	FORCEINLINE void  SetSkillPoint(float _SkillPoint) {SkillPoint = _SkillPoint;}
-
+	void AddSkillLevelMelee( int32 SkillPoint );
+	void AddSkillLevelRange( int32 SkillPoint );
 	
 
 	// <---------------------- Item ---------------------->

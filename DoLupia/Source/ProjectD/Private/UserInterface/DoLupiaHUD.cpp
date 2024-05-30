@@ -6,7 +6,9 @@
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/Interaction/InteractionWidget.h"
 #include "Data/WidgetData.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/Equipment/PlayerEquipmentWidget.h"
+#include "UserInterface/SystemCall/GameSystemCallWidget.h"
 
 ADoLupiaHUD::ADoLupiaHUD()
 {
@@ -16,19 +18,41 @@ void ADoLupiaHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(MainMenuFactory)
+	if(MainMenuFactory && !MainMenuWidget)
 	{
 		MainMenuWidget = CreateWidget<UMainMenu>(GetWorld(), MainMenuFactory);
 		MainMenuWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Inventory));
 		MainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
-	if (InteractionWidgetFactory)
+	if (InteractionWidgetFactory && !InteractionWidget)
 	{
 		InteractionWidget = CreateWidget<UInteractionWidget>(GetWorld(), InteractionWidgetFactory);
 		InteractionWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Interaction));
 		InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	if(GameSystemCallFactory && !GameSystemCall)
+	{
+		GameSystemCall = CreateWidget<UGameSystemCallWidget>(GetWorld(), GameSystemCallFactory );
+		GameSystemCall->AddToViewport(static_cast<uint32>(ViewPortPriority::Behind));
+		GameSystemCall->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+}
+
+void ADoLupiaHUD::OnSystemCall(const FText& Message) const
+{
+	GameSystemCall->DisplayMessage(Message);
+}
+
+void ADoLupiaHUD::OnSystemCallSoundCue(const FText& Message, USoundCue* SoundCue) const
+{
+	GameSystemCall->DisplayMessage( Message, SoundCue );
+}
+
+void ADoLupiaHUD::OnSystemCallSoundWave(const FText& Message, USoundWave* SoundWave) const
+{
+	GameSystemCall->DisplayMessage( Message , SoundWave );
 }
 
 void ADoLupiaHUD::DisPlayMenu()
