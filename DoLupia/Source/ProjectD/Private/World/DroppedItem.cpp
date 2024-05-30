@@ -85,7 +85,7 @@ void ADroppedItem::OnTouchesGroundBeginOverlap(UPrimitiveComponent* OverlappedCo
 	if(MyCharacter)
 	{
 		// 나중에 시스템 콜 추가예정 -> 인벤토리 부족
-		MyCharacter->GetInventory()->HandelAddItem(ItemReference);
+		MyCharacter->GetInventory()->HandelAddItem(ItemReference, true);
 		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		MyItemSpawner->ReturnItem( this );
 		MyItemSpawner->SetActive( this , false );
