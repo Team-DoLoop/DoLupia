@@ -78,7 +78,6 @@ void UPlayerAttackComp::BeginPlay()
 		for(int i = 0; i < SkillCount; i++)
 		{
 			CurrentSkillData.Add(GI->GetPlayerSkillData(0));	// 스킬 사용 못할 때 data 넣기
-			Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
 		}
 	}
 
@@ -98,6 +97,7 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 
 	// MP Regen
 	if (!PlayerStat) return;
+	CurrentMP = PlayerStat->GetMP();
 	if (CurrentMP < PlayerMaxMP)
 	{
 		CurrentRegenTime += DeltaTime;
@@ -160,6 +160,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 		CurrentSkillData[4] = GI->GetPlayerSkillData(9);
 
 		CurrentSkillColor = EUseColor::RED;
+		
 	}
 	else
 	{
@@ -170,9 +171,11 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 		}
 	}
 
-	for(int i = 0; i < SkillCount; i++)
+	for(int i = 1; i <= SkillCount; i++)
 	{
-		SetSkillUI(i, CurrentSkillData[i+1]);
+		SetSkillUI(i-1, CurrentSkillData[i]);
+		SetSkillCoolDownUI(i-1, 0.0f);
+		Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
 	}
 }
 
@@ -228,18 +231,21 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 
 	SetSkillAttackData(CurrentSkillData[AttackIndex]);
 
-	if(Skills.IsValidIndex(AttackIndex-1) && CanUseSkill(AttackIndex))
+	if(Skills.IsValidIndex(AttackIndex) && CanUseSkill(AttackIndex))
 	{
-		// 쿨다운 시작
-		Skills[AttackIndex].bIsOnCooldown = true;
-		Skills[AttackIndex].CooldownRemain = Skills[AttackIndex].CooldownTime;
-		GetWorld()->GetTimerManager().SetTimer(Skills[AttackIndex].CooldownTimerHandle,
-			FTimerDelegate::CreateUObject(this, &UPlayerAttackComp::ResetCooldown, AttackIndex), Skills[AttackIndex].CooldownTime, false);
-        
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
+		if(AttackIndex != 0)
 		{
-			UpdateCooldown(AttackIndex);
-		});
+			// 쿨다운 시작
+			Skills[AttackIndex].bIsOnCooldown = true;
+			Skills[AttackIndex].CooldownRemain = Skills[AttackIndex].CooldownTime;
+			GetWorld()->GetTimerManager().SetTimer(Skills[AttackIndex].CooldownTimerHandle,
+				FTimerDelegate::CreateUObject(this, &UPlayerAttackComp::ResetCooldown, AttackIndex), Skills[AttackIndex].CooldownTime, false);
+	        
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
+			{
+				UpdateCooldown(AttackIndex);
+			});
+		}
 		
 		PlayerAttackStatus = 2;
 		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
@@ -352,6 +358,11 @@ void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkil
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillData);
 }
 
+void UPlayerAttackComp::SetSkillCoolDownUI(int32 SlotIndex, float CoolTime)
+{
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(SlotIndex, CoolTime);
+}
+
 void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 {
 	SkillLevel = PlayerSkillData->SkillLevel;
@@ -380,8 +391,7 @@ void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
 		}
 		else
 		{
-			Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(AttackIndex, GetCooldownPercent(AttackIndex));
-
+			SetSkillCoolDownUI(AttackIndex-1, GetCooldownPercent(AttackIndex));
 			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
 			{
 				UpdateCooldown(AttackIndex);
@@ -396,7 +406,7 @@ void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
 	{
 		Skills[AttackIndex].bIsOnCooldown = false;
 		Skills[AttackIndex].CooldownRemain = 0.0f;
-		UpdateCooldown(AttackIndex); // Ensure UI update
+		UpdateCooldown(AttackIndex);
 		UE_LOG(LogTemp, Warning, TEXT("Skill %d cooldown reset."), AttackIndex);
 	}
 }
