@@ -5,6 +5,7 @@
 #include <Components/BoxComponent.h>
 
 #include "Characters/ProjectDCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "Quest/QuestGiver.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
