@@ -38,7 +38,7 @@ private:
 	void OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture );
 
 	UPROPERTY( EditDefaultsOnly )
-	class UStaticMeshComponent* meshComp;
+	class USkeletalMeshComponent* meshComp;
 
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* AITxtMaterial;

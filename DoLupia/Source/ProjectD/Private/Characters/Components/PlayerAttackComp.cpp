@@ -61,6 +61,8 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerSkills.Add(NewObject<UPlayerSkillSwap>());
 */
 
+	Skills.SetNum(5);
+	
 	// PlayerMP
 	if (PlayerStat)
 	{
@@ -80,6 +82,8 @@ void UPlayerAttackComp::BeginPlay()
 	}
 
 	InitCanUseColor();
+	
+	IgnoreAttackActors.AddUnique(Player);
 }
 
 
@@ -93,8 +97,7 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 
 	// MP Regen
 	if (!PlayerStat) return;
-	int32 CurrentMP = PlayerStat->GetMP();
-
+	CurrentMP = PlayerStat->GetMP();
 	if (CurrentMP < PlayerMaxMP)
 	{
 		CurrentRegenTime += DeltaTime;
@@ -104,6 +107,19 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 			PlayerStat->SetMP(CurrentMP);
 			Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 			CurrentRegenTime = 0;
+		}
+	}
+
+	// Skill CoolTime
+	for (FSkillInfo& Skill : Skills)
+	{
+		if (Skill.bIsOnCooldown)
+		{
+			Skill.CooldownRemain -= DeltaTime;
+			if (Skill.CooldownRemain < 0.0f)
+			{
+				Skill.CooldownRemain = 0.0f;
+			}
 		}
 	}
 }
@@ -144,6 +160,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 		CurrentSkillData[4] = GI->GetPlayerSkillData(9);
 
 		CurrentSkillColor = EUseColor::RED;
+		
 	}
 	else
 	{
@@ -154,9 +171,11 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 		}
 	}
 
-	for(int i = 0; i < SkillCount; i++)
+	for(int i = 1; i <= SkillCount; i++)
 	{
-		SetSkillUI(i, CurrentSkillData[i+1]);
+		SetSkillUI(i-1, CurrentSkillData[i]);
+		SetSkillCoolDownUI(i-1, 0.0f);
+		Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
 	}
 }
 
@@ -194,6 +213,8 @@ void UPlayerAttackComp::CompleteSkill()
 	if (!PlayerFSMComp) return;
 	PlayerAttackStatus = 3;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+	IgnoreAttackActors.Empty();
+	IgnoreAttackActors.AddUnique(Player);
 
 	if (!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
 	{
@@ -210,13 +231,22 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 
 	SetSkillAttackData(CurrentSkillData[AttackIndex]);
 
-	// MP가 있다면
-	int32 CurrentMP = PlayerStat->GetMP() - SkillCost;
-	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), SkillCost)
-
-	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
-	if (AttackIndex == 0 || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
+	if(Skills.IsValidIndex(AttackIndex) && CanUseSkill(AttackIndex))
 	{
+		if(AttackIndex != 0)
+		{
+			// 쿨다운 시작
+			Skills[AttackIndex].bIsOnCooldown = true;
+			Skills[AttackIndex].CooldownRemain = Skills[AttackIndex].CooldownTime;
+			GetWorld()->GetTimerManager().SetTimer(Skills[AttackIndex].CooldownTimerHandle,
+				FTimerDelegate::CreateUObject(this, &UPlayerAttackComp::ResetCooldown, AttackIndex), Skills[AttackIndex].CooldownTime, false);
+	        
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
+			{
+				UpdateCooldown(AttackIndex);
+			});
+		}
+		
 		PlayerAttackStatus = 2;
 		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
 
@@ -244,7 +274,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 }
 
 // 애니메이션 노티파이로 호출하는 근거리 스킬 공격 생성 함수
-void UPlayerAttackComp::MeleeSkillAttackJudgement()
+void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 {
 	TArray<AActor*> TargetActors;
 	FVector PlayerLoc = Player->GetActorLocation();
@@ -264,10 +294,21 @@ void UPlayerAttackComp::MeleeSkillAttackJudgement()
 	{
 		if (AMonster* Monster = Cast<AMonster>(TargetActor))
 		{
-			Monster->OnMyTakeDamage(SkillDamage);
-			UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
+			// IgnoreAttackActors에 없다면
+			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(Monster)))
+			{
+				IgnoreAttackActors.AddUnique(Monster);
+				Monster->OnMyTakeDamage(SkillDamage);
+				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
+			}
 		}
 	}
+}
+
+void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
+{
+	IgnoreAttackActors.Empty();
+	IgnoreAttackActors.AddUnique(Player);
 }
 
 void UPlayerAttackComp::MeleeSkill()
@@ -317,6 +358,11 @@ void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkil
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillData);
 }
 
+void UPlayerAttackComp::SetSkillCoolDownUI(int32 SlotIndex, float CoolTime)
+{
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(SlotIndex, CoolTime);
+}
+
 void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 {
 	SkillLevel = PlayerSkillData->SkillLevel;
@@ -333,3 +379,57 @@ void UPlayerAttackComp::UltSkill()
 	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
 }
 
+void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex) && Skills[AttackIndex].bIsOnCooldown)
+	{
+		Skills[AttackIndex].CooldownRemain -= GetWorld()->GetDeltaSeconds();
+
+		if (Skills[AttackIndex].CooldownRemain <= 0.0f)
+		{
+			ResetCooldown(AttackIndex);
+		}
+		else
+		{
+			SetSkillCoolDownUI(AttackIndex-1, GetCooldownPercent(AttackIndex));
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
+			{
+				UpdateCooldown(AttackIndex);
+			});
+		}
+	}
+}
+
+void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex))
+	{
+		Skills[AttackIndex].bIsOnCooldown = false;
+		Skills[AttackIndex].CooldownRemain = 0.0f;
+		UpdateCooldown(AttackIndex);
+		UE_LOG(LogTemp, Warning, TEXT("Skill %d cooldown reset."), AttackIndex);
+	}
+}
+
+bool UPlayerAttackComp::CanUseSkill(int32 AttackIndex)
+{
+	// MP가 있다면
+	CurrentMP = PlayerStat->GetMP() - SkillCost;
+	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), SkillCost)
+
+	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
+	if (AttackIndex == 0 || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
+	{
+		if(!Skills[AttackIndex].bIsOnCooldown) return true;
+	}
+	return false;
+}
+
+float UPlayerAttackComp::GetCooldownPercent(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex) && Skills[AttackIndex].CooldownTime > 0)
+	{
+		return 1.0f - (Skills[AttackIndex].CooldownRemain / Skills[AttackIndex].CooldownTime);
+	}
+	return 0.0f;
+}

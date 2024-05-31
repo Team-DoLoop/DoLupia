@@ -40,3 +40,8 @@ void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* Player
 {
 	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillData);
 }
+
+void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
+{
+	PlayerSkillSlotArray[SlotIndex]->SetCoolTimeBar(CoolTime);
+}

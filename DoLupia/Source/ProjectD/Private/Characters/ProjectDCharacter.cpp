@@ -532,12 +532,21 @@ void AProjectDCharacter::BeginInteract()
 		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( LookAtActor );
 		if (QuestInterface)
 		{
+			ATestNPCCharacter* npc = Cast<ATestNPCCharacter>( LookAtActor );
+
+			if (npc)
+			{
+				npc->DialogWith();
+			}
+
+			/*
 			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
 			const FString& ActorObjectID = QuestInterface->InteractWith();
 
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			//캐릭터가 베이스 한테
 			OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
+			*/
 		}
 	}
 }

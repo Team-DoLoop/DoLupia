@@ -9,6 +9,23 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+USTRUCT()
+struct FSkillInfo
+{
+	GENERATED_BODY()
+
+	float CooldownTime;
+	float CooldownRemain;
+	bool bIsOnCooldown;
+	FTimerHandle CooldownTimerHandle;
+
+	FSkillInfo()
+	{
+		CooldownTime = 0.0f;
+		CooldownRemain = 0.0f;
+		bIsOnCooldown = false;
+	}
+};
 
 struct FPlayerSkillData;
 enum class ESkillType : uint8;
@@ -63,12 +80,20 @@ public:
 	
 	// <---------------------- Attack ---------------------->
 private:
+	UPROPERTY(EditAnywhere, Category = "Skill")
+	TArray<FSkillInfo> Skills;
+	
 	int32 PlayerMaxMP;
 	
 	float MPRegenRate;
 	float MPRegenTime;
 	float CurrentRegenTime;
 	int PlayerAttackStatus = 0;
+
+	int32 CurrentMP = 0;
+
+	UPROPERTY()
+	TArray<AActor*> IgnoreAttackActors;
 	
 	UPROPERTY()
 	class UAnimMontage* AutoAttackMontage;
@@ -81,15 +106,25 @@ public:
 	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
 	
+	void SetSkillCoolDownUI(int32 SlotIndex, float CoolTime);
 	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
+	
 	void PlayerExecuteAttack(int32 AttackIndex);
-	void MeleeSkillAttackJudgement();
+	void MeleeSkillAttackJudgementStart();
+	void MeleeSkillAttackJudgementEnd();
 
 	void MeleeSkill();
 	void RangedSkill();
 	void SwapSkill();
 	void UltSkill();
 
+	void UpdateCooldown(int32 AttackIndex);
+	void ResetCooldown(int32 AttackIndex);
+	bool CanUseSkill(int32 AttackIndex);
+	
+	UFUNCTION()
+	float GetCooldownPercent(int32 AttackIndex);
+	
 
 	// FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}

@@ -1,0 +1,9 @@
+rowname,NPCName,Speaker,DialogueText,NextID,bTriggersQuest
+101,NPC_001,레드,으으... 이런 부조리한 세상에선 더이상 살 수 없어!,102,false
+102,NPC_001,레드,넌 이런 현실에 화가 나 본 적 없니.?,103,false
+103,NPC_001,레드,날 도와줄 생각이 있을 때 다시 말을 걸어줘..,-1,true
+204,NPC_002,Sarah,Good morning!,205,false
+205,NPC_002,Sarah,How can I help you today?,-1,false
+306,NPC_003,Mary,Welcome to our village.,307,false
+307,NPC_003,Mary,We need your help with something.,308,true
+308,NPC_003,Mary,Please talk to the village elder.,-1,false

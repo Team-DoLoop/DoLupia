@@ -16,7 +16,7 @@ AQuest_Base::AQuest_Base()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
+	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 
 	if (DataTable)
 	{
@@ -30,7 +30,7 @@ AQuest_Base::AQuest_Base()
 	}
 
 	//_C!!!!!
-	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/QuestSystem/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
+	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/UserInterface/Quest/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
 	if (WidgetClassFinder.Succeeded())
 	{
 		Notification_Widget = WidgetClassFinder.Class;
