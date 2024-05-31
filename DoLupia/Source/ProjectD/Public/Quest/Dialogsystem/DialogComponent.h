@@ -1,10 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DialogComponent.generated.h"
+
+class UDataTable;
+struct FDialogueData;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -24,5 +27,34 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+public:
+	UFUNCTION(BlueprintCallable, Category="Dialog")
+	void StartDialog( const FString& NPCNmae , int32 StartubgDialogID );
+
+	UFUNCTION( BlueprintCallable , Category = "Dialog" )
+	void AdvanceDialog();
+
+	UFUNCTION( BlueprintCallable , Category = "Dialog" )
+	FString GetCurrentSpeaker() const;
+
+	UFUNCTION( BlueprintCallable , Category = "Dialog" )
+	FString GetCurrentDialogText() const;
+
+private:
+	UPROPERTY( EditAnywhere , Category = "Dialogue" )
+	UDataTable* DialogueDataTable;
+
+	UPROPERTY( EditAnywhere , Category = "Dialogue" )
+	TSubclassOf<UUserWidget> DialogueWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* DialogueWidget;
+
+	FString CurrentNPCName;
+	int32 CurrentDialogueID;
+	FDialogueData* CurrentDialogue;
+
+	void LoadDialogue( int32 DialogueID );
+	void TriggerQuest();
+
 };
