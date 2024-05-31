@@ -21,6 +21,7 @@ struct FSkillInfo
 
 	FSkillInfo()
 	{
+		CooldownTime = 0.0f;
 		CooldownRemain = 0.0f;
 		bIsOnCooldown = false;
 	}
@@ -105,7 +106,9 @@ public:
 	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
 	
+	void SetSkillCoolDownUI(int32 SlotIndex, float CoolTime);
 	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
+	
 	void PlayerExecuteAttack(int32 AttackIndex);
 	void MeleeSkillAttackJudgementStart();
 	void MeleeSkillAttackJudgementEnd();

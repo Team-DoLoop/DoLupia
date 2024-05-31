@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerSkillSlotWidget.generated.h"
 
+enum class EUseColor : uint8;
 /**
  * 
  */
@@ -18,6 +19,8 @@ class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
 	virtual void NativeOnInitialized ( ) override;
 	
 private:
+	TMap<EUseColor, FLinearColor> ProgressBarColor;
+	
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UImage* SkillThumnail;
 	
