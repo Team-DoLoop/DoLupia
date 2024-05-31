@@ -2,7 +2,10 @@
 
 
 #include "Quest/TestNPCCharacter.h"
+#include <Components/BoxComponent.h>
 
+#include "Characters/ProjectDCharacter.h"
+#include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "Quest/QuestGiver.h"
 
 // Sets default values
@@ -12,12 +15,16 @@ ATestNPCCharacter::ATestNPCCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
 }
 
 // Called when the game starts or when spawned
 void ATestNPCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+    NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+    NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 	
 }
 
@@ -26,6 +33,36 @@ void ATestNPCCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ATestNPCCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+    if (OtherActor)
+    {
+        AProjectDCharacter* PlayerCharacter = Cast<AProjectDCharacter>( OtherActor );
+
+        if (PlayerCharacter != nullptr)
+        {
+            NPCInteractGWidget->SetVisibility( ESlateVisibility::Visible );
+        }
+    }
+}
+
+void ATestNPCCharacter::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+    if (OtherActor)
+    {
+        AProjectDCharacter* PlayerCharacter = Cast<AProjectDCharacter>( OtherActor );
+
+        if (PlayerCharacter != nullptr)
+        {
+            NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
+        }
+    }
 }
 
 // Called to bind functionality to input
