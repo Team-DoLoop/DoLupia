@@ -7,6 +7,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "Quest/QuestGiver.h"
+#include "Quest/Dialogsystem/DialogComponent.h"
 
 // Sets default values
 ATestNPCCharacter::ATestNPCCharacter()
@@ -15,6 +16,7 @@ ATestNPCCharacter::ATestNPCCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
+    DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
     BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
 }
 
@@ -104,4 +106,9 @@ FString ATestNPCCharacter::InteractWith()
 void ATestNPCCharacter::LookAt()
 {
 
+}
+
+void ATestNPCCharacter::DialogWith()
+{
+    DialogComp->StartDialog( this , TEXT( "NPC_001" ) , 101 );
 }

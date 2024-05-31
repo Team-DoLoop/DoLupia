@@ -10,6 +10,7 @@
 class UNPCInteractionWidget;
 class UQuestGiver;
 class UBoxComponent;
+class UDialogComponent;
 
 UCLASS()
 class PROJECTD_API ATestNPCCharacter : public ACharacter, public IQuestInteractionInterface
@@ -41,6 +42,7 @@ public:
 	virtual FString InteractWith() override;
 
 	virtual void LookAt() override;
+	void DialogWith();
 
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
@@ -48,4 +50,7 @@ public:
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
+
+	UPROPERTY( VisibleAnywhere , Category = "Dialog" )
+	UDialogComponent* DialogComp;
 };
