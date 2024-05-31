@@ -47,8 +47,9 @@ void AStrangeObject::NotifyActorBeginOverlap(AActor* OtherActor)
 		if (PlayerCharacter != nullptr)
 		{
 			WidgetComponent->SetVisibility( true );
+			UE_LOG(LogTemp, Error, TEXT("WidgetComponent->SetVisibility( true );"))
 		}
-	}
+	} 
 }
 
 void AStrangeObject::NotifyActorEndOverlap(AActor* OtherActor)
@@ -62,6 +63,7 @@ void AStrangeObject::NotifyActorEndOverlap(AActor* OtherActor)
 		if (PlayerCharacter != nullptr)
 		{
 			WidgetComponent->SetVisibility( false );
+			UE_LOG( LogTemp , Error , TEXT( "WidgetComponent->SetVisibility( false );" ) )
 		}
 	}
 }

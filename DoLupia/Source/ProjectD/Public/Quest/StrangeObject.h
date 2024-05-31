@@ -38,6 +38,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
+
 	virtual void NotifyActorEndOverlap( AActor* OtherActor ) override;
 
 	UPROPERTY( VisibleAnywhere )
