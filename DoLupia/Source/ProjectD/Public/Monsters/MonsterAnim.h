@@ -6,6 +6,8 @@
 #include "Monster.h"
 #include "Animation/AnimInstance.h"
 #include "MonsterFSM.h"
+#include "RangedMonster.h"
+#include "StrikeMonster.h"
 #include "MonsterAnim.generated.h"
 
 /**
@@ -32,7 +34,13 @@ public:
 	bool bIsAttackComplete = false;
 
 	UFUNCTION(BlueprintCallable)
+	void OnDoHitAttackAnimation();
+
+	UFUNCTION(BlueprintCallable)
 	void OnEndHitAttackAnimation();
+
+	UFUNCTION( BlueprintCallable )
+	void SetCollision();
 
 	UFUNCTION( BlueprintCallable )
 	void OnDoStrikeDieAnimation();
