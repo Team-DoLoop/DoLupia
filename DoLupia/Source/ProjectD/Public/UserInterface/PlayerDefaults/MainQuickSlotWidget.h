@@ -31,7 +31,7 @@ public:
 	void SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot);
 	bool IsDraggingWidget();
 
-	void UpdateMouseWidget( const FVector2D& MousePosition );
+	bool QuickSlotMouseHoveredWidget( const FVector2D& MousePosition );
 
 protected:
 	virtual void NativeConstruct() override;

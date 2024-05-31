@@ -261,13 +261,15 @@ void AProjectDCharacter::HoveredQuickSlot()
 		if (PlayerController->GetMousePosition( MouseX , MouseY ))
 		{
 			// 사용자 정의 함수로 마우스 위치 업데이트
-			PlayerDefaultsWidget->UpdateMouseWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
+			PlayerDefaultsWidget->QuickSlotMouseHoveredWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
 		}
 	}
 }
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
+
+	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;
 
@@ -275,8 +277,14 @@ bool AProjectDCharacter::PossibleChangeGameMode()
 	{
 		UQuestGiver* QuestGiver = SpecificActor->GetQuestGiver();
 
+		// 퀘스트 창이 뜨면
 		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver() || GetQuestLogComponent())
 			return false;
+
+		// 플레이어가 죽으면
+		if(moveComp->PlayerDieUI)
+			return false;
+
 	}
 
 	return true;

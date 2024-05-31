@@ -62,21 +62,15 @@ bool UMainQuickSlotWidget::IsDraggingWidget()
 	return false;
 }
 
-void UMainQuickSlotWidget::UpdateMouseWidget( const FVector2D& MousePosition )
+bool UMainQuickSlotWidget::QuickSlotMouseHoveredWidget( const FVector2D& MousePosition )
 {
 	for (auto elem : QuickSlotArray)
 	{
 		if(elem->CheckHorveredQuickSlotUI( MousePosition ))
-			return;
+			return true;
 	}
 
-	if(PlayerController)
-	{
-		FInputModeGameOnly InputMode;
-		InputMode.SetConsumeCaptureMouseDown(true);
-		PlayerController->SetInputMode(InputMode);
-	}
-
+	return false;
 }
 
 

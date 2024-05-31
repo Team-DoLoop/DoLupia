@@ -64,9 +64,10 @@ UQuickSlotWidget* UPlayerDefaultsWidget::FindQuickSlot( int32 FindIndex )
 	return nullptr;
 }
 
-void UPlayerDefaultsWidget::UpdateMouseWidget(FVector2D MousePosition) const
+bool UPlayerDefaultsWidget::QuickSlotMouseHoveredWidget(FVector2D MousePosition) const
 {
 	if (QuickSlot)
-		QuickSlot->UpdateMouseWidget( MousePosition );
+		return QuickSlot->QuickSlotMouseHoveredWidget( MousePosition );
 
+	return true;
 }
