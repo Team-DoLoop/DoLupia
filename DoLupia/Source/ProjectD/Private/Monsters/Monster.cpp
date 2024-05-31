@@ -65,6 +65,7 @@ void AMonster::BeginPlay()
 
 	ai = Cast<AAIController>( this->GetController() );
 
+	IsAlive = true;
 
 	if(!ItemSpawner)
 	{
@@ -96,18 +97,23 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//HP Widget 빌보드 처리
-	FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
-	FVector dir = camLoc - healthUI->GetComponentLocation();
-	dir.Normalize();
-	healthUI->SetWorldRotation( dir.ToOrientationRotator() );
+	
 
 	//항상 플레이어를 바라보도록 회전
-	FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
-	rot.Normalize();
-	if (bHasTarget)
+	if(IsAlive)
 	{
-		this->SetActorRotation( rot.ToOrientationRotator() );
+		//HP Widget 빌보드 처리
+		FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
+		FVector dir = camLoc - healthUI->GetComponentLocation();
+		dir.Normalize();
+
+		healthUI->SetWorldRotation( dir.ToOrientationRotator() );
+		FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
+		rot.Normalize();
+		if (bHasTarget)
+		{
+			this->SetActorRotation( rot.ToOrientationRotator() );
+		}
 	}
 }
 
@@ -115,13 +121,7 @@ void AMonster::Tick(float DeltaTime)
 void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//공격 받을 시 OnMyTakeDamage() 호출
-	if (ASwordBase* testActor = Cast<ASwordBase>( OtherActor ))
-	{
-		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::OnMyCompBeginOverlap" ) );
-		
-		OnMyTakeDamage( 10 );
-	}
+
 }
 
 
@@ -189,12 +189,13 @@ void AMonster::AttackState()
 void AMonster::DamageState()
 {
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DamageState()" ) );
+	anim->animState = MonsterFSM->state;
 
 	currentTime += GetWorld()->GetDeltaSeconds();
 	if (currentTime > 1.5)
 	{
 		MonsterFSM->state = EMonsterState::Move;
-		this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+		GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 		currentTime = 0;
 		anim->animState = MonsterFSM->state;
 	}
@@ -204,26 +205,12 @@ void AMonster::DamageState()
 void AMonster::DieState()
 {
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DieState()" ) );
-
+	
 	anim->animState = MonsterFSM->state;
-
-	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
-	//죽음 애니메이션 끝난 후 destroy
-	currentTime += GetWorld()->GetDeltaSeconds();
-	if (currentTime > 4)
-	{
-		//플레이어 델리게이트 사용 : 킬 목표
-		AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
-		FString EnumValueAsString = EnumToString( EMonsterType::Strike );
-		player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
-
-		//아이템 드랍
-		if (ItemSpawner)
-			ItemSpawner->SpawnItem( ItemSpawner );
-		
-		this->Destroy();
-		currentTime = 0;
-	}
+	healthUI->DestroyComponent();
+	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	IsAlive = false;
+	
 }
 
 void AMonster::MoveToTarget()
@@ -263,8 +250,8 @@ void AMonster::MoveToTarget()
 
 void AMonster::OnMyTakeDamage(int32 damage)
 {
+	
 	currentHP -= damage;
-	monsterHPWidget->SetHP( currentHP , maxHP );
 
 	if (currentHP < 0)
 	{
@@ -280,11 +267,34 @@ void AMonster::OnMyTakeDamage(int32 damage)
 	{
 		MonsterFSM->state = EMonsterState::Die;
 	}
-	anim->animState = MonsterFSM->state;
+
+
+	monsterHPWidget->SetHP( currentHP , maxHP );
+	UE_LOG( LogTemp , Warning , TEXT( "currentHP : %d" ) , currentHP );
+
+
+
 	// 충돌체 끄기
-	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 	ai->StopMovement();
 
+}
+
+void AMonster::DestroyMonster()
+{
+	//죽음 애니메이션 끝난 후 destroy (AnimNotify에서 호출)
+	
+	//플레이어 델리게이트 사용 : 킬 목표
+	AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
+	FString EnumValueAsString = EnumToString( EMonsterType::Strike );
+	player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
+
+	//아이템 드랍
+	if (ItemSpawner)
+		ItemSpawner->SpawnItem( ItemSpawner );
+
+	this->Destroy();
+		
 }
 
 bool AMonster::GetRandomPositionInNavMesh(FVector centerLocation, float radius, FVector& dest)
