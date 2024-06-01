@@ -9,11 +9,18 @@
 #include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
 
+#include "NPC/Animation/NPCAnim.h"
+#include "Quest/QuestGiver.h"
+#include "Quest/Dialogsystem/DialogComponent.h"
+
 // Sets default values
 ANPCBase::ANPCBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
+	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
 
 }
 
@@ -23,6 +30,8 @@ void ANPCBase::BeginPlay()
 	Super::BeginPlay();
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
+
 
 	if (gm)
 	{
@@ -32,15 +41,12 @@ void ANPCBase::BeginPlay()
 		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
 	}
 
-	//gm->InitializeNPCConvWidget();
 }
 
 // Called every frame
 void ANPCBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	
 
 }
 
@@ -55,27 +61,14 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
 	AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
 
-	UE_LOG( LogTemp , Warning , TEXT( "NPC Test" ) );
-
-	
-
-	UE_LOG( LogTemp , Warning , TEXT( "NPCConversation : [%s]" ) , *NPCConversation )
-
 	if (player)
 	{
 		AIlib = gm->GetAIConnectionLibrary();
-		UE_LOG( LogTemp , Warning , TEXT( "NPC - Overlap Player" ) );
-
+		
 		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
 		if (AIlib)
 		{
 			//BeginChat();
-
-			for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
-			{
-				// Call the function on the actor
-				ActorItr->UpdateActorMaterial();
-			}
 		}
 		else {
 			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
@@ -88,7 +81,6 @@ void ANPCBase::BeginChat()
 {
 	if (AIlib) {
 		AIlib->OnWebApiResponseReceived.AddDynamic( this , &ANPCBase::CallNPCMessageDelegate );
-		UE_LOG( LogTemp , Warning , TEXT( "AIlib - First Load Sucess" ) );
 
 		FString testStr = "이게 무슨 일이죠?";
 		AIlib->SendNPCConversationToServer( testStr );
@@ -107,6 +99,42 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 
 	gm->ReceiveNPCMsg( NPCConversation );
 
+}
+
+void ANPCBase::DialogWith()
+{
+	DialogComp->StartDialog( this , *NPCID , DialogNum );
+}
+
+FString ANPCBase::InteractWith()
+{
+	// 먼저 QuestGiverComp가 유효한지 확인
+	if (QuestGiverComp == nullptr)
+	{
+		UE_LOG( LogTemp , Error , TEXT( "QuestGiverComp is null." ) );
+		return FString( TEXT( "QuestGiverComp is null." ) );
+	}
+
+	// QuestGiverComp가 UQuestInteractionInterface를 구현하는지 확인
+	if (!QuestGiverComp->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
+	{
+		return FString( TEXT( "QuestGiverComp does not implement UQuestInteractionInterface." ) );
+	}
+
+	// 인터페이스로 캐스팅 시도
+	IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( QuestGiverComp );
+
+	if (QuestInterface == nullptr)
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
+		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
+	}
+
+	return QuestInterface->InteractWith();
+}
+
+void ANPCBase::LookAt()
+{
 }
 
 

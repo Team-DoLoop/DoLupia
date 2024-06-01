@@ -29,7 +29,7 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Dialog")
-	void StartDialog( AActor* InCurrentNPC, const FString& NPCNmae , int32 StartubgDialogID );
+	void StartDialog( AActor* InCurrentNPC, const FString& NPCID , int32 StartubgDialogID );
 
 	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	void AdvanceDialog();

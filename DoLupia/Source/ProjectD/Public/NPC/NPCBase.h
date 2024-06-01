@@ -4,10 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Quest/QuestInteractionInterface.h"
 #include "NPCBase.generated.h"
 
+class UDialogComponent;
+class UQuestGiver;
+class UNPCAnim;
+class APlayerGameMode;
+class UAIConnectionLibrary;
+
+
 UCLASS()
-class PROJECTD_API ANPCBase : public ACharacter
+class PROJECTD_API ANPCBase : public ACharacter , public IQuestInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -24,20 +32,47 @@ public:
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
 
 private:
+	UPROPERTY()
+	UNPCAnim* anim;
 
 	UPROPERTY()
-	class APlayerGameMode* gm;
-
+	APlayerGameMode* gm;
 
 	UPROPERTY()
-	class UAIConnectionLibrary* AIlib;
+	UAIConnectionLibrary* AIlib;
 
+	/*-----------  AI Chatbot 연동  -----------*/
+private:
 	FString NPCConversation;
 
 	//Player 상호작용 시 호출
 	void BeginChat();
 
-	// Function to call delegate
 	UFUNCTION()
 	void CallNPCMessageDelegate( FString Message );
+
+	/*-----------  Dialog Component  -----------*/
+public:
+	void DialogWith();
+
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
+	int32 DialogNum;
+
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
+	FString NPCID;
+
+private:
+	UPROPERTY( VisibleAnywhere , Category = "Dialog" )
+	UDialogComponent* DialogComp;
+
+	/*-----------  Quest Component  -----------*/
+public:
+	FORCEINLINE UQuestGiver* GetQuestGiver() const { return QuestGiverComp; };
+	virtual FString InteractWith() override;
+	virtual void LookAt() override;
+
+private:
+	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
+	UQuestGiver* QuestGiverComp;
+
 };
