@@ -147,8 +147,8 @@ void UPlayerAttackComp::SetColorUseState(EUseColor _Color, bool bCanUse)
 	CanUseColor[_Color] = bCanUse;
 }
 
-// 퀘스트나 무기 장착 상태 변화 시 호출
-void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
+// 퀘스트 수락 시 호출
+void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 {
 	// 스킬 사용 가능
 	if(bCanUse)
@@ -160,7 +160,6 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 		CurrentSkillData[4] = GI->GetPlayerSkillData(9);
 
 		CurrentSkillColor = EUseColor::RED;
-		
 	}
 	else
 	{
@@ -174,8 +173,12 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 	for(int i = 1; i <= SkillCount; i++)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
-		SetSkillCoolDownUI(i-1, 1.0f);
-		Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
+		if(OpenType == ESkillOpenType::QUEST)
+		{
+			SetSkillCoolDownUI(i-1, 1.0f);
+			Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
+			Skills[i].SkillLevel = 1;
+		}
 	}
 }
 
@@ -230,6 +233,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
 
 	SetSkillAttackData(CurrentSkillData[AttackIndex]);
+	SkillLevel = Skills[AttackIndex].SkillLevel;
 
 	if(Skills.IsValidIndex(AttackIndex) && CanUseSkill(AttackIndex))
 	{
@@ -298,7 +302,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(Monster)))
 			{
 				IgnoreAttackActors.AddUnique(Monster);
-				Monster->OnMyTakeDamage(SkillDamage);
+				Monster->OnMyTakeDamage(SkillDamage * SkillLevel);
 				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
 			}
 		}
@@ -365,7 +369,6 @@ void UPlayerAttackComp::SetSkillCoolDownUI(int32 SlotIndex, float CoolTime)
 
 void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 {
-	SkillLevel = PlayerSkillData->SkillLevel;
 	SkillCost = PlayerSkillData->SkillCost;
 	SkillCoolTime = PlayerSkillData->SkillCoolTime;
 	SkillMontage = PlayerSkillData->SkillMontage;
@@ -399,6 +402,24 @@ void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
 		}
 	}
 }
+
+
+// <---------------------- Skill Upgrade ---------------------->
+
+void UPlayerAttackComp::GetSkillUpgradePoint(int32 SkillIndex)
+{
+	// 스킬 업그레이드 UI
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->ShowSkillUpgradeUI(SkillIndex-1);
+}
+
+void UPlayerAttackComp::SkillUpgrade(int32 SkillIndex)
+{
+	Skills[SkillIndex].SkillLevel = Skills[SkillIndex].SkillLevel + 1;
+	if(Skills[SkillIndex].SkillLevel >= 5) Skills[SkillIndex].SkillLevel = 5;
+}
+
+
+// <---------------------- Skill CoolDown ---------------------->
 
 void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
 {

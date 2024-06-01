@@ -26,6 +26,7 @@ void UPlayerSkillWidget::InitSkillSlot()
 		if(PlayerSkillSlot)
 		{
 			PlayerSkillSlotArray.Add(PlayerSkillSlot);
+			PlayerSkillSlot->SetSkillIndex(i);
 			PlayerSkillSlot->SetUI(GI->GetPlayerSkillData(0));	// 모두 스킬 사용 X로 초기화
 			
 			if(UHorizontalBoxSlot* SkillSlot = SkillBox->AddChildToHorizontalBox(PlayerSkillSlot))
@@ -44,4 +45,14 @@ void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* Player
 void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
 {
 	PlayerSkillSlotArray[SlotIndex]->SetCoolTimeBar(CoolTime);
+}
+
+void UPlayerSkillWidget::ShowSkillUpgradeUI(int32 SlotIndex)
+{
+	PlayerSkillSlotArray[SlotIndex]->ShowSkillUpgradeBtn();
+}
+
+void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex)
+{
+	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI();
 }
