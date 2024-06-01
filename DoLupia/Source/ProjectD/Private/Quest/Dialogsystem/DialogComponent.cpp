@@ -7,6 +7,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
 #include "Kismet/GameplayStatics.h"
+#include "NPC/NPCBase.h"
 #include "Quest/QuestGiver.h"
 #include "Quest/TestNPCCharacter.h"
 #include "UserInterface/NPC/DialogWidget.h"
@@ -44,10 +45,10 @@ void UDialogComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCNmae, int32 StartubgDialogID)
+void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , int32 StartubgDialogID)
 {
 	CurrentNPC = InCurrentNPC;
-	CurrentNPCName = NPCNmae;
+	CurrentNPCName = NPCID;
 	LoadDialogue( StartubgDialogID );
 
 	if (DialogueWidget)
@@ -139,14 +140,14 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 
 void UDialogComponent::TriggerQuest()
 {
-	// 대화창 끄는 로직 필요
+	// 퀘스트 창 끄기 전 대화창 끄기
 	HideDialogWidget();
 
 	// CurrentNPC가 유효한지 확인
 	if (CurrentNPC)
 	{
 		// CurrentNPC에서 UQuestComponent를 가져오기
-		ATestNPCCharacter* npc = Cast<ATestNPCCharacter>( CurrentNPC );
+		ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
 		auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( npc );
 

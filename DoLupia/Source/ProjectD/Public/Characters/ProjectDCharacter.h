@@ -18,6 +18,7 @@ class UQuestLogComponent;
 class UQuestInventoryComponent;
 class UPlayerBattleWidget;
 class ATestNPCCharacter;
+class ANPCBase;
 
 USTRUCT()
 struct FInteractionData
@@ -259,7 +260,7 @@ private:
 	AActor* LookAtActor;
 
 	UPROPERTY()
-	ATestNPCCharacter* SpecificActor;
+	ANPCBase* SpecificActor;
 	
 protected:
 	

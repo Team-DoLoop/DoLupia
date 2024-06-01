@@ -22,26 +22,6 @@ AMonster::AMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*ConstructorHelpers::FObjectFinder<USkeletalMesh>MonsterMesh(TEXT("/Game/Monsters/TrashMonster/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem.SK_Ancient_Golem"));
-	RootComponent->SetWorldScale3D(FVector(1.5f));
-	if (MonsterMesh.Succeeded()) {
-		GetMesh()->SetSkeletalMesh(MonsterMesh.Object);
-		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -189), FRotator(0, -90, 0));
-		
-	}
-
-	FName WheelsSocket( TEXT( "WheelsSocket" ) );
-	if (GetMesh()->DoesSocketExist( WheelsSocket ))
-	{
-		Wheels = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "Wheels" ) );
-		static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_WHEELS( TEXT( "/Game/Monsters/TrashMonster/Assets/Ancient_Golem/Mesh/SK_Ancient_Golem_Moving_Wheels.SK_Ancient_Golem_Moving_Wheels"  ));
-		if (SK_WHEELS.Succeeded())
-		{
-			Wheels->SetSkeletalMesh( SK_WHEELS.Object );
-		}
-		Wheels->SetupAttachment( GetMesh() , WheelsSocket );
-	}*/
-
 
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>(TEXT("MonsterFSM"));
 
@@ -59,7 +39,6 @@ void AMonster::BeginPlay()
 	int32 yaw = rand() % 360;
 	SetActorRotation( FRotator( 0 , yaw ,0 ) );
 	monsterHPWidget = Cast<UMonsterHPWidget>( healthUI->GetWidget() );
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic( this , &AMonster::OnMyCompBeginOverlap );
 
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 
@@ -97,17 +76,15 @@ void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
-
-	//항상 플레이어를 바라보도록 회전
 	if(IsAlive)
 	{
 		//HP Widget 빌보드 처리
 		FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
 		FVector dir = camLoc - healthUI->GetComponentLocation();
 		dir.Normalize();
-
 		healthUI->SetWorldRotation( dir.ToOrientationRotator() );
+
+		//항상 플레이어를 바라보도록 회전
 		FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
 		rot.Normalize();
 		if (bHasTarget)
@@ -117,17 +94,14 @@ void AMonster::Tick(float DeltaTime)
 	}
 }
 
-
 void AMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 }
 
 
 void AMonster::IdleState()
 {
-	
 	//애니메이션 상태 업데이트
 	anim->animState = MonsterFSM->state;
 
@@ -145,7 +119,11 @@ void AMonster::IdleState()
 
 void AMonster::MoveState()
 {
-	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( " AMonster::MoveState()" ) );
+	if (currentHP <= 0)
+	{
+		return;
+	}
+
 	//플레이어 방향으로 이동
 	MoveToTarget();
 
@@ -165,24 +143,27 @@ void AMonster::AttackState()
 		return;
 	}
 
+	if(currentHP<=0)
+	{
+		return;
+	}
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 	currentTime += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
-	
+
+	//공격 개시
 	if(currentTime>attackDelayTime)
 	{
 		currentTime = 0;
 		anim->bAttackDelay = true;
 	}
 
-	
+	//공격 범위를 벗어나고 && 하던 공격이 완료되었다면
 	if (TargetVector.Size() > AttackRange && anim->bIsAttackComplete) {
 		MonsterFSM->state = EMonsterState::Move;
 		anim->animState = MonsterFSM->state;
 		anim->bIsAttackComplete = false;
-		//GetRandomPositionInNavMesh( GetActorLocation() , 500 , randomPos );
 	}
-	
 
 }
 
@@ -233,19 +214,6 @@ void AMonster::MoveToTarget()
 
 	ai->MoveToLocation( destination );
 
-	//네비 메쉬안에 타겟이 있다면 타겟을 향해 이동
-	/*if(r.Result==ENavigationQueryResult::Success)
-	{
-		ai->MoveToLocation( destination );
-	}
-	else
-	{ //네비 메쉬안에 타겟이 없다면 랜덤포인트를 향해 이동
-		auto result = ai->MoveToLocation( randomPos );
-		if(result == EPathFollowingRequestResult::Type::AlreadyAtGoal)
-		{
-			GetRandomPositionInNavMesh( this->GetActorLocation() , 500 , randomPos );
-		}
-	}*/
 }
 
 void AMonster::OnMyTakeDamage(int32 damage)
@@ -268,11 +236,8 @@ void AMonster::OnMyTakeDamage(int32 damage)
 		MonsterFSM->state = EMonsterState::Die;
 	}
 
-
 	monsterHPWidget->SetHP( currentHP , maxHP );
 	UE_LOG( LogTemp , Warning , TEXT( "currentHP : %d" ) , currentHP );
-
-
 
 	// 충돌체 끄기
 	GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );

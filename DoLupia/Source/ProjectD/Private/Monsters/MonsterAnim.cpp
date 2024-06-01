@@ -2,6 +2,8 @@
 
 
 #include "Monsters/MonsterAnim.h"
+
+#include "Components/CapsuleComponent.h"
 #include "Monsters/Monster.h"
 #include "Monsters/RangedMonster.h"
 #include "Monsters/StrikeMonster.h"
@@ -21,10 +23,30 @@ void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 }
 
+void UMonsterAnim::OnDoHitAttackAnimation()
+{
+	auto ownerPawn = TryGetPawnOwner();
+	auto monster = Cast<AStrikeMonster>( ownerPawn );
+	monster->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Overlap );
+
+}
+
 void UMonsterAnim::OnEndHitAttackAnimation()
 {
+	auto ownerPawn = TryGetPawnOwner();
+	auto monster = Cast<AStrikeMonster>( ownerPawn );
+
 	bAttackDelay = false;
 	bIsAttackComplete = true;
+}
+
+void UMonsterAnim::SetCollision()
+{
+	auto ownerPawn = TryGetPawnOwner();
+	auto monster = Cast<AStrikeMonster>( ownerPawn );
+	monster->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Ignore );
 }
 
 void UMonsterAnim::OnDoStrikeDieAnimation()

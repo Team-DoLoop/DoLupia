@@ -174,7 +174,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse)
 	for(int i = 1; i <= SkillCount; i++)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
-		SetSkillCoolDownUI(i-1, 0.0f);
+		SetSkillCoolDownUI(i-1, 1.0f);
 		Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
 	}
 }
