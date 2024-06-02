@@ -230,7 +230,7 @@ void UPlayerAttackComp::CompleteSkill()
 void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 {
 	if (!Player || !PlayerFSMComp || !PlayerStat) return;
-	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
+	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_ONLY))) return;
 
 	SetSkillAttackData(CurrentSkillData[AttackIndex]);
 	SkillLevel = Skills[AttackIndex].SkillLevel;
@@ -252,7 +252,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 		}
 		
 		PlayerAttackStatus = 2;
-		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
 
 		Player->TurnPlayer();
 
@@ -330,6 +330,12 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 {
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
+
+	if(PlayerFSMComp)
+	{
+		UE_LOG(LogTemp, Log, TEXT("MeleeSkillAttackJudgementEnd"));
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_WITH);
+	}
 }
 
 
