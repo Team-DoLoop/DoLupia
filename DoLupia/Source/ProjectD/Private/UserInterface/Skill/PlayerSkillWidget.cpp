@@ -37,6 +37,8 @@ void UPlayerSkillWidget::InitSkillSlot()
 	}
 }
 
+// <--------------------- Update Skill Level --------------------->
+
 void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData)
 {
 	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillData);
@@ -47,12 +49,10 @@ void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
 	PlayerSkillSlotArray[SlotIndex]->SetCoolTimeBar(CoolTime);
 }
 
-void UPlayerSkillWidget::ShowSkillUpgradeUI(int32 SlotIndex)
-{
-	PlayerSkillSlotArray[SlotIndex]->ShowSkillUpgradeBtn();
-}
 
-void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex)
+// <--------------------- Upgrade Skill Level --------------------->
+
+void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevelSlotIndex)
 {
-	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI();
+	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI(SkillLevelSlotIndex);
 }

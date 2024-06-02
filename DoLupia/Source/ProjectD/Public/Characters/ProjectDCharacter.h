@@ -263,6 +263,13 @@ private:
 	ANPCBase* SpecificActor;
 	
 protected:
+
+	void PerformTrace();
+
+	UPROPERTY( EditAnywhere )
+	float TraceDistance = 2000.0f;  // 트레이스 거리 설정
+
+	AActor* LastHitActor;  // 마지막으로 히트된 액터를 저장
 	
 public:	
 	FORCEINLINE UQuestLogComponent* GetQuestLogComponent() const { return PlayerQuest; };

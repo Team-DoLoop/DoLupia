@@ -37,8 +37,7 @@ public:
 	void UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
 	void UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime);
 
-	void ShowSkillUpgradeUI(int32 SlotIndex);
-	void UpgradeSkillLevelUI(int32 SlotIndex);
+	void UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevelSlotIndex);
 	
 	FORCEINLINE TArray<UPlayerSkillSlotWidget*> GetPlayerSkillSlotArr() const {return PlayerSkillSlotArray;}
 	

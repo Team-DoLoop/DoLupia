@@ -49,7 +49,6 @@ void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , 
 {
 	CurrentNPC = InCurrentNPC;
 	CurrentNPCName = NPCID;
-	LoadDialogue( StartubgDialogID );
 
 	if (DialogueWidget)
 	{
@@ -62,6 +61,8 @@ void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , 
 
 		ShowDialogWidget();
 	}
+
+	LoadDialogue( StartubgDialogID );
 	
 }
 

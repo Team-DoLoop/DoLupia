@@ -45,5 +45,16 @@ private:
 
 	AActor* CurrentNPC;
 
+	/*---------------- typing effect --------------------*/
+	FText FullText;
+	FString CurrentText;
+	int32 CurrentIndex;
+	FTimerHandle TypingTimerHandle;
+	float TypingSpeed;
+
+	void TypeNextCharacter();
+
+
+
 	
 };

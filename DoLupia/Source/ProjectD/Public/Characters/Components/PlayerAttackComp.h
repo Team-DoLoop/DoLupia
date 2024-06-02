@@ -93,6 +93,12 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Skill")
 	TArray<FSkillInfo> Skills;
+
+	UPROPERTY(EditAnywhere, Category="Flamethrower")
+	TSubclassOf<class APlayerSkillFlamethrower> FlamethrowerFactory;
+
+	UPROPERTY()
+	class APlayerSkillFlamethrower* Flamethrower;
 	
 	int32 PlayerMaxMP;
 	
@@ -116,16 +122,23 @@ public:
 	virtual void CancelSkill() override;
 	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
+
 	
 	void SetSkillCoolDownUI(int32 SlotIndex, float CoolTime);
 	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
 	
 	void PlayerExecuteAttack(int32 AttackIndex);
+	void PlayerQuitSkill(int32 AttackIndex);
+
 	void MeleeSkillAttackJudgementStart();
 	void MeleeSkillAttackJudgementEnd();
+	void RangedSkillAttackJudgementStart();
+	void RangedSkillAttackJudgmentEnd();
 
 	void MeleeSkill();
 	void RangedSkill();
+
+	
 	void SwapSkill();
 	void UltSkill();
 
@@ -161,7 +174,6 @@ public:
 	// <---------------------- Skill Upgrade ---------------------->
 public:
 	void GetSkillUpgradePoint(int32 SkillIndex);
-	void SkillUpgrade(int32 SkillIndex);
 	
 	
 	// <---------------------- Skill Data ---------------------->

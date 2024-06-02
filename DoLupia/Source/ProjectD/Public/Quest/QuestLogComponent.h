@@ -60,6 +60,9 @@ public:
 	void TurnInQuest( FName QuestID );
 
 	UFUNCTION()
+	void AddToTracker();
+
+	UFUNCTION()
 	bool QueryActiveQuest(FName QuestID);
 
 	UFUNCTION()

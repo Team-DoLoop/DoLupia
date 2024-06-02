@@ -25,9 +25,6 @@ void UPlayerSkillSlotWidget::NativeOnInitialized()
 	ProgressBarColor.Add(EUseColor::YELLOW, FLinearColor(1.0f, 1.0f, 0.0f, 0.5f));
 	ProgressBarColor.Add(EUseColor::BLUE, FLinearColor(0.0f, 0.0f, 1.0f, 0.5f));
 	ProgressBarColor.Add(EUseColor::COLOR, FLinearColor( 128.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f, 0.5f));
-
-	Btn_SkillUpgrade->OnClicked.AddDynamic(this, &UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI);
-	Btn_SkillUpgrade->SetVisibility(ESlateVisibility::Hidden);
 	
 	InitSkillLevelUI();
 	
@@ -91,15 +88,11 @@ void UPlayerSkillSlotWidget::SetCoolTimeBar(float CoolTime)
 	CoolTimeBar->SetPercent(CoolTime);
 }
 
-void UPlayerSkillSlotWidget::ShowSkillUpgradeBtn()
-{
-	Btn_SkillUpgrade->SetVisibility(ESlateVisibility::Visible);
-}
 
-void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI()
+// <--------------------- Upgrade Skill Level --------------------->
+
+void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI(int32 SkillLevelSlotIndex)
 {
-	SkillLevel = SkillLevel + 1;
-	SkillLevelSlot[SkillLevel - 1]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
-	Player->GetAttackComp()->SkillUpgrade(SlotIndex + 1);
-	Btn_SkillUpgrade->SetVisibility(ESlateVisibility::Hidden);
+	UE_LOG(LogTemp, Log, TEXT("SkillLevelSlotIndex : %d"), SkillLevelSlotIndex);
+	SkillLevelSlot[SkillLevelSlotIndex]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
 }
