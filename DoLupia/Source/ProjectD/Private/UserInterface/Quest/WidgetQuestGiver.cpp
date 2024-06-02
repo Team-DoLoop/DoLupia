@@ -116,7 +116,7 @@ void UWidgetQuestGiver::OnAcceptClicked()
 
 
     // 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
-    PlayerCharacterD->GetAttackComp()->SetSkillUseState( true );
+    PlayerCharacterD->GetAttackComp()->SetSkillUseState( true, ESkillOpenType::QUEST );
 
     // 각 색깔 열리게
     PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
