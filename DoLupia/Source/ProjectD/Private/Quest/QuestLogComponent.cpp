@@ -69,6 +69,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
 	CurrentQuest.Add( SpawneQuest );
+    //AddToTracker();
 }
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
@@ -110,6 +111,18 @@ void UQuestLogComponent::TurnInQuest( FName QuestID )
         UE_LOG( LogTemp , Error , TEXT( "Failed to find quest with ID %s" ) , *QuestID.ToString() );
     }
 
+}
+
+void UQuestLogComponent::AddToTracker( )
+{
+    if (!CurrentQuest.IsEmpty())
+    {
+        for (const auto& Quest : CurrentQuest)
+        {
+            UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ));
+            TrackQuest( Quest );
+        }
+    }
 }
 
 bool UQuestLogComponent::QueryActiveQuest(FName QuestID)
