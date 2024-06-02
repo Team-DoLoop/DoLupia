@@ -27,6 +27,9 @@ public:
 	UFUNCTION()
 	void OnTimelineFinished();
 
+	UPROPERTY( EditAnywhere , Category = "Materials" )
+	UMaterialInterface* AITxtMaterial;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,8 +48,7 @@ private:
 	UPROPERTY( EditDefaultsOnly )
 	class USkeletalMeshComponent* meshComp;
 
-	UPROPERTY( EditAnywhere , Category = "Materials" )
-	UMaterialInterface* AITxtMaterial;
+	
 
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
