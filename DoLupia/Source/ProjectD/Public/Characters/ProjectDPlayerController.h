@@ -164,6 +164,7 @@ private:
 
 protected:
 	// void Attack();
+	void QuitSkill(int32 SkillIndex);
 	void ExecuteSkill(int32 SkillIndex);
 	
 private:
