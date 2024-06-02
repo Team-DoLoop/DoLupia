@@ -542,8 +542,6 @@ void AProjectDCharacter::BeginInteract()
 				{
 					UE_LOG( LogTemp , Error , TEXT( "QUESTNPC-TEST" ) );
 					const FString& ActorObjectID = QuestInterface->InteractWith();
-
-					const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 					//캐릭터가 베이스 한테
 					OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
 				}
@@ -553,15 +551,17 @@ void AProjectDCharacter::BeginInteract()
 				}
 				
 			}
+			else
+			{
+				//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
+				const FString& ActorObjectID = QuestInterface->InteractWith();
 
-			/*
-			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
-			const FString& ActorObjectID = QuestInterface->InteractWith();
+				const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
+				UE_LOG( LogTemp , Warning , TEXT( "ActorName: %s" ) , *ActorName );
 
-			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
-			//캐릭터가 베이스 한테
-			OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
-			*/
+				//캐릭터가 베이스 한테
+				OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
+			}
 		}
 	}
 }

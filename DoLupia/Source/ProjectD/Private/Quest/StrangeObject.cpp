@@ -16,8 +16,7 @@ AStrangeObject::AStrangeObject()
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>( TEXT( "InteractWidget" ) );
 
-	// 위젯 컴포넌트의 부모 설정 (루트 컴포넌트에 붙이거나 다른 컴포넌트에 붙일 수 있습니다)
-	WidgetComponent->SetupAttachment( RootComponent );
+	WidgetComponent->SetupAttachment( BoxComponent);
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +25,7 @@ void AStrangeObject::BeginPlay()
 	Super::BeginPlay();
 	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
 	WidgetComponent->SetWidget( NPCInteractGWidget );
+	WidgetComponent->SetCastShadow( false );
 	WidgetComponent->SetVisibility( false );
 }
 
