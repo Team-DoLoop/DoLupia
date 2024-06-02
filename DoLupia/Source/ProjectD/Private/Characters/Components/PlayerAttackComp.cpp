@@ -195,19 +195,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 
 void UPlayerAttackComp::Attack()
 {
-	/*
-	if (!Player || !PlayerFSMComp) return;
-	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK)))
-		return;
 
-	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
-
-	Player->TurnPlayer();
-
-	if (!PlayerAnim) return;
-	PlayerAnim->PlayAttackAnimation(AutoAttackMontage);
-	//PlayerAnim->PlayerAttackAnimation(0);
-	*/
 }
 
 void UPlayerAttackComp::CancelSkill()
@@ -235,6 +223,9 @@ void UPlayerAttackComp::CompleteSkill()
 		PlayerController->SetInputMode(InputMode);
 	}
 }
+
+
+// <------------------------------ Skill ------------------------------>
 
 void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 {
@@ -295,6 +286,14 @@ void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
 	}
 }
 
+
+// <------------------------------ Skill Melee ------------------------------>
+
+void UPlayerAttackComp::MeleeSkill()
+{
+	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
+}
+
 // 애니메이션 노티파이로 호출하는 근거리 스킬 공격 생성 함수
 void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 {
@@ -321,7 +320,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 			{
 				IgnoreAttackActors.AddUnique(Monster);
 				Monster->OnMyTakeDamage(SkillDamage * SkillLevel);
-				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster"), *Monster->GetName());
+				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *Monster->GetName(), SkillDamage * SkillLevel);
 			}
 		}
 	}
@@ -333,18 +332,8 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 	IgnoreAttackActors.AddUnique(Player);
 }
 
-void UPlayerAttackComp::RangedSkillAttackJudgementStart()
-{
-}
 
-void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
-{
-}
-
-void UPlayerAttackComp::MeleeSkill()
-{
-	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
-}
+// <------------------------------ Skill Ranged ------------------------------>
 
 void UPlayerAttackComp::RangedSkill()
 {
@@ -372,22 +361,16 @@ void UPlayerAttackComp::RangedSkill()
 	}
 }
 
-EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
+void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 {
-	EUseColor _NextColor = static_cast<EUseColor>(static_cast<int32>(_CurrentColor) + 1);
-
-	switch (_CurrentColor)
-	{
-	case EUseColor::RED : _NextColor = EUseColor::YELLOW; break;
-	case EUseColor::YELLOW : _NextColor = EUseColor::BLUE; break;
-	case EUseColor::BLUE : _NextColor = EUseColor::RED; break;
-	}
-
-	// 해금이 안되어 있다면 무조건 Red 반환
-	if(!CanUseColor[_NextColor]) return EUseColor::RED;
-	
-	return _NextColor;
 }
+
+void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
+{
+}
+
+
+// <------------------------------ Skill Swap ------------------------------>
 
 void UPlayerAttackComp::SwapSkill()
 {
@@ -409,10 +392,33 @@ void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkil
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillData);
 }
 
-void UPlayerAttackComp::SetSkillCoolDownUI(int32 SlotIndex, float CoolTime)
+EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
 {
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(SlotIndex, CoolTime);
+	EUseColor _NextColor = static_cast<EUseColor>(static_cast<int32>(_CurrentColor) + 1);
+
+	switch (_CurrentColor)
+	{
+	case EUseColor::RED : _NextColor = EUseColor::YELLOW; break;
+	case EUseColor::YELLOW : _NextColor = EUseColor::BLUE; break;
+	case EUseColor::BLUE : _NextColor = EUseColor::RED; break;
+	}
+
+	// 해금이 안되어 있다면 무조건 Red 반환
+	if(!CanUseColor[_NextColor]) return EUseColor::RED;
+	
+	return _NextColor;
 }
+
+
+// <------------------------------ Ult ------------------------------>
+
+void UPlayerAttackComp::UltSkill()
+{
+	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
+}
+
+
+// <------------------------------ Skill Data ------------------------------>
 
 void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 {
@@ -424,9 +430,31 @@ void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 }
 
 
-void UPlayerAttackComp::UltSkill()
+// <---------------------- Skill Upgrade ---------------------->
+
+void UPlayerAttackComp::GetSkillUpgradePoint(int32 SkillIndex)
 {
-	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
+	UE_LOG(LogTemp, Log, TEXT("SkillLevel : %d"), Skills[SkillIndex].SkillLevel);
+	// 업그레이드 할 수 있는 레벨보다 초과되었다면
+	if(Skills[SkillIndex].SkillLevel >= 5) return;
+	
+	UE_LOG(LogTemp, Log, TEXT("SkillLevel2 : %d"), Skills[SkillIndex].SkillLevel);
+	Skills[SkillIndex].SkillLevel = Skills[SkillIndex].SkillLevel + 1;
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillIndex-1, Skills[SkillIndex].SkillLevel-1);
+}
+
+
+// <---------------------- Skill CoolDown ---------------------->
+
+void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
+{
+	if (Skills.IsValidIndex(AttackIndex))
+	{
+		Skills[AttackIndex].bIsOnCooldown = false;
+		Skills[AttackIndex].CooldownRemain = 0.0f;
+		UpdateCooldown(AttackIndex);
+		UE_LOG(LogTemp, Warning, TEXT("Skill %d cooldown reset."), AttackIndex);
+	}
 }
 
 void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
@@ -450,33 +478,9 @@ void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
 	}
 }
 
-
-// <---------------------- Skill Upgrade ---------------------->
-
-void UPlayerAttackComp::GetSkillUpgradePoint(int32 SkillIndex)
+void UPlayerAttackComp::SetSkillCoolDownUI(int32 SlotIndex, float CoolTime)
 {
-	// 스킬 업그레이드 UI
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->ShowSkillUpgradeUI(SkillIndex-1);
-}
-
-void UPlayerAttackComp::SkillUpgrade(int32 SkillIndex)
-{
-	Skills[SkillIndex].SkillLevel = Skills[SkillIndex].SkillLevel + 1;
-	if(Skills[SkillIndex].SkillLevel >= 5) Skills[SkillIndex].SkillLevel = 5;
-}
-
-
-// <---------------------- Skill CoolDown ---------------------->
-
-void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
-{
-	if (Skills.IsValidIndex(AttackIndex))
-	{
-		Skills[AttackIndex].bIsOnCooldown = false;
-		Skills[AttackIndex].CooldownRemain = 0.0f;
-		UpdateCooldown(AttackIndex);
-		UE_LOG(LogTemp, Warning, TEXT("Skill %d cooldown reset."), AttackIndex);
-	}
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(SlotIndex, CoolTime);
 }
 
 bool UPlayerAttackComp::CanUseSkill(int32 AttackIndex)

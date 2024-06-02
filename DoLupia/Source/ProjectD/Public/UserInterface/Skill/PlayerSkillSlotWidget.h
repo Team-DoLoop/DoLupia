@@ -40,9 +40,6 @@ private:
 	UPROPERTY()
 	TArray<class UImage*> SkillLevelSlot;
 
-	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	class UButton* Btn_SkillUpgrade;
-
 	
 public:
 	void InitUI();
@@ -51,8 +48,7 @@ public:
 	void SetUI(FPlayerSkillData* PlayerSkillData);
 	void SetCoolTimeBar(float CoolTime);
 
-	void ShowSkillUpgradeBtn();
-	void UpgradeSkillSlotLevelUI();
+	void UpgradeSkillSlotLevelUI(int32 SkillLevelSlotIndex);
 
 	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
 	

@@ -104,6 +104,8 @@ void AProjectDPlayerController::SetupInputComponent()
 
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
+		
 		
 		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);						// Q
 		
@@ -163,9 +165,6 @@ void AProjectDPlayerController::TestAnyFunction()
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
-
-	// 스킬 업그레이드
-	ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(1);
 }
 
 	
@@ -215,6 +214,10 @@ void AProjectDPlayerController::Evasion()
 	// 회피기
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->Evasion();
+
+	
+	// 스킬 업그레이드
+	ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(1);
 }
 
 // <---------------------- UI ---------------------->

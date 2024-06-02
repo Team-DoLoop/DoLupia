@@ -174,7 +174,6 @@ public:
 	// <---------------------- Skill Upgrade ---------------------->
 public:
 	void GetSkillUpgradePoint(int32 SkillIndex);
-	void SkillUpgrade(int32 SkillIndex);
 	
 	
 	// <---------------------- Skill Data ---------------------->
