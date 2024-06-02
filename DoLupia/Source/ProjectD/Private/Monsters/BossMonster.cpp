@@ -5,10 +5,12 @@
 #include "Monsters/MonsterAIController.h"
 #include "Engine/World.h"  // 필요
 #include "CollisionQueryParams.h"  // 필요
+#include "Components/WidgetComponent.h"
 #include "Engine/EngineTypes.h"  // 필요
 #include "Engine/Engine.h"  // GEngine
 #include "Engine/OverlapResult.h"
 #include "Monsters/BossAnim.h"
+#include "Monsters/MonsterHPWidget.h"
 #include "Monsters/AI/BTTask_Attack.h"
 
 // Sets default values
@@ -24,12 +26,12 @@ ABossMonster::ABossMonster()
 	
 	OctopusBackpackComponent = CreateDefaultSubobject<UOctopusBackpackComponent>( TEXT( "OctopusBackpackComponent" ) );
 	ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>( TEXT( "ChildActorComponent" ) );
+	ChildActorComponent->SetChildActorClass( AOctopusBackpackActor::StaticClass() );
 
 	FName OctoSocket( TEXT( "OctoSocket" ) );
 	if (GetMesh()->DoesSocketExist( OctoSocket ))
 	{
 		ChildActorComponent->SetupAttachment( GetMesh(),OctoSocket );
-		//ChildActorComponent->AttachToComponent( GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, OctoSocket );
 	}
 
 	AIControllerClass = AMonsterAIController::StaticClass();
@@ -46,7 +48,7 @@ void ABossMonster::BeginPlay()
 	state = EBossState::Idle;
 	anim = Cast<UBossAnim>( this->GetMesh()->GetAnimInstance() );
 	OctopusBackpackComponent->OctopusBackpackBattleMode( true );
-
+	
 }
 
 // Called every frame
@@ -76,20 +78,24 @@ void ABossMonster::Tick( float DeltaTime )
 
 void ABossMonster::IdleState()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::IdleState()" ) );
+	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::IdleState()" ) );
 	anim->animState = state;
 }
 
 void ABossMonster::MoveState()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::MoveState()" ) );
+	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::MoveState()" ) );
 	anim->animState = state;
+	
 }
 
 void ABossMonster::AttackState()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::AttackState()" ) );
+	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::AttackState()" ) );
 	anim->animState = state;
+	//auto OctopusBackpackActor = Cast<AOctopusBackpackActor>( UGameplayStatics::GetActorOfClass( GetWorld() , AOctopusBackpackActor::StaticClass() ) );
+	//AOctopusBackpackActor* OctopusActorComponent = Cast<AOctopusBackpackActor>( ChildActorComponent );
+	//OctopusActorComponent->IsAttacking = true;
 }
 
 void ABossMonster::DamageState()

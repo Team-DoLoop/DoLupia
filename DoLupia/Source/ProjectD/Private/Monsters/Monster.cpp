@@ -121,8 +121,11 @@ void AMonster::MoveState()
 {
 	if (currentHP <= 0)
 	{
+		UE_LOG( LogTemp , Warning , TEXT( "AMonster::MoveState()  currentHP <= 0" ) )
+
 		return;
 	}
+	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::MoveState()" ) );
 
 	//플레이어 방향으로 이동
 	MoveToTarget();
@@ -140,6 +143,7 @@ void AMonster::AttackState()
 {
 	if (target == nullptr)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("AMonster::AttackState()  target == nullptr"))
 		return;
 	}
 
@@ -147,7 +151,7 @@ void AMonster::AttackState()
 	{
 		return;
 	}
-	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
+	GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::AttackState()" ) );
 	currentTime += GetWorld()->GetDeltaSeconds();
 	TargetVector = target->GetActorLocation() - this->GetActorLocation();
 
@@ -186,34 +190,58 @@ void AMonster::DamageState()
 void AMonster::DieState()
 {
 	//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::DieState()" ) );
-	
-	anim->animState = MonsterFSM->state;
-	healthUI->DestroyComponent();
-	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 	IsAlive = false;
-	
+	anim->animState = MonsterFSM->state;
+	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	if(healthUI)
+	{
+		healthUI->DestroyComponent();
+	}
 }
 
 void AMonster::MoveToTarget()
 {
 	FRotator MonsterRotation = FRotationMatrix::MakeFromX( TargetVector ).Rotator();
 	this->SetActorRotation( MonsterRotation );
-
+	target = GetWorld()->GetFirstPlayerController()->GetPawn();
 	FVector destination = target->GetActorLocation();
 	TargetVector = destination - this->GetActorLocation();
 	//this->AddMovementInput( TargetVector.GetSafeNormal() );
+
 	auto ns = UNavigationSystemV1::GetNavigationSystem( GetWorld() );
+	if (ns == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Red , TEXT( "Navigation System not found" ) );
+		return;
+	}
 
-	FPathFindingQuery query;
+	ai = Cast<AAIController>( GetController() );
+	if (ai == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Red , TEXT( "AI Controller not found" ) );
+		return;
+	}
 
-	FAIMoveRequest req;
-	req.SetAcceptanceRadius( 10 );
-	req.SetGoalLocation( destination );
-	ai->BuildPathfindingQuery( req , query );
-	FPathFindingResult r = ns->FindPathSync( query );
+	// 이동 요청 생성 및 설정
+	FAIMoveRequest MoveRequest;
+	MoveRequest.SetGoalLocation( destination );
+	MoveRequest.SetAcceptanceRadius( 10.0f );
 
-	ai->MoveToLocation( destination );
+	// 경로 찾기 쿼리 생성 및 설정
+	FPathFindingQuery Query;
+	ai->BuildPathfindingQuery( MoveRequest , Query );
 
+	// 경로 찾기 결과
+	FPathFindingResult PathResult = ns->FindPathSync( Query );
+	if (PathResult.IsSuccessful())
+	{
+		ai->MoveToLocation( destination );
+		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AMonster::MoveToTarget()" ) );
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Red , TEXT( "Pathfinding failed" ) );
+	}
 }
 
 void AMonster::OnMyTakeDamage(int32 damage)

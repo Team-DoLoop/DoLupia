@@ -61,5 +61,5 @@ public:
 
 	UPROPERTY()
 	class UBossAnim* anim;
-	
+
 };

@@ -34,9 +34,6 @@ void UMonsterAnim::OnDoHitAttackAnimation()
 
 void UMonsterAnim::OnEndHitAttackAnimation()
 {
-	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<AStrikeMonster>( ownerPawn );
-
 	bAttackDelay = false;
 	bIsAttackComplete = true;
 }
