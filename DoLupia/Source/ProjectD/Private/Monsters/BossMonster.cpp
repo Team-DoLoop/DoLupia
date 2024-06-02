@@ -9,6 +9,7 @@
 #include "Engine/Engine.h"  // GEngine
 #include "Engine/OverlapResult.h"
 #include "Monsters/AI/BTTask_Attack.h"
+#include "Monsters/Drone/BossDrone.h"
 
 // Sets default values
 ABossMonster::ABossMonster()
@@ -47,6 +48,17 @@ void ABossMonster::BeginPlay()
 	Super::BeginPlay();
 	IsAlive = true;
 	state = EBossState::Idle;
+
+	for(int32 i = 0; i < DronesToSpawnNumber; ++i)
+	{
+		ABossDrone* BossDrone = GetWorld()->SpawnActor<ABossDrone>( BossDroneFactory );
+		BossDrone->SetBossIntervalLocation(BossDroneLocation[i]);
+		BossDrone->SetActorLocation( GetActorLocation() + BossDroneLocation[i] );
+		BossDrone->SetCurrentAngle(72 * i);
+		BossDrones.Add(BossDrone);
+	}
+
+	
 }
 
 // Called every frame

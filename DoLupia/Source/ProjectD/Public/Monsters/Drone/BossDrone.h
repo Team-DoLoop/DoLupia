@@ -23,18 +23,16 @@ class PROJECTD_API ABossDrone : public APawn
 {
 	GENERATED_BODY()
 
-	//friend class ABossDroneLaser;
 
 public:	
-	// Sets default values for this actor's properties
 	ABossDrone();
 
+	FORCEINLINE void SetBossIntervalLocation(const FVector& NewBossIntervalLocation) { BossIntervalLocation = NewBossIntervalLocation;}
+	FORCEINLINE void SetCurrentAngle(float NewCurrentAngle) { CurrentAngle = NewCurrentAngle; }
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 
@@ -61,12 +59,21 @@ private:
 	UPROPERTY( EditDefaultsOnly )
 	float AttackRange = 1000.f;
 
+	UPROPERTY( EditDefaultsOnly )
+	float OrbitRadius;
+	UPROPERTY( EditDefaultsOnly )
+	float OrbitSpeed; 
+	float CurrentAngle;
+
 	EDroneState CurrentState;
 
-	UPROPERTY()
-	USkeletalMeshComponent* MeshComponent;
+	UPROPERTY(EditDefaultsOnly)
+	USkeletalMeshComponent* DroneMeshComponent;
 
+
+	FVector BossIntervalLocation;
 	FVector AttackTargetLocation;
+
 	TArray<FVector> LaserVectors;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -83,6 +90,9 @@ private:
 
 	UPROPERTY()
 	ABossMonster* Boss;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABossDroneLaser> LaserFactory;
 
 	UPROPERTY()
 	ABossDroneLaser* LaserActor;

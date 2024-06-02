@@ -19,7 +19,6 @@ ABossDroneLaser::ABossDroneLaser()
     SetRootComponent( DumpSceneComponent );
 
     StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Laser Mesh"));
-    StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 	StaticMeshComponent->SetupAttachment(DumpSceneComponent);
 
     Speed = 3000.f;
@@ -36,6 +35,13 @@ void ABossDroneLaser::Tick( float DeltaTime )
 {
     Super::Tick( DeltaTime );
     MoveLaser(DeltaTime);
+}
+
+void ABossDroneLaser::Initialize( ABossDrone* MyDrone )
+{
+    Drone = MyDrone;
+    CurrentLocation = Drone->GetActorLocation();
+    SetActorLocation( CurrentLocation );
 }
 
 void ABossDroneLaser::Initialize(const FVector& InDirection, float InSpeed)
@@ -97,12 +103,7 @@ void ABossDroneLaser::MoveLaser(float DeltaTime)
     }
 }
 
-void ABossDroneLaser::Initialize(ABossDrone* MyDrone)
-{
-    Drone = MyDrone;
-    CurrentLocation = Drone->GetActorLocation();
-	SetActorLocation( CurrentLocation );
-}
+
 
 void ABossDroneLaser::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                             FVector NormalImpulse, const FHitResult& Hit)

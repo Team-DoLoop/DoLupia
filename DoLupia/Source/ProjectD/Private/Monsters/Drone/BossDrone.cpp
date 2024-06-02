@@ -13,9 +13,17 @@ ABossDrone::ABossDrone()
 
 	MuzzleOffSet = FVector(0.f, 0.f, 50.f);
 
-	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Drone Mesh"));
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
-	SetRootComponent( MeshComponent );
+	DroneMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Drone Mesh"));
+	DroneMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	DroneMeshComponent->SetVisibility(true);
+
+	OrbitRadius = 300.0f;
+	OrbitSpeed = 50.0f;
+	CurrentAngle = 0.0f;
+
+	SetRootComponent( DroneMeshComponent );
+
+
 }
 
 void ABossDrone::BeginPlay()
@@ -24,7 +32,7 @@ void ABossDrone::BeginPlay()
 
 	Boss = Cast<ABossMonster>(UGameplayStatics::GetActorOfClass(GetWorld(), ABossMonster::StaticClass()));
 	Target = GetWorld()->GetFirstPlayerController()->GetCharacter();
-	LaserActor = GetWorld()->SpawnActor<ABossDroneLaser>();
+	LaserActor = GetWorld()->SpawnActor<ABossDroneLaser>(LaserFactory);
 	LaserActor->Initialize(this);
 }
 
@@ -32,8 +40,11 @@ void ABossDrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Detect();
-	Attack();
+	// 각도를 시간에 따라 증가
+	CurrentAngle += OrbitSpeed * DeltaTime;
+
+	//Detect();
+	//Attack();
 
 	switch (CurrentState)
 	{
@@ -70,9 +81,22 @@ void ABossDrone::FollowBoss(float DeltaTime)
 {
 	if (Boss)
 	{
-		FVector BossLocation = Boss->GetActorLocation();
-		FVector Direction = (BossLocation - GetActorLocation()).GetSafeNormal();
-		AddMovementInput(Direction, MovementSpeed * DeltaTime);
+		//FVector BossLocation = Boss->GetActorLocation() + BossIntervalLocation;
+		FVector Direction = (Boss->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+		// 각도 값을 라디안으로 변환
+		float RadianAngle = FMath::DegreesToRadians( CurrentAngle );
+
+		// 새로운 위치 계산
+		FVector NewLocation;
+		NewLocation.X = Boss->GetActorLocation().X + BossIntervalLocation.X + OrbitRadius * FMath::Cos( RadianAngle );
+		NewLocation.Y = Boss->GetActorLocation().Y + BossIntervalLocation.Y + OrbitRadius * FMath::Sin( RadianAngle );
+		NewLocation.Z = Boss->GetActorLocation().Z + BossIntervalLocation.Z;
+
+		SetActorLocation( NewLocation );
+
+		//SetActorLocation( FMath::Lerp( GetActorLocation() , Boss->GetActorLocation() + BossIntervalLocation , 0.1f ) );
+		////AddMovementInput(Direction, MovementSpeed * DeltaTime);
 	}
 }
 

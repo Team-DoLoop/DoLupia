@@ -178,9 +178,6 @@ void AProjectDPlayerController::OnSetDestinationReleased()
 {
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->OnSetDestinationReleased();
-	FInputModeGameOnly InputMode;
-	InputMode.SetConsumeCaptureMouseDown(true);
-	SetInputMode(FInputModeGameOnly());
 }
 
 /*

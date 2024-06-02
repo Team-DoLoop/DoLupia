@@ -10,6 +10,8 @@
 #include "Components/ActorComponent.h"
 #include "BossMonster.generated.h"
 
+class ABossDrone;
+
 UENUM( BlueprintType )
 enum class EBossState : uint8
 {
@@ -58,6 +60,20 @@ public:
 	void AttackState();
 	void DamageState();
 	void DieState();
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	int32 DronesToSpawnNumber;
+
+	UPROPERTY( EditDefaultsOnly )
+	TArray<FVector> BossDroneLocation;
+
+	UPROPERTY( EditDefaultsOnly )
+	TArray<ABossDrone*> BossDrones;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABossDrone> BossDroneFactory;
+	
 
 
 	
