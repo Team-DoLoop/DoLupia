@@ -15,17 +15,22 @@ public:
 	// Sets default values for this actor's properties
 	AAITxtHandlerBase();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick( float DeltaTime ) override;
 
 	// Update actor's material
 	void UpdateActorMaterial();
-	
+
+	UFUNCTION()
+	void UpdateDissolve( float dissolve );
+
+	UFUNCTION()
+	void OnTimelineFinished();
+
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 
@@ -45,5 +50,21 @@ private:
 
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
+
+
+	/* ------------- TimeLine ---------------- */
+	UMaterialInstanceDynamic* DynamicMaterial;
+
+	// Timeline component
+	UPROPERTY()
+	class UTimelineComponent* TimelineComp;
+
+	float TimelineLength;
+
+	// Curve for timeline
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	class UCurveFloat* AlphaCurve;
+
+	UTexture2DDynamic* NewTexture;
 
 };
