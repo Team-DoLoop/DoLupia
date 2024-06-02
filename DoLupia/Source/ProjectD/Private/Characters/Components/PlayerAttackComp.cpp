@@ -12,9 +12,7 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
-#include "Characters/Skill/PlayerSkillBase.h"
-#include "Characters/Skill/PlayerSkillMelee.h"
-#include "Characters/Skill/PlayerSkillSwap.h"
+#include "Characters/Skill/PlayerSkillFlamethrower.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "GameFramework/GameSession.h"
 #include "Kismet/GameplayStatics.h"
@@ -84,6 +82,17 @@ void UPlayerAttackComp::BeginPlay()
 	InitCanUseColor();
 	
 	IgnoreAttackActors.AddUnique(Player);
+
+	// Add Red W
+	if (FlamethrowerFactory)
+	{
+		Flamethrower = GetWorld()->SpawnActor<APlayerSkillFlamethrower>(FlamethrowerFactory);
+		if (Flamethrower)
+		{
+			Flamethrower->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("WeaponSocket"));
+			Flamethrower->SetOwner(Player);
+		}
+	}
 }
 
 
@@ -277,6 +286,15 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 	}
 }
 
+void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
+{
+	// W End
+	if(AttackIndex == 2)
+	{
+		if(CurrentSkillColor == EUseColor::RED && Flamethrower) Flamethrower->StopFiring();
+	}
+}
+
 // 애니메이션 노티파이로 호출하는 근거리 스킬 공격 생성 함수
 void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 {
@@ -315,6 +333,14 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 	IgnoreAttackActors.AddUnique(Player);
 }
 
+void UPlayerAttackComp::RangedSkillAttackJudgementStart()
+{
+}
+
+void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
+{
+}
+
 void UPlayerAttackComp::MeleeSkill()
 {
 	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
@@ -323,6 +349,27 @@ void UPlayerAttackComp::MeleeSkill()
 void UPlayerAttackComp::RangedSkill()
 {
 	UE_LOG(LogTemp, Log, TEXT("Ranged Skill : %s"),  *(CurrentSkillData[1]->SkillName));
+
+	switch (CurrentSkillColor)
+	{
+	case EUseColor::RED :
+		{
+			// 화염 방사기
+			Flamethrower->StartFiring();
+			break;
+		}
+	case EUseColor::YELLOW :
+		{
+			// 전기 쉴드
+			break;
+		}
+	case EUseColor::BLUE :
+		{
+			// 물 공격
+			break;
+		}
+	default: break;
+	}
 }
 
 EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
