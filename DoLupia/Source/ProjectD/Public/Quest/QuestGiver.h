@@ -30,6 +30,9 @@ public:
 	FORCEINLINE UWidgetQuestGiver*		GetWidgetQuestGiver() const { return QuestWidget; }
 	FORCEINLINE UWidgetQuestRewards*	GetRewardQuestGiver() const { return RewardsWidget; }
 
+	UFUNCTION( BlueprintCallable )
+	virtual FString InteractWith() override;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDataTableRowHandle QuestData;
@@ -56,9 +59,6 @@ protected:
 	class AProjectDCharacter* MyPlayerCharacter;
 	UPROPERTY()
 	class AProjectDGameMode* MyGameMode;
-
-	UFUNCTION(BlueprintCallable)
-	virtual FString InteractWith() override;
 
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UWidgetQuestGiver> QuestGiverWidget;

@@ -5,6 +5,7 @@
 #include <Components/BoxComponent.h>
 #include "Characters/ProjectDCharacter.h"
 
+
 // Sets default values
 ALocationMarker::ALocationMarker()
 {

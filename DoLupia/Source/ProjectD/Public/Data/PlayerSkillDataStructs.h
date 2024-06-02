@@ -24,8 +24,7 @@ struct FPlayerSkillData : public FTableRowBase
 
 public:
 	FPlayerSkillData() : SkillID(1), SkillColor(EUseColor::NONE), SkillType(ESkillType::NONE), SkillName(""),
-	SkillThumnail(nullptr), SkillMontage(nullptr), SkillLevel(1),
-	SkillCost(10), SkillCoolTime(5), SkillDamage(10), SkillRange(FVector(100.0f , 100.0f , 20.0f))
+	SkillThumnail(nullptr), SkillMontage(nullptr), SkillCost(10), SkillCoolTime(5), SkillDamage(10), SkillRange(FVector(100.0f , 100.0f , 20.0f))
 	{
 	}
 
@@ -49,9 +48,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText SkillDescription;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 SkillLevel;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillCost;

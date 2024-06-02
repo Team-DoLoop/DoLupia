@@ -15,7 +15,7 @@ AQuest_Base::AQuest_Base()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
+	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 
 	if (DataTable)
 	{
@@ -29,7 +29,7 @@ AQuest_Base::AQuest_Base()
 	}
 
 	//_C!!!!!
-	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/QuestSystem/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
+	static ConstructorHelpers::FClassFinder<UWidgetQuestNotification> WidgetClassFinder( TEXT( "/Game/UserInterface/Quest/WBP_WidgetQuestNotification.WBP_WidgetQuestNotification_C" ) );
 	if (WidgetClassFinder.Succeeded())
 	{
 		Notification_Widget = WidgetClassFinder.Class;

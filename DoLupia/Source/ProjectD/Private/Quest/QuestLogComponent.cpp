@@ -12,7 +12,7 @@ UQuestLogComponent::UQuestLogComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-    static ConstructorHelpers::FClassFinder<UQuestTracker> WidgetClassFinder( TEXT( "/Game/QuestSystem/WBP_QuestTracker.WBP_QuestTracker_C" ) );
+    static ConstructorHelpers::FClassFinder<UQuestTracker> WidgetClassFinder( TEXT( "/Game/UserInterface/Quest/WBP_QuestTracker.WBP_QuestTracker_C" ) );
     if (WidgetClassFinder.Succeeded())
     {
         QuestTracker_Widget = WidgetClassFinder.Class;

@@ -4,7 +4,13 @@
 #include "Quest/Dialogsystem/DialogComponent.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
+#include "Kismet/GameplayStatics.h"
+#include "NPC/NPCBase.h"
+#include "Quest/QuestGiver.h"
+#include "Quest/TestNPCCharacter.h"
+#include "UserInterface/NPC/DialogWidget.h"
 
 // Sets default values for this component's properties
 UDialogComponent::UDialogComponent()
@@ -26,12 +32,7 @@ void UDialogComponent::BeginPlay()
 
 	if (DialogueWidgetClass)
 	{
-		DialogueWidget = CreateWidget<UUserWidget>( GetWorld() , DialogueWidgetClass );
-
-		if (DialogueWidget)
-		{
-			DialogueWidget->AddToViewport();
-		}
+		DialogueWidget = CreateWidget<UDialogWidget>( GetWorld() , DialogueWidgetClass );
 	}
 }
 
@@ -44,14 +45,29 @@ void UDialogComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UDialogComponent::StartDialog(const FString& NPCNmae, int32 StartubgDialogID)
+void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , int32 StartubgDialogID)
 {
-	CurrentNPCName = NPCNmae;
+	CurrentNPC = InCurrentNPC;
+	CurrentNPCName = NPCID;
 	LoadDialogue( StartubgDialogID );
+
+	if (DialogueWidget)
+	{
+		UFunction* SetCurrentNPCFunction = DialogueWidget->FindFunction( FName( "SetCurrentNPC" ) );
+		if (SetCurrentNPCFunction)
+		{
+			UE_LOG( LogTemp , Warning , TEXT( "UDialogComponent::StartDialog - SetCurrentNPCFunction" ) );
+			DialogueWidget->ProcessEvent( SetCurrentNPCFunction , &InCurrentNPC );
+		}
+
+		ShowDialogWidget();
+	}
+	
 }
 
 void UDialogComponent::AdvanceDialog()
 {
+	UE_LOG( LogTemp , Warning , TEXT( "UDialogComponent::AdvanceDialog" ) );
 	if (CurrentDialogue)
 	{
 		if (CurrentDialogue->bTriggersQuest)
@@ -75,6 +91,8 @@ FString UDialogComponent::GetCurrentDialogText() const
 
 void UDialogComponent::LoadDialogue(int32 DialogueID)
 {
+	UE_LOG( LogTemp , Warning , TEXT( "UDialogComponent::LoadDialogue" ) );
+
 	if (DialogueID == -1)
 	{
 		//이게 npc의 마지막 대화이면 Dialog 위젯을 닫는다.
@@ -87,6 +105,7 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 
 	if (DialogueDataTable)
 	{
+		UE_LOG( LogTemp , Warning , TEXT( "DialogueDataTable" ) );
 		static const FString ContextString( TEXT( "GENERAL" ) );
 		FDialogueData* DialogueData = DialogueDataTable->FindRow<FDialogueData>( FName( *FString::FromInt( DialogueID ) ) , ContextString );
 
@@ -97,18 +116,21 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 
 			if (DialogueWidget)
 			{
+				//UE_LOG( LogTemp , Warning , TEXT( "%s %s" ), *CurrentDialogue->DialogueText , *CurrentDialogue->Speaker );
 				FText DialogueText = FText::FromString( CurrentDialogue->DialogueText );
 				FText SpeakerText = FText::FromString( CurrentDialogue->Speaker );
 
-				UFunction* UpdateDialogueTextFunction = DialogueWidget->FindFunction( FName( "UpdateDialogueText" ) );
+				UFunction* UpdateDialogueTextFunction = DialogueWidget->FindFunction( FName( "UpdateDialogText" ) );
 				if (UpdateDialogueTextFunction)
 				{
+					UE_LOG( LogTemp , Warning , TEXT( "UpdateDialogueTextFunction" ) );
 					DialogueWidget->ProcessEvent( UpdateDialogueTextFunction , &DialogueText );
 				}
 
 				UFunction* UpdateSpeakerTextFunction = DialogueWidget->FindFunction( FName( "UpdateSpeakerText" ) );
 				if (UpdateSpeakerTextFunction)
 				{
+					UE_LOG( LogTemp , Warning , TEXT( "UpdateSpeakerTextFunction" ) );
 					DialogueWidget->ProcessEvent( UpdateSpeakerTextFunction , &SpeakerText );
 				}
 			}
@@ -118,5 +140,49 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 
 void UDialogComponent::TriggerQuest()
 {
+	// 퀘스트 창 끄기 전 대화창 끄기
+	HideDialogWidget();
+
+	// CurrentNPC가 유효한지 확인
+	if (CurrentNPC)
+	{
+		// CurrentNPC에서 UQuestComponent를 가져오기
+		ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+		auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( npc );
+
+		if (player)
+		{
+			// 퀘스트 트리거 로직을 여기에 추가
+			FString QuestID = QuestInterface->InteractWith();
+			
+			player->OnObjectiveIDCalled.Broadcast( QuestID , 1 );
+		}
+		else
+		{
+			UE_LOG( LogTemp , Warning , TEXT( "UQuestComponent not found on NPC" ) );
+		}
+	}
+	else
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "CurrentNPC is null" ) );
+	}
+
+}
+
+void UDialogComponent::ShowDialogWidget()
+{
+	if(DialogueWidget && !DialogueWidget->IsInViewport() )
+	{
+		DialogueWidget->AddToViewport();
+	}
+}
+
+void UDialogComponent::HideDialogWidget()
+{
+	if (DialogueWidget && DialogueWidget->IsInViewport())
+	{
+		DialogueWidget->RemoveFromViewport();
+	}
 }
 

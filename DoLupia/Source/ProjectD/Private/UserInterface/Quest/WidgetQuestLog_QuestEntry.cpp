@@ -10,7 +10,7 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/QuestDataTable.QuestDataTable" ) );
+	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 
 	if (DataTable)
 	{

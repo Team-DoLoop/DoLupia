@@ -9,18 +9,29 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+UENUM(BlueprintType)
+enum ESkillOpenType : int8
+{
+	NONE UMETA(DisplayName = "None"),
+	QUEST UMETA(DisplayName = "Quest"),
+	WEAPON UMETA(DisplayName = "Weapon"),
+};
+
 USTRUCT()
 struct FSkillInfo
 {
 	GENERATED_BODY()
 
+	int32 SkillLevel;
 	float CooldownTime;
 	float CooldownRemain;
 	bool bIsOnCooldown;
+
 	FTimerHandle CooldownTimerHandle;
 
 	FSkillInfo()
 	{
+		SkillLevel = 1;
 		CooldownTime = 0.0f;
 		CooldownRemain = 0.0f;
 		bIsOnCooldown = false;
@@ -140,11 +151,17 @@ public:
 private:
 	TMap<EUseColor, bool> CanUseColor;
 	TMap<EUseColor, int32> StartIndexColor;
+
 	
-	// <---------------------- Skill Use - Weapon ---------------------->
+	// <---------------------- Skill Use - Quest, Weapon ---------------------->
 public:
-	void SetSkillUseState(bool bCanUse);
-	
+	void SetSkillUseState(bool bCanUse, ESkillOpenType OpenType);
+
+
+	// <---------------------- Skill Upgrade ---------------------->
+public:
+	void GetSkillUpgradePoint(int32 SkillIndex);
+	void SkillUpgrade(int32 SkillIndex);
 	
 	
 	// <---------------------- Skill Data ---------------------->
@@ -162,9 +179,9 @@ public:
 	
 private:
 	TArray<FPlayerSkillData*> CurrentSkillData;
-	EUseColor CurrentSkillColor = EUseColor::NONE; // X, 빨, 노, 파
+	EUseColor CurrentSkillColor = EUseColor::NONE;	// X, 빨, 노, 파
 
-	int32 SkillCount = 4;						// 플레이어 스킬 개수
+	int32 SkillCount = 4;							// 플레이어 스킬 개수
 	
 	int32 SkillID;
 	EUseColor SkillColor;

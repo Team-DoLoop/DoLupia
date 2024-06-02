@@ -150,12 +150,15 @@ void AProjectDPlayerController::TestAnyFunction()
 	*/
 
 	// 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
-	ControlledCharacter->GetAttackComp()->SetSkillUseState(true);
+	ControlledCharacter->GetAttackComp()->SetSkillUseState(true, QUEST);
 
 	// 각 색깔 열리게
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
+
+	// 스킬 업그레이드
+	ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(1);
 }
 
 	

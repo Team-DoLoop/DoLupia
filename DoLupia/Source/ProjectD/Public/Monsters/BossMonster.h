@@ -4,13 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-//#include "OctopusBackpackComponent.h"
-//#include "OctopusBackpackActor.h"
+#include "OctopusBackpackComponent.h"
+#include "OctopusBackpackActor.h"
 #include "AI/BTTask_Attack.h"
 #include "Components/ActorComponent.h"
 #include "BossMonster.generated.h"
-
-class ABossDrone;
 
 UENUM( BlueprintType )
 enum class EBossState : uint8
@@ -38,11 +36,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//UPROPERTY( EditAnywhere , Category = "Components" )
-	//UOctopusBackpackComponent* OctopusBackpackComponent;
+	UPROPERTY( EditAnywhere , BlueprintReadWrite, Category = "Components" )
+	UOctopusBackpackComponent* OctopusBackpackComponent;
 	
-	//UPROPERTY( EditAnywhere,BlueprintReadWrite , Category = "Components" )
-	//UChildActorComponent* ChildActorComponent;
+	UPROPERTY( EditAnywhere,BlueprintReadWrite , Category = "Components" )
+	UChildActorComponent* ChildActorComponent;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EBossState state;
@@ -61,20 +59,7 @@ public:
 	void DamageState();
 	void DieState();
 
-private:
-	UPROPERTY(EditDefaultsOnly)
-	int32 DronesToSpawnNumber;
-
-	UPROPERTY( EditDefaultsOnly )
-	TArray<FVector> BossDroneLocation;
-
-	UPROPERTY( EditDefaultsOnly )
-	TArray<ABossDrone*> BossDrones;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ABossDrone> BossDroneFactory;
-	
-
-
+	UPROPERTY()
+	class UBossAnim* anim;
 	
 };

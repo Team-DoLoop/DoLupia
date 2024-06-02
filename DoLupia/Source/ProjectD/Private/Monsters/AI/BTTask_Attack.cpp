@@ -31,6 +31,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}*/
 	return EBTNodeResult::Succeeded;
 
+	//Anim에서 notify로 애니메이션 끝났을 때 succeded 로 변경
 	
 }
 

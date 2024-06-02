@@ -20,8 +20,14 @@ class PROJECTD_API UDialogWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	void UpdateDialogText( FText NewText );
+
+	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	void UpdateSpeakerText( FText NewSpeaker );
+
+	UFUNCTION( BlueprintCallable , Category = "Dialog" )
+	void SetCurrentNPC(AActor* InCurrentNPC);
 
 private:
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
@@ -33,6 +39,11 @@ private:
 	
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
 	UButton* btn_nxt;
+
+	UFUNCTION()
+	void OnNxtBtnClicked();
+
+	AActor* CurrentNPC;
 
 	
 };

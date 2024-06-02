@@ -37,6 +37,8 @@
 #include "Engine/World.h"
 #include "Items/Cape/PlayerCape.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "NPC/NPCBase.h"
+#include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
@@ -410,7 +412,6 @@ void AProjectDCharacter::PerformInteractionCheck()
 	if(LookDirection > 0.0)
 	{
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f, 0, 2.0f);
-
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
@@ -418,7 +419,6 @@ void AProjectDCharacter::PerformInteractionCheck()
 		if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
 		{
 			FString name = TraceHit.GetActor()->GetName();
-
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
 			{
 
@@ -442,7 +442,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
-				SpecificActor = Cast<ATestNPCCharacter>( LookAtActor );
+				SpecificActor = Cast<ANPCBase>( LookAtActor );
 				if (SpecificActor)
 				{
 					SpecificActor->LookAt(); // 인터페이스 메서드 호출
@@ -540,12 +540,36 @@ void AProjectDCharacter::BeginInteract()
 		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( LookAtActor );
 		if (QuestInterface)
 		{
+			ANPCBase* npc = Cast<ANPCBase>( LookAtActor );
+
+			if (npc)
+			{
+				UE_LOG( LogTemp , Error , TEXT( "NPC-TEST" ) );
+				AQuestAcceptNPC* Questnpc = Cast<AQuestAcceptNPC>( LookAtActor );
+				if(Questnpc)
+				{
+					UE_LOG( LogTemp , Error , TEXT( "QUESTNPC-TEST" ) );
+					const FString& ActorObjectID = QuestInterface->InteractWith();
+
+					const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
+					//캐릭터가 베이스 한테
+					OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
+				}
+				else
+				{
+					npc->DialogWith();
+				}
+				
+			}
+
+			/*
 			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
 			const FString& ActorObjectID = QuestInterface->InteractWith();
 
 			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 			//캐릭터가 베이스 한테
 			OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
+			*/
 		}
 	}
 }

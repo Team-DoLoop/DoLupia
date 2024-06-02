@@ -8,8 +8,8 @@
 #include "Engine/EngineTypes.h"  // 필요
 #include "Engine/Engine.h"  // GEngine
 #include "Engine/OverlapResult.h"
+#include "Monsters/BossAnim.h"
 #include "Monsters/AI/BTTask_Attack.h"
-#include "Monsters/Drone/BossDrone.h"
 
 // Sets default values
 ABossMonster::ABossMonster()
@@ -21,7 +21,7 @@ ABossMonster::ABossMonster()
 	if (BossMonsterMesh.Succeeded()) {
 		GetMesh()->SetSkeletalMesh( BossMonsterMesh.Object );
 	}
-	/*
+	
 	OctopusBackpackComponent = CreateDefaultSubobject<UOctopusBackpackComponent>( TEXT( "OctopusBackpackComponent" ) );
 	ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>( TEXT( "ChildActorComponent" ) );
 
@@ -29,12 +29,8 @@ ABossMonster::ABossMonster()
 	if (GetMesh()->DoesSocketExist( OctoSocket ))
 	{
 		ChildActorComponent->SetupAttachment( GetMesh(),OctoSocket );
-
+		//ChildActorComponent->AttachToComponent( GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, OctoSocket );
 	}
-	*/
-	//ChildActorComponent->SetupAttachment( GetMesh());
-
-
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -48,23 +44,25 @@ void ABossMonster::BeginPlay()
 	Super::BeginPlay();
 	IsAlive = true;
 	state = EBossState::Idle;
+	anim = Cast<UBossAnim>( this->GetMesh()->GetAnimInstance() );
+	OctopusBackpackComponent->OctopusBackpackBattleMode( true );
 
-	for(int32 i = 0; i < DronesToSpawnNumber; ++i)
-	{
-		ABossDrone* BossDrone = GetWorld()->SpawnActor<ABossDrone>( BossDroneFactory );
-		BossDrone->SetBossIntervalLocation(BossDroneLocation[i]);
-		BossDrone->SetActorLocation( GetActorLocation() + BossDroneLocation[i] );
-		BossDrone->SetCurrentAngle(72 * i);
-		BossDrones.Add(BossDrone);
-	}
-
-	
 }
 
 // Called every frame
 void ABossMonster::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	//// 보스의 위치와 회전 업데이트
+	//FVector NewLocation = GetActorLocation() + FVector( 1.0f , 0.0f , 0.0f );
+	//SetActorLocation( NewLocation );
+
+	//// Child Actor의 위치와 회전 업데이트
+	//if (ChildActorComponent)
+	//{
+	//	ChildActorComponent->SetWorldLocation( NewLocation );
+	//}
 
 	switch (state)
 	{
@@ -78,18 +76,20 @@ void ABossMonster::Tick( float DeltaTime )
 
 void ABossMonster::IdleState()
 {
-	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::IdleState()" ) );
-
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::IdleState()" ) );
+	anim->animState = state;
 }
 
 void ABossMonster::MoveState()
 {
-	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::MoveState()" ) );
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::MoveState()" ) );
+	anim->animState = state;
 }
 
 void ABossMonster::AttackState()
 {
-	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::AttackState()" ) );
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::AttackState()" ) );
+	anim->animState = state;
 }
 
 void ABossMonster::DamageState()

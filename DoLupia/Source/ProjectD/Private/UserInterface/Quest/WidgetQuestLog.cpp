@@ -17,7 +17,7 @@ void UWidgetQuestLog::NativePreConstruct()
     Super::NativePreConstruct();
 
     // 데이터 테이블 가져오기
-    UDataTable* DataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/QuestSystem/QuestDataTable.QuestDataTable"));
+    UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
     if (!IsObjectValid( DataTable , "DataTable" ))
     {
         return;

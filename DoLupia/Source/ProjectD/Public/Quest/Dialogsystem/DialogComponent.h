@@ -29,7 +29,7 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Dialog")
-	void StartDialog( const FString& NPCNmae , int32 StartubgDialogID );
+	void StartDialog( AActor* InCurrentNPC, const FString& NPCID , int32 StartubgDialogID );
 
 	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	void AdvanceDialog();
@@ -54,7 +54,12 @@ private:
 	int32 CurrentDialogueID;
 	FDialogueData* CurrentDialogue;
 
+	UPROPERTY()
+	AActor* CurrentNPC;
+
 	void LoadDialogue( int32 DialogueID );
 	void TriggerQuest();
+	void ShowDialogWidget();
+	void HideDialogWidget();
 
 };
