@@ -410,8 +410,10 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
+		FRotator BoxRotation = FRotator::ZeroRotator;
+		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
 
-		if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			FString name = TraceHit.GetActor()->GetName();
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
