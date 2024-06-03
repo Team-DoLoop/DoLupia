@@ -3,12 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "BossDrone.generated.h"
+
+DECLARE_DELEGATE( FTestDelegate );
 
 class ABossMonster;
 class ABossDroneLaser;
 class USkeletalMeshComponent;
+class UAnimMontage;
+
+UENUM( BlueprintType )
+enum class EDroneState : uint8
+{
+	Following ,
+	AttackSquaring,
+	Attacking,
+	Pattern,
+	Returning
+};
 
 UENUM()
 enum class LaserOnGroundPattern : uint8
@@ -18,8 +31,9 @@ enum class LaserOnGroundPattern : uint8
 	LOGP_Star
 };
 
+
 UCLASS()
-class PROJECTD_API ABossDrone : public APawn
+class PROJECTD_API ABossDrone : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -29,30 +43,26 @@ public:
 
 	FORCEINLINE void SetBossIntervalLocation(const FVector& NewBossIntervalLocation) { BossIntervalLocation = NewBossIntervalLocation;}
 	FORCEINLINE void SetCurrentAngle(float NewCurrentAngle) { CurrentAngle = NewCurrentAngle; }
+
+	FORCEINLINE float GetAttackRange() const { return AttackRange; }
+	FORCEINLINE float GetFollowRange() const { return FollowRange; }
+
 protected:
 	virtual void BeginPlay() override;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	void Attack();
 
 private:
 	void LaserOnGround( LaserOnGroundPattern Pattern, FVector Location );
 
 	void FollowBoss( float DeltaTime );
 	void Detect() const;
-	void Attack();
 	void ReturnToBoss();
 
 private:
-	enum class EDroneState
-	{
-		Following,
-		AttackSquaring,
-		Attacking,
-		Returning
-	};
-
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed = 600.f;
 
@@ -60,15 +70,24 @@ private:
 	float AttackRange = 1000.f;
 
 	UPROPERTY( EditDefaultsOnly )
+	float FollowRange = 300.f;
+
+	UPROPERTY( EditDefaultsOnly )
 	float OrbitRadius;
 	UPROPERTY( EditDefaultsOnly )
 	float OrbitSpeed; 
 	float CurrentAngle;
 
+	UPROPERTY(EditDefaultsOnly)
 	EDroneState CurrentState;
 
+
+	
 	UPROPERTY(EditDefaultsOnly)
 	USkeletalMeshComponent* DroneMeshComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* DroneAttackMontage;
 
 
 	FVector BossIntervalLocation;

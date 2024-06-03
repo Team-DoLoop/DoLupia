@@ -6,6 +6,8 @@
 #include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 
 UItemBase::UItemBase() : bIsCopy(false), bIsPickup(false)
 {
@@ -58,10 +60,27 @@ void UItemBase::Use(AProjectDCharacter* Character)
 	{
 		if (APlayerStat* PlayerStat = Character->GetPlayerStat())
 		{
-			PlayerStat->AddSkillLevelMelee( ItemStatistics.SkillPointMelee );
-			PlayerStat->AddSkillLevelRange( ItemStatistics.SkillPointRange );
-			PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
-			PlayerStat->SetMP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+			if(ItemStatistics.SkillPointMelee)
+			{
+				PlayerStat->AddSkillLevelMelee( ItemStatistics.SkillPointMelee );
+			}
+
+			if (ItemStatistics.SkillPointRange)
+			{
+				PlayerStat->AddSkillLevelRange( ItemStatistics.SkillPointRange );
+			}
+
+			if(ItemStatistics.HealthValue)
+			{
+				int32 CurrentHP = PlayerStat->GetHP();
+				int32 MaxHP = PlayerStat->GetMaxHP();
+
+				PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+				Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP, MaxHP );
+			}
+			
+			//PlayerStat->SetMP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+			//Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP , MaxHP );
 		}
 	}	
 }

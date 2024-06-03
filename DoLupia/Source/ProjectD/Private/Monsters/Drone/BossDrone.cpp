@@ -3,9 +3,11 @@
 
 #include "Monsters/Drone/BossDrone.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/Drone/BossDroneLaser.h"
+#include "Monsters/Drone/AI/BossDroneAIController.h"
 
 ABossDrone::ABossDrone()
 {
@@ -21,9 +23,11 @@ ABossDrone::ABossDrone()
 	OrbitSpeed = 50.0f;
 	CurrentAngle = 0.0f;
 
+	AIControllerClass = ABossDroneAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+
 	SetRootComponent( DroneMeshComponent );
-
-
 }
 
 void ABossDrone::BeginPlay()
@@ -34,11 +38,16 @@ void ABossDrone::BeginPlay()
 	Target = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	LaserActor = GetWorld()->SpawnActor<ABossDroneLaser>(LaserFactory);
 	LaserActor->Initialize(this);
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->MaxWalkSpeed );
 }
 
 void ABossDrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
 
 	// 각도를 시간에 따라 증가
 	CurrentAngle += OrbitSpeed * DeltaTime;
@@ -79,6 +88,7 @@ void ABossDrone::LaserOnGround( LaserOnGroundPattern Pattern, FVector Location )
 
 void ABossDrone::FollowBoss(float DeltaTime)
 {
+
 	if (Boss)
 	{
 		//FVector BossLocation = Boss->GetActorLocation() + BossIntervalLocation;
@@ -94,6 +104,8 @@ void ABossDrone::FollowBoss(float DeltaTime)
 		NewLocation.Z = Boss->GetActorLocation().Z + BossIntervalLocation.Z;
 
 		SetActorLocation( NewLocation );
+
+		
 
 		//SetActorLocation( FMath::Lerp( GetActorLocation() , Boss->GetActorLocation() + BossIntervalLocation , 0.1f ) );
 		////AddMovementInput(Direction, MovementSpeed * DeltaTime);
@@ -116,6 +128,11 @@ void ABossDrone::Attack()
 
 		SetActorRotation( (TargetLocation - MuzzleStartLocation).Rotation() );
 		MuzzleEndLocation = TargetLocation + GetActorForwardVector() * AttackRange;
+
+		if(UAnimInstance* AnimInstance = DroneMeshComponent->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play( DroneAttackMontage );
+		}
 	}
 }
 
