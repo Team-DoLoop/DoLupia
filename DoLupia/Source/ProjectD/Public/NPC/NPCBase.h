@@ -7,6 +7,8 @@
 #include "Quest/QuestInteractionInterface.h"
 #include "NPCBase.generated.h"
 
+class UNPCInteractionWidget;
+class UWidgetComponent;
 class UDialogComponent;
 class UQuestGiver;
 class UNPCAnim;
@@ -30,6 +32,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
+	virtual void NotifyActorEndOverlap( AActor* OtherActor ) override;
 
 private:
 	UPROPERTY()
@@ -74,5 +77,24 @@ public:
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
+
+	/*---------------------- Interact Widget ------------------*/
+protected:
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
+
+	UPROPERTY()
+	UNPCInteractionWidget* NPCInteractGWidget;
+
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = "UI" )
+	UWidgetComponent* WidgetComponent;
+
+	/*---------------------- Post Process Depth ------------------*/
+public:
+	int32 stencilDepth = 4 ;
+
+private:
+	void ChangeNPCStatus( int32 depth );
+
 
 };

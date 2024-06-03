@@ -118,16 +118,6 @@ FString UQuestGiver::InteractWith()
                 DisplayRewards();
                 return GetOwner()->GetName();
             }
-            /*
-            else 
-            {
-                UE_LOG( LogTemp , Error , TEXT( " DisplayQuest(CompleteValuePtr->CurrnetStage);" ) );
- 
-                DisplayQuest( CompleteValuePtr->CurrnetStage );
-                return GetOwner()->GetName();
-            }  
-            */
-            
         }
 
         // 모든 조건을 처리한 후에도 값을 반환하지 않았으므로 기본값을 반환합니다.

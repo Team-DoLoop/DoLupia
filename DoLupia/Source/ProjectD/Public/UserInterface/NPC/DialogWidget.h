@@ -8,6 +8,7 @@
 
 class UTextBlock;
 class UButton;
+class USoundWave;
 
 /**
  * 
@@ -44,6 +45,12 @@ private:
 	void OnNxtBtnClicked();
 
 	AActor* CurrentNPC;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* clickSFX;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* npcSFX;
 
 	/*---------------- typing effect --------------------*/
 	FText FullText;

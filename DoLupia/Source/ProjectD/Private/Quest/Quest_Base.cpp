@@ -70,11 +70,11 @@ void AQuest_Base::BeginPlay()
 	}
 
 	//QuestLogComp 에서 생성되고, QuestId를 받음.
-	UQuestLogComponent* Questcomponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
-	if (Questcomponent) 
+	QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
+	if (QuestLogComponent)
 	{
 		//컴포넌트에서 questID 방송 받아서 여기서 함수 호출해서 QuestID 저장하기
-		Questcomponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
+		QuestLogComponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
@@ -92,7 +92,7 @@ void AQuest_Base::BeginPlay()
 		// QuestID가 유효해졌으므로 이후 작업 수행
 		GetQuestDetails();
 		CheckItem();
-
+		ReadyAddTracker.Broadcast();
 	} );
 
 	IsCompleted = AreObjectivesComplete();
@@ -180,6 +180,7 @@ void AQuest_Base::GetQuestDetails()
 		CurrentObjectiveProgress.Add( Objective.ObjectiveID , 0 );
 		UE_LOG( LogTemp , Error , TEXT( "CurrentObjectiveProgress.Add : %s" ), *Objective.ObjectiveID );
 	}
+	
 }
 
 
@@ -242,7 +243,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 				else {
 					IsCompleted = true;
 					if (QuestDetails.AutoComplete) {
-						UQuestLogComponent* QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
+						QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
 						QuestLogComponent->TurnInQuest( QuestID );
 					}
 				}

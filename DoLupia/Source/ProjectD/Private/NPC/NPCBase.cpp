@@ -9,19 +9,34 @@
 #include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
 
+#include "Components/WidgetComponent.h"
 #include "NPC/Animation/NPCAnim.h"
 #include "Quest/QuestGiver.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
+#include "UserInterface/Quest/NPCInteractionWidget.h"
 
 // Sets default values
 ANPCBase::ANPCBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>( TEXT( "InteractWidget" ) );
 
+	WidgetComponent->SetupAttachment( RootComponent );
+
+	FVector InitialWidgetPosition = FVector( 90.0f , 0.0f , -90.0f ); // 원하는 초기 위치로 설정
+	FRotator InitialWidgetRotation = FRotator( 20.0f , 0.0f , 0.0f ); // 원하는 초기 회전으로 설정
+	FVector InitialWidgetScale = FVector( 0.5f );
+
+	WidgetComponent->SetRelativeLocation( InitialWidgetPosition );
+	WidgetComponent->SetRelativeRotation( InitialWidgetRotation );
+	WidgetComponent->SetRelativeScale3D( InitialWidgetScale );
+
+	// Post Process depth 설정값
+	//GetMesh()->SetRenderCustomDepth( true );
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +56,10 @@ void ANPCBase::BeginPlay()
 		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
 	}
 
+	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+	WidgetComponent->SetWidget( NPCInteractGWidget );
+	WidgetComponent->SetCastShadow( false );
+	WidgetComponent->SetVisibility( false );
 }
 
 // Called every frame
@@ -74,6 +93,24 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
 		}
 
+		WidgetComponent->SetVisibility( true );
+		UE_LOG( LogTemp , Error , TEXT( "WidgetComponent->SetVisibility( false );" ) )
+	}
+}
+
+void ANPCBase::NotifyActorEndOverlap( AActor* OtherActor )
+{
+	Super::NotifyActorEndOverlap( OtherActor );
+
+	if (OtherActor)
+	{
+		AProjectDCharacter* PlayerCharacter = Cast<AProjectDCharacter>( OtherActor );
+
+		if (PlayerCharacter != nullptr)
+		{
+			WidgetComponent->SetVisibility( false );
+			UE_LOG( LogTemp , Error , TEXT( "WidgetComponent->SetVisibility( false );" ) )
+		}
 	}
 }
 
@@ -104,6 +141,10 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
+	stencilDepth = 1;
+	ChangeNPCStatus( stencilDepth );
+	anim->bTalking = true;
+
 }
 
 FString ANPCBase::InteractWith()
@@ -135,6 +176,12 @@ FString ANPCBase::InteractWith()
 
 void ANPCBase::LookAt()
 {
+}
+
+void ANPCBase::ChangeNPCStatus(int32 depth)
+{
+	GetMesh()->SetRenderCustomDepth( true );
+	GetMesh()->CustomDepthStencilValue = depth;
 }
 
 
