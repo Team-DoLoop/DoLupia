@@ -18,23 +18,25 @@
 // Sets default values
 ANPCBase::ANPCBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
-
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>( TEXT( "InteractWidget" ) );
 
 	WidgetComponent->SetupAttachment( RootComponent );
 
 	FVector InitialWidgetPosition = FVector( 90.0f , 0.0f , -90.0f ); // 원하는 초기 위치로 설정
 	FRotator InitialWidgetRotation = FRotator( 20.0f , 0.0f , 0.0f ); // 원하는 초기 회전으로 설정
-    FVector InitialWidgetScale = FVector(0.5f);
+	FVector InitialWidgetScale = FVector( 0.5f );
 
 	WidgetComponent->SetRelativeLocation( InitialWidgetPosition );
 	WidgetComponent->SetRelativeRotation( InitialWidgetRotation );
 	WidgetComponent->SetRelativeScale3D( InitialWidgetScale );
+
+	// Post Process depth 설정값
+	//GetMesh()->SetRenderCustomDepth( true );
 }
 
 // Called when the game starts or when spawned
@@ -139,6 +141,10 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
+	stencilDepth = 1;
+	ChangeNPCStatus( stencilDepth );
+	anim->bTalking = true;
+
 }
 
 FString ANPCBase::InteractWith()
@@ -170,6 +176,12 @@ FString ANPCBase::InteractWith()
 
 void ANPCBase::LookAt()
 {
+}
+
+void ANPCBase::ChangeNPCStatus(int32 depth)
+{
+	GetMesh()->SetRenderCustomDepth( true );
+	GetMesh()->CustomDepthStencilValue = depth;
 }
 
 

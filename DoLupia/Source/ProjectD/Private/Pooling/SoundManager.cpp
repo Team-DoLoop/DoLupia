@@ -100,14 +100,13 @@ void ASoundManager::PlaySoundWave2D(USoundWave* SoundWave, float Volume, float P
 
 void ASoundManager::PlayBGM(USoundBase* BGM)
 {
-	StopBGM();
-	if (CurrentBackgroundMusic)
-	{
-		CurrentBackgroundMusic = BGM;
-		
-		AudioBGM->SetSound( CurrentBackgroundMusic );
-		AudioBGM->Play();
-	}
+	if(CurrentBackgroundMusic)
+		StopBGM();
+
+	CurrentBackgroundMusic = BGM;
+	
+	AudioBGM->SetSound( CurrentBackgroundMusic );
+	AudioBGM->Play();
 }
 
 

@@ -78,7 +78,7 @@ private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
 
-	/*---------------------- Widget ------------------*/
+	/*---------------------- Interact Widget ------------------*/
 protected:
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
@@ -88,4 +88,13 @@ protected:
 
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = "UI" )
 	UWidgetComponent* WidgetComponent;
+
+	/*---------------------- Post Process Depth ------------------*/
+public:
+	int32 stencilDepth = 4 ;
+
+private:
+	void ChangeNPCStatus( int32 depth );
+
+
 };

@@ -5,6 +5,7 @@
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Pooling/SoundManager.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
 
 
@@ -29,6 +30,7 @@ void UDialogWidget::UpdateDialogText(FText NewText)
 		txt_dialog->SetText( FText::FromString( CurrentText ) );
 
         // 타이핑 시작
+        ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( npcSFX, 0.25f );
         GetWorld()->GetTimerManager().SetTimer( TypingTimerHandle , this , &UDialogWidget::TypeNextCharacter , TypingSpeed , true );
 	}
 }
@@ -54,6 +56,7 @@ void UDialogWidget::OnNxtBtnClicked()
         if (DialogueComponent)
         {
             DialogueComponent->AdvanceDialog();
+            ASoundManager::GetInstance(GetWorld())->PlaySoundWave2D( clickSFX );
         }
     }
 }
