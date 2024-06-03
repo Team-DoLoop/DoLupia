@@ -69,7 +69,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
 	CurrentQuest.Add( SpawneQuest );
-    //AddToTracker();
+    SpawneQuest->ReadyAddTracker.AddDynamic(this, &UQuestLogComponent::AddToTracker);
 }
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
@@ -122,6 +122,15 @@ void UQuestLogComponent::AddToTracker( )
             UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ));
             TrackQuest( Quest );
         }
+    }
+}
+
+void UQuestLogComponent::RemoveTracker()
+{
+    if(Tracker)
+    {
+        Tracker->Remove();
+        Tracker = nullptr;
     }
 }
 

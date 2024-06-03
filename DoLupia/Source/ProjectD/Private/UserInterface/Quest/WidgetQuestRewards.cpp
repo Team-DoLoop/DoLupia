@@ -155,6 +155,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
     }
 
     QuestLogComp->CompleteQuest(QuestID);
+    QuestLogComp->RemoveTracker();
 
     if (QuestID.IsNone())
     {
