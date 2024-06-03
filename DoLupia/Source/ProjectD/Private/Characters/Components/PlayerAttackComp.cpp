@@ -52,12 +52,10 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
 	PlayerStat = Cast<APlayerStat>(Player->GetPlayerState());
 
-	/*
-	// PlayerSkill
-	PlayerSkills.Add(NewObject<UPlayerSkillMelee>());
-	PlayerSkills.Add(NewObject<UPlayerSkillMelee>());
-	PlayerSkills.Add(NewObject<UPlayerSkillSwap>());
-*/
+	if(PlayerAnim)
+	{
+		PlayerAnim->OnNextAttackCheck.AddUObject(this, &UPlayerAttackComp::NextAttackCheck);
+	}
 	
 	// PlayerMP
 	if (PlayerStat)
@@ -202,6 +200,14 @@ void UPlayerAttackComp::CompleteSkill()
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
 
+	if(CurrentSkillInfo != nullptr)
+	{
+		AttackEndComboState(CurrentSkillInfo);
+		
+		// 쿨다운 시작
+		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
+	}
+
 	if (!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
 	{
 		FInputModeGameOnly InputMode;
@@ -217,29 +223,40 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 {
 	if (!Player || !PlayerFSMComp || !PlayerStat) return;
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_ONLY))) return;
-
 	
 	FSkillInfo* TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
 	
 	if(TempSkill && CanUseSkill(TempSkill))
 	{
-		SetSkillData(TempSkill->SkillData);
-		
-		// 공격 애니메이션 실행
-		PlayerAnim->PlayAttackAnimation(SkillMontage);
-		SetSkillCoolDownUI();
-		
-		// 쿨다운 시작
-		StartCooldown(TempSkill->CooldownTimerHandle, TempSkill->SkillData->SkillCoolTime);
-		
-		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
 		Player->TurnPlayer();
+		
+		if(CurrentSkillInfo == TempSkill)
+		{
+			if(TempSkill->CanNextCombo)
+			{
+				// 콤보 공격
+				TempSkill->IsComboInputOn = true;
+			}
+		}
+		else
+		{
+			AttackStartComboState(TempSkill);
+			CurrentSkillInfo = TempSkill;
+			SetSkillData(TempSkill->SkillData);
+			
+			// 공격 애니메이션 실행
+			PlayerAnim->PlayAttackAnimation(SkillMontage);
+			PlayerAnim->JumpToAttackMontageSection(TempSkill->CurrentCombo);
+
+			PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
+		}
+		SetSkillCoolDownUI();
 
 		// 공격 실행
 		switch (SkillKeyIndex)
 		{
-		case 0 : Attack(); break;
-		case 1 : ExecuteMeleeSkill(); break;
+		// case 0 : Attack(); break;
+		//case 1 : ExecuteMeleeSkill(); break;
 		case 2 : ExecuteRangedSkill(); break;
 		case 3 : ExecuteSwapSkill(); break;
 		case 4 : ExecuteUltSkill(); break;
@@ -353,7 +370,11 @@ void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 
 void UPlayerAttackComp::ExecuteSwapSkill()
 {
+	// 쿨다운 시작
+	StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
+		
 	CurrentSkillColor = FindSkillColor(CurrentSkillColor);
+	CurrentSkillInfo = nullptr;
 	
 	for(int i = 0; i < 2; i++)
 	{
@@ -494,4 +515,36 @@ bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 		//	if(!_TempSkill->bIsOnCooldown) return true;
 	}
 	return false;
+}
+
+
+// <---------------------- Attack Combo ---------------------->
+
+void UPlayerAttackComp::AttackStartComboState(FSkillInfo* _TempSkill)
+{
+	_TempSkill->CanNextCombo = true;
+	_TempSkill->IsComboInputOn = false;
+
+	if(FMath::IsWithinInclusive<int32>(_TempSkill->CurrentCombo, 0, _TempSkill->SkillData->SkillMaxCombo-1))
+	{
+		_TempSkill->CurrentCombo = FMath::Clamp<int32>(_TempSkill->CurrentCombo + 1, 1, _TempSkill->SkillData->SkillMaxCombo);
+	}
+}
+
+void UPlayerAttackComp::AttackEndComboState(FSkillInfo* _TempSkill)
+{
+	_TempSkill->IsComboInputOn = false;
+	_TempSkill->CanNextCombo = false;
+	_TempSkill->CurrentCombo = 0;
+}
+
+void UPlayerAttackComp::NextAttackCheck()
+{
+	CurrentSkillInfo->CanNextCombo = false;
+	if(CurrentSkillInfo->IsComboInputOn)
+	{
+		AttackStartComboState(CurrentSkillInfo);
+		if(CurrentSkillInfo->CurrentCombo <= CurrentSkillInfo->SkillData->SkillMaxCombo)
+			PlayerAnim->JumpToAttackMontageSection(CurrentSkillInfo->CurrentCombo);
+	}
 }

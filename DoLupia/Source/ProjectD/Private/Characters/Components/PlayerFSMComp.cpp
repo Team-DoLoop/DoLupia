@@ -169,7 +169,7 @@ bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState, EPlayerWeaponSta
 	// 안되는 상태 : 공격, 회피, 눕기, 대화, 죽음
 	switch (_CurrentState)
 	{
-	case EPlayerState::ATTACK_ONLY : return false;
+	// case EPlayerState::ATTACK_ONLY : return false;
 	case EPlayerState::EVASION : return false;
 		
 	case EPlayerState::LYING : return false;

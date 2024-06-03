@@ -27,9 +27,15 @@ struct FSkillInfo
 	FPlayerSkillData* SkillData;
 
 	int32 SkillLevel;
+
+	// Combo
+	bool CanNextCombo;
+	bool IsComboInputOn;
+	int32 CurrentCombo;
+	
+	// CoolTime
 	float CooldownRemain;
 	bool bIsOnCooldown;
-
 	FTimerHandle CooldownTimerHandle;
 
 	FSkillInfo()
@@ -145,7 +151,6 @@ public:
 	// FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
 
-
 	
 	// <---------------------- Skill Use - Color ---------------------->
 public:
@@ -166,6 +171,18 @@ public:
 	// <---------------------- Skill Upgrade ---------------------->
 public:
 	void GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex);
+
+
+	
+	// <---------------------- Attack Combo ---------------------->
+public:
+	void AttackStartComboState(FSkillInfo* _TempSkill);
+	void AttackEndComboState(FSkillInfo* _TempSkill);
+
+	void NextAttackCheck();
+	
+private:
+
 	
 	
 	// <---------------------- Skill Data ---------------------->
@@ -180,6 +197,8 @@ public:
 
 	
 private:
+	FSkillInfo* CurrentSkillInfo;
+	
 	//TArray<FPlayerSkillData*> CurrentSkillData;
 	EUseColor CurrentSkillColor = EUseColor::NONE;	// X, 빨, 노, 파
 
