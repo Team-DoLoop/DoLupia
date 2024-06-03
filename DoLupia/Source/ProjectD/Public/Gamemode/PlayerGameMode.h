@@ -24,8 +24,6 @@ public:
 	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaSeconds) override;
-
 	class UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	void InitializeNPCConvWidget();
