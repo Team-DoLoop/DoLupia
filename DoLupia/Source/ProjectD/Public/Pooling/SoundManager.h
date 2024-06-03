@@ -30,6 +30,7 @@ public:
 	void PlaySoundWave( USoundWave* SoundWave , FVector Location , float Volume, float Pitch = 1.f );
 	void PlaySoundWave2D( USoundWave* SoundWave , float Volume = 1.f, float Pitch = 1.f);
 
+	UFUNCTION( BlueprintCallable )
 	void PlayBGM( USoundBase* BGM );
 	void StopBGM();
 
