@@ -34,6 +34,8 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
+#include "Components/MeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/World.h"
 #include "Items/Cape/PlayerCape.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -71,7 +73,7 @@ AProjectDCharacter::AProjectDCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 1500.f;
+	CameraBoom->TargetArmLength = 850.0f;
 	CameraBoom->SetRelativeRotation(FRotator(-40.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
@@ -183,6 +185,7 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
 	{
 		PerformInteractionCheck();
+		PerformTrace();
 	}
 }
 
@@ -415,8 +418,10 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
+		FRotator BoxRotation = FRotator::ZeroRotator;
+		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
 
-		if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			FString name = TraceHit.GetActor()->GetName();
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
@@ -550,8 +555,6 @@ void AProjectDCharacter::BeginInteract()
 				{
 					UE_LOG( LogTemp , Error , TEXT( "QUESTNPC-TEST" ) );
 					const FString& ActorObjectID = QuestInterface->InteractWith();
-
-					const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
 					//캐릭터가 베이스 한테
 					OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
 				}
@@ -561,15 +564,17 @@ void AProjectDCharacter::BeginInteract()
 				}
 				
 			}
+			else
+			{
+				//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
+				const FString& ActorObjectID = QuestInterface->InteractWith();
 
-			/*
-			//이 interactWith가 많은 곳을 지나치는데 strageObject / NPC-> Giver
-			const FString& ActorObjectID = QuestInterface->InteractWith();
+				const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
+				UE_LOG( LogTemp , Warning , TEXT( "ActorName: %s" ) , *ActorName );
 
-			const FString& ActorName = LookAtActor->GetName(); // 액터의 이름을 가져옴
-			//캐릭터가 베이스 한테
-			OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
-			*/
+				//캐릭터가 베이스 한테
+				OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
+			}
 		}
 	}
 }
@@ -632,4 +637,110 @@ void AProjectDCharacter::DropItem(UItemBase* ItemToDrop, const int32 QuantityToD
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Item to drop was somehos null"));
 	}
+}
+
+//------------오브젝트 투명---------------
+void AProjectDCharacter::PerformTrace()
+{
+	FVector Start = TopDownCameraComponent->GetComponentLocation();
+	FVector End = Start + (TopDownCameraComponent->GetForwardVector() * TraceDistance);
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor( this );
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel( HitResult , Start , End , ECC_Visibility , CollisionParams );
+
+	if (bHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor && HitActor != LastHitActor)
+		{
+			if (LastHitActor)
+			{
+				// 이전에 히트된 액터의 재질을 원래대로 복원
+				UMeshComponent* MeshComponent = LastHitActor->FindComponentByClass<UMeshComponent>();
+				if (MeshComponent)
+				{
+					for (int32 i = 0; i < MeshComponent->GetNumMaterials(); i++)
+					{
+						UMaterialInstanceDynamic* DynamicMaterial = Cast<UMaterialInstanceDynamic>( MeshComponent->GetMaterial( i ) );
+						if (DynamicMaterial)
+						{
+							UE_LOG( LogTemp , Warning , TEXT( "Resetting opacity for: %s" ) , *LastHitActor->GetName() );
+							DynamicMaterial->SetScalarParameterValue( TEXT( "Opacity" ) , 1.0f );
+						}
+						else
+						{
+							UE_LOG( LogTemp , Error , TEXT( "Failed to get dynamic material for: %s" ) , *LastHitActor->GetName() );
+						}
+					}
+				}
+			}
+
+			// 현재 히트된 액터의 재질을 투명하게 설정
+			UMeshComponent* MeshComponent = HitActor->FindComponentByClass<UMeshComponent>();
+			if (MeshComponent)
+			{
+				for (int32 i = 0; i < MeshComponent->GetNumMaterials(); i++)
+				{
+					UMaterialInstanceDynamic* DynamicMaterial = MeshComponent->CreateAndSetMaterialInstanceDynamic( i );
+					if (DynamicMaterial)
+					{
+						UE_LOG( LogTemp , Warning , TEXT( "Setting opacity for: %s" ) , *HitActor->GetName() );
+						DynamicMaterial->SetScalarParameterValue( TEXT( "Opacity" ) , 0.0f );
+					}
+					else
+					{
+						// 기존 머티리얼을 동적 머티리얼 인스턴스로 변환
+						UMaterialInterface* MaterialInterface = MeshComponent->GetMaterial( i );
+						DynamicMaterial = UMaterialInstanceDynamic::Create( MaterialInterface , this );
+						if (DynamicMaterial)
+						{
+							MeshComponent->SetMaterial( i , DynamicMaterial );
+							UE_LOG( LogTemp , Warning , TEXT( "Converted to dynamic material and setting opacity for: %s" ) , *HitActor->GetName() );
+							DynamicMaterial->SetScalarParameterValue( TEXT( "Opacity" ) , 0.0f );
+						}
+						else
+						{
+							UE_LOG( LogTemp , Error , TEXT( "Failed to create dynamic material for: %s" ) , *HitActor->GetName() );
+						}
+					}
+				}
+			}
+
+			UE_LOG( LogTemp , Warning , TEXT( "Now hitting: %s" ) , *HitActor->GetName() );
+			LastHitActor = HitActor;
+		}
+	}
+	else
+	{
+		if (LastHitActor)
+		{
+			// 더 이상 히트되지 않은 경우, 이전에 히트된 액터의 재질을 원래대로 복원
+			UMeshComponent* MeshComponent = LastHitActor->FindComponentByClass<UMeshComponent>();
+			if (MeshComponent)
+			{
+				for (int32 i = 0; i < MeshComponent->GetNumMaterials(); i++)
+				{
+					UMaterialInstanceDynamic* DynamicMaterial = Cast<UMaterialInstanceDynamic>( MeshComponent->GetMaterial( i ) );
+					if (DynamicMaterial)
+					{
+						UE_LOG( LogTemp , Warning , TEXT( "Resetting opacity for: %s" ) , *LastHitActor->GetName() );
+						DynamicMaterial->SetScalarParameterValue( TEXT( "Opacity" ) , 1.0f );
+					}
+					else
+					{
+						UE_LOG( LogTemp , Error , TEXT( "Failed to get dynamic material for: %s" ) , *LastHitActor->GetName() );
+					}
+				}
+			}
+
+			UE_LOG( LogTemp , Warning , TEXT( "No longer hitting: %s" ) , *LastHitActor->GetName() );
+			LastHitActor = nullptr;
+		}
+	}
+
+	// 디버그용 선 그리기 (선택 사항)
+	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
 }

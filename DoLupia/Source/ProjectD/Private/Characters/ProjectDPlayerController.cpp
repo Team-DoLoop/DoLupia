@@ -102,11 +102,20 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::StopAiming);
 
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);
-		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);
-		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 2);
-		EnhancedInputComponent->BindAction(CastingHitDownSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 3);
-		EnhancedInputComponent->BindAction(UltSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 4);
+
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
+		
+		
+		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);						// Q
+		
+		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 2);						// W Start
+		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::QuitSkill, 2);						// W End
+		
+
+		EnhancedInputComponent->BindAction(CastingHitDownSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 3);			// E
+
+		EnhancedInputComponent->BindAction(UltSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 4);						// R
 
 		// Test
 		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
@@ -156,9 +165,6 @@ void AProjectDPlayerController::TestAnyFunction()
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
-
-	// 스킬 업그레이드
-	ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(1);
 }
 
 	
@@ -205,6 +211,10 @@ void AProjectDPlayerController::Evasion()
 	// 회피기
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->Evasion();
+
+	
+	// 스킬 업그레이드
+	ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(1);
 }
 
 // <---------------------- UI ---------------------->
@@ -288,6 +298,13 @@ void AProjectDPlayerController::Attack()
 
 }
 */
+
+void AProjectDPlayerController::QuitSkill(int32 SkillIndex)
+{
+	if(!ControlledCharacter) return;
+
+	ControlledCharacter->attackComp->PlayerQuitSkill(SkillIndex);
+}
 
 void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)
 {
