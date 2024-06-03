@@ -3,26 +3,25 @@
 
 #include "Characters/Skill/PlayerSkillBase.h"
 
-#include "Characters/PlayerStateBase.h"
-#include "Characters/ProjectDCharacter.h"
-#include "Characters/Components/PlayerFSMComp.h"
-#include "Data/PlayerSkillDataStructs.h"
-
-UPlayerSkillBase::UPlayerSkillBase()
+// Sets default values
+APlayerSkillBase::APlayerSkillBase()
 {
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+// Called when the game starts or when spawned
+void APlayerSkillBase::BeginPlay()
+{
+	Super::BeginPlay();
 	
 }
 
-void UPlayerSkillBase::ExecuteSkill()
+// Called every frame
+void APlayerSkillBase::Tick(float DeltaTime)
 {
-	
+	Super::Tick(DeltaTime);
+
 }
 
-void UPlayerSkillBase::ApplySkill(ACharacter* Target)
-{
-}
-
-void UPlayerSkillBase::ChangeSkillData(FPlayerSkillData* _PlayerSkillData)
-{
-	
-}
