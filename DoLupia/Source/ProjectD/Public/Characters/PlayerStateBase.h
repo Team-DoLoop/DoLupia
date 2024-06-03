@@ -19,7 +19,8 @@ enum class EPlayerState : uint8
 	MOVE UMETA(DisplayName = "Move"),				// 이동
 	EVASION UMETA(DisplayName = "Evasion"),			// 회피
 	
-	ATTACK UMETA(DisplayName = "Attack"),			// 공격
+	ATTACK_ONLY UMETA(DisplayName = "AttackOnly"),			// 공격(아무것도 못함)
+	ATTACK_WITH UMETA(DisplayName = "AttackWith"),				// 동작 가능
 	DAMAGE UMETA(DisplayName = "Damage"),			// 피격
 	LYING UMETA(DisplayName = "Lying"),				// 눕는 공격 피격
 
@@ -34,6 +35,7 @@ enum class EPlayerWeaponState : uint8
 	UNARMED UMETA(DisplayName = "Unarmed"),			// 비무장
 	SWORD UMETA(DisplayName = "Sword"),				// 대검
 };
+
 
 UCLASS()
 class PROJECTD_API UPlayerStateBase : public UObject

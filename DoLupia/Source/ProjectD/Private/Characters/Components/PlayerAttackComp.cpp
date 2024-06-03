@@ -230,7 +230,7 @@ void UPlayerAttackComp::CompleteSkill()
 void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 {
 	if (!Player || !PlayerFSMComp || !PlayerStat) return;
-	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK))) return;
+	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_ONLY))) return;
 
 	SetSkillAttackData(CurrentSkillData[AttackIndex]);
 	SkillLevel = Skills[AttackIndex].SkillLevel;
@@ -252,7 +252,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
 		}
 		
 		PlayerAttackStatus = 2;
-		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK);
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
 
 		Player->TurnPlayer();
 
@@ -330,6 +330,12 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 {
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
+
+	if(PlayerFSMComp)
+	{
+		UE_LOG(LogTemp, Log, TEXT("MeleeSkillAttackJudgementEnd"));
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_WITH);
+	}
 }
 
 
@@ -434,11 +440,9 @@ void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 
 void UPlayerAttackComp::GetSkillUpgradePoint(int32 SkillIndex)
 {
-	UE_LOG(LogTemp, Log, TEXT("SkillLevel : %d"), Skills[SkillIndex].SkillLevel);
 	// 업그레이드 할 수 있는 레벨보다 초과되었다면
 	if(Skills[SkillIndex].SkillLevel >= 5) return;
-	
-	UE_LOG(LogTemp, Log, TEXT("SkillLevel2 : %d"), Skills[SkillIndex].SkillLevel);
+
 	Skills[SkillIndex].SkillLevel = Skills[SkillIndex].SkillLevel + 1;
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillIndex-1, Skills[SkillIndex].SkillLevel-1);
 }
