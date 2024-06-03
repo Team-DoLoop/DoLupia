@@ -440,11 +440,9 @@ void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
 
 void UPlayerAttackComp::GetSkillUpgradePoint(int32 SkillIndex)
 {
-	UE_LOG(LogTemp, Log, TEXT("SkillLevel : %d"), Skills[SkillIndex].SkillLevel);
 	// 업그레이드 할 수 있는 레벨보다 초과되었다면
 	if(Skills[SkillIndex].SkillLevel >= 5) return;
-	
-	UE_LOG(LogTemp, Log, TEXT("SkillLevel2 : %d"), Skills[SkillIndex].SkillLevel);
+
 	Skills[SkillIndex].SkillLevel = Skills[SkillIndex].SkillLevel + 1;
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillIndex-1, Skills[SkillIndex].SkillLevel-1);
 }
