@@ -42,6 +42,7 @@
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
+#include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -122,8 +123,6 @@ AProjectDCharacter::AProjectDCharacter()
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
 
-	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
-
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -173,6 +172,9 @@ void AProjectDCharacter::BeginPlay()
 	// 초기 장비 착용
 	Gadget->InitEquip();
 
+	//상호작용 위젯 생성
+	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+	NPCInteractGWidget->AddToViewport( 0 );
 
 }
 
@@ -433,12 +435,14 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
+				NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
 			}
 			// NPC 인터페이스 검사
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
+				NPCInteractGWidget->SetVisibility( ESlateVisibility::Visible );
 				SpecificActor = Cast<ANPCBase>( LookAtActor );
 				if (SpecificActor)
 				{
@@ -448,17 +452,20 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
+				NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor: nullptr" ) );
 			}
 		}
 		else
 		{
 			LookAtActor = nullptr;
+			NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 		}
 	}
 	else
 	{
 		LookAtActor = nullptr;
+		NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 	}
 	NoInteractionableFound();
 }
