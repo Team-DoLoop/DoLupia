@@ -23,8 +23,20 @@ AAITxtHandlerBase::AAITxtHandlerBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    RootComponent = CreateDefaultSubobject<USceneComponent>( TEXT( "RootComponent" ) );
+
 	meshComp = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "meshComp" ) );
 	meshComp->SetupAttachment( RootComponent );
+
+    if (!meshComp)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "Failed to create meshComp" ) );
+    }
+    else
+    {
+        meshComp->SetupAttachment( RootComponent );
+    }
+
 
     TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
     TimelineLength = 5.0f; // 재생 시간
@@ -56,6 +68,13 @@ void AAITxtHandlerBase::BeginPlay()
     FOnTimelineEvent TimelineFinished;
     TimelineFinished.BindUFunction( this , FName( "OnTimelineFinished" ) );
     TimelineComp->SetTimelineFinishedFunc( TimelineFinished );
+
+    if (!meshComp)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr in BeginPlay" ) );
+        return;
+    }
+
 
 }
 
@@ -109,7 +128,18 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
     {
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
-        DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
+
+        if (!meshComp)
+        {
+            UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr" ) );
+        }
+
+        if (meshComp && AITxtMaterial)
+        {
+            DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
+            UE_LOG( LogTemp , Error , TEXT( "meshComp is DynamicMaterial" ) );
+        }
+        
         // UTexture로 캐스팅
         //UTexture* AITxt = Cast<UTexture>( DownloadedTexture );
 
@@ -117,6 +147,7 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
         if (DynamicMaterial)
         {
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded - PlayFromStart" ) );
             TimelineComp->PlayFromStart();
         }
     }

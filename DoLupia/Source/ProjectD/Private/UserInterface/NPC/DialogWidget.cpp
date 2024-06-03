@@ -43,20 +43,16 @@ void UDialogWidget::UpdateSpeakerText(FText NewSpeaker)
 
 void UDialogWidget::SetCurrentNPC(AActor* InCurrentNPC)
 {
-    UE_LOG( LogTemp , Warning , TEXT( "UDialogWidget::SetCurrentNPC" ) );
     CurrentNPC = InCurrentNPC;
 }
 
 void UDialogWidget::OnNxtBtnClicked()
 {
-    UE_LOG( LogTemp , Warning , TEXT( "UDialogWidget::OnNxtBtnClicked" ) );
     if (CurrentNPC)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "UDialogWidget::OnNxtBtnClicked - CurrentNPC" ) );
         UDialogComponent* DialogueComponent = CurrentNPC->FindComponentByClass<UDialogComponent>();
         if (DialogueComponent)
         {
-            UE_LOG( LogTemp , Warning , TEXT( "UDialogWidget::OnNxtBtnClicked - DialogueComponent" ) );
             DialogueComponent->AdvanceDialog();
         }
     }
