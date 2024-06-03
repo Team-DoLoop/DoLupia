@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerSkillWidget.generated.h"
 
-struct FPlayerSkillData;
+struct FSkillInfo;
 /**
  * 
  */
@@ -34,10 +34,10 @@ private:
 	
 public:
 	void InitSkillSlot();
-	void UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
+	void UpdateSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkilInfo);
 	void UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime);
 
-	void UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevelSlotIndex);
+	void UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel);
 	
 	FORCEINLINE TArray<UPlayerSkillSlotWidget*> GetPlayerSkillSlotArr() const {return PlayerSkillSlotArray;}
 	

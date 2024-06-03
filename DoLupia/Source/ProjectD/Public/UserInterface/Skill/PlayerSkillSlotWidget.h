@@ -11,6 +11,7 @@ enum class EUseColor : uint8;
 /**
  * 
  */
+struct FSkillInfo;
 struct FPlayerSkillData;
 UCLASS()
 class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
@@ -45,10 +46,10 @@ public:
 	void InitUI();
 	void InitSkillLevelUI();
 
-	void SetUI(FPlayerSkillData* PlayerSkillData);
+	void SetUI(FPlayerSkillData* _SkillData);
 	void SetCoolTimeBar(float CoolTime);
 
-	void UpgradeSkillSlotLevelUI(int32 SkillLevelSlotIndex);
+	void UpgradeSkillSlotLevelUI(int32 SkillLevel);
 
 	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
 	

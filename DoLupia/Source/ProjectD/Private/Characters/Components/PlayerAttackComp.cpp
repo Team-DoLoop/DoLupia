@@ -58,8 +58,6 @@ void UPlayerAttackComp::BeginPlay()
 	PlayerSkills.Add(NewObject<UPlayerSkillMelee>());
 	PlayerSkills.Add(NewObject<UPlayerSkillSwap>());
 */
-
-	Skills.SetNum(5);
 	
 	// PlayerMP
 	if (PlayerStat)
@@ -70,13 +68,36 @@ void UPlayerAttackComp::BeginPlay()
 		CurrentRegenTime = 0;
 	}
 
+	CantSkill.SetNum(5);
+	for(int i = 0; i < CantSkill.Num(); i++) CantSkill[i] = new FSkillInfo();
+	
+	AutoSkill = new FSkillInfo();
+	RedQSkill = new FSkillInfo();
+	RedWSkill = new FSkillInfo();
+	YellowQSkill = new FSkillInfo();
+	YellowWSkill = new FSkillInfo();
+	BlueQSkill = new FSkillInfo();
+	BlueWSkill = new FSkillInfo();
+	SwapSkill = new FSkillInfo();
+	UltSkill = new FSkillInfo();
+	
 	if(GI)
 	{
-		CurrentSkillData.Add(GI->GetPlayerSkillData(1));		// 평타 맨 앞에 넣기
-		for(int i = 0; i < SkillCount; i++)
+		CantSkill[0]->SkillData	= GI->GetPlayerSkillData(1);			// 스킬 사용 못할 때 data 넣기
+		for(int i = 1; i <= SkillCount; i++)
 		{
-			CurrentSkillData.Add(GI->GetPlayerSkillData(0));	// 스킬 사용 못할 때 data 넣기
+			CantSkill[i]->SkillData = GI->GetPlayerSkillData(0);
 		}
+
+		AutoSkill->SkillData = GI->GetPlayerSkillData(1);			// Auto
+		RedQSkill->SkillData = GI->GetPlayerSkillData(2);			// Red
+		RedWSkill->SkillData =GI->GetPlayerSkillData(3);
+		YellowQSkill->SkillData = GI->GetPlayerSkillData(4);			// Yellow
+		YellowWSkill->SkillData = GI->GetPlayerSkillData(5);			
+		BlueQSkill->SkillData = GI->GetPlayerSkillData(6);			// Blue
+		BlueWSkill->SkillData = GI->GetPlayerSkillData(7);
+		SwapSkill->SkillData = GI->GetPlayerSkillData(8);
+		UltSkill->SkillData = GI->GetPlayerSkillData(9);				// Ult
 	}
 
 	InitCanUseColor();
@@ -119,18 +140,8 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 		}
 	}
 
-	// Skill CoolTime
-	for (FSkillInfo& Skill : Skills)
-	{
-		if (Skill.bIsOnCooldown)
-		{
-			Skill.CooldownRemain -= DeltaTime;
-			if (Skill.CooldownRemain < 0.0f)
-			{
-				Skill.CooldownRemain = 0.0f;
-			}
-		}
-	}
+	// SkillCoolUI
+	SetSkillCoolDownUI();
 }
 
 
@@ -159,35 +170,21 @@ void UPlayerAttackComp::SetColorUseState(EUseColor _Color, bool bCanUse)
 // 퀘스트 수락 시 호출
 void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 {
+	auto CurrentSkillData = CantSkill;
 	// 스킬 사용 가능
 	if(bCanUse)
 	{
-		// UI 모두 활성화 (Red로)
-		CurrentSkillData[1] = GI->GetPlayerSkillData(2);
-		CurrentSkillData[2] = GI->GetPlayerSkillData(3);
-		CurrentSkillData[3] = GI->GetPlayerSkillData(8);
-		CurrentSkillData[4] = GI->GetPlayerSkillData(9);
-
 		CurrentSkillColor = EUseColor::RED;
-	}
-	else
-	{
-		// UI 비활성화
-		for(int i = 1; i <= SkillCount; i++)
-		{
-			CurrentSkillData[i] = GI->GetPlayerSkillData(0);	// 스킬 사용 X 데이터
-		}
+		CurrentSkillData.Add(AutoSkill);
+		CurrentSkillData[1] = RedQSkill;
+		CurrentSkillData[2] = RedWSkill;
+		CurrentSkillData[3] = SwapSkill;
+		CurrentSkillData[4] = UltSkill;
 	}
 
 	for(int i = 1; i <= SkillCount; i++)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
-		if(OpenType == ESkillOpenType::QUEST)
-		{
-			SetSkillCoolDownUI(i-1, 1.0f);
-			Skills[i].CooldownTime = CurrentSkillData[i]->SkillCoolTime;
-			Skills[i].SkillLevel = 1;
-		}
 	}
 }
 
@@ -198,20 +195,9 @@ void UPlayerAttackComp::Attack()
 
 }
 
-void UPlayerAttackComp::CancelSkill()
-{
-	PlayerAttackStatus = -1;
-}
-
-void UPlayerAttackComp::ReadySkill()
-{
-	PlayerAttackStatus = 1;
-}
-
 void UPlayerAttackComp::CompleteSkill()
 {
 	if (!PlayerFSMComp) return;
-	PlayerAttackStatus = 3;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
@@ -227,47 +213,36 @@ void UPlayerAttackComp::CompleteSkill()
 
 // <------------------------------ Skill ------------------------------>
 
-void UPlayerAttackComp::PlayerExecuteAttack(int32 AttackIndex)
+void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 {
 	if (!Player || !PlayerFSMComp || !PlayerStat) return;
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_ONLY))) return;
 
-	SetSkillAttackData(CurrentSkillData[AttackIndex]);
-	SkillLevel = Skills[AttackIndex].SkillLevel;
-
-	if(Skills.IsValidIndex(AttackIndex) && CanUseSkill(AttackIndex))
+	
+	FSkillInfo* TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
+	
+	if(TempSkill && CanUseSkill(TempSkill))
 	{
-		if(AttackIndex != 0)
-		{
-			// 쿨다운 시작
-			Skills[AttackIndex].bIsOnCooldown = true;
-			Skills[AttackIndex].CooldownRemain = Skills[AttackIndex].CooldownTime;
-			GetWorld()->GetTimerManager().SetTimer(Skills[AttackIndex].CooldownTimerHandle,
-				FTimerDelegate::CreateUObject(this, &UPlayerAttackComp::ResetCooldown, AttackIndex), Skills[AttackIndex].CooldownTime, false);
-	        
-			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
-			{
-				UpdateCooldown(AttackIndex);
-			});
-		}
+		SetSkillData(TempSkill->SkillData);
 		
-		PlayerAttackStatus = 2;
+		// 공격 애니메이션 실행
+		PlayerAnim->PlayAttackAnimation(SkillMontage);
+		SetSkillCoolDownUI();
+		
+		// 쿨다운 시작
+		StartCooldown(TempSkill->CooldownTimerHandle, TempSkill->SkillData->SkillCoolTime);
+		
 		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
-
 		Player->TurnPlayer();
 
-		// 공격 애니메이션 실행
-		//PlayerAnim->PlayerAttackAnimation(SkillIndex + 1);
-		PlayerAnim->PlayAttackAnimation(SkillMontage);
-
 		// 공격 실행
-		switch (AttackIndex)
+		switch (SkillKeyIndex)
 		{
 		case 0 : Attack(); break;
-		case 1 : MeleeSkill(); break;
-		case 2 : RangedSkill(); break;
-		case 3 : SwapSkill(); break;
-		case 4 : UltSkill(); break;
+		case 1 : ExecuteMeleeSkill(); break;
+		case 2 : ExecuteRangedSkill(); break;
+		case 3 : ExecuteSwapSkill(); break;
+		case 4 : ExecuteUltSkill(); break;
 		default: break;
 		}
 
@@ -289,9 +264,9 @@ void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
 
 // <------------------------------ Skill Melee ------------------------------>
 
-void UPlayerAttackComp::MeleeSkill()
+void UPlayerAttackComp::ExecuteMeleeSkill()
 {
-	UE_LOG(LogTemp, Log, TEXT("Melee Skill : %s"), *(CurrentSkillData[0]->SkillName));
+	
 }
 
 // 애니메이션 노티파이로 호출하는 근거리 스킬 공격 생성 함수
@@ -341,10 +316,8 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 
 // <------------------------------ Skill Ranged ------------------------------>
 
-void UPlayerAttackComp::RangedSkill()
+void UPlayerAttackComp::ExecuteRangedSkill()
 {
-	UE_LOG(LogTemp, Log, TEXT("Ranged Skill : %s"),  *(CurrentSkillData[1]->SkillName));
-
 	switch (CurrentSkillColor)
 	{
 	case EUseColor::RED :
@@ -378,24 +351,24 @@ void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 
 // <------------------------------ Skill Swap ------------------------------>
 
-void UPlayerAttackComp::SwapSkill()
+void UPlayerAttackComp::ExecuteSwapSkill()
 {
 	CurrentSkillColor = FindSkillColor(CurrentSkillColor);
-	int32 NextSkillIndex = StartIndexColor[CurrentSkillColor];
 	
 	for(int i = 0; i < 2; i++)
 	{
-		// 0은 기본 공격이라 1부터 시작
-		CurrentSkillData[i+1] = GI -> GetPlayerSkillData(NextSkillIndex + i);
-		SetSkillUI(i, CurrentSkillData[i+1]);
+		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
+		SetSkillUI(i, _TempSkill);
 	}
+	
+	SetSkillCoolDownUI();
 }
 
-void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData)
+void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)
 {
 	if (!Player) return;
 	
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillData);
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillInfo);
 }
 
 EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
@@ -418,7 +391,7 @@ EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
 
 // <------------------------------ Ult ------------------------------>
 
-void UPlayerAttackComp::UltSkill()
+void UPlayerAttackComp::ExecuteUltSkill()
 {
 	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
 }
@@ -426,86 +399,99 @@ void UPlayerAttackComp::UltSkill()
 
 // <------------------------------ Skill Data ------------------------------>
 
-void UPlayerAttackComp::SetSkillAttackData(FPlayerSkillData* PlayerSkillData)
+FSkillInfo* UPlayerAttackComp::GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex)
 {
-	SkillCost = PlayerSkillData->SkillCost;
-	SkillCoolTime = PlayerSkillData->SkillCoolTime;
-	SkillMontage = PlayerSkillData->SkillMontage;
-	SkillDamage = PlayerSkillData->SkillDamage;
-	SkillRange = PlayerSkillData->SkillRange;
+	switch (SkillKeyIndex)
+	{
+	case 0: return AutoSkill;
+	case 3 : return SwapSkill;
+	case 4: return UltSkill;
+	}
+	
+	switch (_Color)
+	{
+	case EUseColor::RED :
+		{
+			if(SkillKeyIndex == 1) return RedQSkill;
+			if(SkillKeyIndex == 2) return RedWSkill;
+		}
+
+	case EUseColor::YELLOW :
+		{
+			if(SkillKeyIndex == 1) return YellowQSkill;
+			if(SkillKeyIndex == 2) return YellowWSkill;
+		}
+
+	case EUseColor::BLUE :
+		{
+			if(SkillKeyIndex == 1) return BlueQSkill;
+			if(SkillKeyIndex == 2) return BlueWSkill;
+		}
+	}
+
+	return nullptr;
+}
+
+void UPlayerAttackComp::SetSkillData(FPlayerSkillData* _SkillData)
+{
+	SkillMontage = _SkillData->SkillMontage;
+	SkillDamage = _SkillData->SkillDamage;
+	SkillRange = _SkillData->SkillRange;
 }
 
 
 // <---------------------- Skill Upgrade ---------------------->
 
-void UPlayerAttackComp::GetSkillUpgradePoint(int32 SkillIndex)
+void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex)
 {
-	// 업그레이드 할 수 있는 레벨보다 초과되었다면
-	if(Skills[SkillIndex].SkillLevel >= 5) return;
-
-	Skills[SkillIndex].SkillLevel = Skills[SkillIndex].SkillLevel + 1;
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillIndex-1, Skills[SkillIndex].SkillLevel-1);
+	FSkillInfo* _TempSkill = GetSkillInfo(_Color, SkillKeyIndex);
+	
+	if(_TempSkill&& _TempSkill->SkillLevel < 5)
+		_TempSkill->SkillLevel = _TempSkill->SkillLevel + 1;
+	
+	// UI 업데이트
+	 Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillKeyIndex-1, _TempSkill->SkillLevel);
 }
 
 
 // <---------------------- Skill CoolDown ---------------------->
 
-void UPlayerAttackComp::ResetCooldown(int32 AttackIndex)
+void UPlayerAttackComp::StartCooldown(FTimerHandle& CooldownTimerHandle, float _CoolTime)
 {
-	if (Skills.IsValidIndex(AttackIndex))
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, _CoolTime, false);
+}
+
+float UPlayerAttackComp::GetCooldownPercent(float RemainingTime, float _SkillCoolTime)
+{
+	if (_SkillCoolTime > 0)
 	{
-		Skills[AttackIndex].bIsOnCooldown = false;
-		Skills[AttackIndex].CooldownRemain = 0.0f;
-		UpdateCooldown(AttackIndex);
-		UE_LOG(LogTemp, Warning, TEXT("Skill %d cooldown reset."), AttackIndex);
+		return 1.0f - (RemainingTime / _SkillCoolTime);
+	}
+	
+	return 0.0f;
+}
+
+void UPlayerAttackComp::SetSkillCoolDownUI()
+{
+	if(CurrentSkillColor == EUseColor::NONE) return;
+	for(int i = 0; i < 2; i++)
+	{
+		auto _TempInfo = GetSkillInfo(CurrentSkillColor, i + 1);
+		float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(_TempInfo->CooldownTimerHandle);
+		Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(i, GetCooldownPercent(RemainingTime, _TempInfo->SkillData->SkillCoolTime) );
 	}
 }
 
-void UPlayerAttackComp::UpdateCooldown(int32 AttackIndex)
-{
-	if (Skills.IsValidIndex(AttackIndex) && Skills[AttackIndex].bIsOnCooldown)
-	{
-		Skills[AttackIndex].CooldownRemain -= GetWorld()->GetDeltaSeconds();
-
-		if (Skills[AttackIndex].CooldownRemain <= 0.0f)
-		{
-			ResetCooldown(AttackIndex);
-		}
-		else
-		{
-			SetSkillCoolDownUI(AttackIndex-1, GetCooldownPercent(AttackIndex));
-			GetWorld()->GetTimerManager().SetTimerForNextTick([this, AttackIndex]()
-			{
-				UpdateCooldown(AttackIndex);
-			});
-		}
-	}
-}
-
-void UPlayerAttackComp::SetSkillCoolDownUI(int32 SlotIndex, float CoolTime)
-{
-	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillCoolTimeUI(SlotIndex, CoolTime);
-}
-
-bool UPlayerAttackComp::CanUseSkill(int32 AttackIndex)
+bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 {
 	// MP가 있다면
-	CurrentMP = PlayerStat->GetMP() - SkillCost;
-	UE_LOG(LogTemp, Log, TEXT("SkillCost : %d"), SkillCost)
+	CurrentMP = PlayerStat->GetMP() - _TempSkill->SkillData->SkillCost;
 
 	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
-	if (AttackIndex == 0 || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
+	if (_TempSkill == AutoSkill || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
 	{
-		if(!Skills[AttackIndex].bIsOnCooldown) return true;
+		return (!GetWorld()->GetTimerManager().IsTimerActive(_TempSkill->CooldownTimerHandle));
+		//	if(!_TempSkill->bIsOnCooldown) return true;
 	}
 	return false;
-}
-
-float UPlayerAttackComp::GetCooldownPercent(int32 AttackIndex)
-{
-	if (Skills.IsValidIndex(AttackIndex) && Skills[AttackIndex].CooldownTime > 0)
-	{
-		return 1.0f - (Skills[AttackIndex].CooldownRemain / Skills[AttackIndex].CooldownTime);
-	}
-	return 0.0f;
 }

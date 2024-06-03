@@ -74,12 +74,12 @@ void UPlayerSkillSlotWidget::InitSkillLevelUI()
 	}
 }
 
-void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* PlayerSkillData)
+void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* _SkillData)
 {
-	if(PlayerSkillData && PlayerSkillData->SkillThumnail)
+	if(_SkillData && _SkillData->SkillThumnail)
 	{
-		CoolTimeBar->SetFillColorAndOpacity(ProgressBarColor[PlayerSkillData->SkillColor]);
-		SkillThumnail->SetBrushFromTexture(PlayerSkillData->SkillThumnail);
+		CoolTimeBar->SetFillColorAndOpacity(ProgressBarColor[_SkillData->SkillColor]);
+		SkillThumnail->SetBrushFromTexture(_SkillData->SkillThumnail);
 	}
 }
 
@@ -91,8 +91,9 @@ void UPlayerSkillSlotWidget::SetCoolTimeBar(float CoolTime)
 
 // <--------------------- Upgrade Skill Level --------------------->
 
-void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI(int32 SkillLevelSlotIndex)
+void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI(int32 _SkillLevel)
 {
-	UE_LOG(LogTemp, Log, TEXT("SkillLevelSlotIndex : %d"), SkillLevelSlotIndex);
-	SkillLevelSlot[SkillLevelSlotIndex]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+	UE_LOG(LogTemp, Log, TEXT("UpgradeSkillSlotLevelUI : %d"), _SkillLevel);
+	for(int i = 0; i < _SkillLevel; i++)
+		SkillLevelSlot[_SkillLevel]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
 }

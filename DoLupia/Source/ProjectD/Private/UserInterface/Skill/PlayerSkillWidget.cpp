@@ -4,6 +4,7 @@
 #include "UserInterface/Skill/PlayerSkillWidget.h"
 
 #include "ProjectDGameInstance.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
@@ -39,9 +40,9 @@ void UPlayerSkillWidget::InitSkillSlot()
 
 // <--------------------- Update Skill Level --------------------->
 
-void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData)
+void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)
 {
-	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillData);
+	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillInfo->SkillData);
 }
 
 void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
@@ -52,7 +53,7 @@ void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
 
 // <--------------------- Upgrade Skill Level --------------------->
 
-void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevelSlotIndex)
+void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel)
 {
-	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI(SkillLevelSlotIndex);
+	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI(SkillLevel);
 }
