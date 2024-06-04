@@ -99,6 +99,7 @@ private:
 
 public:
 	bool CanAttackState(EPlayerState _CurrentState, EPlayerWeaponState _CurrentWeaponState);
+	bool CanAttackWithState(EPlayerState _CurrentState);
 
 	
 	// <--------------------- Damage --------------------->

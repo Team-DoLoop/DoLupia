@@ -88,6 +88,9 @@ public:
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentEnd();
 
+	UFUNCTION()
+	void AnimNotify_AttackWith();
+
 	
 	// <---------------------- Combo ---------------------->
 private:

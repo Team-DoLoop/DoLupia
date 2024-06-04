@@ -89,7 +89,7 @@ bool UPlayerFSMComp::CanChangeState(EPlayerState _changeState)
 	case EPlayerState::MOVE : return CanMoveState(CurrentState);
 
 	case EPlayerState::ATTACK_ONLY : return CanAttackState(CurrentState, CurrentWeaponState);
-	case EPlayerState::ATTACK_WITH : return true;
+	case EPlayerState::ATTACK_WITH : return CanAttackWithState(CurrentState);
 	case EPlayerState::LYING : return CanLyingState(CurrentState);
 	case EPlayerState::DAMAGE : return CanDamageState(CurrentState);
 	case EPlayerState::EVASION : return CanEvasionState(CurrentState);
@@ -189,6 +189,14 @@ bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState, EPlayerWeaponSta
 	return true;
 }
 
+bool UPlayerFSMComp::CanAttackWithState(EPlayerState _CurrentState)
+{
+	switch (_CurrentState)
+	{
+	case EPlayerState::ATTACK_ONLY : return true;
+	}
+	return false;
+}
 
 
 // <--------------------- Damage --------------------->

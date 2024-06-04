@@ -198,25 +198,22 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	if(SkillKeyIndex != 3) CurrentSkillInfo = _TempInfo;
 	SetSkillData(_TempInfo->SkillData);
 	
+	// UI
+	SkillKeyIndex_Combo = SkillKeyIndex;
+	
 	AttackStartComboState();
-			
+	
+	Player->TurnPlayer();
+	
 	// 공격 애니메이션 실행
 	PlayerAnim->PlayAttackAnimation(SkillMontage);
 	PlayerAnim->JumpToAttackMontageSection(CurrentCombo); // CurrentCombo = 1
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
-
-	Player->TurnPlayer();
 	
 	// MP 소모
 	PlayerStat->SetMP(CurrentMP);
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 
-	// Combo UI
-	if(CurrentCombo < SkillMaxCombo)
-	{
-		SkillKeyIndex_Combo = SkillKeyIndex;
-		SetComboAttackUI(SkillKeyIndex_Combo, true);
-	}
 }
 
 void UPlayerAttackComp::CompleteSkill()
@@ -542,6 +539,15 @@ bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 	return false;
 }
 
+void UPlayerAttackComp::TurnToAttackWithState()
+{
+	if(PlayerFSMComp)
+	{
+		if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_WITH))) return;
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_WITH);
+	}
+}
+
 
 // <---------------------- Attack Combo ---------------------->
 
@@ -551,6 +557,9 @@ void UPlayerAttackComp::AttackStartComboState()
 	IsComboInputOn = false;
 	
 	CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, SkillMaxCombo);
+
+	// Combo UI
+	SetComboAttackUI(SkillKeyIndex_Combo, true);
 }
 
 void UPlayerAttackComp::AttackEndComboState()
@@ -568,21 +577,27 @@ void UPlayerAttackComp::AttackEndComboState()
 void UPlayerAttackComp::NextAttackCheck()
 {
 	CanNextCombo = false;
-	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_WITH);
-	
-	SetComboAttackUI(SkillKeyIndex_Combo, false);
-	SkillKeyIndex_Combo = -1;
 	
 	if(IsComboInputOn)
 	{
+		Player->TurnPlayer();
 		AttackStartComboState();
 		PlayerAnim->JumpToAttackMontageSection(CurrentCombo);
+		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
+	}
+	else
+	{
+		SetComboAttackUI(SkillKeyIndex_Combo, false);
+		SkillKeyIndex_Combo = -1;
+		TurnToAttackWithState();
 	}
 }
 
 void UPlayerAttackComp::SetComboAttackUI(int32 SkillKeyIndex, bool CanCombo)
 {
 	if(SkillKeyIndex <= 0) return;
+	UE_LOG(LogTemp, Log, TEXT("SetComboAttackUI : "));
+	if(CanCombo && CurrentCombo >= SkillMaxCombo) return;
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->SetSkillComboUI(SkillKeyIndex, CanCombo);
 }
 

@@ -143,6 +143,8 @@ public:
 	void SetSkillCoolDownUI();
 	
 	bool CanUseSkill(FSkillInfo* _TempSkill);
+
+	void TurnToAttackWithState();
 	
 	
 
