@@ -342,7 +342,7 @@ void AProjectDCharacter::CameraTimelineEnd()
 	}
 }
 
-void AProjectDCharacter::TakeHit(EAttackType AttackType, float Damage)
+void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage)
 {
 	if(!PlayerFSM) return;
 	
@@ -358,6 +358,13 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, float Damage)
 		PlayerFSM->ChangePlayerState( EPlayerState::LYING );
 		if(!PlayerAnim) return;
 		PlayerAnim->PlayerLyingAnimation();
+	}
+	
+	switch (EffectAttackType)
+	{
+	case EEffectAttackType::NONE : break;
+	case EEffectAttackType::BLEED : break;
+	case EEffectAttackType::POISON : break;
 	}
 
 	TakeDamage(Damage);

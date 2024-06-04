@@ -137,6 +137,7 @@ void UPlayerAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
 	if(Montage_IsPlaying(AttackMontage))
 	{
+		UE_LOG(LogTemp,Log,TEXT("Montage Play : %d"), NewSection);
 		Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
 	}
 }

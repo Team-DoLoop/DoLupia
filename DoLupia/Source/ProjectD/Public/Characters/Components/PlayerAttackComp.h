@@ -41,7 +41,13 @@ struct FSkillInfo
 	FSkillInfo()
 	{
 		SkillData = nullptr;
+		
 		SkillLevel = 1;
+
+		CanNextCombo = false;
+		IsComboInputOn = false;
+		CurrentCombo = 0;
+		
 		CooldownRemain = 0.0f;
 		bIsOnCooldown = false;
 	}
@@ -119,7 +125,7 @@ private:
 	TArray<AActor*> IgnoreAttackActors;
 
 protected:
-	void Attack();
+	void Attack(FSkillInfo* _TempInfo);
 	
 public:
 	virtual void CompleteSkill() override;

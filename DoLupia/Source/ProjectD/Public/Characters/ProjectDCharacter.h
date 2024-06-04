@@ -195,7 +195,7 @@ protected:
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
-	virtual void TakeHit(EAttackType AttackType, float Damage) override;
+	void TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage);
 	virtual void TakeDamage( float Damage ) override;
 
 	void LyingEnd();
