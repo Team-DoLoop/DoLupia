@@ -6,8 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "FloorAttack.generated.h"
 
+#define DEBUG_MY_FLOORATTAK
+
+class UNiagaraSystem;
 class USoundBase;
 class USphereComponent;
+class UDecalComponent;
+class UMaterialInterface;
 
 UCLASS()
 class PROJECTD_API AFloorAttack : public AActor
@@ -26,19 +31,43 @@ protected:
 
 	bool ActorSameType( AActor* OtherActor );
 
+	virtual void Trigger();
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 protected:
 	UPROPERTY( EditDefaultsOnly , Category = "Weapon Properties" )
-	USoundBase* SpawnSound;
+	USoundWave* SpawnSound;
+
+	UPROPERTY( EditDefaultsOnly , Category = "Weapon Properties" )
+	UNiagaraSystem* SpawnEffect;
+
 
 	UPROPERTY( EditDefaultsOnly , Category = "Weapon Properties" )
 	USphereComponent* AttackSphere;
+
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = "Components" )
+	UDecalComponent* DecalComp;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Effects" )
+	UMaterialInterface* DecalMaterial;
+
 
 	TArray<AActor*> IgnoerActors;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AttackDamage = 20;
+
+	UPROPERTY(EditDefaultsOnly)
+	float AttackRadius = 200.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool ChaseTarget;
+
+	
+
+private:
+	void SpawnAOESphere();
 
 };

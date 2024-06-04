@@ -39,6 +39,7 @@
 #include "Engine/World.h"
 #include "Items/Cape/PlayerCape.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Monsters/Drone/FloorAttack/FA_Blast_Base.h"
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
@@ -186,6 +187,11 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	{
 		PerformInteractionCheck();
 		PerformTrace();
+	}
+
+	if(PlayerController->IsInputKeyDown(EKeys::N))
+	{
+		AFA_Blast_Base* Blast = GetWorld()->SpawnActor<AFA_Blast_Base>();
 	}
 }
 
