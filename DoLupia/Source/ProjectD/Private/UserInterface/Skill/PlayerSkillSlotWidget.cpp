@@ -95,5 +95,5 @@ void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI(int32 _SkillLevel)
 {
 	UE_LOG(LogTemp, Log, TEXT("UpgradeSkillSlotLevelUI : %d"), _SkillLevel);
 	for(int i = 0; i < _SkillLevel; i++)
-		SkillLevelSlot[_SkillLevel-1]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+		SkillLevelSlot[i]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
 }
