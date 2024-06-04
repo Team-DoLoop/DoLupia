@@ -176,7 +176,7 @@ void UDialogComponent::ShowDialogWidget()
 {
 	if(DialogueWidget && !DialogueWidget->IsInViewport() )
 	{
-		DialogueWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Quest) );
+		DialogueWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
 }
 
