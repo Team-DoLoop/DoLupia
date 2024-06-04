@@ -266,6 +266,8 @@ private:
 protected:
 
 	void PerformTrace();
+	void InteractWidgetCreate();
+	void InteractWidgetRemove();
 
 	UPROPERTY( EditAnywhere )
 	float TraceDistance = 2000.0f;  // 트레이스 거리 설정
