@@ -187,9 +187,6 @@ void AProjectDPlayerController::OnSetDestinationReleased()
 {
 	if(!ControlledCharacter) return;
 	ControlledCharacter->moveComp->OnSetDestinationReleased();
-	FInputModeGameOnly InputMode;
-	InputMode.SetConsumeCaptureMouseDown(true);
-	SetInputMode(FInputModeGameOnly());
 }
 
 /*
@@ -217,7 +214,7 @@ void AProjectDPlayerController::Evasion()
 
 	
 	// 스킬 업그레이드
-	ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(1);
+	// ControlledCharacter->GetAttackComp()->GetSkillUpgradePoint(EUseColor::RED, 1);
 }
 
 // <---------------------- UI ---------------------->

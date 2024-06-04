@@ -39,9 +39,11 @@
 #include "Engine/World.h"
 #include "Items/Cape/PlayerCape.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Monsters/Drone/FloorAttack/FA_Blast_Base.h"
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
+#include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -122,8 +124,6 @@ AProjectDCharacter::AProjectDCharacter()
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
 
-	//QuestInteractable =  CreateDefaultSubobject<UQuestInteractionInterface>( TEXT( "QuestInterface" ) );
-
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -172,8 +172,6 @@ void AProjectDCharacter::BeginPlay()
 
 	// 초기 장비 착용
 	Gadget->InitEquip();
-
-
 }
 
 void AProjectDCharacter::Tick(float DeltaSeconds)
@@ -185,7 +183,12 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
 	{
 		PerformInteractionCheck();
-		PerformTrace();
+		//PerformTrace();
+	}
+
+	if(PlayerController->IsInputKeyDown(EKeys::N))
+	{
+		AFA_Blast_Base* Blast = GetWorld()->SpawnActor<AFA_Blast_Base>();
 	}
 }
 
@@ -266,13 +269,15 @@ void AProjectDCharacter::HoveredQuickSlot()
 		if (PlayerController->GetMousePosition( MouseX , MouseY ))
 		{
 			// 사용자 정의 함수로 마우스 위치 업데이트
-			PlayerDefaultsWidget->UpdateMouseWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
+			PlayerDefaultsWidget->QuickSlotMouseHoveredWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
 		}
 	}
 }
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
+
+	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;
 
@@ -280,8 +285,14 @@ bool AProjectDCharacter::PossibleChangeGameMode()
 	{
 		UQuestGiver* QuestGiver = SpecificActor->GetQuestGiver();
 
+		// 퀘스트 창이 뜨면
 		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver() || GetQuestLogComponent())
 			return false;
+
+		// 플레이어가 죽으면
+		if(moveComp->PlayerDieUI)
+			return false;
+
 	}
 
 	return true;
@@ -340,7 +351,7 @@ void AProjectDCharacter::CameraTimelineEnd()
 	}
 }
 
-void AProjectDCharacter::TakeHit(EAttackType AttackType, float Damage)
+void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage)
 {
 	if(!PlayerFSM) return;
 	
@@ -356,6 +367,13 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, float Damage)
 		PlayerFSM->ChangePlayerState( EPlayerState::LYING );
 		if(!PlayerAnim) return;
 		PlayerAnim->PlayerLyingAnimation();
+	}
+	
+	switch (EffectAttackType)
+	{
+	case EEffectAttackType::NONE : break;
+	case EEffectAttackType::BLEED : break;
+	case EEffectAttackType::POISON : break;
 	}
 
 	TakeDamage(Damage);
@@ -410,8 +428,10 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
+		FRotator BoxRotation = FRotator::ZeroRotator;
+		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
 
-		if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			FString name = TraceHit.GetActor()->GetName();
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
@@ -431,12 +451,14 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
+				InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
 			}
 			// NPC 인터페이스 검사
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
+				InteractWidgetCreate();
 				SpecificActor = Cast<ANPCBase>( LookAtActor );
 				if (SpecificActor)
 				{
@@ -446,17 +468,20 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
+				InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor: nullptr" ) );
 			}
 		}
 		else
 		{
 			LookAtActor = nullptr;
+			InteractWidgetRemove();
 		}
 	}
 	else
 	{
 		LookAtActor = nullptr;
+		NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 	}
 	NoInteractionableFound();
 }
@@ -733,4 +758,27 @@ void AProjectDCharacter::PerformTrace()
 
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
+}
+
+//--------------------- 상호작용 위젯 ------------------
+void AProjectDCharacter::InteractWidgetCreate()
+{
+	if(!NPCInteractGWidget)
+	{
+		//상호작용 위젯 생성
+		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}else
+	{
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind ));
+	}
+	
+}
+
+void AProjectDCharacter::InteractWidgetRemove()
+{
+	if(NPCInteractGWidget)
+	{
+		NPCInteractGWidget->RemoveFromParent();
+	}
 }

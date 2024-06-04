@@ -14,6 +14,7 @@
 #include "Engine.h"
 #include "Items/Cape/PlayerCape.h"
 #include <AI/AITxtBossAttack.h>
+#include "Pooling/SoundManager.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -34,8 +35,11 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
-
-
+	// Level
+	LevelNames.Add( TEXT( "GameLv0" ) );
+	LevelNames.Add( TEXT( "GameLv1" ) );
+	LevelNames.Add( TEXT( "GameLv2" ) );
+	LevelNames.Add( TEXT( "GameLv3" ) );
 }
 
 void APlayerGameMode::StartPlay()
@@ -44,30 +48,35 @@ void APlayerGameMode::StartPlay()
 
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
+}
 
-	//AITestUI = CreateWidget<UAITestWidget>( GetWorld() , AITestUIFactory );
-	if (AITestUI)
+void APlayerGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
+	if (CurLevelName == LevelNames[0])
 	{
-		AITestUI->AddToViewport( 999 );
-		
-		// Set input mode to UI only and set the widget to focus
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		if (PlayerController)
-		{
-			//FInputModeUIOnly InputMode;
-			FInputModeGameOnly InputMode;
-
-			//InputMode.SetWidgetToFocus( AITestUI->TakeWidget() );
-			//PlayerController->SetInputMode( InputMode );
-			//PlayerController->bShowMouseCursor = true;
-
-			InputMode.SetConsumeCaptureMouseDown( true );
-			PlayerController->SetInputMode( FInputModeUIOnly() );
-
-		}
-
+		LevelIdx = 0;
+	}
+	else if (CurLevelName == LevelNames[1])
+	{
+		LevelIdx = 1;
+	}
+	else if (CurLevelName == LevelNames[2])
+	{
+		LevelIdx = 2;
+	}
+	else if (CurLevelName == LevelNames[3])
+	{
+		LevelIdx = 3;
+	}
+	else
+	{
+		LevelIdx = -1;
 	}
 
+	PlayBGMForLevel( LevelIdx );
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -104,5 +113,20 @@ void APlayerGameMode::ApplyAITxtB()
 	{
 		// Call the function on the actor
 		ActorItr->UpdateActorMaterial();
+	}
+}
+
+void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
+{
+	if (LvBGMs.Contains( LvIndex ))
+	{
+		if (USoundWave* NewBGM = LvBGMs[LvIndex])
+		{
+			if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
+			{
+				SoundManager->PlayBGM( NewBGM );
+				CurrentBGM = NewBGM;
+			}
+		}
 	}
 }

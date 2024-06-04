@@ -9,6 +9,7 @@
 #include "Quest/QuestInteractionInterface.h"
 #include "ProjectDCharacter.generated.h"
 
+class UNPCInteractionWidget;
 class ADoLupiaHUD;
 class UPlayerDefaultsWidget;
 class UItemBase;
@@ -194,7 +195,7 @@ protected:
 	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
-	virtual void TakeHit(EAttackType AttackType, float Damage) override;
+	void TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage);
 	virtual void TakeDamage( float Damage ) override;
 
 	void LyingEnd();
@@ -265,11 +266,19 @@ private:
 protected:
 
 	void PerformTrace();
+	void InteractWidgetCreate();
+	void InteractWidgetRemove();
 
 	UPROPERTY( EditAnywhere )
 	float TraceDistance = 2000.0f;  // 트레이스 거리 설정
 
 	AActor* LastHitActor;  // 마지막으로 히트된 액터를 저장
+
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
+
+	UPROPERTY()
+	UNPCInteractionWidget* NPCInteractGWidget;
 	
 public:	
 	FORCEINLINE UQuestLogComponent* GetQuestLogComponent() const { return PlayerQuest; };

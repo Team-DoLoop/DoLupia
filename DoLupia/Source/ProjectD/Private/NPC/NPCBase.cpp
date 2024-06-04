@@ -16,12 +16,14 @@
 // Sets default values
 ANPCBase::ANPCBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
 
+	// Post Process depth 설정값
+	//GetMesh()->SetRenderCustomDepth( true );
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +42,6 @@ void ANPCBase::BeginPlay()
 	else {
 		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
 	}
-
 }
 
 // Called every frame
@@ -73,7 +74,6 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 		else {
 			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
 		}
-
 	}
 }
 
@@ -104,6 +104,10 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
+	stencilDepth = 1;
+	ChangeNPCStatus( stencilDepth );
+	anim->bTalking = true;
+
 }
 
 FString ANPCBase::InteractWith()
@@ -135,6 +139,12 @@ FString ANPCBase::InteractWith()
 
 void ANPCBase::LookAt()
 {
+}
+
+void ANPCBase::ChangeNPCStatus(int32 depth)
+{
+	GetMesh()->SetRenderCustomDepth( true );
+	GetMesh()->CustomDepthStencilValue = depth;
 }
 
 

@@ -117,7 +117,8 @@ void UWidgetQuestRewards::NativeDestruct()
     if (PlayerController)
     {
         auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
-        FInputModeGameOnly InputMode;
+        //FInputModeGameOnly InputMode;
+        FInputModeGameAndUI InputMode;
         PlayerControllerD->SetInputMode( InputMode );
     }
 }
@@ -155,6 +156,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
     }
 
     QuestLogComp->CompleteQuest(QuestID);
+    QuestLogComp->RemoveTracker();
 
     if (QuestID.IsNone())
     {

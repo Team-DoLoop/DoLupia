@@ -57,18 +57,7 @@ void AAutoQuestAcceptActor::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (OtherActor) {
 		AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
 		if (player) {
-			/*
-			UQuestLogComponent* Questcomponent = player->FindComponentByClass<UQuestLogComponent>();
 
-			bool ActiveQuest = Questcomponent->QueryActiveQuest( QuestData.RowName );
-
-			if (!ActiveQuest) {
-				Questcomponent->AddNewQuest( QuestData.RowName );
-			}
-
-			auto QuestID = QuestData.RowName.ToString();
-			player->OnObjectiveIDCalled.Broadcast( QuestID , 1 );
-			*/
 			GiveQuest();
 		}
 	}
@@ -86,6 +75,5 @@ void AAutoQuestAcceptActor::GiveQuest()
 	if (!ActiveQuest) {
 		Questcomponent->AddNewQuest( QuestData.RowName );
 	}
-	
 }
 

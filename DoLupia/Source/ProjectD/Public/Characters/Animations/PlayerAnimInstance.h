@@ -11,6 +11,8 @@
  * 
  */
 
+DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
+
 UCLASS()
 class PROJECTD_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -86,6 +88,19 @@ public:
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentEnd();
 
+	UFUNCTION()
+	void AnimNotify_AttackWith();
 
+	
+	// <---------------------- Combo ---------------------->
+private:
+	FName GetAttackMontageSectionName(int32 Section);
+	
+public:
+	FOnNextAttackCheckDelegate OnNextAttackCheck;
+	void JumpToAttackMontageSection(int32 NewSection);
+
+	UFUNCTION()
+	void AnimNotify_NextAttackCheck();
 
 };

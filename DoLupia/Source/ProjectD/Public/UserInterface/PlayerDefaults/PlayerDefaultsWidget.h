@@ -29,7 +29,7 @@ public:
 
 	UQuickSlotWidget* FindQuickSlot(int32 FindIndex);
 
-	void UpdateMouseWidget( FVector2D MousePosition ) const;
+	bool QuickSlotMouseHoveredWidget( FVector2D MousePosition ) const;
 
 protected:
 	virtual void NativeConstruct() override;

@@ -6,6 +6,9 @@
 #include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Characters/Components/PlayerAttackComp.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 
 UItemBase::UItemBase() : bIsCopy(false), bIsPickup(false)
 {
@@ -25,6 +28,7 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 	this->TextData = MyItemBase->TextData;
 	this->NumericData = MyItemBase->NumericData;
 	this->ItemStatistics = MyItemBase->ItemStatistics;
+	this->ItemSkillColor = MyItemBase->ItemSkillColor;
 	this->AssetData = MyItemBase->AssetData;
 	this->SkillAttribute = MyItemBase->SkillAttribute;
 	this->bIsCopy = true;
@@ -56,13 +60,27 @@ void UItemBase::Use(AProjectDCharacter* Character)
 {
 	if (Character)
 	{
+		if(ItemSkillColor != EUseColor::NONE)
+		{
+			Character->GetAttackComp()->GetSkillUpgradePoint(ItemSkillColor, ItemStatistics.ItemSkillID);
+			//PlayerStat->AddSkillLevelMelee( ItemStatistics.SkillPointMelee );
+		}
+		
 		if (APlayerStat* PlayerStat = Character->GetPlayerStat())
 		{
-			PlayerStat->AddSkillLevelMelee( ItemStatistics.SkillPointMelee );
-			PlayerStat->AddSkillLevelRange( ItemStatistics.SkillPointRange );
-			PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
-			PlayerStat->SetMP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+
+			if(ItemStatistics.HealthValue)
+			{
+				int32 CurrentHP = PlayerStat->GetHP();
+				int32 MaxHP = PlayerStat->GetMaxHP();
+
+				PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+				Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP, MaxHP );
+			}
+			
+			//PlayerStat->SetMP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+			//Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP , MaxHP );
 		}
-	}	
+	}
 }
 

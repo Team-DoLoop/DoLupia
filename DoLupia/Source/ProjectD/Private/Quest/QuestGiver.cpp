@@ -40,7 +40,7 @@ UQuestGiver::UQuestGiver()
 	}
 
 	// 데이터 테이블 로드
-	ItemDataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/ItemData/MundaneItems.MundaneItems" ) );
+	ItemDataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/Item/ItemData/MundaneItems" ) );
 
 }
 
@@ -118,16 +118,6 @@ FString UQuestGiver::InteractWith()
                 DisplayRewards();
                 return GetOwner()->GetName();
             }
-            /*
-            else 
-            {
-                UE_LOG( LogTemp , Error , TEXT( " DisplayQuest(CompleteValuePtr->CurrnetStage);" ) );
- 
-                DisplayQuest( CompleteValuePtr->CurrnetStage );
-                return GetOwner()->GetName();
-            }  
-            */
-            
         }
 
         // 모든 조건을 처리한 후에도 값을 반환하지 않았으므로 기본값을 반환합니다.
@@ -195,6 +185,7 @@ UItemBase* UQuestGiver::CreateItem(const TSubclassOf<UItemBase> BaseClass, const
         ItemReference->SetTextData( ItemData->TextData );
         ItemReference->SetNumericData( ItemData->NumericData );
         ItemReference->SetAssetData( ItemData->AssetData );
+    	ItemReference->SetItemSkillColorData( ItemData->ItemSkillColor );
 
         // 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
         FItemNumericData& ItemNumericData = ItemReference->GetNumericData();

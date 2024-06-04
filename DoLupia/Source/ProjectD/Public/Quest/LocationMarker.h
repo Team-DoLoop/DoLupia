@@ -7,6 +7,7 @@
 #include "LocationMarker.generated.h"
 
 class UBoxComponent;
+class UMeshComponent;
 
 UCLASS()
 class PROJECTD_API ALocationMarker : public AActor
@@ -29,6 +30,9 @@ public:
 
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
+
+	UPROPERTY( VisibleAnywhere )
+	UMeshComponent* MeshComponent;
 
 	UPROPERTY()
 	FText LocationName;

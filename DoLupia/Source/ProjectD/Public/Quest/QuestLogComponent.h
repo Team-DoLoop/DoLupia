@@ -8,6 +8,7 @@
 #include "QuestLogComponent.generated.h"
 
 
+class AQuest_Base;
 class UQuestTracker;
 
 // 예시: FName 타입을 전달하는 델리게이트 선언
@@ -61,6 +62,9 @@ public:
 
 	UFUNCTION()
 	void AddToTracker();
+
+	UFUNCTION()
+	void RemoveTracker();
 
 	UFUNCTION()
 	bool QueryActiveQuest(FName QuestID);

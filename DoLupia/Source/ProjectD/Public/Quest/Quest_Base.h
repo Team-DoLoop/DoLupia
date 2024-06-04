@@ -12,6 +12,7 @@ class AQuestLogComponent;
 class UWidgetQuestNotification;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnObjectiveHeard );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FReadyAddTracker);
 UCLASS()
 class AQuest_Base : public AActor
 {
@@ -33,8 +34,10 @@ public:
 	//UPROPERTY()
 	FOnObjectiveHeard OnObjectiveHeard;
 
+	FReadyAddTracker ReadyAddTracker;
+
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION()
 	void OnObjectiveIDHeard( FString ObjectiveID , int32 Value = 1 );
@@ -77,6 +80,9 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FDataTableRowHandle QuestData;
+
+	UPROPERTY(EditAnywhere)
+	UQuestLogComponent* QuestLogComponent;
 
 	//블루프린트에서 넣어줘야해!!!!!
 	UPROPERTY( EditAnywhere )

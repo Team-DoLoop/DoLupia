@@ -79,7 +79,8 @@ public:
 
 	// <---------------------- Evasion ---------------------->
 private:
-	float EvasionRange = 5000.0f;
+	float EvasionMaxRange = 5000.0f;
+	float EvasionRange = 1000.0f;
 
 protected:
 	

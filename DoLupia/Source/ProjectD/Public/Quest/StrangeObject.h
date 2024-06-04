@@ -24,22 +24,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY( EditAnywhere )
-	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
-
-	UPROPERTY()
-	UNPCInteractionWidget* NPCInteractGWidget;
-
-	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = "UI" )
-	UWidgetComponent* WidgetComponent;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
-
-	virtual void NotifyActorEndOverlap( AActor* OtherActor ) override;
 
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성

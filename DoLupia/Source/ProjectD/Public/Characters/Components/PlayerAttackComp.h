@@ -9,6 +9,8 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+struct FPlayerSkillData;
+
 UENUM(BlueprintType)
 enum ESkillOpenType : int8
 {
@@ -21,18 +23,22 @@ USTRUCT()
 struct FSkillInfo
 {
 	GENERATED_BODY()
+	
+	FPlayerSkillData* SkillData;
 
 	int32 SkillLevel;
-	float CooldownTime;
+	
+	// CoolTime
 	float CooldownRemain;
 	bool bIsOnCooldown;
-
 	FTimerHandle CooldownTimerHandle;
 
 	FSkillInfo()
 	{
+		SkillData = nullptr;
+		
 		SkillLevel = 1;
-		CooldownTime = 0.0f;
+		
 		CooldownRemain = 0.0f;
 		bIsOnCooldown = false;
 	}
@@ -91,8 +97,6 @@ public:
 	
 	// <---------------------- Attack ---------------------->
 private:
-	UPROPERTY(EditAnywhere, Category = "Skill")
-	TArray<FSkillInfo> Skills;
 
 	UPROPERTY(EditAnywhere, Category="Flamethrower")
 	TSubclassOf<class APlayerSkillFlamethrower> FlamethrowerFactory;
@@ -105,29 +109,22 @@ private:
 	float MPRegenRate;
 	float MPRegenTime;
 	float CurrentRegenTime;
-	int PlayerAttackStatus = 0;
 
 	int32 CurrentMP = 0;
 
 	UPROPERTY()
 	TArray<AActor*> IgnoreAttackActors;
-	
-	UPROPERTY()
-	class UAnimMontage* AutoAttackMontage;
 
 protected:
-	void Attack();
+	void Attack(FSkillInfo* _TempInfo);
+	void FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex);
 	
 public:
-	virtual void CancelSkill() override;
-	virtual void ReadySkill() override;
 	virtual void CompleteSkill() override;
-
 	
-	void SetSkillCoolDownUI(int32 SlotIndex, float CoolTime);
-	void SetSkillUI(int32 SlotIndex, FPlayerSkillData* PlayerSkillData);
+	void SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo);
 	
-	void PlayerExecuteAttack(int32 AttackIndex);
+	void PlayerExecuteAttack(int32 SkillKeyIndex);
 	void PlayerQuitSkill(int32 AttackIndex);
 
 	void MeleeSkillAttackJudgementStart();
@@ -135,24 +132,24 @@ public:
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
 
-	void MeleeSkill();
-	void RangedSkill();
-
+	void ExecuteMeleeSkill();
+	void ExecuteRangedSkill();
 	
-	void SwapSkill();
-	void UltSkill();
-
-	void UpdateCooldown(int32 AttackIndex);
-	void ResetCooldown(int32 AttackIndex);
-	bool CanUseSkill(int32 AttackIndex);
+	void ExecuteSwapSkill();
+	void ExecuteUltSkill();
 	
-	UFUNCTION()
-	float GetCooldownPercent(int32 AttackIndex);
+	void StartCooldown(FTimerHandle& CooldownTimerHandle, float _CoolTime);
+	float GetCooldownPercent(float RemainingTime, float _SkillCoolTime);
+	void SetSkillCoolDownUI();
+	
+	bool CanUseSkill(FSkillInfo* _TempSkill);
+
+	void TurnToAttackWithState();
+	
 	
 
 	// FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
 	FORCEINLINE void SetCurrentColor(EUseColor NewColor) {CurrentSkillColor = NewColor;}
-
 
 	
 	// <---------------------- Skill Use - Color ---------------------->
@@ -173,43 +170,68 @@ public:
 
 	// <---------------------- Skill Upgrade ---------------------->
 public:
-	void GetSkillUpgradePoint(int32 SkillIndex);
+	void GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex);
+
+
+	
+	// <---------------------- Attack Combo ---------------------->
+public:
+	void AttackStartComboState();
+	void AttackEndComboState();
+
+	void NextAttackCheck();
+
+	void SetComboAttackUI(int32 SkillKeyIndex, bool CanCombo);
+	
+private:
+	bool CanNextCombo;
+	bool IsComboInputOn;
+	int32 CurrentCombo = 0;
+	int32 SkillKeyIndex_Combo = -1;
+
 	
 	
 	// <---------------------- Skill Data ---------------------->
 public:
-	void SetSkillAttackData( FPlayerSkillData* PlayerSkillData );
-	//void CheckNextColor();
-	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
+	FSkillInfo* GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
+	void SetSkillData(FSkillInfo* _TempInfo);
 	
-	FORCEINLINE virtual FString GetSkillName() const {return SkillName;}
+	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
+
 	FORCEINLINE virtual int32 GetSkillLevel() const {return SkillLevel;}
-	FORCEINLINE virtual int32 GetSkillCost() const {return SkillCost;}
-	FORCEINLINE virtual int32 GetSkillCoolTime() const {return SkillCoolTime;}
 	FORCEINLINE virtual int32 GetSkillDamage() const {return SkillDamage;}
 
 	
 private:
-	TArray<FPlayerSkillData*> CurrentSkillData;
+	FSkillInfo* CurrentSkillInfo;
+	
+	//TArray<FPlayerSkillData*> CurrentSkillData;
 	EUseColor CurrentSkillColor = EUseColor::NONE;	// X, 빨, 노, 파
+
+	TArray<FSkillInfo*> CantSkill;
+
+	FSkillInfo* AutoSkill;
+	
+	FSkillInfo* RedQSkill;
+	FSkillInfo* RedWSkill;
+	
+	FSkillInfo* YellowQSkill;
+	FSkillInfo* YellowWSkill;
+	
+	FSkillInfo* BlueQSkill;
+	FSkillInfo* BlueWSkill;
+	
+	FSkillInfo* SwapSkill;
+	FSkillInfo* UltSkill;
 
 	int32 SkillCount = 4;							// 플레이어 스킬 개수
 	
-	int32 SkillID;
-	EUseColor SkillColor;
-	ESkillType SkillType;
-	FString SkillName;
-
-	UPROPERTY()
-	UTexture2D* SkillThumnail;
 	UPROPERTY()
 	UAnimMontage* SkillMontage;
-	
-	FText SkillDescription;
+
 	int32 SkillLevel; //
-	int32 SkillCost; //
-	int32 SkillCoolTime; //
 	int32 SkillDamage; //
 	FVector SkillRange; //
+	int32 SkillMaxCombo; //
 	 
 };

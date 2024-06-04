@@ -30,6 +30,9 @@ public:
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* AITxtMaterial;
 
+	UPROPERTY( EditDefaultsOnly )
+	class USkeletalMeshComponent* meshComp;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,10 +47,6 @@ private:
 
 	UFUNCTION()
 	void OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture );
-
-	UPROPERTY( EditDefaultsOnly )
-	class USkeletalMeshComponent* meshComp;
-
 	
 
 	UPROPERTY( EditDefaultsOnly )

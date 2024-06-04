@@ -31,8 +31,6 @@ void AGrid2048::BeginPlay()
                 }
 			}
 		}
-
-
     }
 
     PreGrid = Grid;
@@ -129,6 +127,24 @@ void AGrid2048::SquashColumn( TArray<int32>& Column )
         {
             Column[dest] *= 2;
             Column[src] = 0;
+
+
+            if (Column[dest] == 256)
+            {
+                for (int32 i = 0; i < 4; ++i)
+                {
+                    for (int32 j = 0; j < 4; ++j)
+                    {
+                        GridWidget[i * 4 + j]->ReStartMiniGame();
+                        Grid[i][j] = 0;
+                    }
+
+                }
+
+                GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
+            }
+
+
         }
         if (Column[dest] == 0)
         {

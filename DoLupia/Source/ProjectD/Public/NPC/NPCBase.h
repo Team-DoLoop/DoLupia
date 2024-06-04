@@ -7,6 +7,7 @@
 #include "Quest/QuestInteractionInterface.h"
 #include "NPCBase.generated.h"
 
+class UWidgetComponent;
 class UDialogComponent;
 class UQuestGiver;
 class UNPCAnim;
@@ -74,5 +75,13 @@ public:
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
+
+	/*---------------------- Post Process Depth ------------------*/
+public:
+	int32 stencilDepth = 4 ;
+
+private:
+	void ChangeNPCStatus( int32 depth );
+
 
 };

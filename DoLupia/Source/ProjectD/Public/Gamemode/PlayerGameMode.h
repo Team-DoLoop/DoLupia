@@ -6,7 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "PlayerGameMode.generated.h"
 
-
 class UAIConnectionLibrary;
 class UNPCConvWidget; 
 class UAITestWidget; 
@@ -23,6 +22,7 @@ public:
 	APlayerGameMode();
 
 	virtual void StartPlay() override;
+	virtual void BeginPlay() override;
 
 	class UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
@@ -41,6 +41,8 @@ public:
 
 
 private:
+	UPROPERTY()
+	TArray<FName> LevelNames;
 
 	UPROPERTY( EditDefaultsOnly )
 	class UAIConnectionLibrary* AIlib;
@@ -48,8 +50,19 @@ private:
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
 
-	UPROPERTY( EditDefaultsOnly )
-	TSubclassOf<class UUserWidget> AITestUIFactory;
 
+	/*---------- Level 별 bgm ----------*/
+public:
+	// 레벨에 대한 BGM을 재생하는 함수
+	void PlayBGMForLevel( int32 LevelIndex );
 
+protected:
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "BGM" )
+	TMap<int32 , USoundWave*> LvBGMs;
+
+	UPROPERTY( Transient )
+	USoundBase* CurrentBGM;
+
+private:
+	int32 LevelIdx;
 };

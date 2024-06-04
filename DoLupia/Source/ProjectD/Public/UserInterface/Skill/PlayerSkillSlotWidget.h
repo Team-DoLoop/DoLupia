@@ -11,6 +11,7 @@ enum class EUseColor : uint8;
 /**
  * 
  */
+struct FSkillInfo;
 struct FPlayerSkillData;
 UCLASS()
 class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
@@ -40,15 +41,20 @@ private:
 	UPROPERTY()
 	TArray<class UImage*> SkillLevelSlot;
 
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UImage* CanComboImage;
+
 	
 public:
 	void InitUI();
 	void InitSkillLevelUI();
 
-	void SetUI(FPlayerSkillData* PlayerSkillData);
+	void SetUI(FPlayerSkillData* _SkillData);
 	void SetCoolTimeBar(float CoolTime);
 
-	void UpgradeSkillSlotLevelUI(int32 SkillLevelSlotIndex);
+	void UpgradeSkillSlotLevelUI(int32 SkillLevel);
+
+	void SetSkillComboSlotUI(bool IsCanCombo);
 
 	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
 	

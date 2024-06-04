@@ -56,6 +56,9 @@ public:
 	int32 SkillCoolTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 SkillMaxCombo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillDamage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

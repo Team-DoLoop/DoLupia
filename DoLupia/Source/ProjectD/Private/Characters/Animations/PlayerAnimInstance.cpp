@@ -98,6 +98,7 @@ void UPlayerAnimInstance::PlayerLyingAnimation()
 	PlayMontage(LyingMontage);
 }
 
+
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 {
 	// 공격 판정 시작
@@ -120,4 +121,34 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 	//ASwordBase* Sword = Gadget->GetSword();
 	//if(!Sword) return;
 	//Sword->CollisionOff();
+}
+
+void UPlayerAnimInstance::AnimNotify_AttackWith()
+{
+	Player->GetAttackComp()->CompleteSkill();
+}
+
+
+FName UPlayerAnimInstance::GetAttackMontageSectionName(int32 Section)
+{
+	if(FMath::IsWithinInclusive<int32>(Section, 1, 4))
+	{
+		return FName(*FString::Printf(TEXT("Combo%d"), Section));
+	}
+	return "";
+}
+
+void UPlayerAnimInstance::JumpToAttackMontageSection(int32 NewSection)
+{
+	if(Montage_IsPlaying(AttackMontage))
+	{
+		UE_LOG(LogTemp,Log,TEXT("Montage Play : %d"), NewSection);
+		Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
+	}
+}
+
+
+void UPlayerAnimInstance::AnimNotify_NextAttackCheck()
+{
+	OnNextAttackCheck.Broadcast();
 }
