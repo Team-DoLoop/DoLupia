@@ -42,6 +42,8 @@ public:
 	FORCEINLINE void SetTextData(FItemTextData _TextData) { TextData = _TextData; }
 	FORCEINLINE void SetNumericData(FItemNumericData _NumericData) { NumericData = _NumericData; }
 	FORCEINLINE void SetAssetData(FItemAssetData _AssetData) { AssetData = _AssetData; }
+	FORCEINLINE void SetItemSkillColorData(EUseColor _ItemSkillColor) { ItemSkillColor = _ItemSkillColor; }
+	
 
 	FORCEINLINE const FName& GetID() const { return ID; }
 	FORCEINLINE EItemType GetItemType() const { return ItemType; }
@@ -51,6 +53,7 @@ public:
 	FORCEINLINE const FItemTextData& GetTextData() const { return TextData; }
 	FORCEINLINE FItemNumericData& GetNumericData() { return NumericData; }
 	FORCEINLINE const FItemAssetData& GetAssetData() const { return AssetData; }
+	FORCEINLINE const EUseColor& GetItemSkillColorData() const { return ItemSkillColor; }
 
 	FORCEINLINE UInventoryComponent* GetOwningInventory() const { return OwningInventory; };
 	FORCEINLINE void SetOwningInventory(UInventoryComponent* NewOwningInventory) { OwningInventory = NewOwningInventory; };
@@ -82,6 +85,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FItemStatistics ItemStatistics;
+
+	UPROPERTY(VisibleAnywhere, Category = "Item")
+	EUseColor ItemSkillColor;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item")
 	FItemTextData TextData;

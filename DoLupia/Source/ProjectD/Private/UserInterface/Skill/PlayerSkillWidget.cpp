@@ -55,6 +55,7 @@ void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
 
 void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel)
 {
+	UE_LOG(LogTemp,Log,TEXT("UpgradeSkillLevelUI %d : %d"), SlotIndex,SkillLevel);
 	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI(SkillLevel);
 }
 
