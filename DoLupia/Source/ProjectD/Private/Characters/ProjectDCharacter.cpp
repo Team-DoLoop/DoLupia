@@ -39,6 +39,7 @@
 #include "Engine/World.h"
 #include "Items/Cape/PlayerCape.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Monsters/Drone/FloorAttack/FA_Blast_Base.h"
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
@@ -189,6 +190,11 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 		PerformInteractionCheck();
 		PerformTrace();
 	}
+
+	if(PlayerController->IsInputKeyDown(EKeys::N))
+	{
+		AFA_Blast_Base* Blast = GetWorld()->SpawnActor<AFA_Blast_Base>();
+	}
 }
 
 void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -268,13 +274,15 @@ void AProjectDCharacter::HoveredQuickSlot()
 		if (PlayerController->GetMousePosition( MouseX , MouseY ))
 		{
 			// 사용자 정의 함수로 마우스 위치 업데이트
-			PlayerDefaultsWidget->UpdateMouseWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
+			PlayerDefaultsWidget->QuickSlotMouseHoveredWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
 		}
 	}
 }
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
+
+	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;
 
@@ -282,8 +290,14 @@ bool AProjectDCharacter::PossibleChangeGameMode()
 	{
 		UQuestGiver* QuestGiver = SpecificActor->GetQuestGiver();
 
+		// 퀘스트 창이 뜨면
 		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver() || GetQuestLogComponent())
 			return false;
+
+		// 플레이어가 죽으면
+		if(moveComp->PlayerDieUI)
+			return false;
+
 	}
 
 	return true;

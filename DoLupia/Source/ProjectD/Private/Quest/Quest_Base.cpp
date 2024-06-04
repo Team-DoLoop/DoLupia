@@ -13,8 +13,7 @@
 // Sets default values
 AQuest_Base::AQuest_Base()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 
@@ -100,9 +99,9 @@ void AQuest_Base::BeginPlay()
 
 
 // Called every frame
-void AQuest_Base::Tick(float DeltaTime)
+void AQuest_Base::Tick(float DeltaSeconds)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick( DeltaSeconds );
 
 }
 

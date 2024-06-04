@@ -135,7 +135,7 @@ void ADroppedItem::PerformBoxTrace()
 		ObjectTypes ,
 		false ,
 		ActorsToIgnore ,
-		EDrawDebugTrace::ForDuration ,
+		EDrawDebugTrace::None,
 		OutHit ,
 		true ,
 		FLinearColor::Red ,

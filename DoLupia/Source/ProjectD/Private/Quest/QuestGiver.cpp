@@ -40,7 +40,7 @@ UQuestGiver::UQuestGiver()
 	}
 
 	// 데이터 테이블 로드
-	ItemDataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/ItemData/MundaneItems.MundaneItems" ) );
+	ItemDataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/Item/ItemData/MundaneItems" ) );
 
 }
 

@@ -37,7 +37,7 @@ public:
 	FReadyAddTracker ReadyAddTracker;
 
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION()
 	void OnObjectiveIDHeard( FString ObjectiveID , int32 Value = 1 );

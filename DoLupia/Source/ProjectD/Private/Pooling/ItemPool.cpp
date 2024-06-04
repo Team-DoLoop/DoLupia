@@ -6,7 +6,7 @@
 
 UItemPool::UItemPool()
 {
-    static ConstructorHelpers::FObjectFinder<UDataTable> DataTable( TEXT( "/Game/ItemData/MundaneItems" ) );
+    static ConstructorHelpers::FObjectFinder<UDataTable> DataTable( TEXT( "/Game/Item/ItemData/MundaneItems" ) );
 
 	if (DataTable.Succeeded())
     {

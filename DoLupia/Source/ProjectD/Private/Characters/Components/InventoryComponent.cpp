@@ -34,8 +34,11 @@ void UInventoryComponent::BeginPlay()
 	//InventorySlotsCapacity
 	ItemPool->CreateItem(100);
 
-	ItemCarouselWidget = CreateWidget<UItemCarouselWidget>(GetWorld(), LootingItemWidgetFactory);
-	ItemCarouselWidget->AddToViewport();
+	if(LootingItemWidgetFactory)
+	{
+		ItemCarouselWidget = CreateWidget<UItemCarouselWidget>( GetWorld() , LootingItemWidgetFactory );
+		ItemCarouselWidget->AddToViewport();
+	}
 }
 
 //
