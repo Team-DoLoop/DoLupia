@@ -20,6 +20,15 @@ enum class EBossState : uint8
 	Die ,
 };
 
+UENUM( BlueprintType )
+enum class EBossSkill : uint8
+{
+	Hit,
+	Fire,
+	GrabAndThrow,
+};
+
+
 UCLASS()
 class PROJECTD_API ABossMonster : public ACharacter
 {
@@ -36,14 +45,18 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY( EditAnywhere , BlueprintReadWrite, Category = "Components" )
-	UOctopusBackpackComponent* OctopusBackpackComponent;
-	
+	/*UPROPERTY( EditAnywhere , BlueprintReadWrite, Category = "Components" )
+	UOctopusBackpackComponent* OctopusBackpackComponent;*/
+
+
 	UPROPERTY( EditAnywhere,BlueprintReadWrite , Category = "Components" )
 	UChildActorComponent* ChildActorComponent;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EBossState state;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EBossSkill skillState;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
 	int32 BossMaxHP = 100;
@@ -61,5 +74,21 @@ public:
 
 	UPROPERTY()
 	class UBossAnim* anim;
+
+	float currentTime = 0;
+	float attackDelayTime = 3;
+
+	// ---------ATTACK-------------
+	void HitAttack();
+	void FireAttack();
+	void GrabAndThrowAttack();
+
+	TArray<void(ABossMonster::*)()> AttackFunctions;
+	TArray<void(ABossMonster::*)()> AttackStack;
+
+	void InitializeAttackStack();
+
+	void GetHitResult();
+
 
 };

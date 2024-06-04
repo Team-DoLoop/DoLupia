@@ -2,8 +2,13 @@
 
 
 #include "Monsters/AI/BTTask_Attack.h"
+
+#include "Monsters/BossAnim.h"
 #include "Monsters/MonsterAIController.h"
 #include "Monsters/BossMonster.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Engine/Engine.h"
+
 UBTTask_Attack::UBTTask_Attack()
 {
 	bNotifyTick = true; // 매 프레임마다 TickTask 호출
@@ -18,32 +23,44 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (nullptr == Boss)
 		return EBTNodeResult::Failed;
 
+	//Boss->state = EBossState::Attack;
+	//Boss->currentTime = Boss->attackDelayTime;
+	IsAttacking = true;
 
-	Boss->state = EBossState::Attack;
-	
-	//IsAttacking = true;
-
-	/*if (!IsAttacking)
+	Boss->anim->OnEndHitAttack.AddLambda( [this]()->void
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "UBTTask_Attack::공격 끝" ) );
+		IsAttacking = false;
+		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndHitAttack.AddLambda" ) );
 
-		return EBTNodeResult::Succeeded;
-	}*/
-	return EBTNodeResult::Succeeded;
+	} );
+	Boss->anim->OnEndFireAttack.AddLambda( [this]()->void
+	{
+		IsAttacking = false;
+		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndFireAttack.AddLambda" ) );
 
-	//Anim에서 notify로 애니메이션 끝났을 때 succeded 로 변경
-	
+	} );
+	Boss->anim->OnEndGrabAttack.AddLambda( [this]()->void
+	{
+		IsAttacking = false;
+		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndGrabAttack.AddLambda" ) );
+
+	} );
+
+	return EBTNodeResult::InProgress;
+
 }
 
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp , NodeMemory , DeltaSeconds);
 
-	
-}
+	if(!IsAttacking)
+	{
+		FinishLatentTask( OwnerComp , EBTNodeResult::Succeeded );
+		UE_LOG( LogTemp , Warning , TEXT( "FinishLatentTask( OwnerComp , EBTNodeResult::Succeeded );" ) );
+		IsAttacking = true;
 
-void UBTTask_Attack::OnAttackEndHandle()
-{
-	IsAttacking = false;
+	}
+	
 }
 

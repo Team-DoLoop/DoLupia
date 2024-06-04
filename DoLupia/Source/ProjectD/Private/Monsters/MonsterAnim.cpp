@@ -27,9 +27,7 @@ void UMonsterAnim::OnDoHitAttackAnimation()
 {
 	auto ownerPawn = TryGetPawnOwner();
 	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	monster->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 	monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Overlap );
-
 }
 
 void UMonsterAnim::OnEndHitAttackAnimation()
@@ -42,7 +40,6 @@ void UMonsterAnim::SetCollision()
 {
 	auto ownerPawn = TryGetPawnOwner();
 	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	monster->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 	monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Ignore );
 }
 

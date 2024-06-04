@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Monsters/MonsterAIController.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Monsters/BossMonster.h"
 
 UBTDecorator_IsInAttackRange::UBTDecorator_IsInAttackRange()
 {
@@ -16,9 +17,17 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 {
 	Super::CalculateRawConditionValue( OwnerComp , NodeMemory );
 	bool bResult = false;
+	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+	auto Boss = Cast<ABossMonster>( OwnerComp.GetAIOwner()->GetPawn() );
 
 	bResult=  OwnerComp.GetBlackboardComponent()->GetValueAsBool( AMonsterAIController::IsInAttackRangeKey  );
-
+	if(bResult)
+	{
+		if(Boss)
+		{
+			Boss->state = EBossState::Attack;
+		}
+	}
 	
 
 	return bResult;
