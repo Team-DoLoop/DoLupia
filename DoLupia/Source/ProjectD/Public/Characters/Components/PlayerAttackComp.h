@@ -194,7 +194,7 @@ private:
 	// <---------------------- Skill Data ---------------------->
 public:
 	FSkillInfo* GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
-	void SetSkillData(FPlayerSkillData* _SkillData);
+	void SetSkillData(FSkillInfo* _TempInfo);
 	
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 

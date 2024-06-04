@@ -196,7 +196,7 @@ void UPlayerAttackComp::Attack(FSkillInfo* _TempInfo)
 void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 {
 	if(SkillKeyIndex != 3) CurrentSkillInfo = _TempInfo;
-	SetSkillData(_TempInfo->SkillData);
+	SetSkillData(_TempInfo);
 	
 	// UI
 	SkillKeyIndex_Combo = SkillKeyIndex;
@@ -474,12 +474,15 @@ FSkillInfo* UPlayerAttackComp::GetSkillInfo( EUseColor _Color, int32 SkillKeyInd
 	return nullptr;
 }
 
-void UPlayerAttackComp::SetSkillData(FPlayerSkillData* _SkillData)
+void UPlayerAttackComp::SetSkillData(FSkillInfo* _TempInfo)
 {
+	auto _SkillData = _TempInfo->SkillData;
+	
 	SkillMontage = _SkillData->SkillMontage;
 	SkillDamage = _SkillData->SkillDamage;
 	SkillRange = _SkillData->SkillRange;
 	SkillMaxCombo = _SkillData->SkillMaxCombo;
+	SkillLevel = _TempInfo->SkillLevel;
 }
 
 
@@ -488,12 +491,16 @@ void UPlayerAttackComp::SetSkillData(FPlayerSkillData* _SkillData)
 void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex)
 {
 	FSkillInfo* _TempSkill = GetSkillInfo(_Color, SkillKeyIndex);
-	
-	if(_TempSkill&& _TempSkill->SkillLevel < 5)
-		_TempSkill->SkillLevel = _TempSkill->SkillLevel + 1;
-	
-	// UI 업데이트
-	 Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillKeyIndex-1, _TempSkill->SkillLevel);
+		
+	if(_TempSkill)
+	{
+		if(_TempSkill->SkillLevel < 5)
+			_TempSkill->SkillLevel = _TempSkill->SkillLevel + 1;
+		
+		// UI 업데이트
+		Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillKeyIndex-1, _TempSkill->SkillLevel);
+		UE_LOG(LogTemp,Log,TEXT("Get GetSkillUpgradePoint"));
+	}
 }
 
 

@@ -134,12 +134,17 @@ void UPlayerMoveComp::Evasion()
 	{
 		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
 		EvasionVec.Z = 0.0f;
+
+		if(EvasionVec.Size() > EvasionMaxRange)
+		{
+			EvasionVec = EvasionVec.GetSafeNormal() * EvasionMaxRange;
+		}
 		
 		FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(EvasionVec, Player->GetActorUpVector());
 		FRotator PlayerRot = Player->GetActorRotation();
 		FRotator TempRot = FRotator(PlayerRot.Pitch, TargetRot.Yaw, PlayerRot.Roll);
 
-		Player->LaunchCharacter(EvasionVec.GetSafeNormal() * EvasionRange, false, false);
+		Player->LaunchCharacter(EvasionVec.GetSafeNormal(), false, false);
 		Player->SetActorRotation( TempRot );
 	}
 	
