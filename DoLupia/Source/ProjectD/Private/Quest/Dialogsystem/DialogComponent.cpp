@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
+#include "Data/WidgetData.h"
 #include "Kismet/GameplayStatics.h"
 #include "NPC/NPCBase.h"
 #include "Quest/QuestGiver.h"
@@ -175,7 +176,7 @@ void UDialogComponent::ShowDialogWidget()
 {
 	if(DialogueWidget && !DialogueWidget->IsInViewport() )
 	{
-		DialogueWidget->AddToViewport();
+		DialogueWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Quest) );
 	}
 }
 

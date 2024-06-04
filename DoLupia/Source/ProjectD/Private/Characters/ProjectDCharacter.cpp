@@ -183,7 +183,7 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 	if(GetWorld()->TimeSince(InteractionData.LastInteractionCehckTime) > InteractionCheckFrequency)
 	{
 		PerformInteractionCheck();
-		PerformTrace();
+		//PerformTrace();
 	}
 
 	if(PlayerController->IsInputKeyDown(EKeys::N))
@@ -767,10 +767,10 @@ void AProjectDCharacter::InteractWidgetCreate()
 	{
 		//상호작용 위젯 생성
 		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
-		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}else
 	{
-		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind ));
 	}
 	
 }
