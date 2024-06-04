@@ -51,12 +51,20 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
 	int32 currentHP = maxHP;
 
+	UPROPERTY( EditAnywhere , BlueprintReadOnly )
+	int32 myDamage = 0;
 
-	UPROPERTY( EditDefaultsOnly , BlueprintReadOnly )
+	/*UPROPERTY( EditDefaultsOnly , BlueprintReadOnly )
 	class UWidgetComponent* healthUI;
 
 	UPROPERTY()
-	class UMonsterHPWidget* monsterHPWidget;
+	class UMonsterHPWidget* monsterHPWidget;*/
+
+	UPROPERTY( EditDefaultsOnly , BlueprintReadOnly )
+	class UWidgetComponent* damageUI;
+
+	UPROPERTY()
+	class UMonsterDamageWidget* monsterDamageWidget;
 
 	//플레이어를 타겟으로 설정
 	UPROPERTY( EditAnywhere )
