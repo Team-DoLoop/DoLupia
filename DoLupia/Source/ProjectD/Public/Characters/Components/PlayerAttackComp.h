@@ -27,11 +27,6 @@ struct FSkillInfo
 	FPlayerSkillData* SkillData;
 
 	int32 SkillLevel;
-
-	// Combo
-	bool CanNextCombo;
-	bool IsComboInputOn;
-	int32 CurrentCombo;
 	
 	// CoolTime
 	float CooldownRemain;
@@ -43,10 +38,6 @@ struct FSkillInfo
 		SkillData = nullptr;
 		
 		SkillLevel = 1;
-
-		CanNextCombo = false;
-		IsComboInputOn = false;
-		CurrentCombo = 0;
 		
 		CooldownRemain = 0.0f;
 		bIsOnCooldown = false;
@@ -126,6 +117,7 @@ private:
 
 protected:
 	void Attack(FSkillInfo* _TempInfo);
+	void FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex);
 	
 public:
 	virtual void CompleteSkill() override;
@@ -182,12 +174,18 @@ public:
 	
 	// <---------------------- Attack Combo ---------------------->
 public:
-	void AttackStartComboState(FSkillInfo* _TempSkill);
-	void AttackEndComboState(FSkillInfo* _TempSkill);
+	void AttackStartComboState();
+	void AttackEndComboState();
 
 	void NextAttackCheck();
+
+	void SetComboAttackUI(int32 SkillKeyIndex, bool CanCombo);
 	
 private:
+	bool CanNextCombo;
+	bool IsComboInputOn;
+	int32 CurrentCombo = 0;
+	int32 SkillKeyIndex_Combo = -1;
 
 	
 	
@@ -232,5 +230,6 @@ private:
 	int32 SkillLevel; //
 	int32 SkillDamage; //
 	FVector SkillRange; //
+	int32 SkillMaxCombo; //
 	 
 };

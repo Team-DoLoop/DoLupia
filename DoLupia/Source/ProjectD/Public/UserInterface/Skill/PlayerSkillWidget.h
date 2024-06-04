@@ -38,6 +38,8 @@ public:
 	void UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime);
 
 	void UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel);
+
+	void SetSkillComboUI(int32 SkillKeyIndex, bool IsCanCombo);
 	
 	FORCEINLINE TArray<UPlayerSkillSlotWidget*> GetPlayerSkillSlotArr() const {return PlayerSkillSlotArray;}
 	

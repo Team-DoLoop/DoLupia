@@ -57,3 +57,12 @@ void UPlayerSkillWidget::UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel)
 {
 	PlayerSkillSlotArray[SlotIndex]->UpgradeSkillSlotLevelUI(SkillLevel);
 }
+
+
+// <--------------------- Skill Combo --------------------->
+
+void UPlayerSkillWidget::SetSkillComboUI(int32 SkillKeyIndex, bool IsCanCombo)
+{
+	PlayerSkillSlotArray[SkillKeyIndex-1]->SetSkillComboSlotUI(IsCanCombo);
+}
+

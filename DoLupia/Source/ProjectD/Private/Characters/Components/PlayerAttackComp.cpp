@@ -193,20 +193,43 @@ void UPlayerAttackComp::Attack(FSkillInfo* _TempInfo)
 
 }
 
+void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
+{
+	if(SkillKeyIndex != 3) CurrentSkillInfo = _TempInfo;
+	SetSkillData(_TempInfo->SkillData);
+	
+	AttackStartComboState();
+			
+	// 공격 애니메이션 실행
+	PlayerAnim->PlayAttackAnimation(SkillMontage);
+	PlayerAnim->JumpToAttackMontageSection(CurrentCombo); // CurrentCombo = 1
+	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
+
+	Player->TurnPlayer();
+	
+	// MP 소모
+	PlayerStat->SetMP(CurrentMP);
+	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
+
+	// Combo UI
+	if(CurrentCombo < SkillMaxCombo)
+	{
+		SkillKeyIndex_Combo = SkillKeyIndex;
+		SetComboAttackUI(SkillKeyIndex_Combo, true);
+	}
+}
+
 void UPlayerAttackComp::CompleteSkill()
 {
 	if (!PlayerFSMComp) return;
 	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
-
-	if(CurrentSkillInfo != nullptr)
-	{
-		// 쿨다운 시작
-		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
-
-		AttackEndComboState(CurrentSkillInfo);
-	}
+	
+	SetComboAttackUI(SkillKeyIndex_Combo, false);
+	SkillKeyIndex_Combo = -1;
+	
+	AttackEndComboState();
 
 	if (!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
 	{
@@ -225,34 +248,36 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_ONLY))) return;
 	
 	FSkillInfo* TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
+	EPlayerState CurrentState = PlayerFSMComp->GetCurrentState();
 	
 	if(TempSkill && CanUseSkill(TempSkill))
-	{	
-		Player->TurnPlayer();
-
-		// 첫 공격이 아니라면
-		if(TempSkill->CurrentCombo > 1)
+	{
+		// 첫 공격이라면 바로 실행
+		if (CurrentState != EPlayerState::ATTACK_ONLY && CurrentState != EPlayerState::ATTACK_WITH)
 		{
-			UE_LOG(LogTemp, Log, TEXT("TempSkill->CurrentCombo > 0"));
-			if(TempSkill->CanNextCombo)
+			UE_LOG(LogTemp, Log, TEXT("First Combo Attack"));
+			FirstAttack(TempSkill, SkillKeyIndex);
+		}
+		// 첫 공격이 아니고 콤보 구간이라면
+		else if(CurrentState == EPlayerState::ATTACK_ONLY)
+		{
+			UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
+			// 만약 콤보 가능 구간이라면
+			if(CanNextCombo)
 			{
-				// 콤보 공격
-				UE_LOG(LogTemp, Log, TEXT("TempSkill->CanNextCombo = true"));
-				TempSkill->IsComboInputOn = true;
+				// 콤보 공격 입력
+				UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
+				IsComboInputOn = true;
 			}
 		}
-		else
+		// 콤보 공격 구간은 아니지만 공격 중이라면
+		else if(CurrentState == EPlayerState::ATTACK_WITH)
 		{
-			UE_LOG(LogTemp, Log, TEXT("TempSkill->CurrentCombo == 0"));
-			AttackStartComboState(TempSkill);
-			CurrentSkillInfo = TempSkill;
-			SetSkillData(TempSkill->SkillData);
-			
-			// 공격 애니메이션 실행
-			PlayerAnim->PlayAttackAnimation(SkillMontage);
-			PlayerAnim->JumpToAttackMontageSection(TempSkill->CurrentCombo);
-
-			PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
+			// 원래 스킬은 사용 못하고
+			if(CurrentSkillInfo != TempSkill)
+			{
+				FirstAttack(TempSkill, SkillKeyIndex);
+			}
 		}
 		
 		SetSkillCoolDownUI();
@@ -267,11 +292,9 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 		case 4 : ExecuteUltSkill(); break;
 		default: break;
 		}
-
-		// MP 소모
-		PlayerStat->SetMP(CurrentMP);
-		Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 	}
+
+	
 }
 
 void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
@@ -327,12 +350,6 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 {
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
-
-	if(PlayerFSMComp)
-	{
-		UE_LOG(LogTemp, Log, TEXT("MeleeSkillAttackJudgementEnd"));
-		PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_WITH);
-	}
 }
 
 
@@ -375,12 +392,14 @@ void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 
 void UPlayerAttackComp::ExecuteSwapSkill()
 {
-	// 쿨다운 시작
-	StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
-		
-	CurrentSkillColor = FindSkillColor(CurrentSkillColor);
-	CurrentSkillInfo = nullptr;
+	// 그 전에 눌렀던 스킬 쿨다운 시작
+	if(CurrentSkillInfo)
+	{
+		AttackEndComboState();
+	}
+	SetComboAttackUI(SkillKeyIndex_Combo, false);
 	
+	CurrentSkillColor = FindSkillColor(CurrentSkillColor);
 	for(int i = 0; i < 2; i++)
 	{
 		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
@@ -463,6 +482,7 @@ void UPlayerAttackComp::SetSkillData(FPlayerSkillData* _SkillData)
 	SkillMontage = _SkillData->SkillMontage;
 	SkillDamage = _SkillData->SkillDamage;
 	SkillRange = _SkillData->SkillRange;
+	SkillMaxCombo = _SkillData->SkillMaxCombo;
 }
 
 
@@ -525,36 +545,44 @@ bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 
 // <---------------------- Attack Combo ---------------------->
 
-void UPlayerAttackComp::AttackStartComboState(FSkillInfo* _TempSkill)
+void UPlayerAttackComp::AttackStartComboState()
 {
-	_TempSkill->CanNextCombo = true;
-	_TempSkill->IsComboInputOn = false;
-
-	if(FMath::IsWithinInclusive<int32>(_TempSkill->CurrentCombo, 0, _TempSkill->SkillData->SkillMaxCombo-1))
-	{
-		_TempSkill->CurrentCombo = FMath::Clamp<int32>(_TempSkill->CurrentCombo + 1, 1, _TempSkill->SkillData->SkillMaxCombo);
-		UE_LOG(LogTemp, Log, TEXT("_TempSkill->CurrentCombo : %d"), _TempSkill->CurrentCombo);
-	}
+	CanNextCombo = true;
+	IsComboInputOn = false;
+	
+	CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, SkillMaxCombo);
 }
 
-void UPlayerAttackComp::AttackEndComboState(FSkillInfo* _TempSkill)
+void UPlayerAttackComp::AttackEndComboState()
 {
-	_TempSkill->IsComboInputOn = false;
-	_TempSkill->CanNextCombo = false;
-	_TempSkill->CurrentCombo = 0;
+	// 쿨다운 시작
+	if(CurrentSkillInfo)
+		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
+	
+	IsComboInputOn = false;
+	CanNextCombo = false;
+	CurrentCombo = 0;
 	CurrentSkillInfo = nullptr;
 }
 
 void UPlayerAttackComp::NextAttackCheck()
 {
-	if(CurrentSkillInfo)
+	CanNextCombo = false;
+	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_WITH);
+	
+	SetComboAttackUI(SkillKeyIndex_Combo, false);
+	SkillKeyIndex_Combo = -1;
+	
+	if(IsComboInputOn)
 	{
-		CurrentSkillInfo->CanNextCombo = false;
-		if(CurrentSkillInfo->IsComboInputOn)
-		{
-			AttackStartComboState(CurrentSkillInfo);
-			if(CurrentSkillInfo->CurrentCombo <= CurrentSkillInfo->SkillData->SkillMaxCombo)
-				PlayerAnim->JumpToAttackMontageSection(CurrentSkillInfo->CurrentCombo);
-		}
+		AttackStartComboState();
+		PlayerAnim->JumpToAttackMontageSection(CurrentCombo);
 	}
 }
+
+void UPlayerAttackComp::SetComboAttackUI(int32 SkillKeyIndex, bool CanCombo)
+{
+	if(SkillKeyIndex <= 0) return;
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->SetSkillComboUI(SkillKeyIndex, CanCombo);
+}
+
