@@ -172,11 +172,6 @@ void AProjectDCharacter::BeginPlay()
 
 	// 초기 장비 착용
 	Gadget->InitEquip();
-
-	//상호작용 위젯 생성
-	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
-	NPCInteractGWidget->AddToViewport( 0 );
-
 }
 
 void AProjectDCharacter::Tick(float DeltaSeconds)
@@ -456,14 +451,14 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
-				NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
+				InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
 			}
 			// NPC 인터페이스 검사
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
-				NPCInteractGWidget->SetVisibility( ESlateVisibility::Visible );
+				InteractWidgetCreate();
 				SpecificActor = Cast<ANPCBase>( LookAtActor );
 				if (SpecificActor)
 				{
@@ -473,14 +468,14 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
-				NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
+				InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor: nullptr" ) );
 			}
 		}
 		else
 		{
 			LookAtActor = nullptr;
-			NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
+			InteractWidgetRemove();
 		}
 	}
 	else
@@ -763,4 +758,27 @@ void AProjectDCharacter::PerformTrace()
 
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
+}
+
+//--------------------- 상호작용 위젯 ------------------
+void AProjectDCharacter::InteractWidgetCreate()
+{
+	if(!NPCInteractGWidget)
+	{
+		//상호작용 위젯 생성
+		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
+	}else
+	{
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
+	}
+	
+}
+
+void AProjectDCharacter::InteractWidgetRemove()
+{
+	if(NPCInteractGWidget)
+	{
+		NPCInteractGWidget->RemoveFromParent();
+	}
 }
