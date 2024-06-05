@@ -169,7 +169,9 @@ void AProjectDCharacter::BeginPlay()
 	}
 
 	PlayerAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-
+	GetMesh()->SetRenderCustomDepth( true );
+	GetMesh()->CustomDepthStencilValue = 2;
+	
 	// 초기 장비 착용
 	Gadget->InitEquip();
 }
