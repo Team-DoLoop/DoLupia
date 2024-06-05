@@ -126,26 +126,38 @@ public:
 	
 	void PlayerExecuteAttack(int32 SkillKeyIndex);
 	void PlayerQuitSkill(int32 AttackIndex);
+	
+	bool CanUseSkill(FSkillInfo* _TempSkill);
+	void TurnToAttackWithState();
 
+	
+	// <---------------------- Melee Attack ---------------------->
+public:
 	void MeleeSkillAttackJudgementStart();
 	void MeleeSkillAttackJudgementEnd();
+
+	
+	// <---------------------- Ranged Attack ---------------------->
+public:
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
 
-	void ExecuteMeleeSkill();
-	void ExecuteRangedSkill();
-	
+
+	// <---------------------- Swap Skill ---------------------->
+public:
 	void ExecuteSwapSkill();
-	void ExecuteUltSkill();
+
 	
+	// <---------------------- Swap Skill ---------------------->
+public:
+	void ExecuteUltSkill();
+
+
+	// <---------------------- Skill CoolDown ---------------------->
+public:
 	void StartCooldown(FTimerHandle& CooldownTimerHandle, float _CoolTime);
 	float GetCooldownPercent(float RemainingTime, float _SkillCoolTime);
 	void SetSkillCoolDownUI();
-	
-	bool CanUseSkill(FSkillInfo* _TempSkill);
-
-	void TurnToAttackWithState();
-	
 	
 
 	// FORCEINLINE class TArray<class UPlayerSkillBase*> GetPlayerSkills() const {return PlayerSkills;}
@@ -194,7 +206,7 @@ private:
 	// <---------------------- Skill Data ---------------------->
 public:
 	FSkillInfo* GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
-	void SetSkillData(FPlayerSkillData* _SkillData);
+	void SetSkillData(FSkillInfo* _TempInfo);
 	
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 

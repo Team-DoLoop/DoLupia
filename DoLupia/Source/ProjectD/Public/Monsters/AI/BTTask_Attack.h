@@ -20,10 +20,6 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	bool IsAttacking = false;
 
-	UFUNCTION()
-	void OnAttackEndHandle();
-	float ct = 0;
-
 protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 

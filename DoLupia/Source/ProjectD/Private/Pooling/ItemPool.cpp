@@ -40,6 +40,7 @@ void UItemPool::CreateItem(int32 NumberOfCreate)
                 ItemReference->SetTextData( ItemData->TextData );
                 ItemReference->SetNumericData( ItemData->NumericData );
                 ItemReference->SetAssetData( ItemData->AssetData );
+                ItemReference->SetItemSkillColorData( ItemData->ItemSkillColor );
 
                 // 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
                 FItemNumericData& ItemNumericData = ItemReference->GetNumericData();

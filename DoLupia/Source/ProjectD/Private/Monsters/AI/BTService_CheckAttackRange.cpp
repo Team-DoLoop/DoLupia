@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Monsters/MonsterAIController.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Monsters/BossAnim.h"
 #include "Monsters/BossMonster.h"
 
 UBTService_CheckAttackRange::UBTService_CheckAttackRange()
@@ -29,16 +30,21 @@ void UBTService_CheckAttackRange::TickNode( UBehaviorTreeComponent& OwnerComp , 
 
 	auto Boss = Cast<ABossMonster>( OwnerComp.GetAIOwner()->GetPawn() );
 
-	bResult = (Target->GetDistanceTo( ControllingPawn ) < 1300.0f);
+	bResult = (Target->GetDistanceTo( ControllingPawn ) < 800.0f);
 
 	if (bResult) {
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool( AMonsterAIController::IsInAttackRangeKey , true );
-		return;
+		Boss->state = EBossState::Attack;
+
+		
 	}
 	else {
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool( AMonsterAIController::IsInAttackRangeKey , NULL );
-		Boss->state = EBossState::Move;
-		return;
+		if(Boss->anim->bIsAttackComplete)
+		{
+			Boss->state = EBossState::Move;
+
+		}
 	}
 }

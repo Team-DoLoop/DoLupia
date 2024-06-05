@@ -7,6 +7,7 @@
 #include "ItemDataStructs.generated.h"
 
 
+enum class EUseColor : uint8;
 
 UENUM(BlueprintType)
 enum class EItemQuality : uint8
@@ -51,18 +52,15 @@ struct FItemStatistics
 	UPROPERTY( EditAnywhere, Category = "Level")
 	int32 ItemLevel;
 
-	UPROPERTY( EditAnywhere , Category = "Level" )
-	int32 SkillPointMelee;
-
-	UPROPERTY( EditAnywhere , Category = "Level" )
-	int32 SkillPointRange;
-
 	UPROPERTY( EditAnywhere , Category = "Equipment" )
 	float DefenseIncreaseAmount;
 
 	UPROPERTY( EditAnywhere , Category = "Equipment" )
 	float DamageIncreaseAmount;
 
+	UPROPERTY( EditAnywhere, Category = "Item")
+	int32 ItemSkillID;
+	
 	UPROPERTY( EditAnywhere , Category = "Item" )
 	float HealthIncreaseAmount;
 
@@ -168,4 +166,6 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	ESkillAttribute SkillAttribute;
 
+	UPROPERTY(EditAnywhere, Category = "Item Data")
+	EUseColor ItemSkillColor;
 };
