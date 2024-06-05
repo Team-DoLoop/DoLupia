@@ -22,6 +22,12 @@ ANPCBase::ANPCBase()
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
 
+	// 초기화
+	AIlib = nullptr;
+	DialogNum = 0;
+	anim = nullptr;
+	gm = nullptr;
+
 	// Post Process depth 설정값
 	//GetMesh()->SetRenderCustomDepth( true );
 }
