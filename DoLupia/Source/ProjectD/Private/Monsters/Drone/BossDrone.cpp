@@ -36,8 +36,8 @@ void ABossDrone::BeginPlay()
 
 	Boss = Cast<ABossMonster>(UGameplayStatics::GetActorOfClass(GetWorld(), ABossMonster::StaticClass()));
 	Target = GetWorld()->GetFirstPlayerController()->GetCharacter();
-	LaserActor = GetWorld()->SpawnActor<ABossDroneLaser>(LaserFactory);
-	LaserActor->Initialize(this);
+	//LaserActor = GetWorld()->SpawnActor<ABossDroneLaser>(LaserFactory);
+	//LaserActor->Initialize(this);
 
 	
 	UE_LOG(LogTemp, Warning, TEXT("%f"), GetCharacterMovement()->MaxWalkSpeed );
@@ -114,8 +114,8 @@ void ABossDrone::FollowBoss(float DeltaTime)
 
 void ABossDrone::Detect() const
 {
-	if(LaserActor && Target)
-		LaserActor->Initialize(Target->GetActorLocation() - GetActorLocation(), 3000.f);
+	/*if(LaserActor && Target)
+		LaserActor->Initialize(Target->GetActorLocation() - GetActorLocation(), 3000.f);*/
 }
 
 void ABossDrone::Attack()

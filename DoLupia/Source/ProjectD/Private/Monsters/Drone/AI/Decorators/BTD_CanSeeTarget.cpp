@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Monsters/Drone/BossDrone.h"
 #include "Monsters/Drone/AI/BossDroneAIController.h"
 
 UBTD_CanSeeTarget::UBTD_CanSeeTarget()
@@ -48,7 +49,7 @@ bool UBTD_CanSeeTarget::CalculateRawConditionValue(UBehaviorTreeComponent& Owner
 		TraceTypeQuery1,
 		false,
 		IgnoreToActors,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		OutHits,
 		true
 	))
@@ -60,9 +61,11 @@ bool UBTD_CanSeeTarget::CalculateRawConditionValue(UBehaviorTreeComponent& Owner
 				return true;	
 			}
 
-			UE_LOG(LogTemp, Log, TEXT("Hit : %s"), *Hit.GetActor()->GetName());
+			//UE_LOG(LogTemp, Log, TEXT("Hit : %s"), *Hit.GetActor()->GetName());
 		}
 	}
+
+	BlackboardComponent->SetValueAsEnum(ABossDroneAIController::GetStateKey() , static_cast<uint8>(EDroneState::Following));
 
 	return false;
 }

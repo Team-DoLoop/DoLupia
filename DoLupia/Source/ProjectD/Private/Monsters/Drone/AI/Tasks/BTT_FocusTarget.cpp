@@ -24,7 +24,5 @@ Type UBTT_FocusTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	AIController->SetFocus(Character);
 
-	FinishLatentTask(OwnerComp, Succeeded);
-
 	return Succeeded;
 }

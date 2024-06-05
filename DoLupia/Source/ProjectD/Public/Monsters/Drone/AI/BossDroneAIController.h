@@ -22,6 +22,7 @@ public:
 
 	static const FName& GetAttackTargetKey() { return AttackTargetKey; }
 	static const FName& GetStateKey() { return StateKey; }
+	static const FName& GetPointOfInterestKey() { return PointOfInterestKey; }
 
 	virtual void Tick(float DeltaSeconds) override;
 

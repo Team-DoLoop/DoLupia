@@ -15,8 +15,5 @@ EBTNodeResult::Type UBTT_DefaultAttack::ExecuteTask(UBehaviorTreeComponent& Owne
 	else
 		return EBTNodeResult::Type::Failed;
 
-
-	FinishLatentTask(OwnerComp , EBTNodeResult::Succeeded);
-
-	return EBTNodeResult::Type::InProgress;
+	return EBTNodeResult::Type::Succeeded;
 }
