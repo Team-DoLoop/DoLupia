@@ -64,41 +64,24 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 	
 	if(!Player) return;
 	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
-	
+	PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
+
 	// We flag that the input is being pressed
 	FollowTime += GetWorld()->GetDeltaSeconds();
 	
 	// We look for the location in the world where the player has pressed the input
 	FHitResult Hit;
-	bool bHitSuccessful = false;
-	/*if (bIsTouch)
-	{
-		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
-	}
-	else
-	{*/
-	bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	//}
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 
 	// If we hit a surface, cache the location
 	if (bHitSuccessful)
 	{
 		CachedDestination = Hit.Location;
 	}
-	
-	// Move towards mouse pointer or touch
-	APawn* ControlledPawn = PlayerController->GetPawn();
 
-	// switch player state
-	// AProjectDCharacter* player = Cast<AProjectDCharacter>(GetCharacter());
+	FVector WorldDirection = (CachedDestination - Player->GetActorLocation()).GetSafeNormal();
+	Player->AddMovementInput(WorldDirection, 1.0, false);
 	
-	if (ControlledPawn != nullptr)
-	{
-		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
-		
-		if(Player != nullptr && PlayerFSM->GetCurrentState() != EPlayerState::MOVE) PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
-	}
 }
 
 void UPlayerMoveComp::OnSetDestinationReleased()
@@ -180,7 +163,6 @@ void UPlayerMoveComp::Die()
 		PlayerDieUI = CreateWidget<UPlayerDieWidget>(GetWorld(), PlayerDieUIFactory);
 		PlayerDieUI->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
 	}
-
 	
 }
 

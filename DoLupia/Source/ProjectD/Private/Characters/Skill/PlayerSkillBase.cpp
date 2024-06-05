@@ -18,6 +18,10 @@ void APlayerSkillBase::BeginPlay()
 	
 }
 
+void APlayerSkillBase::ActivateSkill()
+{
+}
+
 // Called every frame
 void APlayerSkillBase::Tick(float DeltaTime)
 {
