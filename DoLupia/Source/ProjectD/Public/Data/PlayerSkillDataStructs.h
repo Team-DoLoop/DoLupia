@@ -10,8 +10,8 @@ enum class ESkillType : uint8
 {
 	NONE UMETA(DisplayName = "None"),
 	AUTO UMETA(DisplayName = "Auto"),
-	MELEE UMETA(DisplayName = "Melee"),
-	RANGED UMETA(DisplayName = "Ranged"),
+	Q UMETA(DisplayName = "Q"),
+	W UMETA(DisplayName = "W"),
 	SWAP UMETA(DisplayName = "Swap"),
 	ULT UMETA(DisplayName = "Ult")
 };

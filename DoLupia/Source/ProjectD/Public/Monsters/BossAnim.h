@@ -42,16 +42,4 @@ public:
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation( float DeltaSeconds ) override;
-
-	UFUNCTION( BlueprintCallable )
-	void OnEndHitAttackAnimation();
-
-	UFUNCTION( BlueprintCallable )
-	void OnEndFireAttackAnimation();
-
-	UFUNCTION( BlueprintCallable )
-	void OnEndGrabAttackAnimation();
-
-	UPROPERTY()
-	class ABossMonster* Boss;
 };

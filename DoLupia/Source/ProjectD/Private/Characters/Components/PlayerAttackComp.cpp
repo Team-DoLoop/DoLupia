@@ -11,10 +11,12 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
+#include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Skill/PlayerSkillFlamethrower.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "GameFramework/GameSession.h"
+#include "Items/Sword/SwordBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Monsters/Monster.h"
@@ -213,7 +215,6 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	// MP 소모
 	PlayerStat->SetMP(CurrentMP);
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
-
 }
 
 void UPlayerAttackComp::CompleteSkill()
@@ -279,19 +280,11 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 		
 		SetSkillCoolDownUI();
 
-		// 공격 실행
-		switch (SkillKeyIndex)
+		if(SkillKeyIndex == 3)
 		{
-		// case 0 : Attack(); break;
-		//case 1 : ExecuteMeleeSkill(); break;
-		case 2 : ExecuteRangedSkill(); break;
-		case 3 : ExecuteSwapSkill(); break;
-		case 4 : ExecuteUltSkill(); break;
-		default: break;
+			ExecuteSwapSkill();
 		}
 	}
-
-	
 }
 
 void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
@@ -306,23 +299,19 @@ void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
 
 // <------------------------------ Skill Melee ------------------------------>
 
-void UPlayerAttackComp::ExecuteMeleeSkill()
-{
-	
-}
-
 // 애니메이션 노티파이로 호출하는 근거리 스킬 공격 생성 함수
 void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 {
 	TArray<AActor*> TargetActors;
-	FVector PlayerLoc = Player->GetActorLocation();
+	FVector SwordLoc = Player->GetGadgetComp()->GetSword()->GetActorLocation();
 	FVector PlayerVec = Player->GetActorForwardVector();
 	PlayerVec.Z = 0;
 	PlayerVec.Normalize();
-	FVector BoxPos = FVector((SkillRange.X * PlayerVec.X)+ PlayerLoc.X, (SkillRange.Y * PlayerVec.Y) + PlayerLoc.Y, PlayerLoc.Z);
-
+	FVector BoxPos = FVector((SkillRange.X * PlayerVec.X)+ SwordLoc.X, (SkillRange.Y * PlayerVec.Y) + SwordLoc.Y, SwordLoc.Z);
+	auto BoxRot = PlayerVec.Rotation().Quaternion();
+	
 	// 확인용 박스
-	DrawDebugBox(GetWorld(), BoxPos, SkillRange, FColor::Red, false, 3.0f);
+	DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
 
 	// 공격 판정
 	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, SkillRange,
@@ -350,31 +339,8 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 }
 
 
-// <------------------------------ Skill Ranged ------------------------------>
 
-void UPlayerAttackComp::ExecuteRangedSkill()
-{
-	switch (CurrentSkillColor)
-	{
-	case EUseColor::RED :
-		{
-			// 화염 방사기
-			Flamethrower->StartFiring();
-			break;
-		}
-	case EUseColor::YELLOW :
-		{
-			// 전기 쉴드
-			break;
-		}
-	case EUseColor::BLUE :
-		{
-			// 물 공격
-			break;
-		}
-	default: break;
-	}
-}
+// <------------------------------ Skill Ranged ------------------------------>
 
 void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 {
