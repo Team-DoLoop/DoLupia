@@ -8,6 +8,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/Quest/WidgetQuestNotification.h"
 
 // Sets default values
@@ -179,6 +181,18 @@ void AQuest_Base::GetQuestDetails()
 		CurrentObjectiveProgress.Add( Objective.ObjectiveID , 0 );
 		UE_LOG( LogTemp , Error , TEXT( "CurrentObjectiveProgress.Add : %s" ), *Objective.ObjectiveID );
 	}
+
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	/*
+	 FString NameString = QuestID.ToString();
+    int32 intQuestID =  FCString::Atoi(*NameString);
+	if(intQuestID == 102)
+	{
+		gm->PlayBGMForLevel( intQuestID );
+	}
+	*/
+	
 	
 }
 
