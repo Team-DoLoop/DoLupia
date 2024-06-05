@@ -21,10 +21,13 @@ protected:
 	virtual void ActivateSkill() override;
 	
 
+public:
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	
 private:
-	//UPROPERTY(EditAnywhere)
-	//class UNiagaraComponent* NiagaraComp;
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NiagaraComp;
 
-	//UPROPERTY(EditAnywhere)
-	//class USphereComponent* SphereComp;
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* SphereComp;
 };

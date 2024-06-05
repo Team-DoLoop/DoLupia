@@ -14,6 +14,7 @@
 #include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Skill/PlayerSkillFlamethrower.h"
+#include "Characters/Skill/PlayerSkillShield.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "GameFramework/GameSession.h"
 #include "Items/Sword/SwordBase.h"
@@ -348,6 +349,29 @@ void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 
 void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 {
+}
+
+
+// <------------------------------ Skill Shield ------------------------------>
+
+void UPlayerAttackComp::ShieldSkillStart()
+{
+	if(!PlayerShieldFactory) return;
+
+	FVector PlayerLoc = Player->GetActorLocation();
+	PlayerLoc.Z = PlayerLoc.Z + 30.0f;
+	PlayerShield = GetWorld()->SpawnActor<APlayerSkillShield>(PlayerShieldFactory, PlayerLoc, FRotator(0));
+	PlayerShield->SetActorScale3D(FVector(0.7f));
+	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	GetWorld()->GetTimerManager().SetTimer(ShieldTimerHandle, this, &UPlayerAttackComp::ShieldSkillEnd, ShieldTime, false);
+}
+
+void UPlayerAttackComp::ShieldSkillEnd()
+{
+	if(!PlayerShield) return;
+	
+	GetWorld()->GetTimerManager().ClearTimer(ShieldTimerHandle);
+	PlayerShield->Destroy();
 }
 
 

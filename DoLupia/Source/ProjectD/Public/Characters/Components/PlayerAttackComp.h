@@ -9,6 +9,7 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+class APlayerSkillShield;
 struct FPlayerSkillData;
 
 UENUM(BlueprintType)
@@ -142,13 +143,32 @@ public:
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
 
+	
+	// <---------------------- Shield Skill ---------------------->
+public:
+	void ShieldSkillStart();
+	void ShieldSkillEnd();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class APlayerSkillShield> PlayerShieldFactory;
+
+private :
+	FTimerHandle ShieldTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Shield")
+	float ShieldTime = 6.0f;
+
+	UPROPERTY()
+	APlayerSkillShield* PlayerShield;
+
+	
 
 	// <---------------------- Swap Skill ---------------------->
 public:
 	void ExecuteSwapSkill();
 
 	
-	// <---------------------- Swap Skill ---------------------->
+	// <---------------------- Ult Skill ---------------------->
 public:
 	void ExecuteUltSkill();
 

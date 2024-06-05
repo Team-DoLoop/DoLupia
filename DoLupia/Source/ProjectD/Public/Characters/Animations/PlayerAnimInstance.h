@@ -89,6 +89,9 @@ public:
 	void AnimNotify_AttackJudgmentEnd();
 
 	UFUNCTION()
+	void AnimNotify_AttackShieldStart();
+
+	UFUNCTION()
 	void AnimNotify_AttackWith();
 
 	

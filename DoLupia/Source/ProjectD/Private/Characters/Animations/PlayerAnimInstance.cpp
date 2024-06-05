@@ -123,6 +123,11 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 	//Sword->CollisionOff();
 }
 
+void UPlayerAnimInstance::AnimNotify_AttackShieldStart()
+{
+	Player->GetAttackComp()->ShieldSkillStart();
+}
+
 void UPlayerAnimInstance::AnimNotify_AttackWith()
 {
 	Player->GetAttackComp()->CompleteSkill();
