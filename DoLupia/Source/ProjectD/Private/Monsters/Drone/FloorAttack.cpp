@@ -25,7 +25,7 @@ AFloorAttack::AFloorAttack()
 	// 데칼 컴포넌트 초기화
 	DecalComp = CreateDefaultSubobject<UDecalComponent>( TEXT( "DecalComp" ) );
 	DecalComp->SetupAttachment( RootComponent );
-	DecalComp->DecalSize = FVector( AttackRadius , AttackRadius , AttackRadius ); 
+	DecalComp->DecalSize = FVector( 9.f , AttackRadius , AttackRadius ); 
 	DecalComp->SetRelativeRotation( FRotator( 90.0f , 0.0f , 0.0f ) );
 }
 
@@ -33,8 +33,6 @@ AFloorAttack::AFloorAttack()
 void AFloorAttack::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//DecalComp = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMaterial, FVector( AttackRadius , AttackRadius , AttackRadius ), GetActorLocation());
 
 	AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::NoCollision );
 	AttackSphere->OnComponentBeginOverlap.AddDynamic(this, &AFloorAttack::OnSphereOverlap);
@@ -45,8 +43,40 @@ void AFloorAttack::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if(OtherActor->IsA<AProjectDCharacter>())
 	{
-		AProjectDCharacter* Character = Cast<AProjectDCharacter>( OtherActor );
-		Character->TakeDamage( AttackDamage );
+		if (OtherActor && !IgnoerActors.Contains( OtherActor ))
+		{
+			AProjectDCharacter* Character = Cast<AProjectDCharacter>( OtherActor );
+			Character->TakeDamage( AttackDamage );
+
+			FVector Normal = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
+			if(abs(Normal.X) <= 0.05f)
+			{
+				if(Normal.X <= 0.05f)
+					Normal.X = 0.1f;
+				else
+					Normal.X = 0.1f;
+			}
+
+			if (abs( Normal.Y ) <= 0.05f)
+			{
+				if (Normal.Y <= 0.05f)
+					Normal.Y = 0.1f;
+				else
+					Normal.Y = 0.1f;
+			}
+
+			if (abs( Normal.Z ) <= 0.05f)
+			{
+				if (Normal.Z <= 0.05f)
+					Normal.Z = 0.1f;
+				else
+					Normal.Z = 0.1f;
+			}
+
+			Character->LaunchCharacter(FVector(500.f, 500.f, 500.f) * Normal , true, false);
+			IgnoerActors.Add(OtherActor);
+		}
 	}
 }
 
