@@ -130,3 +130,8 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 		}
 	}
 }
+
+void APlayerGameMode::ChangeNextLv(FName LevelName)
+{
+	UGameplayStatics::OpenLevel( this , LevelName );
+}

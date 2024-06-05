@@ -65,4 +65,9 @@ protected:
 
 private:
 	int32 LevelIdx;
+
+	/*---------- Level Open ----------*/
+public:
+	void ChangeNextLv( FName LevelName );
+
 };
