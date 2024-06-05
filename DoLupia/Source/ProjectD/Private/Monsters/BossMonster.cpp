@@ -141,24 +141,25 @@ void ABossMonster::AttackState()
 
 				
 			}
-			if (currentTime > attackDelayTime)
+			
+		}
+		if (currentTime > attackDelayTime)
+		{
+			// 스택이 비어있으면 스택을 초기화
+			if (AttackStack.Num() == 0)
 			{
-				// 스택이 비어있으면 스택을 초기화
-				if (AttackStack.Num() == 0)
-				{
-					InitializeAttackStack();
-				}
+				InitializeAttackStack();
+			}
 
-				// 스택에서 하나씩 꺼내어 공격 실행
-				if (AttackStack.Num() > 0)
-				{
-					anim->bAttackDelay = true;
-					UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Start Attack!!!!" ) );
-					void (ABossMonster:: * Attack)() = AttackStack.Pop();
-					(this->*Attack)();
-					currentTime = 0;
-					anim->bIsAttackComplete = false;
-				}
+			// 스택에서 하나씩 꺼내어 공격 실행
+			if (AttackStack.Num() > 0)
+			{
+				anim->bAttackDelay = true;
+				UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Start Attack!!!!" ) );
+				void (ABossMonster:: * Attack)() = AttackStack.Pop();
+				(this->*Attack)();
+				currentTime = 0;
+				anim->bIsAttackComplete = false;
 			}
 		}
 	}
