@@ -24,6 +24,9 @@ public:
 	EBossSkill animBossSkill;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EBossDelay animBossDelay;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	bool bAttackState = false;
 
 	UPROPERTY( EditDefaultsOnly , BlueprintReadWrite )
@@ -42,10 +45,11 @@ public:
 
 	UFUNCTION( BlueprintCallable )
 	void OnEndHitAttackAnimation();
-
 	UFUNCTION( BlueprintCallable )
 	void OnEndFireAttackAnimation();
-
 	UFUNCTION( BlueprintCallable )
 	void OnEndGrabAttackAnimation();
+
+	UPROPERTY()
+	class ABossMonster* Boss;
 };

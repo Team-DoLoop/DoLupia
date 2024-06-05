@@ -52,7 +52,6 @@ void AStrikeMonster::BeginPlay()
 	//근거리 몬스터 체력 설정
 	maxHP = 30;
 	currentHP = maxHP;
-	UE_LOG( LogTemp , Warning , TEXT( "%d" ) , currentHP );
 	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
 }
 
@@ -68,8 +67,7 @@ void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (OverlapPlayer->GetController())
 		{
 			//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "AStrikeMonster:: 단거리 공격 성공!!" ) );
-			OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE,10 );
-			
+			OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 10 );
 		}
 	}
 }

@@ -2,6 +2,7 @@
 
 
 #include "Monsters/BossAnim.h"
+#include "Monsters/BossMonster.h"
 
 void UBossAnim::NativeInitializeAnimation()
 {
@@ -10,9 +11,13 @@ void UBossAnim::NativeInitializeAnimation()
 	bIsAttackComplete = true;
 }
 
+
 void UBossAnim::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	Boss = Cast<ABossMonster>( UGameplayStatics::GetActorOfClass( GetWorld() , ABossMonster::StaticClass() ) );
+	
 }
 
 void UBossAnim::OnEndHitAttackAnimation()

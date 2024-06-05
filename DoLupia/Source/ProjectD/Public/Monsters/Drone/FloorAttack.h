@@ -53,8 +53,8 @@ protected:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Effects" )
 	UMaterialInterface* DecalMaterial;
 
-
-	TArray<AActor*> IgnoerActors;
+	UPROPERTY()
+	TSet<AActor*> IgnoerActors;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AttackDamage = 20;

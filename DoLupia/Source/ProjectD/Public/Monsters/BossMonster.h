@@ -28,6 +28,13 @@ enum class EBossSkill : uint8
 	GrabAndThrow,
 };
 
+UENUM( BlueprintType )
+enum class EBossDelay : uint8
+{
+	LookAround,
+	Launch ,
+};
+
 
 UCLASS()
 class PROJECTD_API ABossMonster : public ACharacter
@@ -57,6 +64,9 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EBossSkill skillState;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EBossDelay delayState;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
 	int32 BossMaxHP = 100;
@@ -88,6 +98,20 @@ public:
 
 	void InitializeAttackStack();
 
+	//-----------DELAY-------------
+	void LookAround();
+	void Launch();
+
+	TArray<void(ABossMonster::*)()> DelayFunctions;
+	TArray<void(ABossMonster::*)()> DelayStack;
+
+	void InitializeDelayStack();
+
+	//delay 애니메이션 한번만 호출되도록
+	bool IsDelaying = true;
+
+
+	//-------------------------------
 	void GetHitResult();
 
 
