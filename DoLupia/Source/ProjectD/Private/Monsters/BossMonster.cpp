@@ -48,6 +48,7 @@ void ABossMonster::BeginPlay()
 	IsAlive = true;
 	state = EBossState::Idle;
 	skillState = EBossSkill::Hit;
+	delayState = EBossDelay::LookAround;
 	anim = Cast<UBossAnim>( this->GetMesh()->GetAnimInstance() );
 	//OctopusBackpackComponent->OctopusBackpackBattleMode( true );
 	
@@ -119,29 +120,50 @@ void ABossMonster::AttackState()
 			this->SetActorRotation( currentRotation );
 
 			currentTime += GetWorld()->GetDeltaSeconds();
+
+			if (IsDelaying)
+			{
+
+				if (DelayStack.Num() == 0)
+				{
+					InitializeDelayStack();
+				}
+
+				// 스택에서 하나씩 꺼내어 delay 실행
+				if (DelayStack.Num() > 0)
+				{
+					IsDelaying = false;
+					void (ABossMonster:: * Delay)() = DelayStack.Pop();
+					(this->*Delay)();
+
+
+				}
+
+				
+			}
+			if (currentTime > attackDelayTime)
+			{
+				// 스택이 비어있으면 스택을 초기화
+				if (AttackStack.Num() == 0)
+				{
+					InitializeAttackStack();
+				}
+
+				// 스택에서 하나씩 꺼내어 공격 실행
+				if (AttackStack.Num() > 0)
+				{
+					anim->bAttackDelay = true;
+					UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Start Attack!!!!" ) );
+					void (ABossMonster:: * Attack)() = AttackStack.Pop();
+					(this->*Attack)();
+					currentTime = 0;
+					anim->bIsAttackComplete = false;
+				}
+			}
 		}
 	}
 
-	if (currentTime > attackDelayTime)
-	{
-		// 스택이 비어있으면 스택을 초기화
-		if (AttackStack.Num() == 0)
-		{
-			InitializeAttackStack();
-		}
 
-		// 스택에서 하나씩 꺼내어 공격 실행
-		if (AttackStack.Num() > 0)
-		{
-			anim->bAttackDelay = true;
-			UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Start Attack!!!!" ) );
-			void (ABossMonster:: * Attack)() = AttackStack.Pop();
-			(this->*Attack)();
-			currentTime = 0;
-			anim->bIsAttackComplete = false;
-		}
-	}
-	
 }
 
 void ABossMonster::DamageState()
@@ -168,7 +190,12 @@ void ABossMonster::FireAttack()
 	anim->animState = state;
 	anim->animBossSkill = skillState;
 
-	//OctopusBackpackComponent->AttackHand( , 0 );
+	//FHitResult outHit_;
+	//GetOwner()->GetWorld()->SweepSingleByObjectType( outHit_ , backPackOcto->GetActorLocation() , backPackOcto->tentaclesArr[handID].targetArrow->GetComponentLocation() ,
+	//												GetOwner()->GetActorQuat() , traceObjectTypesArr ,
+	//												FCollisionShape::MakeSphere( 20.f ) , traceParams_ );
+
+	//OctopusBackpackComponent->AttackHand( outHit_, 1 );
 }
 
 void ABossMonster::GrabAndThrowAttack()
@@ -190,6 +217,38 @@ void ABossMonster::InitializeAttackStack()
 		int32 Index = UKismetMathLibrary::RandomIntegerInRange( 0 , AttackFunctions.Num() - 1 );
 		AttackStack.Push( AttackFunctions[Index] );
 		AttackFunctions.RemoveAt( Index );
+	}
+}
+
+void ABossMonster::LookAround()
+{
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Delay - LookAround()" ) );
+
+	delayState = EBossDelay::LookAround;
+	anim->animState = state;
+	anim->animBossDelay = delayState;
+}
+
+void ABossMonster::Launch()
+{
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Delay - Launch()" ) );
+	//
+	delayState = EBossDelay::Launch;
+	anim->animState = state;
+	anim->animBossDelay = delayState;
+	LaunchCharacter( FVector(0,0,3000) , true , true);
+	//카메라 쉐이킹
+}
+
+void ABossMonster::InitializeDelayStack()
+{
+	DelayFunctions = { &ABossMonster::LookAround, &ABossMonster::Launch };
+
+	while (DelayFunctions.Num() > 0)
+	{
+		int32 Index = UKismetMathLibrary::RandomIntegerInRange( 0 , DelayFunctions.Num() - 1 );
+		DelayStack.Push( DelayFunctions[Index] );
+		DelayFunctions.RemoveAt( Index );
 	}
 }
 
