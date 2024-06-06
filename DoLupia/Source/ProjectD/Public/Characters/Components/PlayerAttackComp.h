@@ -9,6 +9,7 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+class APlayerSkillUlt;
 class APlayerSkillShield;
 struct FPlayerSkillData;
 
@@ -106,10 +107,12 @@ private:
 	class APlayerSkillFlamethrower* Flamethrower;
 	
 	int32 PlayerMaxMP;
-	
+
+	/*
 	float MPRegenRate;
 	float MPRegenTime;
 	float CurrentRegenTime;
+	*/
 
 	int32 CurrentMP = 0;
 
@@ -171,6 +174,24 @@ public:
 	// <---------------------- Ult Skill ---------------------->
 public:
 	void ExecuteUltSkill();
+	void ExecuteUltEnd();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class APlayerSkillUlt> PlayerUltFactory;
+
+private:
+	FTimerHandle UltTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Ult")
+	float UltTime = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Ult")
+	float MaxUltRange = 1000.0f; // MaxRange 값 설정
+
+	FVector SpawnLocation;
+
+	UPROPERTY()
+	APlayerSkillUlt* PlayerUlt;
 
 
 	// <---------------------- Skill CoolDown ---------------------->
@@ -227,6 +248,7 @@ private:
 public:
 	FSkillInfo* GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
 	void SetSkillData(FSkillInfo* _TempInfo);
+	void SetSpawnLocation();
 	
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 

@@ -15,6 +15,7 @@
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Skill/PlayerSkillFlamethrower.h"
 #include "Characters/Skill/PlayerSkillShield.h"
+#include "Characters/Skill/PlayerSkillUlt.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "GameFramework/GameSession.h"
 #include "Items/Sword/SwordBase.h"
@@ -64,9 +65,9 @@ void UPlayerAttackComp::BeginPlay()
 	if (PlayerStat)
 	{
 		PlayerMaxMP = PlayerStat->GetMaxMP();
-		MPRegenRate = PlayerStat->GetMPRegenRate();
-		MPRegenTime = PlayerStat->GetMPRegenTime();
-		CurrentRegenTime = 0;
+		//MPRegenRate = PlayerStat->GetMPRegenRate();
+		//MPRegenTime = PlayerStat->GetMPRegenTime();
+		//CurrentRegenTime = 0;
 	}
 
 	CantSkill.SetNum(5);
@@ -129,6 +130,7 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 	// MP Regen
 	if (!PlayerStat) return;
 	CurrentMP = PlayerStat->GetMP();
+	/*
 	if (CurrentMP < PlayerMaxMP)
 	{
 		CurrentRegenTime += DeltaTime;
@@ -140,7 +142,8 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 			CurrentRegenTime = 0;
 		}
 	}
-
+	*/
+	
 	// SkillCoolUI
 	SetSkillCoolDownUI();
 }
@@ -200,11 +203,13 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 {
 	if(SkillKeyIndex != 3) CurrentSkillInfo = _TempInfo;
 	SetSkillData(_TempInfo);
+	SetSpawnLocation();
 	
 	// UI
 	SkillKeyIndex_Combo = SkillKeyIndex;
 	
 	AttackStartComboState();
+	SetSpawnLocation();
 	
 	Player->TurnPlayer();
 	
@@ -214,6 +219,7 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
 	
 	// MP 소모
+	CurrentMP = PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost;
 	PlayerStat->SetMP(CurrentMP);
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 }
@@ -425,7 +431,19 @@ EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
 
 void UPlayerAttackComp::ExecuteUltSkill()
 {
-	// UE_LOG(LogTemp, Log, TEXT("Ult Skill : %s"),  *(CurrentSkillData[1]->SkillName));
+	if(!PlayerUltFactory) return;
+	
+	PlayerUlt = GetWorld()->SpawnActor<APlayerSkillUlt>(PlayerUltFactory, SpawnLocation, FRotator(0));
+	// PlayerUlt->SetDamage(SkillDamage);
+	GetWorld()->GetTimerManager().SetTimer(UltTimerHandle, this, &UPlayerAttackComp::ExecuteUltEnd, UltTime, false);
+}
+
+void UPlayerAttackComp::ExecuteUltEnd()
+{
+	if(!PlayerUlt) return;
+	
+	GetWorld()->GetTimerManager().ClearTimer(UltTimerHandle);
+	PlayerUlt->Destroy();
 }
 
 
@@ -475,6 +493,24 @@ void UPlayerAttackComp::SetSkillData(FSkillInfo* _TempInfo)
 	SkillLevel = _TempInfo->SkillLevel;
 }
 
+void UPlayerAttackComp::SetSpawnLocation()
+{
+	FHitResult Hit;
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	if (!bHitSuccessful) return;
+
+	FVector MouseLocation = Hit.Location;
+	FVector PlayerLoc = Player->GetActorLocation();
+	float Distance = FVector::Dist(PlayerLoc, MouseLocation);
+	
+	if (Distance > MaxUltRange)
+	{
+		FVector Direction = (MouseLocation - PlayerLoc).GetSafeNormal();
+		SpawnLocation = PlayerLoc + Direction * MaxUltRange;
+	}
+	else  SpawnLocation = MouseLocation;
+}
+
 
 // <---------------------- Skill Upgrade ---------------------->
 
@@ -514,7 +550,7 @@ float UPlayerAttackComp::GetCooldownPercent(float RemainingTime, float _SkillCoo
 void UPlayerAttackComp::SetSkillCoolDownUI()
 {
 	if(CurrentSkillColor == EUseColor::NONE) return;
-	for(int i = 0; i < 2; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		auto _TempInfo = GetSkillInfo(CurrentSkillColor, i + 1);
 		float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(_TempInfo->CooldownTimerHandle);
@@ -524,11 +560,10 @@ void UPlayerAttackComp::SetSkillCoolDownUI()
 
 bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 {
-	// MP가 있다면
-	CurrentMP = PlayerStat->GetMP() - _TempSkill->SkillData->SkillCost;
-
+	// 게이지가 100이라면
+	if(CurrentMP >= PlayerMaxMP) return false;
 	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
-	if (_TempSkill == AutoSkill || (CurrentSkillColor != EUseColor::NONE && CurrentMP >= 0))
+	if (_TempSkill == AutoSkill || (CurrentSkillColor != EUseColor::NONE))
 	{
 		return (!GetWorld()->GetTimerManager().IsTimerActive(_TempSkill->CooldownTimerHandle));
 		//	if(!_TempSkill->bIsOnCooldown) return true;

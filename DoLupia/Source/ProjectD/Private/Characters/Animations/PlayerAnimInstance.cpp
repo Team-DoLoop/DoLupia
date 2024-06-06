@@ -128,6 +128,11 @@ void UPlayerAnimInstance::AnimNotify_AttackShieldStart()
 	Player->GetAttackComp()->ShieldSkillStart();
 }
 
+void UPlayerAnimInstance::AnimNotify_AttackUltStart()
+{
+	Player->GetAttackComp()->ExecuteUltSkill();
+}
+
 void UPlayerAnimInstance::AnimNotify_AttackWith()
 {
 	Player->GetAttackComp()->CompleteSkill();

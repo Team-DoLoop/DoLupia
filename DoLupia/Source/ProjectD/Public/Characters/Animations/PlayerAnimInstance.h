@@ -92,6 +92,9 @@ public:
 	void AnimNotify_AttackShieldStart();
 
 	UFUNCTION()
+	void AnimNotify_AttackUltStart();
+
+	UFUNCTION()
 	void AnimNotify_AttackWith();
 
 	

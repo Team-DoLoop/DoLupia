@@ -13,7 +13,7 @@
 
 APlayerStat::APlayerStat()
 	:	MaxHP(1000),CurrentHP(MaxHP),
-		MaxMP(100), CurrentMP(MaxMP), MPRegenRate(5.0f), MPRegenTime(1.0f),
+		MaxMP(100), CurrentMP(0), MPRegenRate(5.0f), MPRegenTime(1.0f),
 		ATK(10.0f),
 		DEF(5.0f),
 		SkillLevelMelee(0),
@@ -30,7 +30,7 @@ void APlayerStat::initPlayerData()
 	CurrentHP = MaxHP;
 
 	MaxMP = 100;
-	CurrentMP = MaxMP;
+	CurrentMP = 0;
 	MPRegenRate = 5.0f;
 	MPRegenTime = 1.0f;
 
@@ -95,7 +95,6 @@ void APlayerStat::SetMP(int32 _MP)
 {
 	if (CurrentMP != _MP)
 	{
-
 		if (_MP > MaxHP)
 			_MP = MaxHP;
 
@@ -103,8 +102,8 @@ void APlayerStat::SetMP(int32 _MP)
 
 		if (AProjectDCharacter* Character = Cast<AProjectDCharacter>( GetOwner() ))
 			if (UPlayerBattleWidget* BattleWidget = Character->GetPlayerBattleWidget())
-				if (UPlayerMPWidget* HpWidget = BattleWidget->GetPlayerMPBar())
-					HpWidget->SetMPBar( CurrentMP , MaxMP );
+				if (UPlayerMPWidget* MpWidget = BattleWidget->GetPlayerMPBar())
+					MpWidget->SetMPBar( CurrentMP , MaxMP );
 	}
 }
 
