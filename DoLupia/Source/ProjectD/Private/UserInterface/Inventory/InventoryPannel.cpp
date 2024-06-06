@@ -26,7 +26,7 @@ void UInventoryPannel::NativeOnInitialized()
 
 		if(InventoryReference)
 		{
-			for (int i = 0; i < 100; ++i) // test
+			for (int i = 0; i < 24; ++i) // test
 				//for(int i = 0; i < InventoryReference->GetSlotCapacity(); ++i)
 			{
 				InventoryReference->AddInventoryContents(nullptr);
