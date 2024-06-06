@@ -31,7 +31,9 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 AProjectDPlayerController::AProjectDPlayerController()
 {
 	bShowMouseCursor = true;
+
 	DefaultMouseCursor = EMouseCursor::Default;
+	CurrentMouseCursor = EMouseCursor::Default;
 }
 
 

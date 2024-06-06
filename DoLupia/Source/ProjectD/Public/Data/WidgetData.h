@@ -11,7 +11,9 @@ enum class ViewPortPriority : uint8
 	Default,
 	Inventory,
 	Main,
-	Quest
+	Quest,
+	Mouse,
+	ViewPortPriorityEnd
 };
 
 /**

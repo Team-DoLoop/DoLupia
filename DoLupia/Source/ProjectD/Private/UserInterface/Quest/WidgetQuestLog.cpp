@@ -93,6 +93,7 @@ void UWidgetQuestLog::NativeDestruct()
 
     if (PlayerControllerD) {
         FInputModeGameOnly InputMode;
+        InputMode.SetConsumeCaptureMouseDown(false);
         PlayerControllerD->SetInputMode( InputMode );
     }
 }
