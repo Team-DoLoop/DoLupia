@@ -3,6 +3,7 @@
 
 #include "World/Trigger/TriggerBaseActor.h"
 #include "NiagaraComponent.h"
+#include "Characters/ProjectDCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,7 +44,12 @@ void ATriggerBaseActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	CallLevel( LvName );
+	auto player = Cast<AProjectDCharacter>(OtherActor);
+
+	if(player)
+	{
+		CallLevel( LvName );
+	}
 
 }
 
