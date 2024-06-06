@@ -121,6 +121,7 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 // <---------------------- Evasion ---------------------->
 void UPlayerMoveComp::Evasion()
 {
+	if(GetWorld()->GetTimerManager().IsTimerActive(CooldownTimerHandle)) return;
 	state = EPlayerState::EVASION;
 	if(!Player || !PlayerController) return;
 	if(!(PlayerFSM -> CanChangeState(state))) return;
