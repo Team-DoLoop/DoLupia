@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerBattleWidget.generated.h"
 
+class UPlayerEvasionSlotWidget;
 /**
  * 
  */
@@ -47,4 +48,15 @@ private:
 	
 public:
 	FORCEINLINE UPlayerSkillWidget* GetPlayerSkillUI() const {return PlayerSkillUI;}
+
+	
+	// <------------------ Evasion ------------------>
+private:
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	UPlayerEvasionSlotWidget* PlayerEvasionSlotUI;
+
+public:
+	FORCEINLINE UPlayerEvasionSlotWidget* GetPlayerEvasionSlotUI() const {return PlayerEvasionSlotUI;}
+
+	
 };

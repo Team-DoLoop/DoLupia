@@ -12,9 +12,11 @@
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
-#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/Event/PlayerDieWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/Skill/PlayerEvasionSlotWidget.h"
 
 class AProjectDCharacter;
 // Sets default values for this component's properties
@@ -54,6 +56,19 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	
+	float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CooldownTimerHandle);
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerEvasionSlotUI()->UpdateEvasionCoolTimeUI(GetCooldownPercent(RemainingTime, EvasionCoolTime) );
+}
+
+float UPlayerMoveComp::GetCooldownPercent(float RemainingTime, float _SkillCoolTime)
+{
+	if (_SkillCoolTime > 0)
+	{
+		return 1.0f - (RemainingTime / _SkillCoolTime);
+	}
+	
+	return 0.0f;
 }
 
 
@@ -129,7 +144,7 @@ void UPlayerMoveComp::Evasion()
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerEvasionAnimation();
 
-	
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, EvasionCoolTime, false);
 }
 
 void UPlayerMoveComp::EvasionEnd()
