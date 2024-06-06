@@ -5,8 +5,10 @@
 #include "NiagaraComponent.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "World/Trigger/TriggerType.h"
 
 // Sets default values
 ATriggerBaseActor::ATriggerBaseActor()
@@ -22,6 +24,10 @@ ATriggerBaseActor::ATriggerBaseActor()
 
 	gm = nullptr;
 	LvName = "";
+
+	// Default TriggerType
+	triggerType = EPlayerTriggerType::None;
+
 
 }
 
@@ -48,7 +54,13 @@ void ATriggerBaseActor::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	if(player)
 	{
-		CallLevel( LvName );
+		if (triggerType == EPlayerTriggerType::LevelTransition)
+		{
+			CallLevel( LvName );
+		} else if (triggerType == EPlayerTriggerType::CameraAngle)
+		{
+			ChangeCameraAngle( 90.0f );
+		}
 	}
 
 }
@@ -56,5 +68,16 @@ void ATriggerBaseActor::NotifyActorBeginOverlap(AActor* OtherActor)
 void ATriggerBaseActor::CallLevel(FName Lvname)
 {
 	gm->ChangeNextLv( Lvname );
+}
+
+void ATriggerBaseActor::ChangeCameraAngle(float angle)
+{
+	// Player Load
+	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+	// 플레이어 카메라 붐...
+	//FRotator NewRotation = player->CameraBoom->GetRelativeRotation();
+	//NewRotation.Yaw = angle;
+	//player->CameraBoom->SetRelativeRotation( NewRotation );
 }
 

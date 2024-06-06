@@ -48,6 +48,8 @@ void UDialogComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , int32 StartubgDialogID)
 {
+	if (!chkDialog) return;
+
 	CurrentNPC = InCurrentNPC;
 	CurrentNPCName = NPCID;
 
@@ -102,6 +104,7 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 		{
 			DialogueWidget->RemoveFromViewport();
 		}
+		chkDialog = false;
 		return;
 	}
 

@@ -70,4 +70,11 @@ private:
 public:
 	void ChangeNextLv( FName LevelName );
 
+	/*---------- CameraBoom Setting ----------*/
+public:
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float PlayerCameraboom = 0.0f;
+
+	void SetPlayerCameraboom(float camboom);
+
 };

@@ -58,18 +58,22 @@ void APlayerGameMode::BeginPlay()
 	if (CurLevelName == LevelNames[0])
 	{
 		LevelIdx = 0;
+		//PlayerCameraboom = 1000.0f;
 	}
 	else if (CurLevelName == LevelNames[1])
 	{
 		LevelIdx = 1;
+		PlayerCameraboom = 1000.0f;
 	}
 	else if (CurLevelName == LevelNames[2])
 	{
 		LevelIdx = 2;
+		PlayerCameraboom = 700.0f;
 	}
 	else if (CurLevelName == LevelNames[3])
 	{
 		LevelIdx = 3;
+		PlayerCameraboom = 1000.0f;
 	}
 	else
 	{
@@ -77,6 +81,7 @@ void APlayerGameMode::BeginPlay()
 	}
 
 	PlayBGMForLevel( LevelIdx );
+	SetPlayerCameraboom( PlayerCameraboom );
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -134,4 +139,13 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 void APlayerGameMode::ChangeNextLv(FName LevelName)
 {
 	UGameplayStatics::OpenLevel( this , LevelName );
+}
+
+void APlayerGameMode::SetPlayerCameraboom(float camboom)
+{
+	// Player Load
+	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
+	//player->CameraBoom->TargetArmLength = camboom ;
 }

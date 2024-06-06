@@ -79,7 +79,8 @@ private:
 
 	/*---------------------- Post Process Depth ------------------*/
 public:
-	int32 stencilDepth = 4 ;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "PostProcess" )
+	int32 stencilDepth = 0 ;
 
 private:
 	void ChangeNPCStatus( int32 depth );
