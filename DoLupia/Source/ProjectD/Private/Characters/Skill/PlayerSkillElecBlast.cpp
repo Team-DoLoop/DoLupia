@@ -22,7 +22,7 @@ void APlayerSkillElecBlast::BeginPlay()
 	FTimerHandle TimerHandle;
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
-	ActivateSkill(); // MidRangeDamage
+	ActivateSkill();
 }, 0.3f, false);
 }
 

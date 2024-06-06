@@ -15,6 +15,7 @@
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Skill/PlayerSkillElecBlast.h"
 #include "Characters/Skill/PlayerSkillFlamethrower.h"
+#include "Characters/Skill/PlayerSkillLightning.h"
 #include "Characters/Skill/PlayerSkillShield.h"
 #include "Characters/Skill/PlayerSkillUlt.h"
 #include "Data/PlayerSkillDataStructs.h"
@@ -361,16 +362,23 @@ void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 	
 	else if(SkillKeyIndex_Combo == 2)
 	{
-		
+		if(!PlayerLightningFactory) return;
+
+		PlayerLightning = GetWorld()->SpawnActor<APlayerSkillLightning>(PlayerLightningFactory, SpawnLocation, FRotator(0));
+		PlayerLightning->SetSkillDamage(SkillLevel * SkillDamage);
 	}
-	else return;
 }
 
 void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 {
 	if(SkillKeyIndex_Combo == 1)
 	{
-		PlayerElecBlast->Destroy();
+		if(PlayerElecBlast) PlayerElecBlast->Destroy();
+	}
+
+	else if(SkillKeyIndex_Combo == 2)
+	{
+		if(PlayerLightning) PlayerLightning->Destroy();
 	}
 }
 
@@ -579,7 +587,8 @@ void UPlayerAttackComp::SetSkillCoolDownUI()
 bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 {
 	// 게이지가 100이라면
-	if(CurrentMP >= PlayerMaxMP) return false;
+	if(_TempSkill != AutoSkill && CurrentMP >= PlayerMaxMP) return false;
+	
 	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
 	if (_TempSkill == AutoSkill || (CurrentSkillColor != EUseColor::NONE))
 	{

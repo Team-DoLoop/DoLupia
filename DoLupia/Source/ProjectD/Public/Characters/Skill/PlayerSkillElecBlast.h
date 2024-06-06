@@ -30,6 +30,6 @@ private:
 	int32 SkillDamage;
 	
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	float SkillRadius = 100.0f;
+	float SkillRadius = 300.0f;
 	
 };

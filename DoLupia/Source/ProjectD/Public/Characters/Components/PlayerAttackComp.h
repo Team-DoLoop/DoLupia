@@ -9,6 +9,7 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+class APlayerSkillLightning;
 class APlayerSkillUlt;
 class APlayerSkillShield;
 class APlayerSkillElecBlast;
@@ -147,8 +148,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerSkillElecBlast> PlayerElecBlastFactory;
 
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<class APlayerSkillShield> PlayerShieldFactory;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerSkillLightning> PlayerLightningFactory;
 	
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
@@ -156,6 +157,9 @@ public:
 private :
 	UPROPERTY()
 	APlayerSkillElecBlast* PlayerElecBlast;
+
+	UPROPERTY()
+	APlayerSkillLightning* PlayerLightning;
 	
 
 	
