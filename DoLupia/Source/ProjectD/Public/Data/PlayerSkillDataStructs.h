@@ -63,4 +63,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector SkillRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillMaxRange;
 };

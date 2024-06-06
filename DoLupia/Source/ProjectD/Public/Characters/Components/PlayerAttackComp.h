@@ -11,6 +11,7 @@
 
 class APlayerSkillUlt;
 class APlayerSkillShield;
+class APlayerSkillElecBlast;
 struct FPlayerSkillData;
 
 UENUM(BlueprintType)
@@ -143,8 +144,19 @@ public:
 	
 	// <---------------------- Ranged Attack ---------------------->
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerSkillElecBlast> PlayerElecBlastFactory;
+
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<class APlayerSkillShield> PlayerShieldFactory;
+	
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
+
+private :
+	UPROPERTY()
+	APlayerSkillElecBlast* PlayerElecBlast;
+	
 
 	
 	// <---------------------- Shield Skill ---------------------->
@@ -184,11 +196,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Ult")
 	float UltTime = 3.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Ult")
-	float MaxUltRange = 1000.0f; // MaxRange 값 설정
-
-	FVector SpawnLocation;
 
 	UPROPERTY()
 	APlayerSkillUlt* PlayerUlt;
@@ -277,8 +284,9 @@ private:
 	
 	FSkillInfo* SwapSkill;
 	FSkillInfo* UltSkill;
-
+	
 	int32 SkillCount = 4;							// 플레이어 스킬 개수
+	FVector SpawnLocation;
 	
 	UPROPERTY()
 	UAnimMontage* SkillMontage;
@@ -287,5 +295,7 @@ private:
 	int32 SkillDamage; //
 	FVector SkillRange; //
 	int32 SkillMaxCombo; //
+	float SkillMaxRange; //
+
 	 
 };

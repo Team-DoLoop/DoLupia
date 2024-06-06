@@ -13,6 +13,7 @@
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
+#include "Characters/Skill/PlayerSkillElecBlast.h"
 #include "Characters/Skill/PlayerSkillFlamethrower.h"
 #include "Characters/Skill/PlayerSkillShield.h"
 #include "Characters/Skill/PlayerSkillUlt.h"
@@ -209,7 +210,6 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	SkillKeyIndex_Combo = SkillKeyIndex;
 	
 	AttackStartComboState();
-	SetSpawnLocation();
 	
 	Player->TurnPlayer();
 	
@@ -351,10 +351,27 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 
 void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 {
+	if(SkillKeyIndex_Combo == 1)
+	{
+		if(!PlayerElecBlastFactory) return;
+
+		PlayerElecBlast = GetWorld()->SpawnActor<APlayerSkillElecBlast>(PlayerElecBlastFactory, SpawnLocation, FRotator(0));
+		PlayerElecBlast->SetSkillDamage(SkillLevel * SkillDamage);
+	}
+	
+	else if(SkillKeyIndex_Combo == 2)
+	{
+		
+	}
+	else return;
 }
 
 void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 {
+	if(SkillKeyIndex_Combo == 1)
+	{
+		PlayerElecBlast->Destroy();
+	}
 }
 
 
@@ -491,6 +508,7 @@ void UPlayerAttackComp::SetSkillData(FSkillInfo* _TempInfo)
 	SkillRange = _SkillData->SkillRange;
 	SkillMaxCombo = _SkillData->SkillMaxCombo;
 	SkillLevel = _TempInfo->SkillLevel;
+	SkillMaxRange = _SkillData->SkillMaxRange;
 }
 
 void UPlayerAttackComp::SetSpawnLocation()
@@ -503,10 +521,10 @@ void UPlayerAttackComp::SetSpawnLocation()
 	FVector PlayerLoc = Player->GetActorLocation();
 	float Distance = FVector::Dist(PlayerLoc, MouseLocation);
 	
-	if (Distance > MaxUltRange)
+	if (Distance > SkillMaxRange)
 	{
 		FVector Direction = (MouseLocation - PlayerLoc).GetSafeNormal();
-		SpawnLocation = PlayerLoc + Direction * MaxUltRange;
+		SpawnLocation = PlayerLoc + Direction * SkillMaxRange;
 	}
 	else  SpawnLocation = MouseLocation;
 }
