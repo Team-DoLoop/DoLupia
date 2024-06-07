@@ -40,6 +40,8 @@ public:
 	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	FString GetCurrentDialogText() const;
 
+	bool chkDialog = true;
+
 private:
 	UPROPERTY( EditAnywhere , Category = "Dialogue" )
 	UDataTable* DialogueDataTable;
