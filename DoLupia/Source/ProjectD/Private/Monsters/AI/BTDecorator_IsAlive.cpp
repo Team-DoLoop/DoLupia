@@ -26,6 +26,7 @@ bool UBTDecorator_IsAlive::CalculateRawConditionValue( UBehaviorTreeComponent& O
 
 	else {
 		bResult= false;
+		Boss->state = EBossState::Die;
 	}
 
 	return bResult;

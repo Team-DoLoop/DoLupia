@@ -39,17 +39,40 @@ public:
 	FEndFireAttackDelegate OnEndFireAttack;
 	FEndGrabAttackDelegate OnEndGrabAttack;
 
+	UPROPERTY()
+	class ABossMonster* Boss;
+
 	virtual void NativeInitializeAnimation() override;
 
 	virtual void NativeUpdateAnimation( float DeltaSeconds ) override;
 
+	//===============Delay_Launch=======================
+
+	UFUNCTION(BlueprintCallable)
+	void EndLaunchAnimation();
+
+	//===============Delay_LookAround=======================
+
+	UFUNCTION( BlueprintCallable )
+	void EndLookAroundAnimation();
+
+	bool bFinishDelay = false;
+	//===============Hit Attack=======================
+	UFUNCTION( BlueprintCallable )
+	void OnDoHitAttackAnimation();
+
 	UFUNCTION( BlueprintCallable )
 	void OnEndHitAttackAnimation();
+
+	//===============Fire Attack=======================
+	UFUNCTION(BlueprintCallable)
+	void OnDoFireAttackAnimation();
+
 	UFUNCTION( BlueprintCallable )
 	void OnEndFireAttackAnimation();
+
+	//===============Grab Attack=======================
 	UFUNCTION( BlueprintCallable )
 	void OnEndGrabAttackAnimation();
 
-	UPROPERTY()
-	class ABossMonster* Boss;
 };

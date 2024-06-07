@@ -52,12 +52,26 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/*UPROPERTY( EditAnywhere , BlueprintReadWrite, Category = "Components" )
-	UOctopusBackpackComponent* OctopusBackpackComponent;*/
+	//UPROPERTY( EditAnywhere , BlueprintReadWrite, Category = "Components" )
+	//UOctopusBackpackComponent* OctopusBackpackComponent;
 
+	UPROPERTY( EditAnywhere )
+	class USphereComponent* AttackCollision;
+
+	UFUNCTION()
+	void OnMyBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
+
+	UFUNCTION()
+	void OnLaunchBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor , UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult );
 
 	UPROPERTY( EditAnywhere,BlueprintReadWrite , Category = "Components" )
 	UChildActorComponent* ChildActorComponent;
+
+	UPROPERTY( EditDefaultsOnly , BlueprintReadOnly )
+	class UWidgetComponent* healthUI;
+
+	UPROPERTY()
+	class UBossHPWidget* BossHPWidget;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EBossState state;
@@ -109,10 +123,11 @@ public:
 
 	//delay 애니메이션 한번만 호출되도록
 	bool IsDelaying = true;
+	UPROPERTY( BlueprintReadWrite)
+	bool IsLaunching = false;
 
-
-	//-------------------------------
-	void GetHitResult();
+	//--------------Damage-----------------
+	void TakeDamage(int damage);
 
 
 };

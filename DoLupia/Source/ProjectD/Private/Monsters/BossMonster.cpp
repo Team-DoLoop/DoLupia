@@ -5,12 +5,14 @@
 #include "Monsters/MonsterAIController.h"
 #include "Engine/World.h"  // 필요
 #include "CollisionQueryParams.h"  // 필요
+#include "Characters/ProjectDCharacter.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/EngineTypes.h"  // 필요
 #include "Engine/Engine.h"  // GEngine
 #include "Engine/OverlapResult.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Monsters/BossAnim.h"
+#include "Monsters/BossHPWidget.h"
 #include "Monsters/MonsterHPWidget.h"
 #include "Monsters/AI/BTTask_Attack.h"
 
@@ -38,6 +40,14 @@ ABossMonster::ABossMonster()
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+
+	healthUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "healthUI" ) );
+	healthUI->SetupAttachment( RootComponent );
+	healthUI->SetCastShadow( false );
+
+	AttackCollision = CreateDefaultSubobject<USphereComponent>( TEXT( "AttackCollision" ) );
+	AttackCollision->SetGenerateOverlapEvents( true );
+	AttackCollision->SetupAttachment( GetMesh() );
 }
 
 
@@ -50,9 +60,24 @@ void ABossMonster::BeginPlay()
 	skillState = EBossSkill::Hit;
 	delayState = EBossDelay::LookAround;
 	anim = Cast<UBossAnim>( this->GetMesh()->GetAnimInstance() );
+
+	BossHPWidget = Cast<UBossHPWidget>( healthUI->GetWidget() );
+	if (UWorld* World = GetWorld())
+	{
+		if (BossHPWidget)
+		{
+			BossHPWidget->AddToViewport();
+		}
+	}
+
+
 	//OctopusBackpackComponent->OctopusBackpackBattleMode( true );
-	
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic( this , &ABossMonster::OnMyBeginOverlap );
+	AttackCollision->OnComponentBeginOverlap.AddDynamic( this , &ABossMonster::OnLaunchBeginOverlap );
+
 	InitializeAttackStack();
+
 
 	
 }
@@ -79,6 +104,37 @@ void ABossMonster::Tick( float DeltaTime )
 	case EBossState::Attack:	AttackState();		break;
 	case EBossState::Damage:	DamageState();		break;
 	case EBossState::Die:		DieState();			break;
+	}
+
+	
+}
+
+void ABossMonster::OnMyBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
+
+		if (OverlapPlayer->GetController())
+		{
+			OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 10 );
+		}
+	}
+}
+
+void ABossMonster::OnLaunchBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(IsLaunching)
+	{
+		if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
+
+			if (OverlapPlayer->GetController())
+			{
+				OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 10 );
+
+			}
+		}
+		
 	}
 }
 
@@ -119,32 +175,32 @@ void ABossMonster::AttackState()
 			currentRotation.Yaw = newRotation.Yaw;
 			this->SetActorRotation( currentRotation );
 
-			currentTime += GetWorld()->GetDeltaSeconds();
-
-			if (IsDelaying)
-			{
-
-				if (DelayStack.Num() == 0)
-				{
-					InitializeDelayStack();
-				}
-
-				// 스택에서 하나씩 꺼내어 delay 실행
-				if (DelayStack.Num() > 0)
-				{
-					IsDelaying = false;
-					void (ABossMonster:: * Delay)() = DelayStack.Pop();
-					(this->*Delay)();
+			//currentTime += GetWorld()->GetDeltaSeconds();
 
 
-				}
-
-				
-			}
-			
 		}
-		if (currentTime > attackDelayTime)
+		if (IsDelaying) // Delay 한번만 호출 되도록
 		{
+
+			if (DelayStack.Num() == 0)
+			{
+				InitializeDelayStack();
+			}
+
+			// 스택에서 하나씩 꺼내어 delay 실행
+			if (DelayStack.Num() > 0)
+			{
+				void (ABossMonster:: * Delay)() = DelayStack.Pop();
+				(this->*Delay)();
+				IsDelaying = false;
+				anim->bFinishDelay = false;
+			}
+
+
+		}
+		if(anim->bFinishDelay)
+		{
+			
 			// 스택이 비어있으면 스택을 초기화
 			if (AttackStack.Num() == 0)
 			{
@@ -160,8 +216,11 @@ void ABossMonster::AttackState()
 				(this->*Attack)();
 				currentTime = 0;
 				anim->bIsAttackComplete = false;
+				anim->bFinishDelay = false;
 			}
+			
 		}
+		
 	}
 
 
@@ -176,12 +235,15 @@ void ABossMonster::DieState()
 	IsAlive = false;
 }
 
+//=============================ATTACK=============================
+
 void ABossMonster::HitAttack()
 {
 	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::HitAttack()" ) );
 	skillState = EBossSkill::Hit;
 	anim->animState = state;
 	anim->animBossSkill = skillState;
+	
 }
 
 void ABossMonster::FireAttack()
@@ -220,7 +282,7 @@ void ABossMonster::InitializeAttackStack()
 		AttackFunctions.RemoveAt( Index );
 	}
 }
-
+//=============================DELAY=============================
 void ABossMonster::LookAround()
 {
 	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Delay - LookAround()" ) );
@@ -233,12 +295,13 @@ void ABossMonster::LookAround()
 void ABossMonster::Launch()
 {
 	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Delay - Launch()" ) );
-	//
+	
 	delayState = EBossDelay::Launch;
 	anim->animState = state;
 	anim->animBossDelay = delayState;
-	LaunchCharacter( FVector(0,0,3000) , true , true);
-	//카메라 쉐이킹
+	IsLaunching = true;
+
+	//카메라 쉐이킹 추가
 }
 
 void ABossMonster::InitializeDelayStack()
@@ -253,9 +316,31 @@ void ABossMonster::InitializeDelayStack()
 	}
 }
 
-void ABossMonster::GetHitResult()
+void ABossMonster::TakeDamage(int damage)
 {
+	BossCurrentHP -= damage;
+	BossHPWidget->SetHP( BossCurrentHP , BossMaxHP );
+	//monsterDamageWidget->SetDamage( damage );
+
+	if (BossCurrentHP < 0)
+	{
+		BossCurrentHP = 0;
+	}
+
+
+	else
+	{
+		state = EBossState::Die;
+	}
+
+	//monsterHPWidget->SetHP( currentHP , maxHP );
+
+
+	
+	
 }
+
+
 
 
 

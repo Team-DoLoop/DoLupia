@@ -30,7 +30,7 @@ void UBTService_CheckAttackRange::TickNode( UBehaviorTreeComponent& OwnerComp , 
 
 	auto Boss = Cast<ABossMonster>( OwnerComp.GetAIOwner()->GetPawn() );
 
-	bResult = (Target->GetDistanceTo( ControllingPawn ) < 800.0f);
+	bResult = (Target->GetDistanceTo( ControllingPawn ) < 1600.0f);
 
 	if (bResult) {
 

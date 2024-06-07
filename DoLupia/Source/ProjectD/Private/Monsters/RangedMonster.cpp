@@ -39,7 +39,7 @@ void ARangedMonster::BeginPlay()
 	//원거리 몬스터 기본 설정
 	maxHP = 30;
 	currentHP = maxHP;
-	this->AttackRange = 850;
+	this->AttackRange = 1200;
 	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 }

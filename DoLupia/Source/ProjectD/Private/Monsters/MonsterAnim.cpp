@@ -16,9 +16,9 @@ void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
 	auto monster = Cast<AMonster>( ownerPawn );
 
 
-	if(monster)
+	if(!monster->IsAlive)
 	{
-		//animState= monster->MonsterFSM->state;
+
 	}
 
 }
@@ -27,7 +27,7 @@ void UMonsterAnim::OnDoHitAttackAnimation()
 {
 	auto ownerPawn = TryGetPawnOwner();
 	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Overlap );
+	//monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Overlap );
 }
 
 void UMonsterAnim::OnEndHitAttackAnimation()
@@ -40,7 +40,7 @@ void UMonsterAnim::SetCollision()
 {
 	auto ownerPawn = TryGetPawnOwner();
 	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Ignore );
+	//monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Ignore );
 }
 
 void UMonsterAnim::OnDoStrikeDieAnimation()
