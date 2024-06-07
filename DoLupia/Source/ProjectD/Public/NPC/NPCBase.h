@@ -8,6 +8,7 @@
 #include "NPCBase.generated.h"
 
 
+class UNPCInteractionWidget;
 class UWidgetComponent;
 class UDialogComponent;
 class UQuestGiver;
@@ -32,6 +33,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
+	virtual void NotifyActorEndOverlap( AActor* OtherActor ) override;
 
 private:
 	UPROPERTY()
@@ -85,5 +87,12 @@ public:
 private:
 	void ChangeNPCStatus( int32 depth );
 
+	/*-------------------- Interaction Widget ---------------------*/
+public:
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
+
+	UPROPERTY()
+	UNPCInteractionWidget* NPCInteractGWidget;
 
 };

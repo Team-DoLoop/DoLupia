@@ -289,7 +289,7 @@ void AMonster::DestroyMonster()
 
 	//플레이어 델리게이트 사용 : 킬 목표
 	AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
-	FString EnumValueAsString = EnumToString( EMonsterType::Strike );
+	FString EnumValueAsString = EnumToString( MonsterType );
 	player->OnObjectiveIDCalled.Broadcast( EnumValueAsString , 1 );
 
 	//아이템 드랍
