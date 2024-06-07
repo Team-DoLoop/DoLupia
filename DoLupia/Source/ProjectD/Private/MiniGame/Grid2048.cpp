@@ -3,7 +3,9 @@
 
 #include "MiniGame/Grid2048.h"
 
+#include "Characters/ProjectDCharacter.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/MiniGame/MiniGameTile2048Widget.h"
 
 AGrid2048::AGrid2048()
@@ -142,6 +144,8 @@ void AGrid2048::SquashColumn( TArray<int32>& Column )
                 }
 
                 GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
+                auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+                player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
             }
 
 
