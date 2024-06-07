@@ -9,6 +9,10 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+class APlayerSkillLightning;
+class APlayerSkillUlt;
+class APlayerSkillShield;
+class APlayerSkillElecBlast;
 struct FPlayerSkillData;
 
 UENUM(BlueprintType)
@@ -105,10 +109,12 @@ private:
 	class APlayerSkillFlamethrower* Flamethrower;
 	
 	int32 PlayerMaxMP;
-	
+
+	/*
 	float MPRegenRate;
 	float MPRegenTime;
 	float CurrentRegenTime;
+	*/
 
 	int32 CurrentMP = 0;
 
@@ -139,18 +145,64 @@ public:
 	
 	// <---------------------- Ranged Attack ---------------------->
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerSkillElecBlast> PlayerElecBlastFactory;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerSkillLightning> PlayerLightningFactory;
+	
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
 
+private :
+	UPROPERTY()
+	APlayerSkillElecBlast* PlayerElecBlast;
+
+	UPROPERTY()
+	APlayerSkillLightning* PlayerLightning;
+	
+
+	
+	// <---------------------- Shield Skill ---------------------->
+public:
+	void ShieldSkillStart();
+	void ShieldSkillEnd();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class APlayerSkillShield> PlayerShieldFactory;
+
+private :
+	FTimerHandle ShieldTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Shield")
+	float ShieldTime = 6.0f;
+
+	UPROPERTY()
+	APlayerSkillShield* PlayerShield;
+
+	
 
 	// <---------------------- Swap Skill ---------------------->
 public:
 	void ExecuteSwapSkill();
 
 	
-	// <---------------------- Swap Skill ---------------------->
+	// <---------------------- Ult Skill ---------------------->
 public:
 	void ExecuteUltSkill();
+	void ExecuteUltEnd();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class APlayerSkillUlt> PlayerUltFactory;
+
+private:
+	FTimerHandle UltTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Ult")
+	float UltTime = 3.0f;
+
+	UPROPERTY()
+	APlayerSkillUlt* PlayerUlt;
 
 
 	// <---------------------- Skill CoolDown ---------------------->
@@ -207,6 +259,7 @@ private:
 public:
 	FSkillInfo* GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
 	void SetSkillData(FSkillInfo* _TempInfo);
+	void SetSpawnLocation();
 	
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 
@@ -235,8 +288,9 @@ private:
 	
 	FSkillInfo* SwapSkill;
 	FSkillInfo* UltSkill;
-
+	
 	int32 SkillCount = 4;							// 플레이어 스킬 개수
+	FVector SpawnLocation;
 	
 	UPROPERTY()
 	UAnimMontage* SkillMontage;
@@ -245,5 +299,7 @@ private:
 	int32 SkillDamage; //
 	FVector SkillRange; //
 	int32 SkillMaxCombo; //
+	float SkillMaxRange; //
+
 	 
 };

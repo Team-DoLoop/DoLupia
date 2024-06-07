@@ -223,7 +223,7 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
 
             // Set the text color and font size based on the value
             FSlateColor TextColor;
-            FSlateFontInfo FontInfo = CellTextBlock->Font;
+            FSlateFontInfo FontInfo = CellTextBlock->GetFont();
             FontInfo.Size = 24;  // Default size, adjust as needed
 
             switch (Value)

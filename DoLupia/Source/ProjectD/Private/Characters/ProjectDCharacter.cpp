@@ -134,6 +134,10 @@ void AProjectDCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerController = Cast<AProjectDPlayerController>(GetController());
+
+	PlayerController->SetIgnoreMoveInput( false );
+	PlayerController->SetIgnoreLookInput( false );
+
 	
 	HUD = Cast<ADoLupiaHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	
@@ -169,8 +173,6 @@ void AProjectDCharacter::BeginPlay()
 	}
 
 	PlayerAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	GetMesh()->SetRenderCustomDepth( true );
-	GetMesh()->CustomDepthStencilValue = 2;
 	
 	// 초기 장비 착용
 	Gadget->InitEquip();
@@ -250,7 +252,7 @@ void AProjectDCharacter::ToggleMenu()
 	else
 	{
 		FInputModeGameOnly InputMode;
-		InputMode.SetConsumeCaptureMouseDown(true);
+		InputMode.SetConsumeCaptureMouseDown(false);
 		PlayerController->SetInputMode( InputMode );
 	}
 
@@ -271,7 +273,12 @@ void AProjectDCharacter::HoveredQuickSlot()
 		if (PlayerController->GetMousePosition( MouseX , MouseY ))
 		{
 			// 사용자 정의 함수로 마우스 위치 업데이트
-			PlayerDefaultsWidget->QuickSlotMouseHoveredWidget( FVector2D( MouseX , MouseY ) );// ( FVector2D( MouseX , MouseY ) );
+			if(!PlayerDefaultsWidget->QuickSlotMouseHoveredWidget( FVector2D( MouseX , MouseY ) ) )
+			{
+				FInputModeGameOnly InputMode;
+				InputMode.SetConsumeCaptureMouseDown( false );
+				PlayerController->SetInputMode( InputMode );
+			}
 		}
 	}
 }

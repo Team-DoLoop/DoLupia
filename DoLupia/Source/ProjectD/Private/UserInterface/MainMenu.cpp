@@ -40,7 +40,7 @@ FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& 
 		{
 			PlayerCharacter->GetDoLupiaHUD()->HideMenu();
 			FInputModeGameOnly InputMode;
-			InputMode.SetConsumeCaptureMouseDown( true );
+			InputMode.SetConsumeCaptureMouseDown( false );
 			PC->SetInputMode(InputMode);
 		}
 

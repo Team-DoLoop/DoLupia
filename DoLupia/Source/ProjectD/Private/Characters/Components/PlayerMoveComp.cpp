@@ -12,9 +12,11 @@
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
-#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UserInterface/Event/PlayerDieWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/Skill/PlayerEvasionSlotWidget.h"
 
 class AProjectDCharacter;
 // Sets default values for this component's properties
@@ -54,6 +56,19 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	
+	float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(CooldownTimerHandle);
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerEvasionSlotUI()->UpdateEvasionCoolTimeUI(GetCooldownPercent(RemainingTime, EvasionCoolTime) );
+}
+
+float UPlayerMoveComp::GetCooldownPercent(float RemainingTime, float _SkillCoolTime)
+{
+	if (_SkillCoolTime > 0)
+	{
+		return 1.0f - (RemainingTime / _SkillCoolTime);
+	}
+	
+	return 0.0f;
 }
 
 
@@ -64,41 +79,24 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 	
 	if(!Player) return;
 	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
-	
+	PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
+
 	// We flag that the input is being pressed
 	FollowTime += GetWorld()->GetDeltaSeconds();
 	
 	// We look for the location in the world where the player has pressed the input
 	FHitResult Hit;
-	bool bHitSuccessful = false;
-	/*if (bIsTouch)
-	{
-		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
-	}
-	else
-	{*/
-	bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
-	//}
+	bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
 
 	// If we hit a surface, cache the location
 	if (bHitSuccessful)
 	{
 		CachedDestination = Hit.Location;
 	}
-	
-	// Move towards mouse pointer or touch
-	APawn* ControlledPawn = PlayerController->GetPawn();
 
-	// switch player state
-	// AProjectDCharacter* player = Cast<AProjectDCharacter>(GetCharacter());
+	FVector WorldDirection = (CachedDestination - Player->GetActorLocation()).GetSafeNormal();
+	Player->AddMovementInput(WorldDirection, 1.0, false);
 	
-	if (ControlledPawn != nullptr)
-	{
-		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
-		
-		if(Player != nullptr && PlayerFSM->GetCurrentState() != EPlayerState::MOVE) PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
-	}
 }
 
 void UPlayerMoveComp::OnSetDestinationReleased()
@@ -123,6 +121,7 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 // <---------------------- Evasion ---------------------->
 void UPlayerMoveComp::Evasion()
 {
+	if(GetWorld()->GetTimerManager().IsTimerActive(CooldownTimerHandle)) return;
 	state = EPlayerState::EVASION;
 	if(!Player || !PlayerController) return;
 	if(!(PlayerFSM -> CanChangeState(state))) return;
@@ -134,22 +133,19 @@ void UPlayerMoveComp::Evasion()
 	{
 		FVector EvasionVec = Hit.ImpactPoint - Player->GetActorLocation();
 		EvasionVec.Z = 0.0f;
-
-		if(EvasionVec.Size() > EvasionMaxRange)
-		{
-			EvasionVec = EvasionVec.GetSafeNormal() * EvasionMaxRange;
-		}
 		
 		FRotator TargetRot = UKismetMathLibrary::MakeRotFromXZ(EvasionVec, Player->GetActorUpVector());
 		FRotator PlayerRot = Player->GetActorRotation();
 		FRotator TempRot = FRotator(PlayerRot.Pitch, TargetRot.Yaw, PlayerRot.Roll);
 
-		Player->LaunchCharacter(EvasionVec.GetSafeNormal(), false, false);
+		Player->LaunchCharacter(EvasionVec.GetSafeNormal() * EvasionRange, false, false);
 		Player->SetActorRotation( TempRot );
 	}
 	
 	if(!PlayerAnim) return;
 	PlayerAnim->PlayerEvasionAnimation();
+
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, EvasionCoolTime, false);
 }
 
 void UPlayerMoveComp::EvasionEnd()
@@ -161,7 +157,7 @@ void UPlayerMoveComp::EvasionEnd()
 }
 
 
-// <---------------------- Die ---------------------->
+// <---------------------- Die ------------------>
 void UPlayerMoveComp::Die()
 {
 	if(!PlayerController || !PlayerFSM) return;
@@ -169,7 +165,6 @@ void UPlayerMoveComp::Die()
 	
 	state = EPlayerState::DIE;
 	if(!(PlayerFSM->CanChangeState(state))) return;
-	
 	PlayerFSM->ChangePlayerState(state);
 
 	if(!PlayerAnim) return;
@@ -180,7 +175,6 @@ void UPlayerMoveComp::Die()
 		PlayerDieUI = CreateWidget<UPlayerDieWidget>(GetWorld(), PlayerDieUIFactory);
 		PlayerDieUI->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
 	}
-
 	
 }
 

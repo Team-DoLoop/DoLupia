@@ -8,6 +8,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
+#include "UserInterface/Skill/PlayerEvasionSlotWidget.h"
 #include "UserInterface/Skill/PlayerSkillSlotWidget.h"
 
 void UPlayerSkillWidget::NativeOnInitialized()
@@ -45,11 +46,13 @@ void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillI
 	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillInfo->SkillData);
 }
 
+
+// <--------------------- Update Skill CoolDown --------------------->
+
 void UPlayerSkillWidget::UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime)
 {
 	PlayerSkillSlotArray[SlotIndex]->SetCoolTimeBar(CoolTime);
 }
-
 
 // <--------------------- Upgrade Skill Level --------------------->
 

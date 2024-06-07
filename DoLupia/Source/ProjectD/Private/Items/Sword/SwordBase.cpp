@@ -18,6 +18,7 @@ ASwordBase::ASwordBase()
 	// Collision
 	ItemStaticMesh->SetCollisionProfileName("NoCollision");
 
+	/*
 	collisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("collisionComp"));
 	collisionComp->SetupAttachment(RootComponent);
 	collisionComp->SetGenerateOverlapEvents(true);
@@ -25,6 +26,7 @@ ASwordBase::ASwordBase()
 	collisionComp->SetRelativeLocation(FVector(0,0, -50));
 	collisionComp->SetCapsuleHalfHeight(120.0f);
 	collisionComp->SetCapsuleRadius(80.0f);
+	*/
 }
 
 // Called when the game starts or when spawned

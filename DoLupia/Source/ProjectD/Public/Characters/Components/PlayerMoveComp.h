@@ -49,6 +49,7 @@ private:
 protected:
 
 public:
+	float GetCooldownPercent(float RemainingTime, float _SkillCoolTime);
 	
 	
 	
@@ -79,8 +80,14 @@ public:
 
 	// <---------------------- Evasion ---------------------->
 private:
-	float EvasionMaxRange = 5000.0f;
-	float EvasionRange = 1000.0f;
+	UPROPERTY(EditAnywhere)
+	float EvasionRange = 2500.0f;
+
+	UPROPERTY(EditAnywhere)
+	float EvasionCoolTime = 3.0f;
+	
+	float CooldownRemain;
+	FTimerHandle CooldownTimerHandle;
 
 protected:
 	

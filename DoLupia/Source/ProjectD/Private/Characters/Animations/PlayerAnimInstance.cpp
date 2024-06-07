@@ -123,6 +123,26 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 	//Sword->CollisionOff();
 }
 
+void UPlayerAnimInstance::AnimNotify_AttackRangedStart()
+{
+	Player->GetAttackComp()->RangedSkillAttackJudgementStart();
+}
+
+void UPlayerAnimInstance::AnimNotify_AttackRangedEnd()
+{
+	Player->GetAttackComp()->RangedSkillAttackJudgmentEnd();
+}
+
+void UPlayerAnimInstance::AnimNotify_AttackShieldStart()
+{
+	Player->GetAttackComp()->ShieldSkillStart();
+}
+
+void UPlayerAnimInstance::AnimNotify_AttackUltStart()
+{
+	Player->GetAttackComp()->ExecuteUltSkill();
+}
+
 void UPlayerAnimInstance::AnimNotify_AttackWith()
 {
 	Player->GetAttackComp()->CompleteSkill();

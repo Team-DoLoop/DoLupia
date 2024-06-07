@@ -7,6 +7,7 @@
 #include "Quest/QuestInteractionInterface.h"
 #include "NPCBase.generated.h"
 
+
 class UWidgetComponent;
 class UDialogComponent;
 class UQuestGiver;

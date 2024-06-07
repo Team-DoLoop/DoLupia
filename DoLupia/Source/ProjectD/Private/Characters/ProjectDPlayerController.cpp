@@ -31,7 +31,9 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 AProjectDPlayerController::AProjectDPlayerController()
 {
 	bShowMouseCursor = true;
+
 	DefaultMouseCursor = EMouseCursor::Default;
+	CurrentMouseCursor = EMouseCursor::Default;
 }
 
 
@@ -96,7 +98,7 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction( QuickSlot0Action , ETriggerEvent::Started , this , &AProjectDPlayerController::UseQuickSlot , 9 );
 
 		//QuestUI
-		EnhancedInputComponent->BindAction( QuestTabAction , ETriggerEvent::Started , this , &AProjectDPlayerController::QuestLogMenu );
+		//EnhancedInputComponent->BindAction( QuestTabAction , ETriggerEvent::Started , this , &AProjectDPlayerController::QuestLogMenu );
 
 		// Attack
 		EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &AProjectDPlayerController::Aim);

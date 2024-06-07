@@ -4,8 +4,6 @@
 #include "Monsters/Drone/FloorAttack/FA_Blast_Base.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "Components/DecalComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 #include "Pooling/SoundManager.h"
 
 AFA_Blast_Base::AFA_Blast_Base()
@@ -39,7 +37,7 @@ void AFA_Blast_Base::Trigger()
 
 void AFA_Blast_Base::PlayBlastSound()
 {
-	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave( SpawnSound, GetActorLocation(), 1.f);
+	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave( SpawnSound , EMonsterSound::MonsterSound1, GetActorLocation());
 }
 
 void AFA_Blast_Base::SpawnBlast()

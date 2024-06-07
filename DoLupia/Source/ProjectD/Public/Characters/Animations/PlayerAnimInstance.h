@@ -81,12 +81,28 @@ public:
 	void PlayAttackAnimation(class UAnimMontage* _Montage);
 
 	void PlayerLyingAnimation();
-	
+
+
+	// <---------------------- Skill ---------------------->
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentStart();
 
 	UFUNCTION()
 	void AnimNotify_AttackJudgmentEnd();
+
+	UFUNCTION()
+	void AnimNotify_AttackRangedStart();
+
+	UFUNCTION()
+	void AnimNotify_AttackRangedEnd();
+
+	UFUNCTION()
+	void AnimNotify_AttackShieldStart();
+
+	
+
+	UFUNCTION()
+	void AnimNotify_AttackUltStart();
 
 	UFUNCTION()
 	void AnimNotify_AttackWith();
