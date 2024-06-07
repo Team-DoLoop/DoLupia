@@ -389,6 +389,12 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType Effec
 
 void AProjectDCharacter::TakeDamage(float Damage)
 {
+	if(!PlayerFSM) return;
+
+	if(PlayerFSM->GetCurrentShieldState() == EPlayerShieldState::SHIELD)
+	{
+		Damage = Damage / 2;
+	}
 	// 데미지 받기
 	int32 HP = PlayerStat->GetHP() - Damage;
 	

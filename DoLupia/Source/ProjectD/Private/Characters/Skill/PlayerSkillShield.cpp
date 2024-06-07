@@ -12,13 +12,13 @@
 APlayerSkillShield::APlayerSkillShield()
 {
 	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
-	NiagaraComp->SetWorldScale3D(FVector(1.0f));
+	NiagaraComp->SetWorldScale3D(FVector(0.7f));
 	SetRootComponent(NiagaraComp);
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	SphereComp->SetGenerateOverlapEvents ( true );
 	SphereComp->SetupAttachment(RootComponent );
-	SphereComp->SetSphereRadius(90.0f);
+	SphereComp->SetSphereRadius(180.0f);
 }
 
 void APlayerSkillShield::ActivateSkill()

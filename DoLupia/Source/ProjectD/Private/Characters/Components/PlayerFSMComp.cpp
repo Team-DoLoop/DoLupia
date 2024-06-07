@@ -115,6 +115,18 @@ void UPlayerFSMComp::ChangePlayerWeaponState(EPlayerWeaponState _weaponState)
 }
 
 
+// <--------------------- Shield State --------------------->
+
+void UPlayerFSMComp::ChangePlayerShieldState(EPlayerShieldState _shieldState)
+{
+	if(CurrentShieldState == _shieldState) return;
+	
+	CurrentShieldState = _shieldState;
+	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentShieldState : %s"), *UEnum::GetValueAsName(CurrentShieldState).ToString());
+}
+
+
+
 // <--------------------- Move --------------------->
 
 void UPlayerFSMComp::TickMove()

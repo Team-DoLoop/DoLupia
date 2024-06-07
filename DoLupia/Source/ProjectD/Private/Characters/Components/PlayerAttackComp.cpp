@@ -402,20 +402,24 @@ void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 
 void UPlayerAttackComp::ShieldSkillStart()
 {
-	if(!PlayerShieldFactory) return;
+	if(!PlayerShieldFactory || !PlayerFSMComp) return;
 
+	const FName& ShieldSocket( TEXT( "ShieldSocket" ) );
 	FVector PlayerLoc = Player->GetActorLocation();
 	PlayerLoc.Z = PlayerLoc.Z + 30.0f;
 	PlayerShield = GetWorld()->SpawnActor<APlayerSkillShield>(PlayerShieldFactory, PlayerLoc, FRotator(0));
-	PlayerShield->SetActorScale3D(FVector(0.3f));
-	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+	// PlayerShield->SetActorScale3D(FVector(0.4f));
+	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
 	GetWorld()->GetTimerManager().SetTimer(ShieldTimerHandle, this, &UPlayerAttackComp::ShieldSkillEnd, ShieldTime, false);
+
+	PlayerFSMComp->ChangePlayerShieldState(EPlayerShieldState::SHIELD);
 }
 
 void UPlayerAttackComp::ShieldSkillEnd()
 {
-	if(!PlayerShield) return;
+	if(!PlayerShield || !PlayerFSMComp) return;
 	
+	PlayerFSMComp->ChangePlayerShieldState(EPlayerShieldState::NONE);
 	GetWorld()->GetTimerManager().ClearTimer(ShieldTimerHandle);
 	PlayerShield->Destroy();
 }
