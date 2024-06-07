@@ -61,6 +61,8 @@ void AGrid2048::NewGrid()
 
 void AGrid2048::NewNumber()
 {
+    if(isSucess) return;
+
 	if(IsFull())
 	{   
         for (int32 i = 0; i < 4; ++i)
@@ -131,7 +133,7 @@ void AGrid2048::SquashColumn( TArray<int32>& Column )
             Column[src] = 0;
 
 
-            if (Column[dest] == 256)
+            if (Column[dest] == 128)
             {
                 for (int32 i = 0; i < 4; ++i)
                 {
@@ -145,17 +147,31 @@ void AGrid2048::SquashColumn( TArray<int32>& Column )
 
                 GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
                 auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
-                player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
+
+                // 게임 클리어 시, 퀘스트 완료
+            	player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
+                isSucess = true;
+                break;
             }
 
 
         }
+
+        if (isSucess) break;
+
+
         if (Column[dest] == 0)
         {
             Swap( Column[dest] , Column[src] );
             ++dest;
         }
     }
+
+    if (isSucess)
+    {
+        ClearGridWidgets();
+    }
+
 }
 
 void AGrid2048::FlipVertically()
@@ -253,4 +269,16 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
             CellTextBlock->SetText( FText::FromString( TEXT( "" ) ) );
         }
     }
+}
+
+void AGrid2048::ClearGridWidgets()
+{
+    for (UMiniGameTile2048Widget* Widget : GridWidget)
+    {
+        if (Widget)
+        {
+            Widget->RemoveFromParent();
+        }
+    }
+    GridWidget.Empty();
 }
