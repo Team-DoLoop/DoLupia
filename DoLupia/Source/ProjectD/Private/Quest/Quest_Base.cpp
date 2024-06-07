@@ -184,15 +184,11 @@ void AQuest_Base::GetQuestDetails()
 
 	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
-	/*
-	 FString NameString = QuestID.ToString();
+
+	//Gamemode 에 QuestID 전송
+	FString NameString = QuestID.ToString();
     int32 intQuestID =  FCString::Atoi(*NameString);
-	if(intQuestID == 102)
-	{
-		gm->PlayBGMForLevel( intQuestID );
-	}
-	*/
-	
+	gm->SetQuestID( intQuestID );
 	
 }
 

@@ -77,4 +77,17 @@ public:
 
 	void SetPlayerCameraboom(float camboom);
 
+	/*---------- QuestID Recieve ----------*/
+public:
+	// Getter 함수 선언
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	int32 GetQuestID() const;
+
+	// Setter 함수 선언
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetQuestID( int32 NewQuestID );
+
+private:
+	int32 questID = -1;
+
 };

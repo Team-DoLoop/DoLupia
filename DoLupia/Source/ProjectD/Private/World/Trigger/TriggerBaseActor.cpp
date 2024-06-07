@@ -76,8 +76,8 @@ void ATriggerBaseActor::ChangeCameraAngle(float angle)
 	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
 	// 플레이어 카메라 붐...
-	//FRotator NewRotation = player->CameraBoom->GetRelativeRotation();
-	//NewRotation.Yaw = angle;
-	//player->CameraBoom->SetRelativeRotation( NewRotation );
+	FRotator NewRotation = player->CameraBoom->GetRelativeRotation();
+	NewRotation.Yaw = angle;
+	player->CameraBoom->SetRelativeRotation( NewRotation );
 }
 
