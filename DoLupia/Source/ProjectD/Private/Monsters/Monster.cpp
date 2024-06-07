@@ -11,6 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Items/Sword/SwordBase.h"
 #include "Monsters/MonsterAnim.h"
 #include "Monsters/MonsterDamageWidget.h"
@@ -53,6 +54,11 @@ void AMonster::BeginPlay()
 	ai = Cast<AAIController>( this->GetController() );
 
 	IsAlive = true;
+
+	float RandomSpeed = FMath::RandRange( 100.0f , 600.0f );
+
+	// MaxWalkSpeed 설정
+	GetCharacterMovement()->MaxWalkSpeed = RandomSpeed;
 
 	if (!ItemSpawner)
 	{
@@ -194,7 +200,6 @@ void AMonster::DamageState()
 	if (currentTime > 1.5)
 	{
 		MonsterFSM->state = EMonsterState::Move;
-		GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 		currentTime = 0;
 		anim->animState = MonsterFSM->state;
 	}
@@ -247,7 +252,12 @@ void AMonster::OnMyTakeDamage( int32 damage )
 
 	currentHP -= damage;
 	myDamage = damage;
-	monsterDamageWidget->SetDamage( damage );
+	
+	if (monsterDamageWidget)
+	{
+		monsterDamageWidget->SetDamage( damage );
+
+	}
 
 	if (currentHP < 0)
 	{
@@ -267,11 +277,11 @@ void AMonster::OnMyTakeDamage( int32 damage )
 	//monsterHPWidget->SetHP( currentHP , maxHP );
 	
 
-	// 충돌체 끄기
-	GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 	ai->StopMovement();
 
 }
+
+
 
 void AMonster::DestroyMonster()
 {
