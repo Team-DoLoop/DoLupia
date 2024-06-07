@@ -239,7 +239,7 @@ void UPlayerAttackComp::CompleteSkill()
 	if (!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
 	{
 		FInputModeGameOnly InputMode;
-		InputMode.SetConsumeCaptureMouseDown(true);
+		InputMode.SetConsumeCaptureMouseDown(false);
 		PlayerController->SetInputMode(InputMode);
 	}
 }

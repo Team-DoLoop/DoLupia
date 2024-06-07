@@ -139,7 +139,7 @@ void UQuickSlotWidget::UnHorveredQuickSlotUI( bool IsInputModeGameOnly )
 		if (PlayerController)
 		{
 			FInputModeGameOnly InputMode;
-			InputMode.SetConsumeCaptureMouseDown(true);
+			InputMode.SetConsumeCaptureMouseDown(false);
 			PlayerController->SetInputMode( InputMode );
 		}
 	}

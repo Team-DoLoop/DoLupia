@@ -20,13 +20,13 @@ void UGameSystemCallWidget::DisplayMessage( const FText& Message )
 
 void UGameSystemCallWidget::DisplayMessage( const FText& Message , USoundCue* SoundCue )
 {
-    ASoundManager::GetInstance( GetWorld() )->PlaySoundCue2D( SoundCue );
+    ASoundManager::GetInstance( GetWorld() )->PlaySoundCue2D( SoundCue, EPlayerSound::PlayerSound9 );
     DisplayMessage( Message );
 }
 
 void UGameSystemCallWidget::DisplayMessage( const FText& Message , USoundWave* SoundWave )
 {
-    ASoundManager::GetInstance(GetWorld())->PlaySoundWave2D( SoundWave );
+    ASoundManager::GetInstance(GetWorld())->PlaySoundWave2D( SoundWave, EPlayerSound::PlayerSound9);
     DisplayMessage( Message );
 }
 

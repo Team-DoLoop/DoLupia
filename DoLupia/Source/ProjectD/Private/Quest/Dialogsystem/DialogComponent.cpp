@@ -100,6 +100,7 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 		//이게 npc의 마지막 대화이면 Dialog 위젯을 닫는다.
 		if (DialogueWidget)
 		{
+			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 			DialogueWidget->RemoveFromViewport();
 		}
 		return;
@@ -177,6 +178,8 @@ void UDialogComponent::ShowDialogWidget()
 	if(DialogueWidget && !DialogueWidget->IsInViewport() )
 	{
 		DialogueWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+		DialogueWidget->SetVisibility( ESlateVisibility::Visible );
+		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor( true );
 	}
 }
 

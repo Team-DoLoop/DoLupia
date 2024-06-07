@@ -21,6 +21,9 @@ class UPlayerBattleWidget;
 class ATestNPCCharacter;
 class ANPCBase;
 
+enum class EAttackType : uint8;
+enum class EEffectAttackType : uint8;
+
 USTRUCT()
 struct FInteractionData
 {
