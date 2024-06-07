@@ -117,8 +117,9 @@ void UWidgetQuestRewards::NativeDestruct()
     if (PlayerController)
     {
         auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
-        //FInputModeGameOnly InputMode;
-        FInputModeGameAndUI InputMode;
+
+        FInputModeGameOnly InputMode;
+        InputMode.SetConsumeCaptureMouseDown(false);
         PlayerControllerD->SetInputMode( InputMode );
     }
 }

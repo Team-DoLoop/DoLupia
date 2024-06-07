@@ -32,6 +32,7 @@ ADroppedItem::ADroppedItem()
 void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh) const
 {
 	ItemMesh->SetStaticMesh( StaticMesh );
+	SphereComponent->SetSphereRadius( FMath::Max3( ItemMesh->Bounds.BoxExtent.X , ItemMesh->Bounds.BoxExtent.Y , ItemMesh->Bounds.BoxExtent.Z ) * 2.0 );
 }
 
 // Called when the game starts or when spawned
@@ -96,26 +97,10 @@ void ADroppedItem::OnTouchesGroundBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 void ADroppedItem::PerformBoxTrace()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "GetActorLocation() -> %f" ) , GetActorLocation().X );
-	UE_LOG( LogTemp , Warning , TEXT( "GetActorLocation() -> %f" ) , GetActorLocation().Y );
-	UE_LOG( LogTemp , Warning , TEXT( "GetActorLocation() -> %f" ) , GetActorLocation().Z );
-
 	const FVector& Start = GetActorLocation() + FVector(0.f, 0.f, ItemMesh->Bounds.BoxExtent.Z);
 	const FVector& End = Start - FVector( 0.f , 0.f , ItemMesh->Bounds.BoxExtent.Z);
 	const FVector& HalfSize = ItemMesh->Bounds.BoxExtent * 0.52f;
 	const FRotator& Orientation = GetActorRotation();
-
-	UE_LOG( LogTemp , Warning , TEXT( "Start X: %f" ) , Start.X );
-	UE_LOG( LogTemp , Warning , TEXT( "Start Y: %f" ) , Start.Y );
-	UE_LOG( LogTemp , Warning , TEXT( "Start Z: %f" ) , Start.Z );
-
-	UE_LOG( LogTemp , Warning , TEXT( "Half X: %f" ) , HalfSize.X );
-	UE_LOG( LogTemp , Warning , TEXT( "Half Y: %f" ) , HalfSize.Y );
-	UE_LOG( LogTemp , Warning , TEXT( "Half Z: %f" ) , HalfSize.Z );
-
-	UE_LOG( LogTemp , Warning , TEXT( "End X: %f" ) , End.X );
-	UE_LOG( LogTemp , Warning , TEXT( "End Y: %f" ) , End.Y );
-	UE_LOG( LogTemp , Warning , TEXT( "End Z: %f" ) , End.Z );
 
 	// 바닥과 충돌을 감지하기 위해 월드 스태틱 오브젝트 타입을 추가
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
@@ -148,8 +133,8 @@ void ADroppedItem::PerformBoxTrace()
 	}
 	else
 	{
-		//ItemMesh->SetRelativeRotation( ItemMesh->GetRelativeRotation() +  SpinRotator);
-		
+		const FRotator& CurrentRotatar = ItemMesh->GetRelativeRotation();
+		ItemMesh->SetRelativeRotation( FMath::RInterpTo( CurrentRotatar , CurrentRotatar + SpinRotator , GetWorld()->GetTimeSeconds() , 0.1f ) );
 	}
 
 }
