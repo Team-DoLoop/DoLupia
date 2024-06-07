@@ -6,6 +6,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"
 
 APlayerSkillShield::APlayerSkillShield()
@@ -23,18 +24,21 @@ APlayerSkillShield::APlayerSkillShield()
 void APlayerSkillShield::ActivateSkill()
 {
 	Super::ActivateSkill();
-
 	
 }
 
 void APlayerSkillShield::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-
-	AMonster* MonsterActor = Cast<AMonster>(OtherActor);
-	if(MonsterActor)
+	
+	int32 RandNum = FMath::RandRange(1,6); // 1~5까지
+	if(AMonster* MonsterActor = Cast<AMonster>(OtherActor))
 	{
-		int32 RandNum = FMath::RandRange(1,6); // 1~5까지
 		MonsterActor->OnMyTakeDamage(RandNum);
+	}
+
+	else if(ABossMonster* BossMonster = Cast<ABossMonster>(OtherActor))
+	{
+		BossMonster->TakeDamage(RandNum);
 	}
 }

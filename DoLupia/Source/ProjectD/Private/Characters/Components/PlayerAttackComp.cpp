@@ -23,6 +23,7 @@
 #include "Items/Sword/SwordBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
@@ -223,6 +224,9 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	CurrentMP = PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost;
 	PlayerStat->SetMP(CurrentMP);
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
+
+	IgnoreAttackActors.Empty();
+	IgnoreAttackActors.AddUnique(Player);
 }
 
 void UPlayerAttackComp::CompleteSkill()
@@ -337,6 +341,17 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *Monster->GetName(), SkillDamage * SkillLevel);
 			}
 		}
+		
+		else if (ABossMonster* BossMonster = Cast<ABossMonster>(TargetActor))
+		{
+			// IgnoreAttackActors에 없다면
+			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(BossMonster)))
+			{
+				IgnoreAttackActors.AddUnique(BossMonster);
+				BossMonster->TakeDamage(SkillDamage * SkillLevel);
+				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *BossMonster->GetName(), SkillDamage * SkillLevel);
+			}
+		}
 	}
 }
 
@@ -392,8 +407,8 @@ void UPlayerAttackComp::ShieldSkillStart()
 	FVector PlayerLoc = Player->GetActorLocation();
 	PlayerLoc.Z = PlayerLoc.Z + 30.0f;
 	PlayerShield = GetWorld()->SpawnActor<APlayerSkillShield>(PlayerShieldFactory, PlayerLoc, FRotator(0));
-	PlayerShield->SetActorScale3D(FVector(0.7f));
-	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	PlayerShield->SetActorScale3D(FVector(0.3f));
+	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 	GetWorld()->GetTimerManager().SetTimer(ShieldTimerHandle, this, &UPlayerAttackComp::ShieldSkillEnd, ShieldTime, false);
 }
 
