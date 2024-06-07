@@ -43,7 +43,6 @@
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
-#include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -460,14 +459,14 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
-				InteractWidgetRemove();
+				//InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
 			}
 			// NPC 인터페이스 검사
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
 				LookAtActor = TraceHit.GetActor();
-				InteractWidgetCreate();
+				//InteractWidgetCreate();
 				SpecificActor = Cast<ANPCBase>( LookAtActor );
 				if (SpecificActor)
 				{
@@ -477,20 +476,19 @@ void AProjectDCharacter::PerformInteractionCheck()
 			else
 			{
 				LookAtActor = nullptr;
-				InteractWidgetRemove();
+				//InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor: nullptr" ) );
 			}
 		}
 		else
 		{
 			LookAtActor = nullptr;
-			InteractWidgetRemove();
+			//InteractWidgetRemove();
 		}
 	}
 	else
 	{
 		LookAtActor = nullptr;
-		NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
 	}
 	NoInteractionableFound();
 }
@@ -767,27 +765,4 @@ void AProjectDCharacter::PerformTrace()
 
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
-}
-
-//--------------------- 상호작용 위젯 ------------------
-void AProjectDCharacter::InteractWidgetCreate()
-{
-	if(!NPCInteractGWidget)
-	{
-		//상호작용 위젯 생성
-		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
-		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
-	}else
-	{
-		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind ));
-	}
-	
-}
-
-void AProjectDCharacter::InteractWidgetRemove()
-{
-	if(NPCInteractGWidget)
-	{
-		NPCInteractGWidget->RemoveFromParent();
-	}
 }
