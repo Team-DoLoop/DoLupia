@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "LocationMarker.generated.h"
 
+class UNiagaraComponent;
 class UBoxComponent;
 class UMeshComponent;
 
@@ -31,13 +32,13 @@ public:
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
 
-	UPROPERTY( VisibleAnywhere )
-	UMeshComponent* MeshComponent;
-
 	UPROPERTY()
 	FText LocationName;
 
 	UPROPERTY(EditAnywhere)
 	FString ObjectiveID;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	UNiagaraComponent* locationVFX;
 
 };
