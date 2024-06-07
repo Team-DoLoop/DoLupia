@@ -33,6 +33,8 @@ public:
 	UPROPERTY( EditDefaultsOnly )
 	class USkeletalMeshComponent* meshComp;
 
+	UPROPERTY( EditDefaultsOnly )
+	class UStaticMeshComponent* floormeshComp;
 
 protected:
 	// Called when the game starts or when spawned

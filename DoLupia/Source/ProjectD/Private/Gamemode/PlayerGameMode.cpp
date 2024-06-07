@@ -78,6 +78,7 @@ void APlayerGameMode::BeginPlay()
 	else
 	{
 		LevelIdx = -1;
+		PlayerCameraboom = 850.0f;
 	}
 
 	PlayBGMForLevel( LevelIdx );
