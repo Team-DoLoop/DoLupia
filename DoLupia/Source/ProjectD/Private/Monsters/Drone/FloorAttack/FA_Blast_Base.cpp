@@ -10,6 +10,13 @@ AFA_Blast_Base::AFA_Blast_Base()
 {
 }
 
+void AFA_Blast_Base::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	CurrentTime += DeltaSeconds;
+}
+
 void AFA_Blast_Base::BeginPlay()
 {
 	Super::BeginPlay();
@@ -49,11 +56,17 @@ void AFA_Blast_Base::SpawnBlast()
 		Handle, 
 		FTimerDelegate::CreateLambda([this]()
 		{
-			Destroy();
+				Test_Destoty();//Destroy();
 		}),
-		1.f, false
+		DestroyTime , false
 	);
 
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SpawnEffect, GetActorLocation());
 	// 이벤트 추가
+}
+
+void AFA_Blast_Base::Test_Destoty()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AFA_Blast_Base::Test_Destoty()"));
+	Destroy();
 }
