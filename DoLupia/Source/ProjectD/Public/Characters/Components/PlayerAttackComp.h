@@ -121,6 +121,9 @@ private:
 	UPROPERTY()
 	TArray<AActor*> IgnoreAttackActors;
 
+	UPROPERTY(EditAnywhere)
+	USoundWave* CantAttackSoundWave;
+
 protected:
 	void Attack(FSkillInfo* _TempInfo);
 	void FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex);
@@ -185,6 +188,10 @@ private :
 	// <---------------------- Swap Skill ---------------------->
 public:
 	void ExecuteSwapSkill();
+
+private:
+	UPROPERTY(EditAnywhere)
+	USoundWave* SwapSoundWave;
 
 	
 	// <---------------------- Ult Skill ---------------------->

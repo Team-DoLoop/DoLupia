@@ -25,6 +25,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
@@ -290,46 +291,52 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	
 	FSkillInfo* TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
 	EPlayerState CurrentState = PlayerFSMComp->GetCurrentState();
-	
-	if(TempSkill && CanUseSkill(TempSkill))
+
+	if(!(TempSkill && CanUseSkill(TempSkill)))
 	{
-		// 첫 공격이라면 바로 실행
-		if (CurrentState != EPlayerState::ATTACK_ONLY && CurrentState != EPlayerState::ATTACK_WITH)
+		if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 		{
-			UE_LOG(LogTemp, Log, TEXT("First Combo Attack"));
+			if(CantAttackSoundWave) SoundManager->PlaySoundWave( CantAttackSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), 0.1f );
+		}
+		return;
+	}
+
+	// 첫 공격이라면 바로 실행
+	if (CurrentState != EPlayerState::ATTACK_ONLY && CurrentState != EPlayerState::ATTACK_WITH)
+	{
+		UE_LOG(LogTemp, Log, TEXT("First Combo Attack"));
+		FirstAttack(TempSkill, SkillKeyIndex);
+	}
+	// 첫 공격이 아니고 콤보 구간이라면
+	else if(CurrentState == EPlayerState::ATTACK_ONLY)
+	{
+		UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
+		// 만약 콤보 가능 구간이라면
+		if(CanNextCombo)
+		{
+			// 콤보 공격 입력
+			UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
+
+			// 그 중 첫번째 눌린 경우에는 Press UI 뜨게
+			if(!IsComboInputOn) SetComboAttackUI(SkillKeyIndex, true);
+			IsComboInputOn = true;
+		}
+	}
+	// 콤보 공격 구간은 아니지만 공격 중이라면
+	else if(CurrentState == EPlayerState::ATTACK_WITH)
+	{
+		// 원래 스킬은 사용 못하고
+		if(CurrentSkillInfo != TempSkill)
+		{
 			FirstAttack(TempSkill, SkillKeyIndex);
 		}
-		// 첫 공격이 아니고 콤보 구간이라면
-		else if(CurrentState == EPlayerState::ATTACK_ONLY)
-		{
-			UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
-			// 만약 콤보 가능 구간이라면
-			if(CanNextCombo)
-			{
-				// 콤보 공격 입력
-				UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
-
-				// 그 중 첫번째 눌린 경우에는 Press UI 뜨게
-				if(!IsComboInputOn) SetComboAttackUI(SkillKeyIndex, true);
-				IsComboInputOn = true;
-			}
-		}
-		// 콤보 공격 구간은 아니지만 공격 중이라면
-		else if(CurrentState == EPlayerState::ATTACK_WITH)
-		{
-			// 원래 스킬은 사용 못하고
-			if(CurrentSkillInfo != TempSkill)
-			{
-				FirstAttack(TempSkill, SkillKeyIndex);
-			}
-		}
+	}
 		
-		SetSkillCoolDownUI();
+	SetSkillCoolDownUI();
 
-		if(SkillKeyIndex == 3)
-		{
-			ExecuteSwapSkill();
-		}
+	if(SkillKeyIndex == 3)
+	{
+		ExecuteSwapSkill();
 	}
 }
 
@@ -475,6 +482,11 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	{
 		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
 		SetSkillUI(i, _TempSkill);
+	}
+
+	if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
+	{
+		if(SwapSoundWave) SoundManager->PlaySoundWave( SwapSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), 0.1f );
 	}
 	
 	SetSkillCoolDownUI();
