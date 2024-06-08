@@ -103,6 +103,7 @@ void UPlayerSkillSlotWidget::SetSkillComboSlotUI(bool IsCanCombo)
 	if(IsCanCombo)
 	{
 		CanComboImage->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(ComboClickAnimation);
 	}
 	else
 	{

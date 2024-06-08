@@ -207,11 +207,11 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	if(SkillKeyIndex != 3) CurrentSkillInfo = _TempInfo;
 	SetSkillData(_TempInfo);
 	SetSpawnLocation();
+	AttackStartComboState();
 	
 	// UI
 	SkillKeyIndex_Combo = SkillKeyIndex;
-	
-	AttackStartComboState();
+	SetComboAttackUI(SkillKeyIndex, true);
 	
 	Player->TurnPlayer();
 	
@@ -277,6 +277,9 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 			{
 				// 콤보 공격 입력
 				UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
+
+				// 그 중 첫번째 눌린 경우에는 Press UI 뜨게
+				if(!IsComboInputOn) SetComboAttackUI(SkillKeyIndex, true);
 				IsComboInputOn = true;
 			}
 		}
@@ -637,7 +640,7 @@ void UPlayerAttackComp::AttackStartComboState()
 	CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, SkillMaxCombo);
 
 	// Combo UI
-	SetComboAttackUI(SkillKeyIndex_Combo, true);
+	// SetComboAttackUI(SkillKeyIndex_Combo, true);
 }
 
 void UPlayerAttackComp::AttackEndComboState()
