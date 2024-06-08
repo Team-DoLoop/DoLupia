@@ -167,6 +167,8 @@ void AProjectDPlayerController::TestAnyFunction()
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
 	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
+
+	ControlledCharacter->TakeEffectAttackHit(EEffectAttackType::ELECTRIC);
 }
 
 	

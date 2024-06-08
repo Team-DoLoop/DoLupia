@@ -92,6 +92,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class APlayerStat* PlayerStat;
 
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* NiagaraComp;
+
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
@@ -107,6 +110,7 @@ public:
 	FORCEINLINE APlayerStat* GetPlayerStat() const { return PlayerStat; }
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
+	FORCEINLINE class UNiagaraComponent* GetNiagaraComp()const {return NiagaraComp;}
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
@@ -196,13 +200,37 @@ protected:
 	UFUNCTION()
 	void CameraTimelineEnd();
 
-	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 	void TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage);
 	virtual void TakeDamage( float Damage ) override;
-
 	void LyingEnd();
+
+	
+
+	// <---------------------- Effect Attack Hit ---------------------->
+private:
+	FTimerHandle EffectTimerHandle;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Effect Attack Hit")
+	float FireEffectTime = 5.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect Attack Hit")
+	float ElecEffectTime = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Character | Effect Attack Hit")
+	class UNiagaraSystem* FireNS;
+
+	UPROPERTY(EditAnywhere, Category = "Character | Effect Attack Hit")
+	class UNiagaraSystem* ElecNS;
+
+	UNiagaraSystem* EffectNS;
+
+public:
+
+	void TakeEffectAttackHit(EEffectAttackType EffectAttackType);
+	void TakeEffectAttackHitEnd();
+
 
 	
 	// <---------------------- Interaction ---------------------->

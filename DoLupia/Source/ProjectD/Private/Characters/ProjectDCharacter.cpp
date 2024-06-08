@@ -20,6 +20,8 @@
 #include "Items/Sword/LongSword.h"
 
 // engine
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "AI/NavigationSystemBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -37,7 +39,9 @@
 #include "Components/MeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/World.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Items/Cape/PlayerCape.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Monsters/Drone/FloorAttack/FA_Blast_Base.h"
 #include "NPC/NPCBase.h"
@@ -90,6 +94,11 @@ AProjectDCharacter::AProjectDCharacter()
 
 	// Collision
 	GetCapsuleComponent()->SetCollisionProfileName( TEXT( "Player" ) );
+
+	// NiagaraComp
+	NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComp"));
+	NiagaraComp->SetWorldScale3D(FVector(1.0f));
+	NiagaraComp -> SetupAttachment(GetMesh());
 
 	// Cape
 	const FName& CapeSocket( TEXT( "CapeSocket" ) );
@@ -363,26 +372,24 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType Effec
 {
 	if(!PlayerFSM) return;
 	
+	// 일반 공격인지 눕는 공격인지 확인
 	if(AttackType == EAttackType::BASIC)
 	{
 		if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
 		
 	}
 
-	if(AttackType == EAttackType::LYING)
+	else if(AttackType == EAttackType::LYING)
 	{
 		if(!(PlayerFSM->CanLyingState(EPlayerState::LYING))) return;
 		PlayerFSM->ChangePlayerState( EPlayerState::LYING );
+		
 		if(!PlayerAnim) return;
 		PlayerAnim->PlayerLyingAnimation();
 	}
-	
-	switch (EffectAttackType)
-	{
-	case EEffectAttackType::NONE : break;
-	case EEffectAttackType::BLEED : break;
-	case EEffectAttackType::POISON : break;
-	}
+
+	// 상태 이상 맞았을 때 플레이어 효과 및 AI 적용
+	if(EffectAttackType != EEffectAttackType::NONE) TakeEffectAttackHit(EffectAttackType);
 
 	TakeDamage(Damage);
 }
@@ -415,6 +422,47 @@ void AProjectDCharacter::TakeDamage(float Damage)
 		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
 	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
+}
+
+void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
+{
+	// AI 적용
+	// auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	// gm->ApplyAITxtB();
+
+	// 이펙트 적용
+	float EffectTime = 0.0f;
+	
+	if(EffectAttackType == EEffectAttackType::FIRE)
+	{
+		EffectTime = FireEffectTime;
+		if(FireNS) EffectNS = FireNS;
+	}
+
+	else if(EffectAttackType == EEffectAttackType::ELECTRIC)
+	{
+		EffectTime = ElecEffectTime;
+		if(ElecNS) EffectNS = ElecNS;
+	}
+
+	if(GetWorld()->GetTimerManager().IsTimerActive(EffectTimerHandle)) TakeEffectAttackHitEnd();
+	GetWorld()->GetTimerManager().SetTimer(EffectTimerHandle, this, &AProjectDCharacter::TakeEffectAttackHitEnd, EffectTime, false);
+
+	// Effect 적용
+	if(EffectNS) NiagaraComp->SetAsset(EffectNS);
+
+	UE_LOG(LogTemp, Log, TEXT("TakeEffectAttackHit"));
+}
+
+void AProjectDCharacter::TakeEffectAttackHitEnd()
+{
+	GetWorld()->GetTimerManager().ClearTimer(EffectTimerHandle);
+	
+	// 맵 원래대로 돌아오기
+
+	// 플레이어 Material 원래대로 돌아오기
+	NiagaraComp->SetAsset(nullptr);
+	UE_LOG(LogTemp, Log, TEXT("TakeEffectAttackHitEnd"));
 }
 
 void AProjectDCharacter::LyingEnd()
