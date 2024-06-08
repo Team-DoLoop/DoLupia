@@ -230,6 +230,11 @@ private:
 	// <---------------------- Skill Use - Quest, Weapon ---------------------->
 public:
 	void SetSkillUseState(bool bCanUse, ESkillOpenType OpenType);
+	void SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock);
+
+private:
+	bool IsUnLockSwap = false;
+	bool IsUnLockUlt = false;
 
 
 	// <---------------------- Skill Upgrade ---------------------->

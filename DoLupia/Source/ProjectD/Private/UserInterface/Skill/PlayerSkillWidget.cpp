@@ -70,3 +70,10 @@ void UPlayerSkillWidget::SetSkillComboUI(int32 SkillKeyIndex, bool IsCanCombo)
 	PlayerSkillSlotArray[SkillKeyIndex-1]->SetSkillComboSlotUI(IsCanCombo);
 }
 
+// <--------------------- Skill Lock --------------------->
+
+void UPlayerSkillWidget::SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock)
+{
+	PlayerSkillSlotArray[SkillKeyIndex-1]->SetSkillLockImage(IsSkillLock);
+}
+

@@ -41,6 +41,9 @@ private:
 	UPROPERTY()
 	TArray<class UImage*> SkillLevelSlot;
 
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UImage* SkillLockImage;
+
 	
 public:
 	void InitUI();
@@ -52,6 +55,8 @@ public:
 	void UpgradeSkillSlotLevelUI(int32 SkillLevel);
 	
 	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
+
+	void SetSkillLockImage(bool IsSkillLock);
 
 
 
