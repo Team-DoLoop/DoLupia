@@ -105,6 +105,7 @@ void UPlayerMoveComp::OnSetDestinationReleased()
 	
 	if(!Player) return;
 	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
+	PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
 	
 	// If it was a short press
 	// if (FollowTime <= ShortPressThreshold)

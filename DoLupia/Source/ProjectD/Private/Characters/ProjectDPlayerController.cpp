@@ -312,6 +312,7 @@ void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)
 {
 	if(!ControlledCharacter) return;
 
+	StopMovement();
 	ControlledCharacter->attackComp->PlayerExecuteAttack(SkillIndex);
 }
 

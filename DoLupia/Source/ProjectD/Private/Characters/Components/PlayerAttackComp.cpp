@@ -589,7 +589,7 @@ float UPlayerAttackComp::GetCooldownPercent(float RemainingTime, float _SkillCoo
 {
 	if (_SkillCoolTime > 0)
 	{
-		return 1.0f - (RemainingTime / _SkillCoolTime);
+		return (RemainingTime / _SkillCoolTime);
 	}
 	
 	return 0.0f;
