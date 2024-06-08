@@ -41,4 +41,6 @@ public:
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
 
+	void AutoQuestDestroy();
+
 };
