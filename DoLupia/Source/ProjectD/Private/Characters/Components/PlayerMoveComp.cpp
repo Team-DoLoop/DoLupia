@@ -65,7 +65,7 @@ float UPlayerMoveComp::GetCooldownPercent(float RemainingTime, float _SkillCoolT
 {
 	if (_SkillCoolTime > 0)
 	{
-		return 1.0f - (RemainingTime / _SkillCoolTime);
+		return  (RemainingTime / _SkillCoolTime);
 	}
 	
 	return 0.0f;
@@ -79,7 +79,7 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 	
 	if(!Player) return;
 	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
-	PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
+	if(PlayerFSM->GetCurrentState() != state) PlayerFSM->ChangePlayerState(state);
 
 	// We flag that the input is being pressed
 	FollowTime += GetWorld()->GetDeltaSeconds();
@@ -102,10 +102,9 @@ void UPlayerMoveComp::OnSetDestinationTriggered()
 void UPlayerMoveComp::OnSetDestinationReleased()
 {
 	state = EPlayerState::MOVE;
-	
 	if(!Player) return;
 	if(!PlayerFSM || !(PlayerFSM->CanChangeState(state))) return;
-	PlayerFSM->ChangePlayerState(EPlayerState::MOVE);
+	if(PlayerFSM->GetCurrentState() != state) PlayerFSM->ChangePlayerState(state);
 	
 	// If it was a short press
 	// if (FollowTime <= ShortPressThreshold)

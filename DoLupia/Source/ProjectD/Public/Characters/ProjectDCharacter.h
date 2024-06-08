@@ -106,6 +106,7 @@ public:
 	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
 	FORCEINLINE APlayerStat* GetPlayerStat() const { return PlayerStat; }
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
+	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 

@@ -47,6 +47,11 @@ void UPlayerAnimInstance::PlayMontage(UAnimMontage* _Montage)
 	Montage_Play(_Montage);
 }
 
+void UPlayerAnimInstance::StopMontage()
+{
+	if(AttackMontage && Montage_IsPlaying(AttackMontage)) Montage_Stop(0.5f, AttackMontage);
+}
+
 void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	UE_LOG(LogTemp, Log, TEXT("Player Animation Montage End"));

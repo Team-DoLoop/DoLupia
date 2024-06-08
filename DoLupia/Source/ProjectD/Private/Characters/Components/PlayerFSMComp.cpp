@@ -5,6 +5,7 @@
 
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "VisualLogger/VisualLoggerTypes.h"
@@ -74,7 +75,8 @@ void UPlayerFSMComp::CheckState(EPlayerState _state)
 void UPlayerFSMComp::ChangePlayerState(EPlayerState _state)
 {
 	if(!CanChangeState(_state)) return;
-	
+	if(_state == EPlayerState::MOVE) Player->GetPlayerAnim()->StopMontage();
+		
 	CurrentState = _state;
 	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("ChangePlayerState : %s"), *UEnum::GetValueAsName(_state).ToString());
 }
