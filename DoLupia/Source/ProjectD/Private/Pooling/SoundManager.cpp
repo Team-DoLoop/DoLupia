@@ -47,8 +47,7 @@ void ASoundManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 ASoundManager* ASoundManager::GetInstance(UWorld* World)
 {
-
-	if (Instance == nullptr)
+	if (!Instance)
 	{
 		Instance = World->SpawnActor<ASoundManager>();
 	}

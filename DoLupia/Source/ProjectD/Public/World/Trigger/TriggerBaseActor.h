@@ -9,6 +9,7 @@
 class UBoxComponent;
 class APlayerGameMode;
 class UNiagaraComponent;
+class AProjectDCharacter;
 
 UCLASS()
 class PROJECTD_API ATriggerBaseActor : public AActor
@@ -40,7 +41,7 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Change Level" )
 	FName LvName;
 
-	void CallLevel( FName Lvname);
+	void CallLevel( FName Lvname, AProjectDCharacter* Character );
 
 public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite )

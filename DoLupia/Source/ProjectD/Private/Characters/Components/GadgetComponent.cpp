@@ -108,63 +108,92 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 {
 	TObjectPtr<UItemBase> EquippedItem = nullptr;
 
-	switch (EItemType ItemType = ItemBase->GetItemType())
+	if (ItemBase)
 	{
+		switch (EItemType ItemType = ItemBase->GetItemType())
+		{
 
-	case EItemType::Head:
-		if(HeadBase)
-		{
-			EquippedItem = HeadBase->GetItemBase();
-			HeadBase->ReceiveItemData( ItemBase );
-		}
-		break;
-	case EItemType::Top:
-		if (TopBase)
-		{
-			EquippedItem = TopBase->GetItemBase();
-			TopBase->ReceiveItemData( ItemBase );
-		}
-		break;
-	case EItemType::Pants:
-		if (PantsBase)
-		{
-			EquippedItem = PantsBase->GetItemBase();
-			PantsBase->ReceiveItemData( ItemBase );
-		}
-		break;
-	case EItemType::Shoes:
-		if (ShoesBase)
-		{
-			EquippedItem = ShoesBase->GetItemBase();
-			ShoesBase->ReceiveItemData( ItemBase );
+		case EItemType::Head:
+			if(HeadBase)
+			{
+				EquippedItem = HeadBase->GetItemBase();
+				HeadBase->ReceiveItemData( ItemBase );
+			}
+			break;
+		case EItemType::Top:
+			if (TopBase)
+			{
+				EquippedItem = TopBase->GetItemBase();
+				TopBase->ReceiveItemData( ItemBase );
+			}
+			break;
+		case EItemType::Pants:
+			if (PantsBase)
+			{
+				EquippedItem = PantsBase->GetItemBase();
+				PantsBase->ReceiveItemData( ItemBase );
+			}
+			break;
+		case EItemType::Shoes:
+			if (ShoesBase)
+			{
+				EquippedItem = ShoesBase->GetItemBase();
+				ShoesBase->ReceiveItemData( ItemBase );
 
-			if (Shoes_L)
-				Shoes_L->ReceiveItemData( ItemBase , true );
+				if (Shoes_L)
+					Shoes_L->ReceiveItemData( ItemBase , true );
+			}
+			break;
+		case EItemType::Weapon:
+			if (SwordBase)
+			{
+				Character->GetPlayerFSMComp()->ChangePlayerWeaponState(EPlayerWeaponState::SWORD);
+				EquippedItem = SwordBase->GetItemBase();
+				SwordBase->ReceiveItemData( ItemBase );
+			}
+			break;
+		case EItemType::Spell:
+
+			break;
+		default: ;
+
 		}
-		break;
-	case EItemType::Weapon:
-		if (SwordBase)
+
+		Character->GetDoLupiaHUD()->UpdateEquipmentWidget( ItemBase );
+
+		if(EquippedItem)
 		{
-			Character->GetPlayerFSMComp()->ChangePlayerWeaponState(EPlayerWeaponState::SWORD);
-			EquippedItem = SwordBase->GetItemBase();
-			SwordBase->ReceiveItemData( ItemBase );
+			EquippedItem->SetOwningInventory( ItemBase->GetOwningInventory() );
+			Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
 		}
-		break;
-	case EItemType::Spell:
-
-		break;
-	default: ;
-
+			
 	}
-
-	Character->GetDoLupiaHUD()->UpdateEquipmentWidget( ItemBase );
-	Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
+	
 
 	return EquippedItem;
 
 }
 
+UItemBase* UGadgetComponent::GetEquippedItem( EItemType ItemType )
+{
+	switch (ItemType)
+	{
+	case EItemType::Head:
+		return HeadBase->GetItemBase();
+	case EItemType::Top:
+		return TopBase->GetItemBase();
+	case EItemType::Pants:
+		return PantsBase->GetItemBase();
+	case EItemType::Shoes:
+		return ShoesBase->GetItemBase();
+	case EItemType::Shield:
+		return nullptr;
+	case EItemType::Weapon:
+		return SwordBase->GetItemBase();
+	}
 
+	return nullptr;
+}
 
 
 

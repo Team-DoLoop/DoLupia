@@ -4,11 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Library/GameSaveManager.h"
 #include "PlayerGameMode.generated.h"
 
 class UAIConnectionLibrary;
 class UNPCConvWidget; 
-class UAITestWidget; 
+class UAITestWidget;
+class ALevelManager;
+
+enum class ESaveType;
 
 /**
  * 
@@ -50,7 +54,6 @@ private:
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
 
-
 	/*---------- Level 별 bgm ----------*/
 public:
 	// 레벨에 대한 BGM을 재생하는 함수
@@ -68,6 +71,6 @@ private:
 
 	/*---------- Level Open ----------*/
 public:
-	void ChangeNextLv( FName LevelName );
+	void ChangeNextLv( FName LevelName, AProjectDCharacter* Character, ESaveType SaveType = ESaveType::SAVE_MAIN);
 
 };

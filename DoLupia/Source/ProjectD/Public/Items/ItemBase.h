@@ -23,16 +23,11 @@ public:
 
 	void CreateItemCopy(const UItemBase* MyItemBase);
 
-	UFUNCTION(Category = "Item")
 	FORCEINLINE float GetItemStackWeight() const { return Quantity * NumericData.Weight; };
-
-	UFUNCTION(Category = "Item")
 	FORCEINLINE float GetItemSingleWeight() const { return NumericData.Weight; };
 
-	UFUNCTION(Category = "Item")
 	FORCEINLINE bool IsFullItemStack() const { return Quantity == NumericData.MaxStackSize; };
 
-	UFUNCTION(Category = "Item")
 	void SetQuantity(const int32 NewQuantity , bool IsRemoveItem );
 
 	FORCEINLINE void SetID(FName _ID) { ID = _ID; }
@@ -43,7 +38,6 @@ public:
 	FORCEINLINE void SetNumericData(FItemNumericData _NumericData) { NumericData = _NumericData; }
 	FORCEINLINE void SetAssetData(FItemAssetData _AssetData) { AssetData = _AssetData; }
 	FORCEINLINE void SetItemSkillColorData(EUseColor _ItemSkillColor) { ItemSkillColor = _ItemSkillColor; }
-	
 
 	FORCEINLINE const FName& GetID() const { return ID; }
 	FORCEINLINE EItemType GetItemType() const { return ItemType; }

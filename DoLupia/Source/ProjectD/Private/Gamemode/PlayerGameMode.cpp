@@ -14,6 +14,9 @@
 #include "Engine.h"
 #include "Items/Cape/PlayerCape.h"
 #include <AI/AITxtBossAttack.h>
+
+#include "Characters/Components/InventoryComponent.h"
+#include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
 
 APlayerGameMode::APlayerGameMode()
@@ -48,6 +51,10 @@ void APlayerGameMode::StartPlay()
 
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
+
+	GetWorld()->SpawnActor<ALevelManager>( ALevelManager::StaticClass());
+	GetWorld()->SpawnActor<ASoundManager>( ASoundManager::StaticClass() );
+
 }
 
 void APlayerGameMode::BeginPlay()
@@ -131,7 +138,8 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 	}
 }
 
-void APlayerGameMode::ChangeNextLv(FName LevelName)
+void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType)
 {
+	ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false);
 	UGameplayStatics::OpenLevel( this , LevelName );
 }

@@ -12,13 +12,6 @@ void UBezierMovementLibrary::MoveObjectAlongCurve( UObject* WorldContextObject ,
     if (!WorldContextObject || !Item)
         return;
 
-    // 테스트용
-    APickup* YourItem = Cast<APickup>( Item );
-    if (YourItem)
-    {
-        YourItem->StartMovement( StartPoint, ActorSpeed );
-    }
-
     FTimerDelegate TimerDelegate;
     TimerDelegate.BindStatic( &UBezierMovementLibrary::UpdateObjectPosition , WorldContextObject , Item , StartPoint, ActorSpeed, GravityScale, 0.0f );
 
@@ -27,7 +20,15 @@ void UBezierMovementLibrary::MoveObjectAlongCurve( UObject* WorldContextObject ,
 
 FVector UBezierMovementLibrary::VectorSeed(AActor* ContextActor)
 {
-
+	if(!ContextActor)
+	{
+        return FVector
+        (
+            FMath::RandRange( -500 , -300 ) ,
+            FMath::RandRange( 300 , 500 ) ,
+            FMath::RandRange( -500 , -300 )
+        );
+	}
 
     FVector StartPosition = ContextActor->GetActorLocation();
     FVector StartRotation = ContextActor->GetActorRotation().Vector();
@@ -44,8 +45,6 @@ FVector UBezierMovementLibrary::VectorSeed(AActor* ContextActor)
     FRandomStream RandomStream( Seed );
 
     int32 minus = FMath::RandRange(0, 3);
-
-    FVector RandVector;
 
     if(minus == 0)
     {

@@ -12,7 +12,7 @@
 ATriggerBaseActor::ATriggerBaseActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	triggerComp = CreateDefaultSubobject<UBoxComponent>( TEXT( "triggerComp" ) );
 	this->SetRootComponent( triggerComp );
@@ -44,17 +44,17 @@ void ATriggerBaseActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	auto player = Cast<AProjectDCharacter>(OtherActor);
+	AProjectDCharacter* player = Cast<AProjectDCharacter>(OtherActor);
 
 	if(player)
 	{
-		CallLevel( LvName );
+		CallLevel( LvName, player );
 	}
 
 }
 
-void ATriggerBaseActor::CallLevel(FName Lvname)
+void ATriggerBaseActor::CallLevel( FName Lvname , AProjectDCharacter* Character )
 {
-	gm->ChangeNextLv( Lvname );
+	gm->ChangeNextLv( Lvname, Character );
 }
 
