@@ -27,15 +27,13 @@ void UInventoryPannel::NativeOnInitialized()
 
 		if(InventoryReference)
 		{
-			for (int i = 0; i < 15; ++i) // test
-				//for(int i = 0; i < InventoryReference->GetSlotCapacity(); ++i)
+
+			for(int i = 0; i < InventoryReference->GetSlotCapacity(); ++i)
 			{
 				InventoryReference->AddInventoryContents(nullptr);
 
 				RefreshInventory();
 			}
-
-			//InventoryReference->OnInventoryUpdated.AddUObject(this, &UInventoryPannel::SetInfoText);
 		}
 	}
 

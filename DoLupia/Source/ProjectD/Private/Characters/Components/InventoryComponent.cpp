@@ -31,8 +31,9 @@ void UInventoryComponent::BeginPlay()
 
 	player = Cast<AProjectDCharacter>( GetOwner() );
 
-	//InventorySlotsCapacity
-	ItemPool->CreateItem(15);
+	InventorySlotsCapacity = 15;
+
+	ItemPool->CreateItem( InventorySlotsCapacity );
 
 	if(LootingItemWidgetFactory)
 	{
@@ -762,14 +763,13 @@ void UInventoryComponent::SortItem_Name()
 		Pairs.Push({Elem.Key, Elem.Value, InventoryCount[Elem.Key]});
 	}*/
 
-	for(int32 i = 0; i < 15; ++i)
+	for(int32 i = 0; i < InventorySlotsCapacity; ++i)
 	{
 		if(InventoryContents[i])
 		{
 			ItemPool->ReturnItem(InventoryContents[i]);
 			InventoryContents[i] = nullptr;
 		}
-		
 	}
 
 	InventoryTotalWeight = 0.0f;
@@ -795,9 +795,12 @@ void UInventoryComponent::SortItem_Name()
 		return A.Key < B.Key; // 오름차순 정렬
 	} );
 
+	
+
 	for(auto Iterate : PP)
 	{
-		TObjectPtr<UItemBase> CopyItemBase = ItemPool->GetItem(Iterate.Key);
+		UItemBase* CopyItemBase = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+		CopyItemBase->CreateItemCopy(ItemPool->GetItem(Iterate.Key));
 
 		if (CopyItemBase->GetNumericData().bIsStackable && CopyItemBase->GetNumericData().MaxStackSize)
 		{
@@ -805,10 +808,14 @@ void UInventoryComponent::SortItem_Name()
 			{
 				const int32 AddNum = FMath::Min( Iterate.Value , CopyItemBase->GetNumericData().MaxStackSize );
 				Iterate.Value -= AddNum;
+				
 				CopyItemBase->SetQuantity( AddNum , false);
 				HandelStackableItems( CopyItemBase , AddNum );
 				CopyItemBase->ResetItemFlags();
-				CopyItemBase = ItemPool->GetItem( Iterate.Key );
+
+				CopyItemBase = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+				CopyItemBase->CreateItemCopy( ItemPool->GetItem( Iterate.Key ) );
+
 			}
 		}
 		else
@@ -818,14 +825,16 @@ void UInventoryComponent::SortItem_Name()
 				CopyItemBase->SetQuantity( 1, false );
 				HandelNonStackableItems( CopyItemBase );
 				CopyItemBase->ResetItemFlags();
-				CopyItemBase = ItemPool->GetItem( Iterate.Key );
+				CopyItemBase = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+				CopyItemBase->CreateItemCopy( ItemPool->GetItem( Iterate.Key ) );
 			}
-
 		}
 
-		ItemPool->ReturnItem(CopyItemBase);
-
 		InventoryCount[Iterate.Key] /= 2;
+
+		if(CopyItemBase)
+			ItemPool->ReturnItem(CopyItemBase);
+			
 	}
 
 	// PlayerMainHUD를 가져오자.
@@ -834,8 +843,7 @@ void UInventoryComponent::SortItem_Name()
 		// HUD에 InventoryPanel를 가져와서 Inventory Widget을 업데이트 시켜주자.
 		if (UInventoryPannel* InventoryPanel = HUD->GetMainMeun()->GetInventoryPanel())
 		{
-			//for(int i = 0; i < InventorySlotsCapacity)
-			for (int32 i = 0; i < 15; ++i) // test
+			for (int32 i = 0; i < InventorySlotsCapacity; ++i) // test
 			{
 				InventoryPanel->RefreshInventoryPannel( i , InventoryContents[i] );
 			}

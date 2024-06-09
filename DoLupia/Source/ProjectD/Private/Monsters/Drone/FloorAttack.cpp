@@ -48,36 +48,41 @@ void AFloorAttack::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 			AProjectDCharacter* Character = Cast<AProjectDCharacter>( OtherActor );
 			Character->TakeDamage( AttackDamage );
 
-			FVector Normal = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+			//FVector Normal = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
-			if(abs(Normal.X) <= 0.05f)
-			{
-				if(Normal.X <= 0.05f)
-					Normal.X = 0.1f;
-				else
-					Normal.X = 0.1f;
-			}
+			//if(abs(Normal.X) <= 0.05f)
+			//{
+			//	if(Normal.X <= 0.05f)
+			//		Normal.X = 0.1f;
+			//	else
+			//		Normal.X = 0.1f;
+			//}
 
-			if (abs( Normal.Y ) <= 0.05f)
-			{
-				if (Normal.Y <= 0.05f)
-					Normal.Y = 0.1f;
-				else
-					Normal.Y = 0.1f;
-			}
+			//if (abs( Normal.Y ) <= 0.05f)
+			//{
+			//	if (Normal.Y <= 0.05f)
+			//		Normal.Y = 0.1f;
+			//	else
+			//		Normal.Y = 0.1f;
+			//}
 
-			if (abs( Normal.Z ) <= 0.05f)
-			{
-				if (Normal.Z <= 0.05f)
-					Normal.Z = 0.1f;
-				else
-					Normal.Z = 0.1f;
-			}
+			//if (abs( Normal.Z ) <= 0.05f)
+			//{
+			//	if (Normal.Z <= 0.05f)
+			//		Normal.Z = 0.1f;
+			//	else
+			//		Normal.Z = 0.1f;
+			//}
 
-			Character->LaunchCharacter(FVector(500.f, 500.f, 500.f) * Normal , true, false);
-			IgnoerActors.Add(OtherActor);
+			//Character->LaunchCharacter(FVector(500.f, 500.f, 500.f) * Normal , true, false);
+			//IgnoerActors.Add(OtherActor);
 		}
 	}
+}
+
+void AFloorAttack::IgnoreActorsClear()
+{
+	IgnoerActors.Empty();
 }
 
 
@@ -103,19 +108,19 @@ void AFloorAttack::SpawnAOESphere()
 
 #endif
 
-	AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
+	//AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
 
-	FTimerHandle Handle;
+	//FTimerHandle Handle;
 
-	GetWorld()->GetTimerManager().SetTimer
-	(
-		Handle , FTimerDelegate::CreateLambda(
-			[this]()
-			{
-				AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
-			} ) ,
-		0.2 , false
-	);
+	//GetWorld()->GetTimerManager().SetTimer
+	//(
+	//	Handle , FTimerDelegate::CreateLambda(
+	//		[this]()
+	//		{
+	//			AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
+	//		} ) ,
+	//	0.2 , false
+	//);
 
 	if(DecalComp)
 		DecalComp->DestroyComponent();

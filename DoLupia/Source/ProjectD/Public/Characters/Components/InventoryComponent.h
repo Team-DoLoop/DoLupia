@@ -87,58 +87,39 @@ class PROJECTD_API UInventoryComponent : public UActorComponent
 public:
 	UInventoryComponent();
 
-	UFUNCTION( Category = "Inventory")
 	void SortItem_Name();
 
-	UFUNCTION(Category = "Inventory")
 	FItemAddResult HandelAddItem(UItemBase* InputItem, bool bResetFlag = false);
 
-	UFUNCTION( Category = "Inventory" )
 	void HandelRemoveItem(const TMap<FString , int32>& RemoveToITem);
 	void HandelRemoveItem(FString ItemName, int32 ItemCount = 1, bool QuickSlotUseItem = false);
 
-	UFUNCTION( Category = "Inventory" )
 	void ReleaseInventory(UItemBase* ItemIn);
-	UFUNCTION(Category = "Inventory")
+
 	const int32 FindEmptyItemIndex(int32 FirstIndex = 0, const FString& InKey = "") const;
-	UFUNCTION(Category = "Inventory")
+
 	UItemBase* FindMatchItem(UItemBase* ItemIn) const;
 	UItemBase* FindMatchItem( const FString& ItemID ) const;
-	UFUNCTION(Category = "Inventory")
 	UItemBase* FindNextItemByID(UItemBase* ItemIn) const;
-	UFUNCTION(Category = "Inventory")
 	UItemBase* FindNextPartialStack(UItemBase* ItemIn) const;
-	UFUNCTION( Category = "Inventory" )
 	int32 FindItemQuantity(const FString& InKey);
 
-	UFUNCTION(Category = "Inventory")
 	void RemoveSingleInstanceOfItem(UItemBase* ItemToRemove, bool IsRemoveItem );
-	UFUNCTION(Category = "Inventory")
 	int32 RemoveAmountOfItem(UItemBase* ItemIn, int32 DesiredAmountToRemove);
-	UFUNCTION(Category = "Inventory")
 	void SplitExistingStack(UItemBase* ItemIn, const int32 AmountToSplit);
 
 	void SwapInventory(UInventoryItemSlot* Sour, UInventoryItemSlot* Dest);
 
 	// getters
-	UFUNCTION(Category = "Inventory")
 	FORCEINLINE float GetInventoryTotalWeight() const { return InventoryTotalWeight; };
-	UFUNCTION(Category = "Inventory")
 	FORCEINLINE float GetWeightCapacity() const { return InventoryWeightCapacity; };
-	UFUNCTION(Category = "Inventory")
 	FORCEINLINE int32 GetSlotCapacity() const { return InventorySlotsCapacity; };
-	UFUNCTION(Category = "Inventory")
 	FORCEINLINE TArray<UItemBase*> GetInventoryContents() const { return InventoryContents; };
-	UFUNCTION(Category = "Inventory")
 	int32 GetInventoryItemCount(const FString& InKey);
 
-
 	// setters
-	UFUNCTION(Category = "Inventory")
 	FORCEINLINE void SetSlotsCapacity(const int32 NewSlotCapacity) { InventorySlotsCapacity = NewSlotCapacity; };
-	UFUNCTION(Category = "Inventory")
 	FORCEINLINE void SetWeightCapacity(const float NewWeightCapacity) { InventoryWeightCapacity = NewWeightCapacity;};
-	UFUNCTION( Category = "Inventory" )
 	FORCEINLINE void AddInventoryContents(UItemBase* AddNewItem) { InventoryContents.Add( AddNewItem ); };
 
 	// 인벤토리 업데이트 델리게이트

@@ -45,7 +45,7 @@ FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, 
 		{
 
 			UInventoryComponent* InventoryComponent = ItemReference->GetOwningInventory();
-			AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( ItemReference->GetOwningInventory()->GetOwner() );
+			AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( InventoryComponent->GetOwner() );
 
 			switch (ItemReference->GetItemType())
 			{

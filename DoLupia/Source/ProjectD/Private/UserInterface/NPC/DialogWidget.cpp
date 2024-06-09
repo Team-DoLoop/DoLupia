@@ -56,7 +56,7 @@ void UDialogWidget::OnNxtBtnClicked()
         if (DialogueComponent)
         {
             DialogueComponent->AdvanceDialog();
-            ASoundManager::GetInstance(GetWorld())->PlaySoundWave2D(clickSFX, ENPCSound::NPCSound1, 0.25f);
+            ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D(clickSFX, ENPCSound::NPCSound1, 0.25f);
         }
     }
 }

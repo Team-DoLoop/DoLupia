@@ -26,7 +26,7 @@ void UGameSystemCallWidget::DisplayMessage( const FText& Message , USoundCue* So
 
 void UGameSystemCallWidget::DisplayMessage( const FText& Message , USoundWave* SoundWave )
 {
-    ASoundManager::GetInstance(GetWorld())->PlaySoundWave2D( SoundWave, EPlayerSound::PlayerSound9);
+    ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( SoundWave, EPlayerSound::PlayerSound9);
     DisplayMessage( Message );
 }
 
