@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MonsterDamageWidget.h"
+#include "SpawnMonsterDamage.h"
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
@@ -51,20 +53,8 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
 	int32 currentHP = maxHP;
 
-	UPROPERTY( EditAnywhere , BlueprintReadOnly )
-	int32 myDamage = 0;
-
-	/*UPROPERTY( EditDefaultsOnly , BlueprintReadOnly )
-	class UWidgetComponent* healthUI;
-
-	UPROPERTY()
-	class UMonsterHPWidget* monsterHPWidget;*/
-
-	UPROPERTY( EditDefaultsOnly , BlueprintReadOnly )
-	class UWidgetComponent* damageUI;
-
-	UPROPERTY()
-	class UMonsterDamageWidget* monsterDamageWidget;
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<ASpawnMonsterDamage> monsterDamageWidget;
 
 	//플레이어를 타겟으로 설정
 	UPROPERTY( EditAnywhere )
