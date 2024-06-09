@@ -25,6 +25,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
@@ -172,6 +173,25 @@ void UPlayerAttackComp::InitCanUseColor()
 void UPlayerAttackComp::SetColorUseState(EUseColor _Color, bool bCanUse)
 {
 	CanUseColor[_Color] = bCanUse;
+
+	switch (_Color)
+	{
+	case EUseColor::YELLOW :
+		{
+			// E 스킬 잠금 해제
+			IsUnLockSwap = true;
+			SetSkillLockUI(3, false);
+			break;
+		}
+	case EUseColor::BLUE :
+		{
+			// 궁 잠금 해제
+			IsUnLockUlt = true;
+			SetSkillLockUI(4, false);
+			break;
+		}
+	default: break;
+	}
 }
 
 // 퀘스트 수락 시 호출
@@ -189,10 +209,22 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 		CurrentSkillData[4] = UltSkill;
 	}
 
-	for(int i = 1; i <= SkillCount; i++)
+	for(int i = 1; i <=SkillCount; i++)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
+		SetSkillLockUI(i, false);
 	}
+}
+
+void UPlayerAttackComp::SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock)
+{
+	// E 스킬인데 해제되지 않았다면
+	if(SkillKeyIndex == 3 && !IsUnLockSwap) IsSkillLock = true;
+
+	// 궁인데 해제되지 않았다면
+	else if(SkillKeyIndex == 4 && !IsUnLockUlt) IsSkillLock = true;
+	
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->SetSkillLockUI(SkillKeyIndex, IsSkillLock);
 }
 
 // <---------------------- Attack ---------------------->
@@ -259,46 +291,52 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	
 	FSkillInfo* TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
 	EPlayerState CurrentState = PlayerFSMComp->GetCurrentState();
-	
-	if(TempSkill && CanUseSkill(TempSkill))
+
+	if(!(TempSkill && CanUseSkill(TempSkill)))
 	{
-		// 첫 공격이라면 바로 실행
-		if (CurrentState != EPlayerState::ATTACK_ONLY && CurrentState != EPlayerState::ATTACK_WITH)
+		if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 		{
-			UE_LOG(LogTemp, Log, TEXT("First Combo Attack"));
+			if(CantAttackSoundWave) SoundManager->PlaySoundWave( CantAttackSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), 0.1f );
+		}
+		return;
+	}
+
+	// 첫 공격이라면 바로 실행
+	if (CurrentState != EPlayerState::ATTACK_ONLY && CurrentState != EPlayerState::ATTACK_WITH)
+	{
+		UE_LOG(LogTemp, Log, TEXT("First Combo Attack"));
+		FirstAttack(TempSkill, SkillKeyIndex);
+	}
+	// 첫 공격이 아니고 콤보 구간이라면
+	else if(CurrentState == EPlayerState::ATTACK_ONLY)
+	{
+		UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
+		// 만약 콤보 가능 구간이라면
+		if(CanNextCombo)
+		{
+			// 콤보 공격 입력
+			UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
+
+			// 그 중 첫번째 눌린 경우에는 Press UI 뜨게
+			if(!IsComboInputOn) SetComboAttackUI(SkillKeyIndex, true);
+			IsComboInputOn = true;
+		}
+	}
+	// 콤보 공격 구간은 아니지만 공격 중이라면
+	else if(CurrentState == EPlayerState::ATTACK_WITH)
+	{
+		// 원래 스킬은 사용 못하고
+		if(CurrentSkillInfo != TempSkill)
+		{
 			FirstAttack(TempSkill, SkillKeyIndex);
 		}
-		// 첫 공격이 아니고 콤보 구간이라면
-		else if(CurrentState == EPlayerState::ATTACK_ONLY)
-		{
-			UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
-			// 만약 콤보 가능 구간이라면
-			if(CanNextCombo)
-			{
-				// 콤보 공격 입력
-				UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
-
-				// 그 중 첫번째 눌린 경우에는 Press UI 뜨게
-				if(!IsComboInputOn) SetComboAttackUI(SkillKeyIndex, true);
-				IsComboInputOn = true;
-			}
-		}
-		// 콤보 공격 구간은 아니지만 공격 중이라면
-		else if(CurrentState == EPlayerState::ATTACK_WITH)
-		{
-			// 원래 스킬은 사용 못하고
-			if(CurrentSkillInfo != TempSkill)
-			{
-				FirstAttack(TempSkill, SkillKeyIndex);
-			}
-		}
+	}
 		
-		SetSkillCoolDownUI();
+	SetSkillCoolDownUI();
 
-		if(SkillKeyIndex == 3)
-		{
-			ExecuteSwapSkill();
-		}
+	if(SkillKeyIndex == 3)
+	{
+		ExecuteSwapSkill();
 	}
 }
 
@@ -444,6 +482,11 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	{
 		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
 		SetSkillUI(i, _TempSkill);
+	}
+
+	if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
+	{
+		if(SwapSoundWave) SoundManager->PlaySoundWave( SwapSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), 0.1f );
 	}
 	
 	SetSkillCoolDownUI();
@@ -610,6 +653,12 @@ bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 {
 	// 게이지가 100이라면
 	if(_TempSkill != AutoSkill && CurrentMP >= PlayerMaxMP) return false;
+
+	// E 스킬인데 잠금 해제가 안되었다면
+	if(_TempSkill == SwapSkill && !IsUnLockSwap) return false;
+	
+	// 궁인데 잠금 해제가 안됐다면
+	if(_TempSkill == UltSkill && !IsUnLockUlt) return false;
 	
 	// 평타거나 현재 색깔이 있고 MP가 있는 스킬이라면 공격 실행
 	if (_TempSkill == AutoSkill || (CurrentSkillColor != EUseColor::NONE))
@@ -648,7 +697,12 @@ void UPlayerAttackComp::AttackEndComboState()
 	// 쿨다운 시작
 	if(CurrentSkillInfo)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
-	
+	// MP가 꽉 찼다면
+	if(CurrentMP >= 100)
+	{
+		for(int i = 1; i <= SkillCount; i++)
+			SetSkillLockUI(i, true);
+	}
 	IsComboInputOn = false;
 	CanNextCombo = false;
 	CurrentCombo = 0;

@@ -40,6 +40,8 @@ public:
 	void UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel);
 
 	void SetSkillComboUI(int32 SkillKeyIndex, bool IsCanCombo);
+
+	void SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock);
 	
 	FORCEINLINE TArray<UPlayerSkillSlotWidget*> GetPlayerSkillSlotArr() const {return PlayerSkillSlotArray;}
 	

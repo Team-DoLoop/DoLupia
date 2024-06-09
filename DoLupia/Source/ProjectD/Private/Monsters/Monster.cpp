@@ -13,8 +13,10 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/Sword/SwordBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Monsters/MonsterAnim.h"
 #include "Monsters/MonsterDamageWidget.h"
+#include "Monsters/SpawnMonsterDamage.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Spawner/ItemSpawner.h"
 
@@ -27,16 +29,6 @@ AMonster::AMonster()
 
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>( TEXT( "MonsterFSM" ) );
 
-	/*healthUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "healthUI" ) );
-
-	healthUI->SetupAttachment( RootComponent );
-	healthUI->SetCastShadow( false );*/
-
-	damageUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "damageUI" ) );
-
-	damageUI->SetupAttachment( RootComponent );
-	damageUI->SetCastShadow( false );
-
 }
 
 // Called when the game starts or when spawned
@@ -45,9 +37,6 @@ void AMonster::BeginPlay()
 	Super::BeginPlay();
 	int32 yaw = rand() % 360;
 	SetActorRotation( FRotator( 0 , yaw , 0 ) );
-	//monsterHPWidget = Cast<UMonsterHPWidget>( healthUI->GetWidget() );
-
-	monsterDamageWidget = Cast<UMonsterDamageWidget>( damageUI->GetWidget() );
 
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 
@@ -92,12 +81,6 @@ void AMonster::Tick( float DeltaTime )
 
 	if (IsAlive)
 	{
-		//HP Widget 빌보드 처리
-		FVector camLoc = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
-		FVector dir = camLoc - damageUI->GetComponentLocation();
-		dir.Normalize();
-		damageUI->SetWorldRotation( dir.ToOrientationRotator() );
-
 		//항상 플레이어를 바라보도록 회전
 		FVector rot = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation() - this->GetActorLocation();
 		rot.Normalize();
@@ -212,10 +195,7 @@ void AMonster::DieState()
 	IsAlive = false;
 	anim->animState = MonsterFSM->state;
 	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
-	if (damageUI)
-	{
-		damageUI->DestroyComponent();
-	}
+	
 }
 
 void AMonster::MoveToTarget()
@@ -251,11 +231,25 @@ void AMonster::OnMyTakeDamage( int32 damage )
 {
 
 	currentHP -= damage;
-	myDamage = damage;
-	
-	if (monsterDamageWidget)
+
+	//Damage UI 생성
+	UWorld* world = GetWorld();
+	if (world)
 	{
-		monsterDamageWidget->SetDamage( damage );
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		FRotator rotator;
+		FVector  SpawnLocation = GetActorLocation();
+		
+		ASpawnMonsterDamage* SpawnedActor = world->SpawnActor<ASpawnMonsterDamage>( monsterDamageWidget , SpawnLocation , rotator , SpawnParams );;
+		if (SpawnedActor)
+		{
+			UMonsterDamageWidget* DamageWidget = Cast<UMonsterDamageWidget>( SpawnedActor->monsterDamageWidget );
+			if (DamageWidget)
+			{
+				DamageWidget->SetDamage( damage );
+			}
+		}
 
 	}
 
