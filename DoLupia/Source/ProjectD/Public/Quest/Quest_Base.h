@@ -93,5 +93,5 @@ public:
 
 protected:
 	bool Local_AllComplete;
-
+	bool bQuestIDValid = false;
 };
