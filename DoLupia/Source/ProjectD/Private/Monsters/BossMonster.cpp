@@ -13,7 +13,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Monsters/BossAnim.h"
 #include "Monsters/BossHPWidget.h"
+#include "Monsters/MonsterDamageWidget.h"
 #include "Monsters/MonsterHPWidget.h"
+#include "Monsters/SpawnMonsterDamage.h"
 #include "Monsters/AI/BTTask_Attack.h"
 
 // Sets default values
@@ -41,9 +43,9 @@ ABossMonster::ABossMonster()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 
-	healthUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "healthUI" ) );
+	/*healthUI = CreateDefaultSubobject<UWidgetComponent>( TEXT( "healthUI" ) );
 	healthUI->SetupAttachment( RootComponent );
-	healthUI->SetCastShadow( false );
+	healthUI->SetCastShadow( false );*/
 
 	AttackCollision = CreateDefaultSubobject<USphereComponent>( TEXT( "AttackCollision" ) );
 	AttackCollision->SetGenerateOverlapEvents( true );
@@ -233,6 +235,8 @@ void ABossMonster::DamageState()
 void ABossMonster::DieState()
 {
 	IsAlive = false;
+	anim->animState = state;
+
 }
 
 //=============================ATTACK=============================
@@ -252,13 +256,6 @@ void ABossMonster::FireAttack()
 	skillState = EBossSkill::Fire;
 	anim->animState = state;
 	anim->animBossSkill = skillState;
-
-	//FHitResult outHit_;
-	//GetOwner()->GetWorld()->SweepSingleByObjectType( outHit_ , backPackOcto->GetActorLocation() , backPackOcto->tentaclesArr[handID].targetArrow->GetComponentLocation() ,
-	//												GetOwner()->GetActorQuat() , traceObjectTypesArr ,
-	//												FCollisionShape::MakeSphere( 20.f ) , traceParams_ );
-
-	//OctopusBackpackComponent->AttackHand( outHit_, 1 );
 }
 
 void ABossMonster::GrabAndThrowAttack()
@@ -267,6 +264,16 @@ void ABossMonster::GrabAndThrowAttack()
 	skillState = EBossSkill::GrabAndThrow;
 	anim->animState = state;
 	anim->animBossSkill = skillState;
+}
+
+void ABossMonster::BlastFire()
+{
+	skillState = EBossSkill::BlastFire;
+}
+
+void ABossMonster::BlastLightening()
+{
+	skillState = EBossSkill::BlastLightening;
 }
 
 void ABossMonster::InitializeAttackStack()
@@ -319,8 +326,32 @@ void ABossMonster::InitializeDelayStack()
 void ABossMonster::TakeDamage(int damage)
 {
 	BossCurrentHP -= damage;
-	BossHPWidget->SetHP( BossCurrentHP , BossMaxHP );
-	//monsterDamageWidget->SetDamage( damage );
+
+	if(BossHPWidget)
+	{
+		BossHPWidget->SetHP( BossCurrentHP , BossMaxHP );
+
+	}
+	//Damage UI 생성
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		FRotator rotator;
+		FVector  SpawnLocation = GetActorLocation();
+
+		ASpawnMonsterDamage* SpawnedActor = world->SpawnActor<ASpawnMonsterDamage>( monsterDamageWidget , SpawnLocation , rotator , SpawnParams );;
+		if (SpawnedActor)
+		{
+			UMonsterDamageWidget* DamageWidget = Cast<UMonsterDamageWidget>( SpawnedActor->monsterDamageWidget );
+			if (DamageWidget)
+			{
+				DamageWidget->SetDamage( damage );
+			}
+		}
+
+	}
 
 	if (BossCurrentHP < 0)
 	{
@@ -328,7 +359,7 @@ void ABossMonster::TakeDamage(int damage)
 	}
 
 
-	else
+	if(BossCurrentHP==0)
 	{
 		state = EBossState::Die;
 	}
@@ -338,6 +369,16 @@ void ABossMonster::TakeDamage(int damage)
 
 	
 	
+}
+
+void ABossMonster::DestroyMonster()
+{
+	//플레이어 델리게이트 사용 : 킬 목표
+	auto target = GetWorld()->GetFirstPlayerController()->GetPawn();
+	AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
+	player->OnObjectiveIDCalled.Broadcast( "Boss" , 1 );
+
+	this->Destroy();
 }
 
 

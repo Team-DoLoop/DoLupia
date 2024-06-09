@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "OctopusBackpackComponent.h"
 #include "OctopusBackpackActor.h"
+#include "SpawnMonsterDamage.h"
 #include "AI/BTTask_Attack.h"
 #include "Components/ActorComponent.h"
 #include "BossMonster.generated.h"
@@ -26,6 +27,8 @@ enum class EBossSkill : uint8
 	Hit,
 	Fire,
 	GrabAndThrow,
+	BlastFire,
+	BlastLightening,
 };
 
 UENUM( BlueprintType )
@@ -106,6 +109,8 @@ public:
 	void HitAttack();
 	void FireAttack();
 	void GrabAndThrowAttack();
+	void BlastFire();
+	void BlastLightening();
 
 	TArray<void(ABossMonster::*)()> AttackFunctions;
 	TArray<void(ABossMonster::*)()> AttackStack;
@@ -129,5 +134,11 @@ public:
 	//--------------Damage-----------------
 	void TakeDamage(int damage);
 
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<ASpawnMonsterDamage> monsterDamageWidget;
 
+
+	//---------------Die--------------------
+
+	void DestroyMonster();
 };

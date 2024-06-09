@@ -51,7 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndLaunchAnimation();
 
-	//===============Delay_LookAround=======================
+	//===============Delay_LookAround=================
 
 	UFUNCTION( BlueprintCallable )
 	void EndLookAroundAnimation();
@@ -74,5 +74,10 @@ public:
 	//===============Grab Attack=======================
 	UFUNCTION( BlueprintCallable )
 	void OnEndGrabAttackAnimation();
+
+	//===================Die===========================
+	UFUNCTION( BlueprintCallable )
+	void OnEndDieAnimation();
+
 
 };
