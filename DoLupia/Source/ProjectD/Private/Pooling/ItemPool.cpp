@@ -58,11 +58,12 @@ UItemBase* UItemPool::GetItem(const FString& ItemID)
 
     int32 Size = Pool.Num();
 
+    bool RemoveThisItem = false;
+
     if (Size > 0)
     {
-        --Size;
-        RetrievedItem = Pool[Size];
-        Pool.RemoveAt(Size);
+        RetrievedItem = Pool[--Size];
+        Pool.RemoveAt( Size );
     }
 
     if(!RetrievedItem)
@@ -76,7 +77,7 @@ UItemBase* UItemPool::GetItem(const FString& ItemID)
 
 void UItemPool::ReturnItem( UItemBase* InItem )
 {
-    if (InItem != nullptr)
+    if (InItem != nullptr && Pool.Num() < 10000)
     {
         Pool.Add(InItem); // 아이템 반환
     }

@@ -32,7 +32,8 @@ enum class EItemType : uint8
 	Spell UMETA(DisplayName = "Spell"),
 	Consumable UMETA(DisplayName = "Consumable"),
 	Quest UMETA(DisplayName = "Quest"),
-	Mundane UMETA(DisplayName = "Mundane")
+	Mundane UMETA(DisplayName = "Mundane"),
+	ItemType_End,
 
 };
 

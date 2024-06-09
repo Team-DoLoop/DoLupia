@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GadgetComponent.generated.h"
 
+enum class EItemType : uint8;
 class AClothes_HeadBase;
 class AClothes_TopBase;
 class AClothes_PantsBase;
@@ -57,5 +58,7 @@ private:
 
 public:
 	FORCEINLINE class ASwordBase* GetSword() const { return SwordBase; }
+
+	UItemBase* GetEquippedItem( EItemType ItemType );
 
 };

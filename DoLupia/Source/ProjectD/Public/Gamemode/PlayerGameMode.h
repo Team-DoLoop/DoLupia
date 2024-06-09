@@ -4,11 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Library/GameSaveManager.h"
 #include "PlayerGameMode.generated.h"
+
+
+#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseThread, UseLocation)					\
+    ALevelManager::GetInstance(GetWorld())->SaveGame(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName,	\
+    Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), UseThread, UseLocation);
+
+#define LOAD(SaveType, SaveSlotName, UseThread, UseLocation, OpenLevel )						\
+		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
+		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
+		SaveType , SaveSlotName , UseThread , UseLocation, OpenLevel );							\
+																								\
+
+
 
 class UAIConnectionLibrary;
 class UNPCConvWidget; 
-class UAITestWidget; 
+class UAITestWidget;
+class ALevelManager;
+
+enum class ESaveType;
 
 /**
  * 
@@ -50,7 +67,6 @@ private:
 	UPROPERTY( EditDefaultsOnly )
 	TSubclassOf<class UUserWidget> NPCUIFactory;
 
-
 	/*---------- Level 별 bgm ----------*/
 public:
 	// 레벨에 대한 BGM을 재생하는 함수
@@ -68,7 +84,7 @@ private:
 
 	/*---------- Level Open ----------*/
 public:
-	void ChangeNextLv( FName LevelName );
+	void ChangeNextLv( FName LevelName, AProjectDCharacter* Character, ESaveType SaveType = ESaveType::SAVE_MAIN);
 
 	/*---------- CameraBoom Setting ----------*/
 public:
