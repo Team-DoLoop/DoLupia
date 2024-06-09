@@ -42,7 +42,7 @@ private:
 	TArray<class UImage*> SkillLevelSlot;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	class UImage* CanComboImage;
+	class UImage* SkillLockImage;
 
 	
 public:
@@ -53,9 +53,21 @@ public:
 	void SetCoolTimeBar(float CoolTime);
 
 	void UpgradeSkillSlotLevelUI(int32 SkillLevel);
-
-	void SetSkillComboSlotUI(bool IsCanCombo);
-
-	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
 	
+	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
+
+	void SetSkillLockImage(bool IsSkillLock);
+
+
+
+	// <---------------- Combo ---------------->
+private:
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UImage* CanComboImage;
+
+	UPROPERTY(EditDefaultsOnly,Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* ComboClickAnimation;
+
+public:
+	void SetSkillComboSlotUI(bool IsCanCombo);
 };

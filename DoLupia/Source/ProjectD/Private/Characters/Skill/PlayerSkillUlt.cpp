@@ -6,6 +6,7 @@
 #include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"
 
 APlayerSkillUlt::APlayerSkillUlt()
@@ -85,6 +86,14 @@ void APlayerSkillUlt::ApplyDamage(float SkillRadius, int32 _Damage)
 			{
 				Monster->OnMyTakeDamage(_Damage);
 				UE_LOG(LogTemp, Log, TEXT("Ult Attack %s Monster : %d"), *Monster->GetName(), _Damage);
+			}
+		}
+		else if (ABossMonster* BossMonster = Cast<ABossMonster>(TargetActor))
+		{
+			if (BossMonster)
+			{
+				BossMonster->TakeDamage(_Damage);
+				UE_LOG(LogTemp, Log, TEXT("Ult Attack %s Monster : %d"), *BossMonster->GetName(), _Damage);
 			}
 		}
 	}

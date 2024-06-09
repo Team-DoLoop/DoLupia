@@ -5,6 +5,7 @@
 #include <Components/BoxComponent.h>
 
 #include "Characters/ProjectDCharacter.h"
+#include "Data/WidgetData.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
 
 // Sets default values
@@ -26,6 +27,30 @@ void AStrangeObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AStrangeObject::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	if(NPCInteractWidget)
+	{
+		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+	NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}else
+	{
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}
+}
+
+void AStrangeObject::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+	if (NPCInteractGWidget)
+	{
+		NPCInteractGWidget->RemoveFromParent();
+	}
 }
 
 FString AStrangeObject::InteractWith()

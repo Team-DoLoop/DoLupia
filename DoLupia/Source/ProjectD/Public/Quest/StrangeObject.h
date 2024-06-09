@@ -27,13 +27,20 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
+	virtual void NotifyActorEndOverlap( AActor* OtherActor ) override;
 
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
 
 	UPROPERTY( EditAnywhere )
 	FString ObjectID;
+
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
+
+	UPROPERTY()
+	UNPCInteractionWidget* NPCInteractGWidget;
 
 	virtual FString InteractWith() override;
 

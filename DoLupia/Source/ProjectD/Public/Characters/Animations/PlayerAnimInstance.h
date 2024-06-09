@@ -38,6 +38,7 @@ public:
 	EPlayerWeaponState WeaponState;
 
 	void PlayMontage(UAnimMontage* _Montage);
+	void StopMontage();
 
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);

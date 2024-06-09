@@ -32,11 +32,6 @@ AAITxtHandlerBase::AAITxtHandlerBase()
     {
         UE_LOG( LogTemp , Error , TEXT( "Failed to create meshComp" ) );
     }
-    else
-    {
-        meshComp->SetupAttachment( RootComponent );
-    }
-
 
     TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
     TimelineLength = 5.0f; // 재생 시간
@@ -69,7 +64,7 @@ void AAITxtHandlerBase::BeginPlay()
     TimelineFinished.BindUFunction( this , FName( "OnTimelineFinished" ) );
     TimelineComp->SetTimelineFinishedFunc( TimelineFinished );
 
-    if (!meshComp)
+    if (!meshComp )
     {
         UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr in BeginPlay" ) );
         return;
@@ -129,9 +124,10 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
 
-        if (!meshComp)
+        if (!meshComp )
         {
-            UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr" ) );
+            UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+            return;
         }
 
         if (meshComp && AITxtMaterial)
@@ -139,9 +135,6 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
             DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
             UE_LOG( LogTemp , Error , TEXT( "meshComp is DynamicMaterial" ) );
         }
-        
-        // UTexture로 캐스팅
-        //UTexture* AITxt = Cast<UTexture>( DownloadedTexture );
 
         NewTexture = DownloadedTexture;
         if (DynamicMaterial)

@@ -32,7 +32,7 @@ void UInventoryComponent::BeginPlay()
 	player = Cast<AProjectDCharacter>( GetOwner() );
 
 	//InventorySlotsCapacity
-	ItemPool->CreateItem(24);
+	ItemPool->CreateItem(15);
 
 	if(LootingItemWidgetFactory)
 	{
@@ -762,7 +762,7 @@ void UInventoryComponent::SortItem_Name()
 		Pairs.Push({Elem.Key, Elem.Value, InventoryCount[Elem.Key]});
 	}*/
 
-	for(int32 i = 0; i < 24; ++i)
+	for(int32 i = 0; i < 15; ++i)
 	{
 		if(InventoryContents[i])
 		{
@@ -835,7 +835,7 @@ void UInventoryComponent::SortItem_Name()
 		if (UInventoryPannel* InventoryPanel = HUD->GetMainMeun()->GetInventoryPanel())
 		{
 			//for(int i = 0; i < InventorySlotsCapacity)
-			for (int32 i = 0; i < 24; ++i) // test
+			for (int32 i = 0; i < 15; ++i) // test
 			{
 				InventoryPanel->RefreshInventoryPannel( i , InventoryContents[i] );
 			}

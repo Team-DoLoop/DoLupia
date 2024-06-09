@@ -6,7 +6,10 @@
 #include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"
+
+class ABossMonster;
 
 APlayerSkillElecBlast::APlayerSkillElecBlast()
 {
@@ -45,6 +48,16 @@ void APlayerSkillElecBlast::ActivateSkill()
 			{
 				Monster->OnMyTakeDamage(SkillDamage);
 				UE_LOG(LogTemp, Log, TEXT("ElecBlast Attack %s Monster : %d"), *Monster->GetName(), SkillDamage);
+			}
+		}
+		
+				
+		else if (ABossMonster* BossMonster = Cast<ABossMonster>(TargetActor))
+		{
+			if (BossMonster)
+			{
+				BossMonster->TakeDamage(SkillDamage);
+				UE_LOG(LogTemp, Log, TEXT("ElecBlast Attack %s Monster : %d"), *BossMonster->GetName(), SkillDamage);
 			}
 		}
 	}

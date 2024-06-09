@@ -5,6 +5,7 @@
 
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/ProjectDPlayerController.h"
+#include "Characters/Animations/PlayerAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "VisualLogger/VisualLoggerTypes.h"
@@ -74,7 +75,8 @@ void UPlayerFSMComp::CheckState(EPlayerState _state)
 void UPlayerFSMComp::ChangePlayerState(EPlayerState _state)
 {
 	if(!CanChangeState(_state)) return;
-	
+	if(_state == EPlayerState::MOVE) Player->GetPlayerAnim()->StopMontage();
+		
 	CurrentState = _state;
 	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("ChangePlayerState : %s"), *UEnum::GetValueAsName(_state).ToString());
 }
@@ -113,6 +115,18 @@ void UPlayerFSMComp::ChangePlayerWeaponState(EPlayerWeaponState _weaponState)
 	CurrentWeaponState = _weaponState;
 	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentWeaponState : %s"), *UEnum::GetValueAsName(CurrentWeaponState).ToString());
 }
+
+
+// <--------------------- Shield State --------------------->
+
+void UPlayerFSMComp::ChangePlayerShieldState(EPlayerShieldState _shieldState)
+{
+	if(CurrentShieldState == _shieldState) return;
+	
+	CurrentShieldState = _shieldState;
+	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentShieldState : %s"), *UEnum::GetValueAsName(CurrentShieldState).ToString());
+}
+
 
 
 // <--------------------- Move --------------------->

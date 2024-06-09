@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TriggerType.h"
 #include "GameFramework/Actor.h"
 #include "TriggerBaseActor.generated.h"
 
@@ -35,6 +36,9 @@ public:
 	UPROPERTY()
 	APlayerGameMode* gm;
 
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EPlayerTriggerType triggerType = EPlayerTriggerType::None;
+
 	/* ------------------- Open Level ------------------- */
 public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Change Level" )
@@ -46,6 +50,8 @@ public:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite )
 	UNiagaraComponent* locationVFX;
 
-	
+	/* ------------------- CameraBoom ------------------- */
+private:
+	void ChangeCameraAngle(float angle);
 
 };

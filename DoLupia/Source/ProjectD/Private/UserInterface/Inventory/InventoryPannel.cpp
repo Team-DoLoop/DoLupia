@@ -12,6 +12,7 @@
 #include "Components/EditableText.h"
 #include "Components/TextBlock.h"
 #include "Components/WrapBox.h"
+#include <Components/Spacer.h>
 
 
 void UInventoryPannel::NativeOnInitialized()
@@ -26,7 +27,7 @@ void UInventoryPannel::NativeOnInitialized()
 
 		if(InventoryReference)
 		{
-			for (int i = 0; i < 24; ++i) // test
+			for (int i = 0; i < 15; ++i) // test
 				//for(int i = 0; i < InventoryReference->GetSlotCapacity(); ++i)
 			{
 				InventoryReference->AddInventoryContents(nullptr);
@@ -34,17 +35,16 @@ void UInventoryPannel::NativeOnInitialized()
 				RefreshInventory();
 			}
 
-			InventoryReference->OnInventoryUpdated.AddUObject(this, &UInventoryPannel::SetInfoText);
+			//InventoryReference->OnInventoryUpdated.AddUObject(this, &UInventoryPannel::SetInfoText);
 		}
 	}
 
 	SortButton->OnClicked.AddDynamic(this, &UInventoryPannel::SortItem);
-	TestButton->OnClicked.AddDynamic( this , &UInventoryPannel::FindItem );
+	//TestButton->OnClicked.AddDynamic( this , &UInventoryPannel::FindItem );
 	
 }
 
-
-void UInventoryPannel::SetInfoText() const
+/*void UInventoryPannel::SetInfoText() const
 {
 	const FString& WeightInfoValue {
 		FString::Printf(TEXT("%.2f"), InventoryReference->GetInventoryTotalWeight()) + "/" +
@@ -56,9 +56,10 @@ void UInventoryPannel::SetInfoText() const
 		FString::SanitizeFloat(InventoryReference->GetSlotCapacity())
 	};
 
-	WeightInfo->SetText(FText::FromString(WeightInfoValue));
-	CapacityInfo->SetText(FText::FromString(CapacityInfoValue));
-}
+	//WeightInfo->SetText(FText::FromString(WeightInfoValue));
+	//CapacityInfo->SetText(FText::FromString(CapacityInfoValue));
+}*/
+
 
 void UInventoryPannel::RefreshInventory()
 {
@@ -105,7 +106,7 @@ void UInventoryPannel::RefreshInventoryPannel(const int32 Index, UItemBase* Item
 	if(ToolTip)
 	{
 		ToolTip->SetupTooltip();
-		SetInfoText();
+		//SetInfoText();
 	}
 	else
 	{
@@ -154,7 +155,7 @@ void UInventoryPannel::SortItem()
 	
 }
 
-void UInventoryPannel::FindItem()
+/*void UInventoryPannel::FindItem()
 {
 	FString TextString = MyTest->GetText().ToString();
 	int32 elem = InventoryReference->GetInventoryItemCount( TextString );
@@ -163,6 +164,7 @@ void UInventoryPannel::FindItem()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("There are %d %s"), elem , *TextString );
 	}
-}
+}*/
+
 
 //

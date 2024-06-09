@@ -22,7 +22,9 @@ enum class EEffectAttackType : uint8
 {
 	NONE = 0 UMETA(DisplyaName = "None"),
 	BLEED = 1 UMETA(DisplayName = "Bleed"),
-	POISON = 2 UMETA(DisplayName = "Poison")
+	POISON = 2 UMETA(DisplayName = "Poison"),
+	FIRE = 3 UMETA(DisplayName = "Fire"),
+	ELECTRIC = 4 UMETA(DisplayName = "Electric")
 };
 
 UCLASS()

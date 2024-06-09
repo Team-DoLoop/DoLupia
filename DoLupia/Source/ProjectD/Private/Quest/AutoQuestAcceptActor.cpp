@@ -77,3 +77,8 @@ void AAutoQuestAcceptActor::GiveQuest()
 	}
 }
 
+void AAutoQuestAcceptActor::AutoQuestDestroy()
+{
+	this->Destroy();
+}
+

@@ -57,4 +57,9 @@ public:
 
     void UpdateCell(int32 x, int32 y, int32 Value);
 
+    void ClearGridWidgets();
+
+private:
+    bool isSucess = false;
+
 };

@@ -67,13 +67,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
 
-	/** Camera boom positioning the camera above the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-
 protected:
 	
 public:
+	/** Camera boom positioning the camera above the character */
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class USpringArmComponent* CameraBoom;
+
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -92,6 +92,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class APlayerStat* PlayerStat;
 
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* NiagaraComp;
+
 	UPROPERTY()
 	class AProjectDPlayerController* PlayerController;
 
@@ -106,6 +109,8 @@ public:
 	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
 	FORCEINLINE APlayerStat* GetPlayerStat() const { return PlayerStat; }
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
+	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
+	FORCEINLINE class UNiagaraComponent* GetNiagaraComp()const {return NiagaraComp;}
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
@@ -195,13 +200,37 @@ protected:
 	UFUNCTION()
 	void CameraTimelineEnd();
 
-	
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
 	void TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage);
 	virtual void TakeDamage( float Damage ) override;
-
 	void LyingEnd();
+
+	
+
+	// <---------------------- Effect Attack Hit ---------------------->
+private:
+	FTimerHandle EffectTimerHandle;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Effect Attack Hit")
+	float FireEffectTime = 5.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effect Attack Hit")
+	float ElecEffectTime = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Character | Effect Attack Hit")
+	class UNiagaraSystem* FireNS;
+
+	UPROPERTY(EditAnywhere, Category = "Character | Effect Attack Hit")
+	class UNiagaraSystem* ElecNS;
+
+	UNiagaraSystem* EffectNS;
+
+public:
+
+	void TakeEffectAttackHit(EEffectAttackType EffectAttackType);
+	void TakeEffectAttackHitEnd();
+
 
 	
 	// <---------------------- Interaction ---------------------->
@@ -269,19 +298,19 @@ private:
 protected:
 
 	void PerformTrace();
-	void InteractWidgetCreate();
-	void InteractWidgetRemove();
 
 	UPROPERTY( EditAnywhere )
 	float TraceDistance = 2000.0f;  // 트레이스 거리 설정
 
 	AActor* LastHitActor;  // 마지막으로 히트된 액터를 저장
 
+	/*
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
 
 	UPROPERTY()
 	UNPCInteractionWidget* NPCInteractGWidget;
+	*/
 	
 public:	
 	FORCEINLINE UQuestLogComponent* GetQuestLogComponent() const { return PlayerQuest; };

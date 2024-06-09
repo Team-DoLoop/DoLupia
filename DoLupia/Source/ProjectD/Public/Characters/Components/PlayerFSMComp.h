@@ -71,6 +71,16 @@ public:
 	FORCEINLINE EPlayerWeaponState GetCurrentWeaponState() const { return CurrentWeaponState; }
 	void ChangePlayerWeaponState(EPlayerWeaponState _weaponState);
 
+	
+	// <--------------------- Shield State --------------------->
+private:
+	UPROPERTY()
+	EPlayerShieldState CurrentShieldState = EPlayerShieldState::NONE;
+
+public:
+	FORCEINLINE EPlayerShieldState GetCurrentShieldState() const { return CurrentShieldState; }
+	void ChangePlayerShieldState(EPlayerShieldState _shieldState);
+
 
 	// <--------------------- IDLE --------------------->
 private:

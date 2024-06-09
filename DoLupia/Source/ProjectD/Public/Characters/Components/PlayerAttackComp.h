@@ -121,6 +121,9 @@ private:
 	UPROPERTY()
 	TArray<AActor*> IgnoreAttackActors;
 
+	UPROPERTY(EditAnywhere)
+	USoundWave* CantAttackSoundWave;
+
 protected:
 	void Attack(FSkillInfo* _TempInfo);
 	void FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex);
@@ -186,6 +189,10 @@ private :
 public:
 	void ExecuteSwapSkill();
 
+private:
+	UPROPERTY(EditAnywhere)
+	USoundWave* SwapSoundWave;
+
 	
 	// <---------------------- Ult Skill ---------------------->
 public:
@@ -230,6 +237,11 @@ private:
 	// <---------------------- Skill Use - Quest, Weapon ---------------------->
 public:
 	void SetSkillUseState(bool bCanUse, ESkillOpenType OpenType);
+	void SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock);
+
+private:
+	bool IsUnLockSwap = false;
+	bool IsUnLockUlt = false;
 
 
 	// <---------------------- Skill Upgrade ---------------------->

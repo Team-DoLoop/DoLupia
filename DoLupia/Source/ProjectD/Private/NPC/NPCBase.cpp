@@ -9,9 +9,12 @@
 #include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
 
+#include "Blueprint/UserWidget.h"
+#include "Data/WidgetData.h"
 #include "NPC/Animation/NPCAnim.h"
 #include "Quest/QuestGiver.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
+#include "UserInterface/Quest/NPCInteractionWidget.h"
 
 // Sets default values
 ANPCBase::ANPCBase()
@@ -80,6 +83,21 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 		else {
 			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
 		}
+		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}else
+	{
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}
+}
+
+void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+	if (NPCInteractGWidget)
+	{
+		NPCInteractGWidget->RemoveFromParent();
 	}
 }
 
@@ -110,7 +128,7 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	stencilDepth = 1;
+	//stencilDepth = 1;
 	ChangeNPCStatus( stencilDepth );
 	anim->bTalking = true;
 

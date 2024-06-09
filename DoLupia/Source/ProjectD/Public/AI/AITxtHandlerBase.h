@@ -33,13 +33,11 @@ public:
 	UPROPERTY( EditDefaultsOnly )
 	class USkeletalMeshComponent* meshComp;
 
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
-
+public:
 	void LoadWebImage();
 
 	UFUNCTION()

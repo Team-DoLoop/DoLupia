@@ -98,11 +98,24 @@ void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI(int32 _SkillLevel)
 		SkillLevelSlot[i]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
 }
 
+void UPlayerSkillSlotWidget::SetSkillLockImage(bool IsSkillLock)
+{
+	if(IsSkillLock)
+	{
+		SkillLockImage->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		SkillLockImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void UPlayerSkillSlotWidget::SetSkillComboSlotUI(bool IsCanCombo)
 {
 	if(IsCanCombo)
 	{
 		CanComboImage->SetVisibility(ESlateVisibility::Visible);
+		PlayAnimation(ComboClickAnimation);
 	}
 	else
 	{

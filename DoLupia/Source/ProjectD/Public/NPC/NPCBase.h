@@ -8,6 +8,7 @@
 #include "NPCBase.generated.h"
 
 
+class UNPCInteractionWidget;
 class UWidgetComponent;
 class UDialogComponent;
 class UQuestGiver;
@@ -32,6 +33,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
+	virtual void NotifyActorEndOverlap( AActor* OtherActor ) override;
 
 private:
 	UPROPERTY()
@@ -79,10 +81,18 @@ private:
 
 	/*---------------------- Post Process Depth ------------------*/
 public:
-	int32 stencilDepth = 4 ;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "PostProcess" )
+	int32 stencilDepth = 0 ;
 
 private:
 	void ChangeNPCStatus( int32 depth );
 
+	/*-------------------- Interaction Widget ---------------------*/
+public:
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UNPCInteractionWidget> NPCInteractWidget;
+
+	UPROPERTY()
+	UNPCInteractionWidget* NPCInteractGWidget;
 
 };
