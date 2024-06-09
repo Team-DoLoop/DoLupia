@@ -59,7 +59,7 @@ void AGameSaveManager::BeginPlay()
 
 	ItemPool->CreateItem( 110 );
 
-	//GetWorld()->SpawnActor<ASaveLoadObject>(ASaveLoadObject::StaticClass());
+	GetWorld()->SpawnActor<ASaveLoadObject>(ASaveLoadObject::StaticClass());
 }
 
 void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character , FString SaveSlotName , FName SaveName , FName LevelName ,
