@@ -15,7 +15,7 @@
 // Sets default values
 AQuest_Base::AQuest_Base()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 
@@ -80,9 +80,7 @@ void AQuest_Base::BeginPlay()
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
-
-	//비동기 함수!!!
-	AsyncTask( ENamedThreads::GameThread , [this]() {
+	/*AsyncTask( ENamedThreads::GameThread , [this]() {
 		while (QuestID.IsNone())
 		{
 			FPlatformProcess::Sleep( 0.1f ); // 설정될 때까지 0.1초 간격으로 대기
@@ -94,9 +92,11 @@ void AQuest_Base::BeginPlay()
 		GetQuestDetails();
 		CheckItem();
 		ReadyAddTracker.Broadcast();
-	} );
+	} );*/
+	//비동기 함수!!! ->Tick으로
+	
 
-	IsCompleted = AreObjectivesComplete();
+	//IsCompleted = AreObjectivesComplete();
 }
 
 
@@ -105,6 +105,19 @@ void AQuest_Base::Tick(float DeltaSeconds)
 {
 	Super::Tick( DeltaSeconds );
 
+	if (!bQuestIDValid && QuestID.IsValid())
+	{
+		bQuestIDValid = true;
+
+		UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(), CheckItem()" ) );
+
+		// QuestID가 유효해졌으므로 이후 작업 수행
+		GetQuestDetails();
+		CheckItem();
+		ReadyAddTracker.Broadcast();
+
+		IsCompleted = AreObjectivesComplete();
+	}
 }
 
 void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
