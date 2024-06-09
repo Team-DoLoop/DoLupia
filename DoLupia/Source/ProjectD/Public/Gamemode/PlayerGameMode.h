@@ -7,6 +7,19 @@
 #include "Library/GameSaveManager.h"
 #include "PlayerGameMode.generated.h"
 
+
+#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseThread, UseLocation)					\
+    ALevelManager::GetInstance(GetWorld())->SaveGame(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName,	\
+    Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), UseThread, UseLocation);
+
+#define LOAD(SaveType, SaveSlotName, UseThread, UseLocation, OpenLevel )						\
+		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
+		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
+		SaveType , SaveSlotName , UseThread , UseLocation, OpenLevel );							\
+																								\
+
+
+
 class UAIConnectionLibrary;
 class UNPCConvWidget; 
 class UAITestWidget;

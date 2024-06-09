@@ -3,9 +3,11 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/MySaveGame.h"
 #include "Pooling/ItemPool.h"
+#include "World/SaveLoad/SaveLoadObject.h"
 
 // Sets default values
 AGameSaveManager::AGameSaveManager()
@@ -15,39 +17,40 @@ AGameSaveManager::AGameSaveManager()
 	ItemPool = CreateDefaultSubobject<UItemPool>( TEXT( "ItemPool" ) );
 }
 
-void AGameSaveManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName , FName SaveName, FVector Location , TArray<UItemBase*> ItemBases )
+void AGameSaveManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName , FName SaveName, FName LevelName, 
+	FVector Location , TArray<UItemBase*> ItemBases, bool UseLocation )
 {
 	switch (SaveType)
 	{
 	case ESaveType::SAVE_AUTO:
-		SaveGameAsync( Character, "PlayerAutoSave", "PlayerAutoSave", static_cast<int32>(ESaveType::SAVE_AUTO) , Location, ItemBases );
+		SaveGameAsync( Character, "PlayerAutoSave", "PlayerAutoSave", LevelName, static_cast<int32>(ESaveType::SAVE_AUTO) , Location, ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_MAIN:
-		SaveGameAsync( Character, "PlayerMainSave" , "PlayerMainSave" , static_cast<int32>(ESaveType::SAVE_MAIN) , Location , ItemBases );
+		SaveGameAsync( Character, "PlayerMainSave" , "PlayerMainSave" , LevelName, static_cast<int32>(ESaveType::SAVE_MAIN) , Location , ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_1:
-		SaveGameAsync( Character, SaveSlotName , SaveName , static_cast<int32>(ESaveType::SAVE_1) , Location , ItemBases );
+		SaveGameAsync( Character, SaveSlotName , SaveName , LevelName, static_cast<int32>(ESaveType::SAVE_1) , Location , ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_2:
-		SaveGameAsync( Character, SaveSlotName , SaveName , static_cast<int32>(ESaveType::SAVE_2) , Location , ItemBases );
+		SaveGameAsync( Character, SaveSlotName , SaveName , LevelName, static_cast<int32>(ESaveType::SAVE_2) , Location , ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_3:
-		SaveGameAsync( Character, SaveSlotName , SaveName , static_cast<int32>(ESaveType::SAVE_3) , Location , ItemBases );
+		SaveGameAsync( Character, SaveSlotName , SaveName , LevelName, static_cast<int32>(ESaveType::SAVE_3) , Location , ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_4:
-		SaveGameAsync( Character, SaveSlotName , SaveName , static_cast<int32>(ESaveType::SAVE_4) , Location , ItemBases );
+		SaveGameAsync( Character, SaveSlotName , SaveName , LevelName, static_cast<int32>(ESaveType::SAVE_4) , Location , ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_5:
-		SaveGameAsync( Character, SaveSlotName , SaveName , static_cast<int32>(ESaveType::SAVE_5) , Location , ItemBases );
+		SaveGameAsync( Character, SaveSlotName , SaveName , LevelName, static_cast<int32>(ESaveType::SAVE_5) , Location , ItemBases, UseLocation );
 		break;
 	case ESaveType::SAVE_END:
 		break;
 	}
 }
 
-void AGameSaveManager::LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName )
+void AGameSaveManager::LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
-	LoadGameAsync( Character, SaveType, SaveSlotName );
+	LoadGameAsync( Character, SaveType, SaveSlotName, UseLocation, OpenLevel, UseThread );
 }
 
 void AGameSaveManager::BeginPlay()
@@ -55,9 +58,12 @@ void AGameSaveManager::BeginPlay()
 	Super::BeginPlay();
 
 	ItemPool->CreateItem( 110 );
+
+	//GetWorld()->SpawnActor<ASaveLoadObject>(ASaveLoadObject::StaticClass());
 }
 
-void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character, FString SaveSlotName, FName SaveName, int32 SaveIndex, FVector Location, TArray<UItemBase*> ItemBases)
+void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character , FString SaveSlotName , FName SaveName , FName LevelName ,
+		int32 SaveIndex , FVector Location , TArray<UItemBase*> ItemBases , bool UseLocation )
 {
 
 	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>( UGameplayStatics::CreateSaveGameObject( UMySaveGame::StaticClass() ) );
@@ -75,7 +81,10 @@ void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character, FString Sav
 			if(ItemBases[i])
 			{
 				FString ItemName = ItemBases[i]->GetTextData().Name.ToString();
-				const int32 Quantity = ItemBases[i]->GetQuantity();
+				int32 Quantity = ItemBases[i]->GetQuantity();
+
+				if(!Quantity)
+					++Quantity;
 
 				if (int32* ElemValue = ItemMap.Find( ItemName ))
 					*ElemValue += Quantity;
@@ -85,7 +94,15 @@ void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character, FString Sav
 		}
 
 		SaveGameInstance->SaveStruct.SaveName = SaveName;
-		SaveGameInstance->SaveStruct.Location = Location;
+		SaveGameInstance->SaveStruct.LevelName = LevelName;
+
+		if(UseLocation)
+			SaveGameInstance->SaveStruct.Location = Location;
+		else
+			if(AActor* PlayerStart = UGameplayStatics::GetActorOfClass( GetWorld() , APlayerStart::StaticClass() ))
+				SaveGameInstance->SaveStruct.Location = PlayerStart->GetActorLocation();
+
+			
 		SaveGameInstance->SaveStruct.ItemBases = ItemMap;
 
 		UGadgetComponent* GadgetComponent = Character->GetGadgetComp();
@@ -144,7 +161,7 @@ void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character, FString Sav
 
 }
 
-void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character, ESaveType SaveType , FString SaveSlotName )
+void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
 	if(Character)
 	{
@@ -166,24 +183,48 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character, ESaveType S
 					UE_LOG( LogTemp , Log , TEXT( "Game loaded successfully. SaveName: %s, Location: %s" ) ,
 						*LoadedGameInstance->SaveStruct.SaveName.ToString() , *LoadedGameInstance->SaveStruct.Location.ToString() );
 
-					Character->SetActorLocation( LoadedGameInstance->SaveStruct.Location );
+					if(UseLocation)
+						Character->SetActorLocation( LoadedGameInstance->SaveStruct.Location );
 
 					for(auto& ItemData : LoadedGameInstance->SaveStruct.ItemBases)
 					{
-						UItemBase* ItemBase = ItemPool->GetItem( ItemData.Key );
+						UItemBase* ItemBase = NewObject<UItemBase>();
+						ItemBase->CreateItemCopy( ItemPool->GetItem( ItemData.Key ) );
 
-						if(ItemBase)
-						{
-							if(!ItemData.Value)
-								++ItemData.Value;
+						int32 StackSize = ItemBase->GetNumericData().MaxStackSize;
 
-							ItemBase->SetQuantity( ItemData.Value , false );
-							Character->GetInventory()->HandelAddItem( ItemBase );
-						}
-						else
+						while (ItemData.Value)
 						{
-							UE_LOG(LogTemp, Error, TEXT("AGameSaveManager::LoadGameAsync Load Failed -> ItemPool"));
+							if (ItemBase)
+							{
+								if(!ItemBase->GetNumericData().bIsStackable)
+								{
+									--ItemData.Value;
+								}
+								else if (ItemData.Value > StackSize)
+								{
+									ItemBase->SetQuantity( StackSize , false );
+									ItemData.Value -= StackSize;
+								}
+								else
+								{
+									ItemBase->SetQuantity( ItemData.Value , false );
+									Character->GetInventory()->HandelAddItem( ItemBase );
+									break;
+								}
+
+								Character->GetInventory()->HandelAddItem( ItemBase );
+
+								ItemBase = NewObject<UItemBase>();
+								ItemBase->CreateItemCopy( ItemPool->GetItem( ItemData.Key ) );
+							}
+							else
+							{
+								UE_LOG( LogTemp , Error , TEXT( "AGameSaveManager::LoadGameAsync Load Failed -> ItemPool" ) );
+							}
 						}
+
+
 					}
 						
 
@@ -207,7 +248,9 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character, ESaveType S
 						}
 
 					}
-					
+
+					if(LoadedGameInstance->SaveStruct.LevelName != FName("None") && OpenLevel)
+						UGameplayStatics::OpenLevel( GetWorld() , LoadedGameInstance->SaveStruct.LevelName );
 				}
 			}
 			else
@@ -217,7 +260,5 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character, ESaveType S
 			} //);
 		} //);
 	}
-
-
 }
 

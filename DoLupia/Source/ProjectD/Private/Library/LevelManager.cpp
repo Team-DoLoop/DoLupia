@@ -5,6 +5,7 @@
 
 #include "Library/GameSaveManager.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Gamemode/PlayerGameMode.h"
 
 ALevelManager* ALevelManager::Instance = nullptr;
 
@@ -20,10 +21,6 @@ void ALevelManager::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeGameSaveManager();
-
-	AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
-
-	GameSaveManager->LoadGame( MyCharacter , ESaveType::SAVE_MAIN , "PlayerMainSave");
 }
 
 void ALevelManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -48,21 +45,20 @@ ALevelManager* ALevelManager::GetInstance( UWorld* World )
 	return Instance;
 }
 
-void ALevelManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName, 
-	FName SaveName, FVector Location, TArray<UItemBase*> ItemBases, bool UseThread )
+void ALevelManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName, FName SaveName,
+	FName LevelName , FVector Location, TArray<UItemBase*> ItemBases, bool UseThread, bool UseLocation )
 {
 	if(GameSaveManager)
 	{
-		GameSaveManager->SaveGame( Character, SaveType, SaveSlotName, SaveName, Location, ItemBases);
+		GameSaveManager->SaveGame( Character, SaveType, SaveSlotName, SaveName, LevelName, Location, ItemBases, UseLocation );
 	}
 }
 
-void ALevelManager::LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName , 
-	FName SaveName , FVector Location , TArray<UItemBase*> ItemBases, bool UseThread )
+void ALevelManager::LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
 	if (GameSaveManager)
 	{
-		GameSaveManager->LoadGame( Character, SaveType , SaveSlotName );
+		GameSaveManager->LoadGame( Character, SaveType , SaveSlotName, UseLocation, UseThread, OpenLevel );
 	}
 }
 

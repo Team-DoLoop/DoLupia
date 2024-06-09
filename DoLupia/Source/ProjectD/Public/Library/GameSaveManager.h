@@ -33,8 +33,9 @@ public:
 	// Sets default values for this actor's properties
 	AGameSaveManager();
 
-	void SaveGame( AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName , FName SaveName, FVector Location , TArray<UItemBase*> ItemBases  );
-	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName );
+	void SaveGame( AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName , FName SaveName, FName LevelName, 
+		FVector Location , TArray<UItemBase*> ItemBases, bool UseLocation );
+	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation , bool UseThread , bool OpenLevel );
 
 	FORCEINLINE void InputSaveData(const FSaveGameDefault& SaveData) { SaveDataArray.Add( SaveData.SaveName, SaveData ); }
 
@@ -42,8 +43,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void SaveGameAsync( AProjectDCharacter* Character, FString SaveSlotName , FName SaveName , int32 SaveIndex , FVector Location , TArray<UItemBase*> ItemBases );
-	void LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName );
+	void SaveGameAsync( AProjectDCharacter* Character, FString SaveSlotName , FName SaveName , FName LevelName,
+		int32 SaveIndex , FVector Location , TArray<UItemBase*> ItemBases, bool UseLocation );
+
+	void LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation , bool UseThread, bool OpenLevel );
 
 private:
 	UPROPERTY()

@@ -52,8 +52,12 @@ void APlayerGameMode::StartPlay()
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
-	GetWorld()->SpawnActor<ALevelManager>( ALevelManager::StaticClass());
-	GetWorld()->SpawnActor<ASoundManager>( ASoundManager::StaticClass() );
+	//AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+
+	//GameSaveManager->LoadGame( MyCharacter , ESaveType::SAVE_MAIN , "PlayerMainSave" );
+
+	ASoundManager::GetInstance(GetWorld());
+	ALevelManager::GetInstance(GetWorld());
 
 }
 
@@ -140,6 +144,10 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 
 void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType)
 {
-	ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false);
+	SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false, false);
+
+	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
+	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
+
 	UGameplayStatics::OpenLevel( this , LevelName );
 }

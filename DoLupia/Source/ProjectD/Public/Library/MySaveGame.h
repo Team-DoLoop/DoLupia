@@ -29,6 +29,9 @@ struct FSaveGameDefault
 	UPROPERTY()
 	TMap<EItemType , FString> EquippedItems;
 
+	UPROPERTY()
+	FName LevelName;
+
 	// 망토
 	UPROPERTY()
 	FName PlayerCape;

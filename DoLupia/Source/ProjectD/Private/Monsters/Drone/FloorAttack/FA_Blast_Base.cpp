@@ -44,7 +44,7 @@ void AFA_Blast_Base::Trigger()
 
 void AFA_Blast_Base::PlayBlastSound()
 {
-	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave( SpawnSound , EMonsterSound::MonsterSound1, GetActorLocation());
+	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave( SpawnSound , EMonsterSound::MonsterSound1, GetActorLocation(), 0.1f);
 }
 
 void AFA_Blast_Base::SpawnBlast()

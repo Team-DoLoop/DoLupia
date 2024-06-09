@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Library/LevelManager.h"
 
 // Sets default values
 ATriggerBaseActor::ATriggerBaseActor()

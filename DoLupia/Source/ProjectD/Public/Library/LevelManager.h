@@ -30,8 +30,10 @@ public:
 	static ALevelManager* GetInstance(UWorld* World);
 
 	// 저장 및 로드 함수
-	void SaveGame( AProjectDCharacter* Character, ESaveType SaveType , FString SaveSlotName , FName SaveName , FVector Location , TArray<UItemBase*> ItemBases, bool UseThread );
-	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName , FName SaveName , FVector Location , TArray<UItemBase*> ItemBases, bool UseThread );
+	void SaveGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName , FName SaveName,
+		FName LevelName , FVector Location , TArray<UItemBase*> ItemBases , bool UseThread , bool UseLocation );
+
+	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation = false , bool UseThread = false, bool OpenLevel = false);
 
 private:
 	void InitializeGameSaveManager();
