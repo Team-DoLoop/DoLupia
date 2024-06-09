@@ -17,12 +17,16 @@ AMinigameQuestObject::AMinigameQuestObject()
 
 FString AMinigameQuestObject::InteractWith()
 {
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-    int32 questid = gm->GetQuestID();
-
-    if (questid == 2003)
+    if(!isAvailable)
     {
-        SpawnMiniGame();
+        auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+        int32 questid = gm->GetQuestID();
+
+        if (questid == 2003)
+        {
+            SpawnMiniGame();
+            isAvailable = true;
+        }
     }
 	return Super::InteractWith();
 }

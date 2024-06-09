@@ -130,7 +130,7 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 		{
 			if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 			{
-				SoundManager->PlayBGM( NewBGM );
+				SoundManager->PlayBGM( NewBGM, 0.2 );
 				CurrentBGM = NewBGM;
 			}
 		}
