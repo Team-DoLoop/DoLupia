@@ -7,9 +7,8 @@
 #include "Animation/AnimInstance.h"
 #include "BossAnim.generated.h"
 
-DECLARE_MULTICAST_DELEGATE( FEndHitAttackDelegate );
-DECLARE_MULTICAST_DELEGATE( FEndFireAttackDelegate );
-DECLARE_MULTICAST_DELEGATE( FEndGrabAttackDelegate );
+DECLARE_MULTICAST_DELEGATE( FEndAttackDelegate );
+
 
 UCLASS()
 class PROJECTD_API UBossAnim : public UAnimInstance
@@ -35,9 +34,8 @@ public:
 	UPROPERTY( EditDefaultsOnly , BlueprintReadWrite )
 	bool bIsAttackComplete = true;
 
-	FEndHitAttackDelegate OnEndHitAttack;
-	FEndFireAttackDelegate OnEndFireAttack;
-	FEndGrabAttackDelegate OnEndGrabAttack;
+	FEndAttackDelegate OnEndAttack;
+
 
 	UPROPERTY()
 	class ABossMonster* Boss;
@@ -48,7 +46,7 @@ public:
 
 	//===============Delay_Launch=======================
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION( BlueprintCallable )
 	void EndLaunchAnimation();
 
 	//===============Delay_LookAround=================
@@ -65,7 +63,7 @@ public:
 	void OnEndHitAttackAnimation();
 
 	//===============Fire Attack=======================
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION( BlueprintCallable )
 	void OnDoFireAttackAnimation();
 
 	UFUNCTION( BlueprintCallable )
@@ -74,6 +72,20 @@ public:
 	//===============Grab Attack=======================
 	UFUNCTION( BlueprintCallable )
 	void OnEndGrabAttackAnimation();
+
+	//===============BlastFire Attack=======================
+	UFUNCTION( BlueprintCallable )
+	void OnDoBlastFireAttackAnimation();
+
+	UFUNCTION( BlueprintCallable )
+	void OnEndBlastFireAttackAnimation();
+
+	//===============BlastLightening Attack=======================
+	UFUNCTION( BlueprintCallable )
+	void OnDoBlastLighteningAttackAnimation();
+
+	UFUNCTION( BlueprintCallable )
+	void OnEndBlastLighteningAttackAnimation();
 
 	//===================Die===========================
 	UFUNCTION( BlueprintCallable )

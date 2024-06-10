@@ -28,7 +28,7 @@ ABossMonster::ABossMonster()
 	if (BossMonsterMesh.Succeeded()) {
 		GetMesh()->SetSkeletalMesh( BossMonsterMesh.Object );
 	}
-	
+
 	//OctopusBackpackComponent = CreateDefaultSubobject<UOctopusBackpackComponent>( TEXT( "OctopusBackpackComponent" ) );
 	ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>( TEXT( "ChildActorComponent" ) );
 	ChildActorComponent->SetChildActorClass( AOctopusBackpackActor::StaticClass() );
@@ -36,7 +36,7 @@ ABossMonster::ABossMonster()
 	FName OctoSocket( TEXT( "OctoSocket" ) );
 	if (GetMesh()->DoesSocketExist( OctoSocket ))
 	{
-		ChildActorComponent->SetupAttachment( GetMesh(),OctoSocket );
+		ChildActorComponent->SetupAttachment( GetMesh() , OctoSocket );
 	}
 
 	AIControllerClass = AMonsterAIController::StaticClass();
@@ -81,7 +81,7 @@ void ABossMonster::BeginPlay()
 	InitializeAttackStack();
 
 
-	
+
 }
 
 // Called every frame
@@ -108,11 +108,11 @@ void ABossMonster::Tick( float DeltaTime )
 	case EBossState::Die:		DieState();			break;
 	}
 
-	
+
 }
 
-void ABossMonster::OnMyBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABossMonster::OnMyBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor ,
+	UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
 	if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
 
@@ -123,10 +123,10 @@ void ABossMonster::OnMyBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	}
 }
 
-void ABossMonster::OnLaunchBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABossMonster::OnLaunchBeginOverlap( UPrimitiveComponent* OverlappedComponent , AActor* OtherActor ,
+										UPrimitiveComponent* OtherComp , int32 OtherBodyIndex , bool bFromSweep , const FHitResult& SweepResult )
 {
-	if(IsLaunching)
+	if (IsLaunching)
 	{
 		if (AProjectDCharacter* OverlapPlayer = Cast<AProjectDCharacter>( OtherActor )) {
 
@@ -136,7 +136,7 @@ void ABossMonster::OnLaunchBeginOverlap(UPrimitiveComponent* OverlappedComponent
 
 			}
 		}
-		
+
 	}
 }
 
@@ -156,11 +156,11 @@ void ABossMonster::MoveState()
 void ABossMonster::AttackState()
 {
 	//UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::AttackState()" ) );
-	attackDelayTime= UKismetMathLibrary::RandomIntegerInRange( 2,4 );
+	attackDelayTime = UKismetMathLibrary::RandomIntegerInRange( 2 , 4 );
 	anim->bAttackState = true;
 	anim->animState = state;
 
-	UE_LOG( LogTemp , Warning , TEXT( "currentTime : %f" ),currentTime );
+	UE_LOG( LogTemp , Warning , TEXT( "currentTime : %f" ) , currentTime );
 
 	auto player = GetWorld()->GetFirstPlayerController()->GetPawn();
 
@@ -170,7 +170,7 @@ void ABossMonster::AttackState()
 		direction.Z = 0.0f;
 		direction.Normalize();
 
-		if(anim->bIsAttackComplete)
+		if (anim->bIsAttackComplete)
 		{
 			FRotator newRotation = direction.ToOrientationRotator();
 			FRotator currentRotation = this->GetActorRotation();
@@ -200,9 +200,9 @@ void ABossMonster::AttackState()
 
 
 		}
-		if(anim->bFinishDelay)
+		if (anim->bFinishDelay)
 		{
-			
+
 			// 스택이 비어있으면 스택을 초기화
 			if (AttackStack.Num() == 0)
 			{
@@ -220,9 +220,9 @@ void ABossMonster::AttackState()
 				anim->bIsAttackComplete = false;
 				anim->bFinishDelay = false;
 			}
-			
+
 		}
-		
+
 	}
 
 
@@ -247,7 +247,7 @@ void ABossMonster::HitAttack()
 	skillState = EBossSkill::Hit;
 	anim->animState = state;
 	anim->animBossSkill = skillState;
-	
+
 }
 
 void ABossMonster::FireAttack()
@@ -269,17 +269,22 @@ void ABossMonster::GrabAndThrowAttack()
 void ABossMonster::BlastFire()
 {
 	skillState = EBossSkill::BlastFire;
+	anim->animState = state;
+	anim->animBossSkill = skillState;
 }
 
 void ABossMonster::BlastLightening()
 {
 	skillState = EBossSkill::BlastLightening;
+	anim->animState = state;
+	anim->animBossSkill = skillState;
 }
 
 void ABossMonster::InitializeAttackStack()
 {
 	// 공격 함수 포인터 배열 초기화
-	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAndThrowAttack };
+	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAndThrowAttack,
+						&ABossMonster::BlastFire,&ABossMonster::BlastLightening };
 
 	// 공격 함수들을 랜덤하게 스택에 추가
 	while (AttackFunctions.Num() > 0)
@@ -302,7 +307,7 @@ void ABossMonster::LookAround()
 void ABossMonster::Launch()
 {
 	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::Delay - Launch()" ) );
-	
+
 	delayState = EBossDelay::Launch;
 	anim->animState = state;
 	anim->animBossDelay = delayState;
@@ -323,11 +328,11 @@ void ABossMonster::InitializeDelayStack()
 	}
 }
 
-void ABossMonster::TakeDamage(int damage)
+void ABossMonster::TakeDamage( int damage )
 {
 	BossCurrentHP -= damage;
 
-	if(BossHPWidget)
+	if (BossHPWidget)
 	{
 		BossHPWidget->SetHP( BossCurrentHP , BossMaxHP );
 
@@ -359,7 +364,7 @@ void ABossMonster::TakeDamage(int damage)
 	}
 
 
-	if(BossCurrentHP==0)
+	if (BossCurrentHP == 0)
 	{
 		state = EBossState::Die;
 	}
@@ -367,8 +372,8 @@ void ABossMonster::TakeDamage(int damage)
 	//monsterHPWidget->SetHP( currentHP , maxHP );
 
 
-	
-	
+
+
 }
 
 void ABossMonster::DestroyMonster()

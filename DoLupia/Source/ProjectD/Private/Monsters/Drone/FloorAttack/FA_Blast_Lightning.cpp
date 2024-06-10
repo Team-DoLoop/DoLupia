@@ -12,6 +12,7 @@
 void AFA_Blast_Lightning::BeginPlay()
 {
 	Super::BeginPlay();
+	FloorAttackType = EFloorAttackType::BlastLightening;
 
 	FTimerHandle Handle1;
 
