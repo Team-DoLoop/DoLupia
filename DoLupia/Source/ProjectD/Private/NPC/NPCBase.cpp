@@ -129,11 +129,12 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 
 void ANPCBase::DialogWith()
 {
-	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	//stencilDepth = 1;
-	ChangeNPCStatus( stencilDepth );
-	anim->bTalking = true;
-
+	if (bCanTalk)
+	{
+		DialogComp->StartDialog( this , *NPCID , DialogNum );
+		ChangeNPCStatus( stencilDepth );
+		anim->bTalking = true;
+	}
 }
 
 FString ANPCBase::InteractWith()

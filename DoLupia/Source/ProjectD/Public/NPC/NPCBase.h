@@ -75,6 +75,8 @@ public:
 	virtual FString InteractWith() override;
 	virtual void LookAt() override;
 
+	bool bCanTalk ;
+
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;

@@ -60,9 +60,14 @@ void ATriggerBaseActor::NotifyActorBeginOverlap(AActor* OtherActor)
 		if (triggerType == EPlayerTriggerType::LevelTransition)
 		{
 			CallLevel( LvName , player );
-		} else if (triggerType == EPlayerTriggerType::CameraAngle)
+		}
+		else if (triggerType == EPlayerTriggerType::CameraAngle)
 		{
 			ChangeCameraAngle( 90.0f );
+		}
+		else if (triggerType == EPlayerTriggerType::CameraTargetArms)
+		{
+			ChangeCameraBooms( 500.0f );
 		}
 	}
 
@@ -82,5 +87,14 @@ void ATriggerBaseActor::ChangeCameraAngle(float angle)
 	FRotator NewRotation = player->CameraBoom->GetRelativeRotation();
 	NewRotation.Yaw = angle;
 	player->CameraBoom->SetRelativeRotation( NewRotation );
+}
+
+void ATriggerBaseActor::ChangeCameraBooms(float angle)
+{
+	// Player Load
+	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
+	player->CameraBoom->TargetArmLength = angle;
 }
 
