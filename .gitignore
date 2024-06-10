@@ -82,8 +82,10 @@ DoLupia/TH/*
 
 #MapAsset
 DoLupia/Content/ResearchMegaPack
-DoLupia/Content/Asset/Map/Beta/UndergroundQuarry
-DoLupia/Content/UndergroundQuarry
-DoLupia/Content/SpaceGUI
 DoLupia/Content/Asset/sA_Megapack_v1
 DoLupia/Content/sA_Megapack_v1
+
+
+#이후에 지울 예정
+DoLupia/Content/UndergroundQuarry
+DoLupia/Content/SpaceGUI

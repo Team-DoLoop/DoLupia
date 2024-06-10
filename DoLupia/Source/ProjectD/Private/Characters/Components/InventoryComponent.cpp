@@ -31,7 +31,7 @@ void UInventoryComponent::BeginPlay()
 
 	player = Cast<AProjectDCharacter>( GetOwner() );
 
-	InventorySlotsCapacity = 15;
+	InventorySlotsCapacity = 20;
 
 	ItemPool->CreateItem( InventorySlotsCapacity );
 
