@@ -2,11 +2,26 @@
 
 
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "Data/WidgetData.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
+
+void UPlayerDefaultsWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	if(PlayerBattleUIFactory)
+	{
+		PlayerBattleUI = CreateWidget<UPlayerBattleWidget>(GetWorld(), PlayerBattleUIFactory);
+		PlayerBattleUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
+	}
+}
 
 void UPlayerDefaultsWidget::NativeConstruct()
 {
@@ -17,15 +32,11 @@ void UPlayerDefaultsWidget::NativeConstruct()
 		QuickSlot = CreateWidget<UMainQuickSlotWidget>(GetWorld(), QuickSlotFactory );
 		QuickSlot->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
 	}
-	
-	if(PlayerBattleUIFactory)
-	{
-		PlayerBattleUI = CreateWidget<UPlayerBattleWidget>(GetWorld(), PlayerBattleUIFactory);
-		PlayerBattleUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
-	}
 
 	SetIsFocusable( true );
-	
+
+	Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	Player->GetAttackComp()->InitSkillUI();
 }
 
 void UPlayerDefaultsWidget::UseQuickSlot(int32 SlotNumber)
@@ -71,3 +82,4 @@ bool UPlayerDefaultsWidget::QuickSlotMouseHoveredWidget(FVector2D MousePosition)
 
 	return true;
 }
+

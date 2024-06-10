@@ -17,6 +17,19 @@ UProjectDGameInstance::UProjectDGameInstance()
 void UProjectDGameInstance::Init()
 {
 	Super::Init();
+	
+	InitCanUseColor();
+}
+
+void UProjectDGameInstance::InitCanUseColor()
+{
+	UEnum* ColorEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUseColor"), true);
+	if(!ColorEnum) return;
+
+	for(int i = 0; i < ColorEnum->NumEnums(); i++)
+	{
+		CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), false);
+	}
 }
 
 FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)

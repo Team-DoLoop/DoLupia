@@ -6,6 +6,7 @@
 #include "InputActionValue.h"
 #include "Common/UseColor.h"
 #include "Components/ActorComponent.h"
+#include "Data/PlayerSkillDataStructs.h"
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
@@ -101,13 +102,6 @@ public:
 	
 	// <---------------------- Attack ---------------------->
 private:
-
-	UPROPERTY(EditAnywhere, Category="Flamethrower")
-	TSubclassOf<class APlayerSkillFlamethrower> FlamethrowerFactory;
-
-	UPROPERTY()
-	class APlayerSkillFlamethrower* Flamethrower;
-	
 	int32 PlayerMaxMP;
 
 	/*
@@ -130,6 +124,7 @@ protected:
 	
 public:
 	virtual void CompleteSkill() override;
+	void AttackEndState();
 	
 	void SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo);
 	
@@ -231,11 +226,12 @@ public:
 
 private:
 	TMap<EUseColor, bool> CanUseColor;
-	TMap<EUseColor, int32> StartIndexColor;
+	// TMap<EUseColor, int32> StartIndexColor;
 
 	
 	// <---------------------- Skill Use - Quest, Weapon ---------------------->
 public:
+	void InitSkillUI();
 	void SetSkillUseState(bool bCanUse, ESkillOpenType OpenType);
 	void SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock);
 
@@ -253,7 +249,6 @@ public:
 	// <---------------------- Attack Combo ---------------------->
 public:
 	void AttackStartComboState();
-	void AttackEndComboState();
 
 	void NextAttackCheck();
 
@@ -265,6 +260,17 @@ private:
 	int32 CurrentCombo = 0;
 	int32 SkillKeyIndex_Combo = -1;
 
+
+	
+	// <---------------------- Charging Skill ---------------------->
+public:
+	void PlayerChargingSkill();
+	void PlayerChargingEndSkill();
+	void NextChargingCheck();
+
+private:
+	bool IsChargingInputOn;
+	bool CanChargingSkill;
 	
 	
 	// <---------------------- Skill Data ---------------------->
@@ -276,6 +282,7 @@ public:
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
 
 	FORCEINLINE virtual int32 GetSkillLevel() const {return SkillLevel;}
+	FORCEINLINE virtual int32 GetSkillCount() const {return SkillCount;}
 	FORCEINLINE virtual int32 GetSkillDamage() const {return SkillDamage;}
 
 	
@@ -312,6 +319,7 @@ private:
 	FVector SkillRange; //
 	int32 SkillMaxCombo; //
 	float SkillMaxRange; //
+	bool IsSkillCharging; //
 
 	 
 };
