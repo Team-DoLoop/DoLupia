@@ -110,6 +110,8 @@ void AProjectDPlayerController::SetupInputComponent()
 		
 		
 		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);						// Q
+		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Triggered, this, &AProjectDPlayerController::ChargingSkill, 1);						// Q
+		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::ChargingEndSkill, 1);						// Q
 		
 		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 2);						// W Start
 		EnhancedInputComponent->BindAction(SpellSkillAction, ETriggerEvent::Completed, this, &AProjectDPlayerController::QuitSkill, 2);						// W End
@@ -316,6 +318,23 @@ void AProjectDPlayerController::ExecuteSkill(int32 SkillIndex)
 
 	StopMovement();
 	ControlledCharacter->attackComp->PlayerExecuteAttack(SkillIndex);
+}
+
+
+// <---------------------- Charging Skill ---------------------->
+
+void AProjectDPlayerController::ChargingSkill(int32 SkillIndex)
+{
+	if(!ControlledCharacter) return;
+
+	ControlledCharacter->attackComp->PlayerChargingSkill();
+}
+
+void AProjectDPlayerController::ChargingEndSkill(int32 SkillIndex)
+{
+	if(!ControlledCharacter) return;
+    
+	ControlledCharacter->attackComp->PlayerChargingEndSkill();
 }
 
 // <---------------------- Quest UI ---------------------->

@@ -16,6 +16,15 @@ enum class ESkillType : uint8
 	ULT UMETA(DisplayName = "Ult")
 };
 
+USTRUCT()
+struct FChargingSkillData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY( EditAnywhere)
+	bool IsChargingSkill;
+};
+
 
 USTRUCT(BlueprintType)
 struct FPlayerSkillData : public FTableRowBase
@@ -65,5 +74,8 @@ public:
 	FVector SkillRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SkillMaxRange;
+	float SkillMaxRange;							// 원거리 공격 최대 스폰 거리
+
+	UPROPERTY(EditAnywhere)
+	FChargingSkillData SkillChargingData;
 };

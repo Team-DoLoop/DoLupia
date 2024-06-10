@@ -120,4 +120,12 @@ public:
 	UFUNCTION()
 	void AnimNotify_NextAttackCheck();
 
+
+	// <---------------------- Combo ---------------------->
+public:
+	void AnimNotify_NextChargingCheck();
+	
+
+private:
+
 };
