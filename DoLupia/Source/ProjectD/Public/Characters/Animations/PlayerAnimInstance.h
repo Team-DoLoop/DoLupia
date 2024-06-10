@@ -108,6 +108,9 @@ public:
 	UFUNCTION()
 	void AnimNotify_AttackWith();
 
+	UFUNCTION()
+	void AnimNotify_AttackWaterBlade();
+
 	
 	// <---------------------- Combo ---------------------->
 private:
@@ -121,7 +124,7 @@ public:
 	void AnimNotify_NextAttackCheck();
 
 
-	// <---------------------- Combo ---------------------->
+	// <---------------------- Charging ---------------------->
 public:
 	UFUNCTION()
 	void AnimNotify_NextChargingCheck();

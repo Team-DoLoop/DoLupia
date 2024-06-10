@@ -153,6 +153,11 @@ void UPlayerAnimInstance::AnimNotify_AttackWith()
 	Player->GetAttackComp()->CompleteSkill();
 }
 
+void UPlayerAnimInstance::AnimNotify_AttackWaterBlade()
+{
+	Player->GetAttackComp()->PlayerWaterBladeSkill();
+}
+
 
 FName UPlayerAnimInstance::GetAttackMontageSectionName(int32 Section)
 {

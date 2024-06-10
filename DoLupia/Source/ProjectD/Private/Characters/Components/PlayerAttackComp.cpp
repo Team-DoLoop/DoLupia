@@ -18,6 +18,7 @@
 #include "Characters/Skill/PlayerSkillLightning.h"
 #include "Characters/Skill/PlayerSkillShield.h"
 #include "Characters/Skill/PlayerSkillUlt.h"
+#include "Characters/Skill/PlayerSkillWaterBlade.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "GameFramework/GameSession.h"
 #include "Items/Sword/SwordBase.h"
@@ -478,6 +479,30 @@ void UPlayerAttackComp::ShieldSkillEnd()
 }
 
 
+
+// <------------------------------ Skill WaterBlade ------------------------------>
+
+void UPlayerAttackComp::PlayerWaterBladeSkill()
+{
+	if(!PlayerWaterBladeFactory) return;
+
+	PlayerWaterBlade = GetWorld()->SpawnActor<APlayerSkillWaterBlade>(PlayerWaterBladeFactory, Player->GetActorLocation(), FRotator(0));
+	PlayerWaterBlade->SetSkillDirection(Player->GetActorForwardVector());
+	PlayerWaterBlade->SetSkillRot(Player->GetActorRotation());
+	PlayerWaterBlade->SetSkillDamage(SkillLevel * SkillDamage);
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
+	DestroyWaterBlade();
+}, WaterBladeRemainTime, false);
+}
+
+void UPlayerAttackComp::DestroyWaterBlade()
+{
+	if(PlayerWaterBlade) PlayerWaterBlade->Destroy();
+}
+
+
 // <------------------------------ Skill Swap ------------------------------>
 
 void UPlayerAttackComp::ExecuteSwapSkill()
@@ -575,6 +600,7 @@ void UPlayerAttackComp::PlayerChargingEndSkill()
 	else
 	{
 		// 콤보 공격 실행
+		Player->TurnPlayer();
 		PlayerAnim->PlayAttackAnimation(SkillMontage);
 		PlayerAnim->JumpToAttackMontageSection(2);
 		CanChargingSkill = false;

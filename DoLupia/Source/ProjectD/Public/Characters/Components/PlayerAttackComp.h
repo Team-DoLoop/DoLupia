@@ -10,6 +10,7 @@
 #include "Interfaces/SkillInterface.h"
 #include "PlayerAttackComp.generated.h"
 
+class APlayerSkillWaterBlade;
 class APlayerSkillLightning;
 class APlayerSkillUlt;
 class APlayerSkillShield;
@@ -178,8 +179,23 @@ private :
 	UPROPERTY()
 	APlayerSkillShield* PlayerShield;
 
-	
 
+	// <---------------------- WaterBlade Skill ---------------------->
+public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerSkillWaterBlade>PlayerWaterBladeFactory;
+	
+	void PlayerWaterBladeSkill();
+	void DestroyWaterBlade();
+
+private :
+	UPROPERTY()
+	APlayerSkillWaterBlade* PlayerWaterBlade;
+		
+	UPROPERTY(EditAnywhere, Category = "Water Blade")
+	float WaterBladeRemainTime = 1.0f;
+
+	
 	// <---------------------- Swap Skill ---------------------->
 public:
 	void ExecuteSwapSkill();
