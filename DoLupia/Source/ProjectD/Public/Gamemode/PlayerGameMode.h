@@ -106,4 +106,13 @@ public:
 private:
 	int32 questID = -1;
 
+
+	/*---------- Level Location Title Widget --------*/
+
+public:
+
+	UPROPERTY( EditDefaultsOnly )
+	TSubclassOf<class ULocationTitleWidget> LocationFactory;
+
+	void CreateLocationTitleWidget(int32 currentlevel);
 };
