@@ -71,6 +71,7 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
 	AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
 
+	/*
 	if (player)
 	{
 		AIlib = gm->GetAIConnectionLibrary();
@@ -89,6 +90,7 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 	{
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
+	*/
 }
 
 void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)

@@ -58,7 +58,6 @@ void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , 
 		UFunction* SetCurrentNPCFunction = DialogueWidget->FindFunction( FName( "SetCurrentNPC" ) );
 		if (SetCurrentNPCFunction)
 		{
-			UE_LOG( LogTemp , Warning , TEXT( "UDialogComponent::StartDialog - SetCurrentNPCFunction" ) );
 			DialogueWidget->ProcessEvent( SetCurrentNPCFunction , &InCurrentNPC );
 		}
 
@@ -71,7 +70,6 @@ void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , 
 
 void UDialogComponent::AdvanceDialog()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "UDialogComponent::AdvanceDialog" ) );
 	if (CurrentDialogue)
 	{
 		if (CurrentDialogue->bTriggersQuest)
@@ -95,15 +93,13 @@ FString UDialogComponent::GetCurrentDialogText() const
 
 void UDialogComponent::LoadDialogue(int32 DialogueID)
 {
-	UE_LOG( LogTemp , Warning , TEXT( "UDialogComponent::LoadDialogue" ) );
-
 	if (DialogueID == -1)
 	{
-		//이게 npc의 마지막 대화이면 Dialog 위젯을 닫는다.
+		// NPC 마지막 대화면 Dialog 위젯을 닫음
 		if (DialogueWidget)
 		{
 			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
-			DialogueWidget->RemoveFromViewport();
+			DialogueWidget->RemoveFromParent();
 		}
 		chkDialog = false;
 		return;
@@ -190,7 +186,7 @@ void UDialogComponent::HideDialogWidget()
 {
 	if (DialogueWidget && DialogueWidget->IsInViewport())
 	{
-		DialogueWidget->RemoveFromViewport();
+		DialogueWidget->RemoveFromParent();
 	}
 }
 
