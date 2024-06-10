@@ -97,4 +97,8 @@ public:
 	UPROPERTY()
 	UNPCInteractionWidget* NPCInteractGWidget;
 
+
+	/*-------------------- Player State ---------------------*/
+	void ChangePlayerState();
+
 };
