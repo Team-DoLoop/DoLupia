@@ -48,8 +48,6 @@ void UDialogComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , int32 StartubgDialogID)
 {
-	if (!chkDialog) return;
-
 	CurrentNPC = InCurrentNPC;
 	CurrentNPCName = NPCID;
 
@@ -101,7 +99,6 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 			DialogueWidget->RemoveFromParent();
 		}
-		chkDialog = false;
 		return;
 	}
 
@@ -157,7 +154,6 @@ void UDialogComponent::TriggerQuest()
 		{
 			// 퀘스트 트리거 로직을 여기에 추가
 			FString QuestID = QuestInterface->InteractWith();
-			
 			player->OnObjectiveIDCalled.Broadcast( QuestID , 1 );
 		}
 		else

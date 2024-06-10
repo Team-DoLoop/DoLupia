@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerBattleWidget.generated.h"
 
+class UProgressBar;
 class UPlayerEvasionSlotWidget;
 /**
  * 
@@ -45,9 +46,16 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	UPlayerSkillWidget* PlayerSkillUI;
+
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	UProgressBar* ChargingSkillBar;
+
+	UPROPERTY(EditDefaultsOnly, Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* ChargingAnim;
 	
 public:
 	FORCEINLINE UPlayerSkillWidget* GetPlayerSkillUI() const {return PlayerSkillUI;}
+	void StartChargingSkill();
 
 	
 	// <------------------ Evasion ------------------>

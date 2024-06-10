@@ -109,19 +109,16 @@ void UPlayerAttackComp::BeginPlay()
 	InitCanUseColor();
 	
 	IgnoreAttackActors.AddUnique(Player);
-
-	// Add Red W
-	if (FlamethrowerFactory)
-	{
-		Flamethrower = GetWorld()->SpawnActor<APlayerSkillFlamethrower>(FlamethrowerFactory);
-		if (Flamethrower)
-		{
-			Flamethrower->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("WeaponSocket"));
-			Flamethrower->SetOwner(Player);
-		}
-	}
 }
 
+void UPlayerAttackComp::InitSkillUI()
+{
+	// 스킬 UI 초기화 함수 (PlayerSkillSlotWidget에서 생성 후에 호출)
+	if(CanUseColor[EUseColor::RED])
+	{
+		SetSkillUseState(true,ESkillOpenType::NONE);
+	}
+}
 
 // Called every frame
 void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
@@ -157,23 +154,20 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 
 void UPlayerAttackComp::InitCanUseColor()
 {
-	UEnum* ColorEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUseColor"), true);
-	if(!ColorEnum) return;
+	if(!GI) return;
 
-	UE_LOG(LogTemp, Log, TEXT("ColorEnum->NumEnums() : %d"), ColorEnum->NumEnums());
-	for(int i = 0; i < ColorEnum->NumEnums(); i++)
-	{
-		CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), false);
-
-		// 0, 2, 4, 6, 8 : None, Red, Yellow, Blue, Color
-		StartIndexColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), i * 2); 
-	}
+	CanUseColor = GI->GetCanUseColor();
+	
+	IsUnLockSwap = CanUseColor[EUseColor::YELLOW];
+	IsUnLockUlt = CanUseColor[EUseColor::BLUE];
 }
 
 void UPlayerAttackComp::SetColorUseState(EUseColor _Color, bool bCanUse)
 {
+	if(!GI) return;
 	CanUseColor[_Color] = bCanUse;
-
+	GI->SetCanUseColor(_Color, bCanUse);
+	
 	switch (_Color)
 	{
 	case EUseColor::YELLOW :
@@ -198,6 +192,7 @@ void UPlayerAttackComp::SetColorUseState(EUseColor _Color, bool bCanUse)
 void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 {
 	auto CurrentSkillData = CantSkill;
+	
 	// 스킬 사용 가능
 	if(bCanUse)
 	{
@@ -212,7 +207,8 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 	for(int i = 1; i <=SkillCount; i++)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
-		SetSkillLockUI(i, false);
+
+		SetSkillLockUI(i, (CurrentMP >= PlayerMaxMP));
 	}
 }
 
@@ -271,7 +267,7 @@ void UPlayerAttackComp::CompleteSkill()
 	SetComboAttackUI(SkillKeyIndex_Combo, false);
 	SkillKeyIndex_Combo = -1;
 	
-	AttackEndComboState();
+	AttackEndState();
 
 	if (!Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->IsDraggingWidget())
 	{
@@ -342,11 +338,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 
 void UPlayerAttackComp::PlayerQuitSkill(int32 AttackIndex)
 {
-	// W End
-	if(AttackIndex == 2)
-	{
-		if(CurrentSkillColor == EUseColor::RED && Flamethrower) Flamethrower->StopFiring();
-	}
+
 }
 
 
@@ -473,7 +465,7 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	// 그 전에 눌렀던 스킬 쿨다운 시작
 	if(CurrentSkillInfo)
 	{
-		AttackEndComboState();
+		AttackEndState();
 	}
 	SetComboAttackUI(SkillKeyIndex_Combo, false);
 	
@@ -537,9 +529,44 @@ void UPlayerAttackComp::ExecuteUltEnd()
 }
 
 
-// <------------------------------ Skill Data ------------------------------>
+// <------------------------------ Charging Skill ------------------------------>
 
-FSkillInfo* UPlayerAttackComp::GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex)
+void UPlayerAttackComp::PlayerChargingSkill()
+{
+	if(!IsSkillCharging) return;
+	IsChargingInputOn = true;
+}
+
+void UPlayerAttackComp::PlayerChargingEndSkill()
+{
+	if(!IsSkillCharging) return;
+
+	// 차징 중간에 끊겼다면
+	if(!CanChargingSkill) 
+	{
+		PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+		PlayerAnim->StopMontage();
+		return;
+	}
+
+	// 콤보 공격 실행
+	PlayerAnim->PlayAttackAnimation(SkillMontage);
+	PlayerAnim->JumpToAttackMontageSection(2);
+	CanChargingSkill = false;
+}
+
+void UPlayerAttackComp::NextChargingCheck()
+{
+	if(!IsChargingInputOn) return;
+
+	UE_LOG(LogTemp, Log, TEXT("NextChargingCheck"));
+	CanChargingSkill = true;
+	PlayerChargingEndSkill();
+}
+
+// <---------------------- Skill Data ---------------------->
+
+FSkillInfo* UPlayerAttackComp::GetSkillInfo(EUseColor _Color, int32 SkillKeyIndex)
 {
 	switch (SkillKeyIndex)
 	{
@@ -582,6 +609,7 @@ void UPlayerAttackComp::SetSkillData(FSkillInfo* _TempInfo)
 	SkillMaxCombo = _SkillData->SkillMaxCombo;
 	SkillLevel = _TempInfo->SkillLevel;
 	SkillMaxRange = _SkillData->SkillMaxRange;
+	IsSkillCharging = _SkillData->SkillChargingData.IsChargingSkill;
 }
 
 void UPlayerAttackComp::SetSpawnLocation()
@@ -692,21 +720,27 @@ void UPlayerAttackComp::AttackStartComboState()
 	// SetComboAttackUI(SkillKeyIndex_Combo, true);
 }
 
-void UPlayerAttackComp::AttackEndComboState()
+void UPlayerAttackComp::AttackEndState()
 {
 	// 쿨다운 시작
 	if(CurrentSkillInfo)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	// MP가 꽉 찼다면
-	if(CurrentMP >= 100)
+	if(CurrentMP >= PlayerMaxMP)
 	{
 		for(int i = 1; i <= SkillCount; i++)
 			SetSkillLockUI(i, true);
 	}
+
+	// Combo
 	IsComboInputOn = false;
 	CanNextCombo = false;
 	CurrentCombo = 0;
 	CurrentSkillInfo = nullptr;
+
+	// Charging
+	IsChargingInputOn =false;
+	CanChargingSkill = false;
 }
 
 void UPlayerAttackComp::NextAttackCheck()

@@ -166,6 +166,8 @@ protected:
 	// void Attack();
 	void QuitSkill(int32 SkillIndex);
 	void ExecuteSkill(int32 SkillIndex);
+	void ChargingSkill(int32 SkillIndex);
+	void ChargingEndSkill(int32 SkillIndex);
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))

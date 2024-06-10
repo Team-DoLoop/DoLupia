@@ -7,6 +7,7 @@
 #include "PlayerDefaultsWidget.generated.h"
 
 
+class AProjectDCharacter;
 class UMainQuickSlotWidget;
 class UQuickSlotWidget;
 class UItemBase;
@@ -19,6 +20,17 @@ UCLASS()
 class PROJECTD_API UPlayerDefaultsWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+
+public:
+	UPROPERTY()
+	AProjectDCharacter* Player;
+
+protected:
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+	
+
 	
 public:
 	FORCEINLINE UMainQuickSlotWidget* GetMainQuickSlot() const { return QuickSlot; }
@@ -30,9 +42,6 @@ public:
 	UQuickSlotWidget* FindQuickSlot(int32 FindIndex);
 
 	bool QuickSlotMouseHoveredWidget( FVector2D MousePosition ) const;
-
-protected:
-	virtual void NativeConstruct() override;
 
 
 protected:

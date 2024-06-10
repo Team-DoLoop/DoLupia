@@ -427,8 +427,8 @@ void AProjectDCharacter::TakeDamage(float Damage)
 void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 {
 	// AI 적용
-	// auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-	// gm->ApplyAITxtB();
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	if(gm) gm->ApplyAITxtB();
 
 	// 이펙트 적용
 	float EffectTime = 0.0f;

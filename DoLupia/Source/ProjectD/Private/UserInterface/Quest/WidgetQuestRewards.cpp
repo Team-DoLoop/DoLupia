@@ -13,9 +13,12 @@
 #include <Components/Image.h>
 #include "Components/HorizontalBox.h"
 #include "Components/Spacer.h"
+#include "Characters/ProjectDCharacter.h"
 #include <Components/SizeBoxSlot.h>
 #include <Components/SizeBox.h>
 
+#include "Characters/Components/PlayerAttackComp.h"
+#include "Common/UseColor.h"
 #include "Gamemode/PlayerGameMode.h"
 
 void UWidgetQuestRewards::NativePreConstruct()
@@ -187,7 +190,9 @@ void UWidgetQuestRewards::OnAcceptClicked()
 	        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
 	    }  
     }
-    
+
+
+
     //보상이 있을 때
     if(!ItemRewards.IsEmpty())
     {
@@ -196,7 +201,16 @@ void UWidgetQuestRewards::OnAcceptClicked()
         InvetoryComp->HandelAddItem( items);
 		}    
     }
-    
+
+    // 퀘스트 보상으로 스킬 해제
+    if (QuestID == "2003")
+    {
+        PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+    }
+    else if (QuestID == "2004")
+    {
+        PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
+    }
     
 
     // 위젯을 화면에서 제거합니다.
