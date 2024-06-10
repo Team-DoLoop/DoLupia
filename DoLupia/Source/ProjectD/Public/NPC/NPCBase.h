@@ -75,6 +75,8 @@ public:
 	virtual FString InteractWith() override;
 	virtual void LookAt() override;
 
+	bool bCanTalk = true ;
+
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
@@ -94,5 +96,9 @@ public:
 
 	UPROPERTY()
 	UNPCInteractionWidget* NPCInteractGWidget;
+
+
+	/*-------------------- Player State ---------------------*/
+	void ChangePlayerState();
 
 };

@@ -12,7 +12,8 @@ enum class EPlayerTriggerType : uint8
 {
 	None			UMETA( DisplayName = "None" ) ,
 	LevelTransition UMETA( DisplayName = "Level Transition" ) ,
-	CameraAngle     UMETA( DisplayName = "Camera Angle" )
+	CameraAngle     UMETA( DisplayName = "Camera Angle" ),
+	CameraTargetArms     UMETA( DisplayName = "Camera Boom Length" )
 };
 
 

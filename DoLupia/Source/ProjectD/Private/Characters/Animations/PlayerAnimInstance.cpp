@@ -177,3 +177,8 @@ void UPlayerAnimInstance::AnimNotify_NextAttackCheck()
 {
 	OnNextAttackCheck.Broadcast();
 }
+
+void UPlayerAnimInstance::AnimNotify_NextChargingCheck()
+{
+	Player->GetAttackComp()->NextChargingCheck();
+}

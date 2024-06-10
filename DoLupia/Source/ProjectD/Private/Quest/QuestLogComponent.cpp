@@ -64,12 +64,13 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
         CurrentActiveQuests.AddUnique( QuestID );
         SpawneQuest->QuestID = QuestID;
         UE_LOG( LogTemp , Error , TEXT( "void UQuestLogComponent::AddNewQuest(FName QuestID): %s" ) , *QuestID.ToString() );
-
     }
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
 	CurrentQuest.Add( SpawneQuest );
-    SpawneQuest->ReadyAddTracker.AddDynamic(this, &UQuestLogComponent::AddToTracker);
+
+    //생성한 퀘스트 액터를 그냥 가져와서 바로 트래커로 만들기
+    //TrackQuest( SpawneQuest );
 }
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
@@ -113,16 +114,29 @@ void UQuestLogComponent::TurnInQuest( FName QuestID )
 
 }
 
-void UQuestLogComponent::AddToTracker( )
+void UQuestLogComponent::AddToTracker(FName QuestID)
 {
-    if (!CurrentQuest.IsEmpty())
+    if(GetQuestActor(QuestID))
+    {
+        UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ) );
+        TrackQuest( GetQuestActor( QuestID ) );
+    }else
+    {
+        UE_LOG( LogTemp , Error , TEXT( "CurrentQuest.IsEmpty()" ) );
+    }
+
+    /*if (!CurrentQuest.IsEmpty())
     {
         for (const auto& Quest : CurrentQuest)
         {
             UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ));
             TrackQuest( Quest );
         }
-    }
+    }else
+    {
+        UE_LOG( LogTemp , Error , TEXT( "CurrentQuest.IsEmpty()" ) );
+    }*/
+    
 }
 
 void UQuestLogComponent::RemoveTracker()

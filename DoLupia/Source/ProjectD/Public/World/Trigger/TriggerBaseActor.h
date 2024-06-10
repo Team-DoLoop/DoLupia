@@ -54,5 +54,6 @@ public:
 	/* ------------------- CameraBoom ------------------- */
 private:
 	void ChangeCameraAngle(float angle);
+	void ChangeCameraBooms( float angle );
 
 };

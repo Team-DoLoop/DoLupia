@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Components/PlayerAttackComp.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Common/UseColor.h"
 #include "Components/VerticalBox.h"
 #include "Gamemode/PlayerGameMode.h"
@@ -114,14 +115,14 @@ void UWidgetQuestGiver::OnAcceptClicked()
 
 	AProjectDCharacter* PlayerCharacterD = Cast<AProjectDCharacter>( PlayerCharacter );
 
-
+    // 특정 Quest 완료 시, Player 스킬 Unlock
+    if( QuestID == "1002" )
+    {
+        PlayerCharacterD->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
+        PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
+    }
     // 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
-    PlayerCharacterD->GetAttackComp()->SetSkillUseState( true, ESkillOpenType::QUEST );
-
-    // 각 색깔 열리게
-    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
-    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
-    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
+    
 
     // 캐릭터에서 QuestLogComponent를 찾습니다.
     UQuestLogComponent* QuestLogComp = Cast<UQuestLogComponent>( PlayerCharacterD->GetComponentByClass( UQuestLogComponent::StaticClass() ) );
@@ -150,11 +151,31 @@ void UWidgetQuestGiver::OnAcceptClicked()
 
    //AI*/
 
+    //겜모에 퀘스트 아이디 int32로 넘김.
+   gm->SetQuestID( tmpNum );
+
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();
+
+    // 플레이어 행동 가능하게
+    ChangePlayerStateIdle();
 }
 
 void UWidgetQuestGiver::OnDeclineClicked()
 {
     RemoveFromParent();
+    ChangePlayerStateIdle();
+}
+
+void UWidgetQuestGiver::ChangePlayerStateIdle()
+{
+    // 플레이어 행동 가능하게
+    if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+    {
+        if(auto PlayerFSM = Player->GetPlayerFSMComp())
+        {
+            if(PlayerFSM->CanChangeState(EPlayerState::IDLE))
+                PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
+        }
+    }
 }

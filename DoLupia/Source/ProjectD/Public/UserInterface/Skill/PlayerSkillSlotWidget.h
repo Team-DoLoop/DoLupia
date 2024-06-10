@@ -19,6 +19,7 @@ class PROJECTD_API UPlayerSkillSlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 	virtual void NativeOnInitialized ( ) override;
+	virtual void NativeConstruct ( ) override;
 	
 private:
 	UPROPERTY()

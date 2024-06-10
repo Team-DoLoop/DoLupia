@@ -16,3 +16,7 @@ void UPlayerBattleWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 	
 }
+
+void UPlayerBattleWidget::StartChargingSkill()
+{
+}
