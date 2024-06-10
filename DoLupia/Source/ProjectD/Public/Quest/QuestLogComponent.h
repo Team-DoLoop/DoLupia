@@ -61,7 +61,7 @@ public:
 	void TurnInQuest( FName QuestID );
 
 	UFUNCTION()
-	void AddToTracker();
+	void AddToTracker( FName QuestID );
 
 	UFUNCTION()
 	void RemoveTracker();
@@ -86,5 +86,7 @@ public:
 
 	UPROPERTY()
 	class UQuestTracker* Tracker;
+
+	FTimerHandle TimerHandle;
 
 };

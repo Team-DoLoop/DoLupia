@@ -12,7 +12,7 @@ class AQuestLogComponent;
 class UWidgetQuestNotification;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnObjectiveHeard );
-DECLARE_DYNAMIC_MULTICAST_DELEGATE( FReadyAddTracker);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE( FReadyAddTracker);
 UCLASS()
 class AQuest_Base : public AActor
 {
@@ -34,7 +34,7 @@ public:
 	//UPROPERTY()
 	FOnObjectiveHeard OnObjectiveHeard;
 
-	FReadyAddTracker ReadyAddTracker;
+	//FReadyAddTracker ReadyAddTracker;
 
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
@@ -94,4 +94,5 @@ public:
 protected:
 	bool Local_AllComplete;
 	bool bQuestIDValid = false;
+	FTimerHandle TimerHandle;
 };

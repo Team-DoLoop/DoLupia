@@ -150,6 +150,9 @@ void UWidgetQuestGiver::OnAcceptClicked()
 
    //AI*/
 
+    //겜모에 퀘스트 아이디 int32로 넘김.
+   gm->SetQuestID( tmpNum );
+
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();
 }
