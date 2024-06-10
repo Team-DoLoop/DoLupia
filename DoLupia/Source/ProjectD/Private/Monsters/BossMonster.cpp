@@ -269,17 +269,22 @@ void ABossMonster::GrabAndThrowAttack()
 void ABossMonster::BlastFire()
 {
 	skillState = EBossSkill::BlastFire;
+	anim->animState = state;
+	anim->animBossSkill = skillState;
 }
 
 void ABossMonster::BlastLightening()
 {
 	skillState = EBossSkill::BlastLightening;
+	anim->animState = state;
+	anim->animBossSkill = skillState;
 }
 
 void ABossMonster::InitializeAttackStack()
 {
 	// 공격 함수 포인터 배열 초기화
-	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAndThrowAttack };
+	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAndThrowAttack,
+						&ABossMonster::BlastFire,&ABossMonster::BlastLightening };
 
 	// 공격 함수들을 랜덤하게 스택에 추가
 	while (AttackFunctions.Num() > 0)

@@ -135,8 +135,28 @@ void UBossAnim::OnEndGrabAttackAnimation()
 	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Grab애니메이션 끝, 브로드캐스트 호츌" ) );
 
 }
+//===============BlastFireAttack=======================
 
-//================DIe==============================
+void UBossAnim::OnEndBlastFireAttackAnimation()
+{
+	bAttackDelay = false;
+	bIsAttackComplete = true;
+	Boss->IsDelaying = true;
+	OnEndGrabAttack.Broadcast();
+	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Grab애니메이션 끝, 브로드캐스트 호츌" ) );
+}
+//===============BlastLighteningAttack=================
+
+void UBossAnim::OnEndBlastLighteningAttackAnimation()
+{
+	bAttackDelay = false;
+	bIsAttackComplete = true;
+	Boss->IsDelaying = true;
+	OnEndGrabAttack.Broadcast();
+	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Grab애니메이션 끝, 브로드캐스트 호츌" ) );
+}
+
+//=======================DIe==============================
 void UBossAnim::OnEndDieAnimation()
 {
 	Boss->DestroyMonster();
