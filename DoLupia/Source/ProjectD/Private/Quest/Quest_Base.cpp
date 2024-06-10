@@ -83,11 +83,11 @@ void AQuest_Base::BeginPlay()
 
 	//QuestLogComp 에서 생성되고, QuestId를 받음.
 	QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
-	if (QuestLogComponent)
+	/*if (QuestLogComponent)
 	{
 		//컴포넌트에서 questID 방송 받아서 여기서 함수 호출해서 QuestID 저장하기
 		QuestLogComponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
-	}
+	}*/
 
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
@@ -107,17 +107,8 @@ void AQuest_Base::BeginPlay()
 	//비동기 함수!!! ->Tick으로
 
 	//딜레이 0.1초
-	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle ,
-		[this]() {
 
-		} ,
-		0.1f , // 지연 시간(초)
-		false
-		);
-	GetQuestDetails();
-	CheckItem();
-	IsCompleted = AreObjectivesComplete();
+	QuestLogComponent->UpdateCurrentActiveQuest.AddDynamic( this , &AQuest_Base::CurrentActiveQuest);
 }
 
 
@@ -227,14 +218,23 @@ void AQuest_Base::GetQuestDetails()
 		UE_LOG( LogTemp , Error , TEXT( "CurrentObjectiveProgress.Add : %s" ), *Objective.ObjectiveID );
 	}
 
+	/*Gamemode 에 QuestID 전송
 	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-
-
-	//Gamemode 에 QuestID 전송
 	FString NameString = QuestID.ToString();
     int32 intQuestID =  FCString::Atoi(*NameString);
-	gm->SetQuestID( intQuestID );
+	gm->SetQuestID( intQuestID );*/
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle ,
+		[this]() {
+
+		} ,
+		1.0f , // 지연 시간(초)
+		false
+		);
 	
+	QuestLogComponent->AddToTracker();
+
 }
 
 
@@ -266,6 +266,7 @@ void AQuest_Base::OnQuestDataLoadedHandler( FName BroQuestID )
 {
 	QuestID = BroQuestID;
 }
+
 
 //WidgetQuestNotification위젯 생성!!
 void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
@@ -337,6 +338,13 @@ bool AQuest_Base::AreObjectivesComplete()
 	}
 
 	return Local_AllComplete;
+}
+
+void AQuest_Base::CurrentActiveQuest()
+{
+	GetQuestDetails();
+	CheckItem();
+	IsCompleted = AreObjectivesComplete();
 }
 
 FObjectiveDetails AQuest_Base::GetObjectiveDataByID( FString ObjectiveID )

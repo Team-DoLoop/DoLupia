@@ -13,7 +13,7 @@ class UQuestTracker;
 
 // 예시: FName 타입을 전달하는 델리게이트 선언
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateCurrentActiveQuest);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestCompleted , AQuest_Base*, D_QuestActor );
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -35,6 +35,8 @@ public:
 
 	UPROPERTY( BlueprintAssignable )
 	FQuestDataLoadedSignature OnQuestDataLoaded;
+
+	FUpdateCurrentActiveQuest UpdateCurrentActiveQuest;
 
 	UPROPERTY( BlueprintAssignable )
 	FQuestCompleted QuestCompleted;
@@ -61,7 +63,7 @@ public:
 	void TurnInQuest( FName QuestID );
 
 	UFUNCTION()
-	void AddToTracker( FName QuestID );
+	void AddToTracker();
 
 	UFUNCTION()
 	void RemoveTracker();
