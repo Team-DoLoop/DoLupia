@@ -68,10 +68,9 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
 	CurrentQuest.Add( SpawneQuest );
-    //SpawneQuest->ReadyAddTracker.AddDynamic(this, &UQuestLogComponent::AddToTracker);
 
     //생성한 퀘스트 액터를 그냥 가져와서 바로 트래커로 만들기
-    TrackQuest( SpawneQuest );
+    //TrackQuest( SpawneQuest );
 }
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )

@@ -118,7 +118,6 @@ void AQuest_Base::BeginPlay()
 	GetQuestDetails();
 	CheckItem();
 	IsCompleted = AreObjectivesComplete();
-	//QuestLogComponent->AddToTracker(QuestID);
 }
 
 
