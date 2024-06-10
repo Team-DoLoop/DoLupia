@@ -37,7 +37,7 @@ void UWidgetQuestNotification::NativeConstruct()
 				// UI 업데이트 또는 Slate 관련 작업
 			RemoveFromParent();
 		} ,
-		3.0f , // 지연 시간(초)
+		1.0f , // 지연 시간(초)
 		false
 		);
 		
