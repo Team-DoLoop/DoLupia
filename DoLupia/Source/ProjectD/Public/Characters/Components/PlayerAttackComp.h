@@ -267,10 +267,16 @@ public:
 	void PlayerChargingSkill();
 	void PlayerChargingEndSkill();
 	void NextChargingCheck();
+	float GetChargingPercent(float RemainingTime, float _ChargingTime);
 
 private:
+	UPROPERTY(EditAnywhere)
+	float ChargingTime = 1.6f;
+	
 	bool IsChargingInputOn;
 	bool CanChargingSkill;
+	
+	FTimerHandle ChargingTimerHandle;
 	
 	
 	// <---------------------- Skill Data ---------------------->

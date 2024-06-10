@@ -123,6 +123,7 @@ public:
 
 	// <---------------------- Combo ---------------------->
 public:
+	UFUNCTION()
 	void AnimNotify_NextChargingCheck();
 	
 
