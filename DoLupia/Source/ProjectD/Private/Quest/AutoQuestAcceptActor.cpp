@@ -8,6 +8,8 @@
 #include "Quest/QuestLogComponent.h"
 #include <Components/BoxComponent.h>
 
+#include "Gamemode/PlayerGameMode.h"
+
 // Sets default values
 AAutoQuestAcceptActor::AAutoQuestAcceptActor()
 {
@@ -73,7 +75,17 @@ void AAutoQuestAcceptActor::GiveQuest()
 	bool ActiveQuest = Questcomponent->QueryActiveQuest( QuestData.RowName );
 
 	if (!ActiveQuest) {
+
+		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		FString tmpString = QuestData.RowName.ToString();
+		int32 tmpNum = FCString::Atoi( *tmpString );
+		UE_LOG( LogTemp , Error , TEXT( "AAutoQuestAcceptActor::GiveQuest() : %d" ) , tmpNum );
+
+
+		 //겜모에 퀘스트 아이디 int32로 넘김.
+		gm->SetQuestID( tmpNum );
 		Questcomponent->AddNewQuest( QuestData.RowName );
+		
 	}
 }
 

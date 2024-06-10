@@ -9,6 +9,8 @@
 #include "Library/AIConnectionLibrary.h"
 #include "UserInterface/NPC/NPCConvWidget.h"
 #include "UserInterface/Test/AITestWidget.h"
+#include  "UserInterface/Event/LocationTitleWidget.h"
+#include "Components/TextBlock.h"
 #include "AI/AITxtPlayer.h"
 #include "Data/WidgetData.h"
 #include "Engine.h"
@@ -75,16 +77,19 @@ void APlayerGameMode::BeginPlay()
 	{
 		LevelIdx = 1;
 		PlayerCameraboom = 1000.0f;
+		CreateLocationTitleWidget( LevelIdx );
 	}
 	else if (CurLevelName == LevelNames[2])
 	{
 		LevelIdx = 2;
 		PlayerCameraboom = 700.0f;
+		CreateLocationTitleWidget( LevelIdx );
 	}
 	else if (CurLevelName == LevelNames[3])
 	{
 		LevelIdx = 3;
 		PlayerCameraboom = 1200.0f;
+		CreateLocationTitleWidget( LevelIdx );
 	}
 	else
 	{
@@ -175,4 +180,36 @@ int32 APlayerGameMode::GetQuestID() const
 void APlayerGameMode::SetQuestID(int32 NewQuestID )
 {
 	questID = NewQuestID;
+	UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::SetQuestID: %d" ) , questID );
+}
+
+void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
+{
+	if (LocationFactory)
+	{
+		ULocationTitleWidget* LocationWidget = CreateWidget<ULocationTitleWidget>( GetWorld() , LocationFactory );
+
+		if (LocationWidget)
+		{
+			FText LocationName;
+			switch (currentlevel)
+			{
+			case 1:
+				LocationName = FText::FromString( TEXT( "길거리" ) );
+				break;
+			case 2:
+				LocationName = FText::FromString( TEXT( "혁명군 기지" ) );
+				break;
+			case 3:
+				LocationName = FText::FromString( TEXT( "보스 기지" ) );
+				break;
+			default:
+				LocationName = FText::FromString( TEXT( "Unknown Location" ) );
+				break;
+			}
+			LocationWidget->txt_LocationName->SetText( LocationName );
+			LocationWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
+
+		}
+	}
 }

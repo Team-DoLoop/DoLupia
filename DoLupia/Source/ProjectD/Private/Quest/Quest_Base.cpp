@@ -15,7 +15,7 @@
 // Sets default values
 AQuest_Base::AQuest_Base()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 
@@ -47,6 +47,17 @@ AQuest_Base::AQuest_Base()
 void AQuest_Base::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//겜모에 QuestID 가져오기
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	int32 IntQuestId = gm->GetQuestID();
+	FString ValueString = FString::FromInt( IntQuestId );
+	UE_LOG( LogTemp , Error , TEXT( "BeginPlay() ValueString: %s" ) , *ValueString );
+	// 2단계: FString을 FName으로 변환
+	FName ValueName( *ValueString );
+	QuestID = ValueName;
+	UE_LOG( LogTemp , Error , TEXT( "BeginPlay() GameMode: %s" ) , *QuestID.ToString() );
 
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (!IsValid( PlayerController ))
@@ -94,9 +105,20 @@ void AQuest_Base::BeginPlay()
 		ReadyAddTracker.Broadcast();
 	} );*/
 	//비동기 함수!!! ->Tick으로
-	
 
-	//IsCompleted = AreObjectivesComplete();
+	//딜레이 0.1초
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle ,
+		[this]() {
+
+		} ,
+		0.1f , // 지연 시간(초)
+		false
+		);
+	GetQuestDetails();
+	CheckItem();
+	IsCompleted = AreObjectivesComplete();
+	//QuestLogComponent->AddToTracker(QuestID);
 }
 
 
@@ -105,19 +127,24 @@ void AQuest_Base::Tick(float DeltaSeconds)
 {
 	Super::Tick( DeltaSeconds );
 
-	if (!bQuestIDValid && QuestID.IsValid())
+	/*if (!bQuestIDValid)
 	{
-		bQuestIDValid = true;
+		if (QuestID.IsValid())
+		{
+			UE_LOG( LogTemp , Error , TEXT( "QuestBase (FName QuestID): %s" ) , *QuestID.ToString() );
 
-		UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(), CheckItem()" ) );
+			// QuestID가 유효해졌으므로 이후 작업 수행
+			GetQuestDetails();
+			CheckItem();
+			ReadyAddTracker.Broadcast();
 
-		// QuestID가 유효해졌으므로 이후 작업 수행
-		GetQuestDetails();
-		CheckItem();
-		ReadyAddTracker.Broadcast();
+			IsCompleted = AreObjectivesComplete();
 
-		IsCompleted = AreObjectivesComplete();
-	}
+			bQuestIDValid = true;
+		}
+	}*/
+	
+	
 }
 
 void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
@@ -158,7 +185,9 @@ void AQuest_Base::OnObjectiveIDHeard( FString BObjectiveID , int32 Value )
 void AQuest_Base::GetQuestDetails()
 {
 	//Tracker 생성
-	ReadyAddTracker.Broadcast();
+	UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(): %s" ) , *QuestID.ToString() );
+
+	//ReadyAddTracker.Broadcast();
 
 	if (!QuestData.DataTable)
 	{
@@ -171,6 +200,7 @@ void AQuest_Base::GetQuestDetails()
 		UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ GetQuestDetails AQuest_Base" ) );
 	}
 
+	UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(): %s" ) , *QuestID.ToString() );
 	
 	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
 	if (!Row)

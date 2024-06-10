@@ -17,6 +17,7 @@ AMinigameQuestObject::AMinigameQuestObject()
 
 FString AMinigameQuestObject::InteractWith()
 {
+    FString test = "";
     if(!isAvailable)
     {
         auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
@@ -26,9 +27,11 @@ FString AMinigameQuestObject::InteractWith()
         {
             SpawnMiniGame();
             isAvailable = true;
+            return ObjectID;
         }
     }
-	return Super::InteractWith();
+
+    return ObjectID;
 }
 
 void AMinigameQuestObject::SpawnMiniGame()
