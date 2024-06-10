@@ -1,0 +1,14 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.OctopusBackpack.cpp.obj": [
+			"OctopusBackpack.init.gen.cpp.obj",
+			"OctopusBackpackActor.gen.cpp.obj",
+			"OctopusBackpackComponent.gen.cpp.obj",
+			"OctopusTypes.gen.cpp.obj",
+			"OctopusBackpack.cpp.obj",
+			"OctopusBackpackActor.cpp.obj",
+			"OctopusBackpackComponent.cpp.obj"
+		]
+	}
+}

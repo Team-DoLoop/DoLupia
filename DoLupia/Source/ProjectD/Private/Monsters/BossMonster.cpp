@@ -30,14 +30,14 @@ ABossMonster::ABossMonster()
 	}
 
 	//OctopusBackpackComponent = CreateDefaultSubobject<UOctopusBackpackComponent>( TEXT( "OctopusBackpackComponent" ) );
-	ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>( TEXT( "ChildActorComponent" ) );
-	ChildActorComponent->SetChildActorClass( AOctopusBackpackActor::StaticClass() );
+	/*ChildActorComponent = CreateDefaultSubobject<UChildActorComponent>( TEXT( "ChildActorComponent" ) );
+	ChildActorComponent->SetChildActorClass( AOctopusBackpackActor::StaticClass() );*/
 
-	FName OctoSocket( TEXT( "OctoSocket" ) );
+	/*FName OctoSocket( TEXT( "OctoSocket" ) );
 	if (GetMesh()->DoesSocketExist( OctoSocket ))
 	{
 		ChildActorComponent->SetupAttachment( GetMesh() , OctoSocket );
-	}
+	}*/
 
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
