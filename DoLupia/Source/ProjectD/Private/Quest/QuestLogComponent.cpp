@@ -87,10 +87,15 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 void UQuestLogComponent::CompleteQuest( FName QuestID )
 {
     //망토 바꾸기
-
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     gm->ApplyAITxtP();
+
+
+    // 플레이어 대화 상태 갱신
+    //auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+    //player->EnableDialogue();
+
 
 	UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
     CompletedQuests.AddUnique( QuestID );

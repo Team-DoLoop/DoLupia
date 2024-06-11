@@ -174,6 +174,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
 
     //Delete(ObjectiveItems)
 
+    /*
     //아이템 지울 게 있을 때
     auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
     if (!RemoveItem.IsEmpty())
@@ -190,7 +191,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
 	        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
 	    }  
     }
-
+    */
 
 
     //보상이 있을 때
