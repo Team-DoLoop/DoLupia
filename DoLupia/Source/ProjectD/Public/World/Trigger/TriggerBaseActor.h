@@ -56,4 +56,8 @@ private:
 	void ChangeCameraAngle(float angle);
 	void ChangeCameraBooms( float angle );
 
+public:
+	void ShowTrigger();
+	void HideTrigger();
+
 };

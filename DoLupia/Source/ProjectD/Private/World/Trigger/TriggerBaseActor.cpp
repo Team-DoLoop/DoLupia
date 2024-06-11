@@ -39,6 +39,11 @@ void ATriggerBaseActor::BeginPlay()
 	Super::BeginPlay();
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	if (triggerType == EPlayerTriggerType::LevelTransition)
+	{
+		HideTrigger();
+	}
 }
 
 // Called every frame
@@ -96,5 +101,18 @@ void ATriggerBaseActor::ChangeCameraBooms(float angle)
 
 	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
 	player->GetCameraBoom()->TargetArmLength = angle;
+}
+
+void ATriggerBaseActor::ShowTrigger()
+{
+	locationVFX->SetVisibility( true );
+	triggerComp->SetCollisionEnabled( ECollisionEnabled::QueryOnly );
+}
+
+void ATriggerBaseActor::HideTrigger()
+{
+	UE_LOG( LogTemp , Warning , TEXT( "HIDE" ) );
+	locationVFX->SetVisibility( false );
+	triggerComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 

@@ -20,6 +20,7 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
+#include "World/Trigger/TriggerBaseActor.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -221,5 +222,14 @@ void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
 			LocationWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
 
 		}
+	}
+}
+
+void APlayerGameMode::ActiveLvTrigger()
+{
+	for (TActorIterator<ATriggerBaseActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->ShowTrigger();
 	}
 }
