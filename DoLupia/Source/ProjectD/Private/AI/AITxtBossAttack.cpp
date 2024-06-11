@@ -25,19 +25,31 @@ AAITxtBossAttack::AAITxtBossAttack()
 
     RootComponent = CreateDefaultSubobject<USceneComponent>( TEXT( "RootComponent" ) );
 
-    meshComp = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp" ) );
-    meshComp->SetupAttachment( RootComponent );
+    meshComp1 = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp1" ) );
+    meshComp1->SetupAttachment( RootComponent );
 
-    if (!meshComp)
+    meshComp2 = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp2" ) );
+    meshComp2->SetupAttachment( RootComponent );
+
+    meshComp3 = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp3" ) );
+    meshComp3->SetupAttachment( RootComponent );
+
+    meshComp4 = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp4" ) );
+    meshComp4->SetupAttachment( RootComponent );
+
+    if (!meshComp1 || !meshComp2 || !meshComp3 || !meshComp4)
     {
-        UE_LOG( LogTemp , Error , TEXT( "Failed to create meshComp" ) );
+        UE_LOG( LogTemp , Error , TEXT( "Failed to create meshComps" ) );
     }
 
     TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
     TimelineLength = 5.0f; // 재생 시간
 
     NewTexture = nullptr;
-    DynamicMaterial = nullptr;
+    DynamicMaterial1 = nullptr;
+    DynamicMaterial2 = nullptr;
+    DynamicMaterial3 = nullptr;
+    DynamicMaterial4 = nullptr;
 
 }
 
@@ -64,9 +76,9 @@ void AAITxtBossAttack::BeginPlay()
     TimelineFinished.BindUFunction( this , FName( "OnTimelineFinished" ) );
     TimelineComp->SetTimelineFinishedFunc( TimelineFinished );
 
-    if (!meshComp)
+    if (!meshComp1 || !meshComp2 || !meshComp3 || !meshComp4)
     {
-        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr in BeginPlay" ) );
+        UE_LOG( LogTemp , Error , TEXT( "meshComps is nullptr in BeginPlay" ) );
         return;
     }
 
@@ -87,18 +99,23 @@ void AAITxtBossAttack::UpdateActorMaterial()
 
 void AAITxtBossAttack::UpdateDissolve( float dissolve )
 {
-    if (DynamicMaterial)
+    if (DynamicMaterial1)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAITxtHandlerBase::UpdateDissolve" ) );
-        DynamicMaterial->SetScalarParameterValue( FName( "dissolve" ) , dissolve );
+        DynamicMaterial1->SetScalarParameterValue( FName( "dissolve" ) , dissolve );
+        DynamicMaterial2->SetScalarParameterValue( FName( "dissolve" ) , dissolve );
+        DynamicMaterial3->SetScalarParameterValue( FName( "dissolve" ) , dissolve );
+        DynamicMaterial4->SetScalarParameterValue( FName( "dissolve" ) , dissolve );
     }
 }
 
 void AAITxtBossAttack::OnTimelineFinished()
 {
-    if (DynamicMaterial)
+    if (DynamicMaterial1)
     {
-        DynamicMaterial->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
+        DynamicMaterial1->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
+        DynamicMaterial2->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
+        DynamicMaterial3->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
+        DynamicMaterial4->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
     }
 }
 
@@ -124,23 +141,28 @@ void AAITxtBossAttack::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture )
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
 
-        if (!meshComp)
+        if (!meshComp1 || !meshComp2 || !meshComp3 || !meshComp4)
         {
             UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
             return;
         }
 
-        if (meshComp && AITxtMaterial)
+        if (meshComp1 && meshComp2 && meshComp3 && meshComp4 && AITxtMaterial)
         {
-            DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
-            UE_LOG( LogTemp , Error , TEXT( "meshComp is DynamicMaterial" ) );
+            DynamicMaterial1 = meshComp1->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
+            DynamicMaterial2 = meshComp2->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
+            DynamicMaterial3 = meshComp3->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
+            DynamicMaterial4 = meshComp4->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
         }
 
         NewTexture = DownloadedTexture;
-        if (DynamicMaterial)
+        if (DynamicMaterial1 && DynamicMaterial2 && DynamicMaterial3 && DynamicMaterial4)
         {
-            DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
-            UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded - PlayFromStart" ) );
+            DynamicMaterial1->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            DynamicMaterial2->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            DynamicMaterial3 ->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            DynamicMaterial4->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
+            
             TimelineComp->PlayFromStart();
         }
     }
