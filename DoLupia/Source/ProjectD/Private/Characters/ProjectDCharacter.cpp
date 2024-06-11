@@ -135,6 +135,9 @@ AProjectDCharacter::AProjectDCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	// Dialog
+	//bIsDialogueEnabled = true;
 }
 
 void AProjectDCharacter::BeginPlay()
@@ -824,3 +827,20 @@ void AProjectDCharacter::PerformTrace()
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
 }
+
+/* Quest Decline 기능 삭제
+void AProjectDCharacter::EnableDialogue()
+{
+	bIsDialogueEnabled = true;
+}
+
+void AProjectDCharacter::DisableDialogue()
+{
+	bIsDialogueEnabled = false;
+}
+
+bool AProjectDCharacter::IsDialogueEnabled() const
+{
+	return bIsDialogueEnabled;
+}
+*/

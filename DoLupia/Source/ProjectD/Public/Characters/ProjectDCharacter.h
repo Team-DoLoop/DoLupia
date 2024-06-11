@@ -324,5 +324,16 @@ public:
 	/*UPROPERTY(BlueprintAssignable , Category = "Events")
 	FOnQuestIDCalled OnQuestIDCalled;
 	*/
+
+
+	/* Quest Decline 기능 삭제
+	// <---------------------- Dialog ---------------------->
+	void EnableDialogue();
+	void DisableDialogue();
+	bool IsDialogueEnabled() const;
+
+private:
+	bool bIsDialogueEnabled;
+	*/
 };
 
