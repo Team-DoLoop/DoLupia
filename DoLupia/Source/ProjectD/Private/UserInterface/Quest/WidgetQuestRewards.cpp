@@ -129,7 +129,7 @@ void UWidgetQuestRewards::NativeDestruct()
 
 void UWidgetQuestRewards::OnAcceptClicked()
 {
-    /*/AI 망토 이미지 적용
+    //AI 망토 이미지 적용
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     gm->ApplyAITxtP();
@@ -160,7 +160,6 @@ void UWidgetQuestRewards::OnAcceptClicked()
     }
 
     QuestLogComp->CompleteQuest(QuestID);
-    QuestLogComp->RemoveTracker();
 
     if (QuestID.IsNone())
     {

@@ -86,11 +86,12 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
 {
-    //망토 바꾸기
+    /*망토 바꾸기
 
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     gm->ApplyAITxtP();
+    */
 
 	UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
     CompletedQuests.AddUnique( QuestID );
@@ -114,6 +115,8 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         	break;
         }
     }
+
+	RemoveTracker();
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )
