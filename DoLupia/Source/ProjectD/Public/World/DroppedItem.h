@@ -28,6 +28,7 @@ public:
 	FORCEINLINE void SetItemPercentage(int32 NewItemPercentage) { ItemPercentage = NewItemPercentage;}
 
 	FORCEINLINE void SetMyItemSpawner( AItemSpawner* NewMyItemSpawner ) { MyItemSpawner = NewMyItemSpawner; }
+	FORCEINLINE void SetStartLocation( FVector NewStartLocation ) { StartLocation = NewStartLocation; }
 
 	void SetItemStaticMesh(UStaticMesh* StaticMesh) const;
 
@@ -53,7 +54,7 @@ protected:
 	UStaticMeshComponent* ItemMesh;
 
 private:
-	void PerformBoxTrace();
+	void PerformBoxTrace(float DeltaTime);
 
 
 private:
@@ -67,5 +68,11 @@ private:
 
 	FRotator OriRotator;
 	FRotator SpinRotator;
+
+	FVector StartLocation;
+
+	FVector ActorSpeed;
+
+	float Time;
 
 };

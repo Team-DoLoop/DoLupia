@@ -29,14 +29,14 @@ void AItemSpawner::BeginPlay()
     ItemPool->CreateItem( MaxItemsToSpawn );
 }
 
-void AItemSpawner::MoveItemAlongCurve( UObject* WorldContextObject , AActor* NewItem , FVector StartPoint , FVector ActorSpeed , float GravityScale )
+void AItemSpawner::MoveItemAlongCurve( UObject* WorldContextObject , AActor* NewItem , FVector StartPoint , float Time, FVector ActorSpeed , float GravityScale )
 {
 	FVector VetorSeed = ActorSpeed;
 
 	if (VetorSeed.IsNearlyZero())
 		VetorSeed = UBezierMovementLibrary::VectorSeed( NewItem );
 
-	UBezierMovementLibrary::MoveObjectAlongCurve( WorldContextObject , NewItem , StartPoint , VetorSeed , GravityScale );
+	UBezierMovementLibrary::MoveObjectAlongCurve( WorldContextObject , NewItem , StartPoint , VetorSeed , GravityScale, Time );
 }
 
 void AItemSpawner::SetActive(AActor* Actor, bool IsActive)
@@ -131,10 +131,11 @@ void AItemSpawner::SpawnItemStackable(const FString& ID, int32 ItemCont, AActor*
 			DroppedItems[i]->SetMyItemSpawner( this );
 			DroppedItems[i]->GetItemReference()->SetQuantity( ItemCount, false );
 			DroppedItems[i]->SetActorLocation( GetActorLocation() );
+			DroppedItems[i]->SetStartLocation( SpawneItemActor->GetActorLocation());
 			// 몬스터 풀링 시 켜주세요.
 			//DroppedItem = DroppedItems[i];
 			//GetWorld()->GetTimerManager().SetTimer( TimerHandle , TimerDelegate , 0.2f , false );
- 			MoveItemAlongCurve( this , DroppedItems[i] , SpawneItemActor->GetActorLocation() , FVector(0.0 , 0.0 , 0.0) , 0.77f);
+ 			MoveItemAlongCurve( this , DroppedItems[i] , SpawneItemActor->GetActorLocation() , GetWorld()->GetTimeSeconds(), FVector(0.0 , 0.0 , 0.0) , 0.77f);
 			//DroppedItems[i]->SetActorLocation( SpawneItemActor->GetActorLocation() );
 			DroppedItems.RemoveAt( i );
 			return;
@@ -158,7 +159,7 @@ void AItemSpawner::SpawnItemNoneStackable(const FString& ID, int32 ItemCont, AAc
 	TimerDelegate.BindLambda( [&]()
 	{
 		SetActive( DroppedItem , true );
-		MoveItemAlongCurve( this , DroppedItem , SpawneItemActor->GetActorLocation() , FVector( 0.0 , 0.0 , 0.0 ) , 0.77f );
+		//MoveItemAlongCurve( this , DroppedItem , SpawneItemActor->GetActorLocation() , FVector( 0.0 , 0.0 , 0.0 ) , 0.77f );
 	} );
 
 	for (int32 i = DroppedItems.Num() - 1; i >= 0; --i)
@@ -172,7 +173,7 @@ void AItemSpawner::SpawnItemNoneStackable(const FString& ID, int32 ItemCont, AAc
 			DroppedItems[i]->SetMyItemSpawner( this );
 			DroppedItems[i]->GetItemReference()->SetQuantity( 1, false );
 			DroppedItems[i]->SetActorLocation( GetActorLocation() );
-			MoveItemAlongCurve( this , DroppedItems[i] , SpawneItemActor->GetActorLocation() , FVector( 0.0 , 0.0 , 0.0 ) , 0.77f );
+			//MoveItemAlongCurve( this , DroppedItems[i] , SpawneItemActor->GetActorLocation() , FVector( 0.0 , 0.0 , 0.0 ) , 0.77f );
 			//DroppedItem = DroppedItems[i];
 			//GetWorld()->GetTimerManager().SetTimer( TimerHandle , TimerDelegate , 0.2f , false );
 			DroppedItems.RemoveAt( i );
