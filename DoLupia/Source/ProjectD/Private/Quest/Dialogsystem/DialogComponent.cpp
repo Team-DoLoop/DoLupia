@@ -122,14 +122,12 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 				UFunction* UpdateDialogueTextFunction = DialogueWidget->FindFunction( FName( "UpdateDialogText" ) );
 				if (UpdateDialogueTextFunction)
 				{
-					UE_LOG( LogTemp , Warning , TEXT( "UpdateDialogueTextFunction" ) );
 					DialogueWidget->ProcessEvent( UpdateDialogueTextFunction , &DialogueText );
 				}
 
 				UFunction* UpdateSpeakerTextFunction = DialogueWidget->FindFunction( FName( "UpdateSpeakerText" ) );
 				if (UpdateSpeakerTextFunction)
 				{
-					UE_LOG( LogTemp , Warning , TEXT( "UpdateSpeakerTextFunction" ) );
 					DialogueWidget->ProcessEvent( UpdateSpeakerTextFunction , &SpeakerText );
 				}
 			}
