@@ -84,7 +84,7 @@ FString UQuestGiver::InteractWith()
 
     bool ActiveQuest = QuestComponent->QueryActiveQuest( QuestData.RowName );
     bool CompleteQuest = QuestComponent->QueryCompleteQuests( QuestData.RowName );
-    bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn( QuestData.RowName );
+    bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn ( QuestData.RowName );
     if (!ActiveQuest && !CompleteQuest)
     {
         FQuestDetails* Row1 = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
