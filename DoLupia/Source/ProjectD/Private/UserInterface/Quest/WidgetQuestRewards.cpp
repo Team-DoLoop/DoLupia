@@ -97,10 +97,11 @@ void UWidgetQuestRewards::NativeConstruct()
         btn_Accept->OnClicked.AddDynamic( this , &UWidgetQuestRewards::OnAcceptClicked );
     }
 
-    if (btn_Decline)
+    /*if (btn_Decline)
     {
         btn_Decline->OnClicked.AddDynamic( this , &UWidgetQuestRewards::OnDeclineClicked );
-    }
+    }*/
+    
 
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
@@ -217,7 +218,8 @@ void UWidgetQuestRewards::OnAcceptClicked()
     RemoveFromParent();
 }
 
-void UWidgetQuestRewards::OnDeclineClicked()
+/*void UWidgetQuestRewards::OnDeclineClicked()
 {
     RemoveFromParent();
-}
+}*/
+
