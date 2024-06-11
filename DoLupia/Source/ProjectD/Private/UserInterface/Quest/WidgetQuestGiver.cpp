@@ -62,10 +62,11 @@ void UWidgetQuestGiver::NativeConstruct()
         btn_Accept->OnClicked.AddDynamic( this , &UWidgetQuestGiver::OnAcceptClicked );
     }
 
-    if (btn_Decline)
+    /*if (btn_Decline)
     {
         btn_Decline->OnClicked.AddDynamic( this , &UWidgetQuestGiver::OnDeclineClicked );
-    }
+    }*/
+    
 
     SetIsFocusable( true );
 
@@ -166,14 +167,15 @@ void UWidgetQuestGiver::OnAcceptClicked()
     
 }
 
-void UWidgetQuestGiver::OnDeclineClicked()
+/*void UWidgetQuestGiver::OnDeclineClicked()
 {
     //auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
     //player->EnableDialogue();
     RemoveFromParent();
     ChangePlayerStateIdle();
-}
+}*/
+
 
 void UWidgetQuestGiver::ChangePlayerStateIdle()
 {
