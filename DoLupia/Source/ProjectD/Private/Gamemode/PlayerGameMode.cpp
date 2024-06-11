@@ -180,7 +180,17 @@ int32 APlayerGameMode::GetQuestID() const
 void APlayerGameMode::SetQuestID(int32 NewQuestID )
 {
 	questID = NewQuestID;
-	UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::SetQuestID: %d" ) , questID );
+	
+}
+
+FString APlayerGameMode::GetStringQuestID()
+{
+	return FStringQuestID;
+}
+
+void APlayerGameMode::SetStringQuestID(FString QuestID)
+{
+	FStringQuestID = QuestID;
 }
 
 void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )

@@ -34,7 +34,16 @@ public:
 	UMaterialInterface* AITxtMaterial;
 
 	UPROPERTY( EditDefaultsOnly )
-	class UStaticMeshComponent* meshComp;
+	class UStaticMeshComponent* meshComp1;
+
+	UPROPERTY( EditDefaultsOnly )
+	class UStaticMeshComponent* meshComp2;
+
+	UPROPERTY( EditDefaultsOnly )
+	class UStaticMeshComponent* meshComp3;
+
+	UPROPERTY( EditDefaultsOnly )
+	class UStaticMeshComponent* meshComp4;
 
 protected:
 	// Called when the game starts or when spawned
@@ -55,7 +64,10 @@ public:
 
 
 	/* ------------- TimeLine ---------------- */
-	UMaterialInstanceDynamic* DynamicMaterial;
+	UMaterialInstanceDynamic* DynamicMaterial1;
+	UMaterialInstanceDynamic* DynamicMaterial2;
+	UMaterialInstanceDynamic* DynamicMaterial3;
+	UMaterialInstanceDynamic* DynamicMaterial4;
 
 	// Timeline component
 	UPROPERTY()
