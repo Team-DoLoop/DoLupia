@@ -169,7 +169,7 @@ void APlayerGameMode::SetPlayerCameraboom(float camboom)
 	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
 	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
-	player->CameraBoom->TargetArmLength = camboom ;
+	player->GetCameraBoom()->TargetArmLength = camboom ;
 }
 
 int32 APlayerGameMode::GetQuestID() const
