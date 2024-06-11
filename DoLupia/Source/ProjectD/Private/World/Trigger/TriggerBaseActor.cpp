@@ -84,9 +84,9 @@ void ATriggerBaseActor::ChangeCameraAngle(float angle)
 	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
 	// 플레이어 카메라 붐...
-	FRotator NewRotation = player->CameraBoom->GetRelativeRotation();
+	FRotator NewRotation = player->GetCameraBoom()->GetRelativeRotation();
 	NewRotation.Yaw = angle;
-	player->CameraBoom->SetRelativeRotation( NewRotation );
+	player->GetCameraBoom()->SetRelativeRotation( NewRotation );
 }
 
 void ATriggerBaseActor::ChangeCameraBooms(float angle)
@@ -95,6 +95,6 @@ void ATriggerBaseActor::ChangeCameraBooms(float angle)
 	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
 	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
-	player->CameraBoom->TargetArmLength = angle;
+	player->GetCameraBoom()->TargetArmLength = angle;
 }
 
