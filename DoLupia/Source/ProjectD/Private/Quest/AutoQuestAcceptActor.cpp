@@ -78,12 +78,9 @@ void AAutoQuestAcceptActor::GiveQuest()
 
 		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 		FString tmpString = QuestData.RowName.ToString();
-		int32 tmpNum = FCString::Atoi( *tmpString );
-		UE_LOG( LogTemp , Error , TEXT( "AAutoQuestAcceptActor::GiveQuest() : %d" ) , tmpNum );
 
-
-		 //겜모에 퀘스트 아이디 int32로 넘김.
-		gm->SetQuestID( tmpNum );
+		 //겜모에 퀘스트 아이디 string 로 넘김.
+		gm->SetStringQuestID( tmpString );
 		Questcomponent->AddNewQuest( QuestData.RowName );
 		
 	}

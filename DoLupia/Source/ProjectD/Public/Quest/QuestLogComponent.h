@@ -12,7 +12,7 @@ class AQuest_Base;
 class UQuestTracker;
 
 // 예시: FName 타입을 전달하는 델리게이트 선언
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestDataLoadedSignature , FName , QuestID );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateCurrentActiveQuest);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FQuestCompleted , AQuest_Base*, D_QuestActor );
 
@@ -33,8 +33,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY( BlueprintAssignable )
-	FQuestDataLoadedSignature OnQuestDataLoaded;
+	//UPROPERTY( BlueprintAssignable )
+	//FQuestDataLoadedSignature OnQuestDataLoaded;
 
 	FUpdateCurrentActiveQuest UpdateCurrentActiveQuest;
 

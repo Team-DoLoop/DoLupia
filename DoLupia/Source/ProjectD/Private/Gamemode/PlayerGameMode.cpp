@@ -183,6 +183,16 @@ void APlayerGameMode::SetQuestID(int32 NewQuestID )
 	
 }
 
+FString APlayerGameMode::GetStringQuestID()
+{
+	return FStringQuestID;
+}
+
+void APlayerGameMode::SetStringQuestID(FString QuestID)
+{
+	FStringQuestID = QuestID;
+}
+
 void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
 {
 	if (LocationFactory)

@@ -51,10 +51,9 @@ void AQuest_Base::BeginPlay()
 	//겜모에 QuestID 가져오기
 	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
-	int32 IntQuestId = gm->GetQuestID();
-	FString ValueString = FString::FromInt( IntQuestId );
-	UE_LOG( LogTemp , Error , TEXT( "BeginPlay() ValueString: %s" ) , *ValueString );
 	// 2단계: FString을 FName으로 변환
+	auto ValueString = gm->GetStringQuestID();
+
 	FName ValueName( *ValueString );
 	QuestID = ValueName;
 	UE_LOG( LogTemp , Error , TEXT( "BeginPlay() GameMode: %s" ) , *QuestID.ToString() );
@@ -89,6 +88,7 @@ void AQuest_Base::BeginPlay()
 		QuestLogComponent->OnQuestDataLoaded.AddDynamic( this , &AQuest_Base::OnQuestDataLoadedHandler );
 	}*/
 
+	ProjectDCharacter->OnObjectiveIDCalled.RemoveDynamic(this , &AQuest_Base::OnObjectiveIDHeard );
 	ProjectDCharacter->OnObjectiveIDCalled.AddDynamic( this , &AQuest_Base::OnObjectiveIDHeard );
 
 	/*AsyncTask( ENamedThreads::GameThread , [this]() {
@@ -107,7 +107,7 @@ void AQuest_Base::BeginPlay()
 	//비동기 함수!!! ->Tick으로
 
 	//딜레이 0.1초
-
+	QuestLogComponent->UpdateCurrentActiveQuest.RemoveDynamic( this , &AQuest_Base::CurrentActiveQuest );
 	QuestLogComponent->UpdateCurrentActiveQuest.AddDynamic( this , &AQuest_Base::CurrentActiveQuest);
 }
 
@@ -298,8 +298,10 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 				else {
 					IsCompleted = true;
 					if (QuestDetails.AutoComplete) {
+						UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete(FString ObjectiveID) QuestDetails.AutoComplete." ) );
 						QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
 						QuestLogComponent->TurnInQuest( QuestID );
+						QuestLogComponent->CompleteQuest( QuestID );
 					}
 				}
 			}

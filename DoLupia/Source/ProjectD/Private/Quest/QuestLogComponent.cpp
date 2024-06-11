@@ -66,7 +66,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
         CurrentQuest.Add( SpawneQuest );
         UE_LOG( LogTemp , Error , TEXT( "CurrentQuest.Num(): %d" ) , CurrentQuest.Num() );
         //QuestID quest_Base에 보내기
-        OnQuestDataLoaded.Broadcast( QuestID );
+        //OnQuestDataLoaded.Broadcast( QuestID );
 
         CurrentActiveQuests.AddUnique( QuestID );
 
@@ -83,6 +83,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
 {
+      UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
     CompletedQuests.AddUnique( QuestID );
     CurrentActiveQuests.Remove( QuestID );
 
