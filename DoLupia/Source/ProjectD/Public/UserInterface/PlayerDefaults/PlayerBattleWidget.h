@@ -56,6 +56,8 @@ private:
 public:
 	FORCEINLINE UPlayerSkillWidget* GetPlayerSkillUI() const {return PlayerSkillUI;}
 	void StartChargingSkill();
+	void UpdateChargingSkill(float ChargingTime, bool CanNextAttack);
+	void EndChargingSkill();
 
 	
 	// <------------------ Evasion ------------------>

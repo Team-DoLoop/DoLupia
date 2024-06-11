@@ -14,6 +14,13 @@ class USphereComponent;
 class UDecalComponent;
 class UMaterialInterface;
 
+UENUM( BlueprintType )
+enum class EFloorAttackType : uint8
+{
+	BlastFire ,
+	BlastLightening ,
+};
+
 UCLASS()
 class PROJECTD_API AFloorAttack : public AActor
 {
@@ -38,6 +45,9 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EFloorAttackType FloorAttackType;
 
 protected:
 	UPROPERTY( EditDefaultsOnly , Category = "Weapon Properties" )

@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-OctopusBackpack.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\Projects\git\DoLupia\DoLupia\Intermediate\Build\Win64\x64\ProjectDEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"D:\Projects\git\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\Module.OctopusBackpack.cpp.obj"
+"D:\Projects\git\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\Default.rc2.res"
+/OUT:"D:\Projects\git\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\UnrealEditor-OctopusBackpack.lib"

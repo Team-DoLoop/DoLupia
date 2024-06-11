@@ -4,6 +4,8 @@
 #include "Monsters/BossAnim.h"
 
 #include "Characters/ProjectDCharacter.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Library/AIConnectionLibrary.h"
 #include "Monsters/BossMonster.h"
 
 void UBossAnim::NativeInitializeAnimation()
@@ -14,12 +16,12 @@ void UBossAnim::NativeInitializeAnimation()
 }
 
 
-void UBossAnim::NativeUpdateAnimation(float DeltaSeconds)
+void UBossAnim::NativeUpdateAnimation( float DeltaSeconds )
 {
-	Super::NativeUpdateAnimation(DeltaSeconds);
+	Super::NativeUpdateAnimation( DeltaSeconds );
 
 	Boss = Cast<ABossMonster>( UGameplayStatics::GetActorOfClass( GetWorld() , ABossMonster::StaticClass() ) );
-	
+
 }
 //===============Delay_Launch=======================
 
@@ -67,10 +69,10 @@ void UBossAnim::OnDoHitAttackAnimation()
 		{
 			AProjectDCharacter* player = Cast<AProjectDCharacter>( UGameplayStatics::GetActorOfClass( GetWorld() , AProjectDCharacter::StaticClass() ) );
 			player->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 100 );
-					
+
 		}
 	}
-	
+
 }
 
 
@@ -79,7 +81,7 @@ void UBossAnim::OnEndHitAttackAnimation()
 	bAttackDelay = false;
 	bIsAttackComplete = true;
 	Boss->IsDelaying = true;
-	OnEndHitAttack.Broadcast();
+	OnEndAttack.Broadcast();
 	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Hit애니메이션 끝, 브로드캐스트 호츌" ) );
 
 }
@@ -100,7 +102,7 @@ void UBossAnim::OnDoFireAttackAnimation()
 
 	//==============effect visible로 바꿔라!!==============
 
-		bool bHit = GetWorld()->LineTraceSingleByChannel( HitResult , Start , End , ECC_Visibility , CollisionParams );
+	bool bHit = GetWorld()->LineTraceSingleByChannel( HitResult , Start , End , ECC_Visibility , CollisionParams );
 
 	if (bHit)
 	{
@@ -119,7 +121,7 @@ void UBossAnim::OnEndFireAttackAnimation()
 	bAttackDelay = false;
 	bIsAttackComplete = true;
 	Boss->IsDelaying = true;
-	OnEndFireAttack.Broadcast();
+	OnEndAttack.Broadcast();
 	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Fire애니메이션 끝, 브로드캐스트 호츌" ) );
 
 }
@@ -131,12 +133,48 @@ void UBossAnim::OnEndGrabAttackAnimation()
 	bAttackDelay = false;
 	bIsAttackComplete = true;
 	Boss->IsDelaying = true;
-	OnEndGrabAttack.Broadcast();
+	OnEndAttack.Broadcast();
 	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Grab애니메이션 끝, 브로드캐스트 호츌" ) );
 
 }
 
-//================DIe==============================
+
+
+//===============BlastFireAttack=======================
+void UBossAnim::OnDoBlastFireAttackAnimation()
+{
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	auto AIlib = gm->GetAIConnectionLibrary();
+	AIlib->SendBImgToSrv( 1 ); //상태이상 : 화염
+}
+
+void UBossAnim::OnEndBlastFireAttackAnimation()
+{
+	bAttackDelay = false;
+	bIsAttackComplete = true;
+	Boss->IsDelaying = true;
+	OnEndAttack.Broadcast();
+}
+
+
+
+//===============BlastLighteningAttack=================
+void UBossAnim::OnDoBlastLighteningAttackAnimation()
+{
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	auto AIlib = gm->GetAIConnectionLibrary();
+	AIlib->SendBImgToSrv( 2 ); //상태이상  : 독
+}
+
+void UBossAnim::OnEndBlastLighteningAttackAnimation()
+{
+	bAttackDelay = false;
+	bIsAttackComplete = true;
+	Boss->IsDelaying = true;
+	OnEndAttack.Broadcast();
+}
+
+//=======================DIe==============================
 void UBossAnim::OnEndDieAnimation()
 {
 	Boss->DestroyMonster();

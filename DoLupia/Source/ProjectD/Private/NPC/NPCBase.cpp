@@ -10,6 +10,7 @@
 #include <Kismet/GameplayStatics.h>
 
 #include "Blueprint/UserWidget.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
 #include "NPC/Animation/NPCAnim.h"
 #include "Quest/QuestGiver.h"
@@ -134,6 +135,8 @@ void ANPCBase::DialogWith()
 		DialogComp->StartDialog( this , *NPCID , DialogNum );
 		ChangeNPCStatus( stencilDepth );
 		anim->bTalking = true;
+
+		ChangePlayerState();
 	}
 }
 
@@ -174,4 +177,15 @@ void ANPCBase::ChangeNPCStatus(int32 depth)
 	GetMesh()->CustomDepthStencilValue = depth;
 }
 
-
+void ANPCBase::ChangePlayerState()
+{
+	// 플레이어 행동 가능하게
+	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	{
+		if(auto PlayerFSM = Player->GetPlayerFSMComp())
+		{
+			if(PlayerFSM->CanChangeState(EPlayerState::TALK_NPC))
+				PlayerFSM->ChangePlayerState(EPlayerState::TALK_NPC);
+		}
+	}
+}
