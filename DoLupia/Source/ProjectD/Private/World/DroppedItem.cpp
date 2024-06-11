@@ -33,21 +33,20 @@ void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh)
 
 	const FItemStatistics& Statistics = ItemReference->GetItemStatistics();
 
-	ItemMesh->SetMassScale( FName("Root") , Statistics.MassScale);
-	SetActorScale3D( Statistics.MeshScale );
-	const FVector& MeshScale =  GetActorScale3D() * ItemMesh->Bounds.BoxExtent;
-	SphereComponent->SetSphereRadius( FMath::Max3( MeshScale.X , MeshScale.Y , MeshScale.Z ) * 2.0 );
+	ItemMesh->SetMassOverrideInKg( NAME_None , Statistics.MassScale );
+	FVector Scale3D = Statistics.MeshScale;
+	SetActorScale3D( Scale3D );
+
+	GravityScale = Statistics.GravityScale;
+
+	SphereComponent->SetSphereRadius( FMath::Max3( ItemMesh->Bounds.BoxExtent.X , ItemMesh->Bounds.BoxExtent.Y , ItemMesh->Bounds.BoxExtent.Z ) 
+		* 2.5 / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
 }
 
 // Called when the game starts or when spawned
 void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if(ItemReference)
-	{
-		
-	}
 
 
 	//UBezierMovementLibrary::MoveObjectAlongCurve( this , this , GetActorLocation() , FVector(100.f,100.f,100.f) , 0.77f);
@@ -166,7 +165,7 @@ void ADroppedItem::PerformBoxTrace( float DeltaTime )
 
 		// 시간에 따른 x와 y 좌표 계산
 		const float X = ActorSpeed.X * Time * FMath::Cos( Radians );
-		const float Y = ActorSpeed.Y * Time * FMath::Sin( Radians ) - 0.77f * Gravity * Time * Time; //  
+		const float Y = ActorSpeed.Y * Time * FMath::Sin( Radians ) - GravityScale * Gravity * Time * Time; //  
 		const float Z = ActorSpeed.Z * Time * FMath::Cos( Radians );
 
 		const FVector& NewPosition = FVector( (float)StartLocation.X + X , (float)StartLocation.Y + Z , (float)StartLocation.Z + Y );

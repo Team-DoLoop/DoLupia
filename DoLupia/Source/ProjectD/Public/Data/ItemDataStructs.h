@@ -87,7 +87,11 @@ struct FItemStatistics
 	FVector MeshScale = FVector(1.0, 1.0, 1.0);
 
 	UPROPERTY( EditAnywhere , Category = "Item" )
-	float MassScale = 1.f;
+	float MassScale = 20.f;
+
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	float GravityScale = 0.77f;
+
 
 };
 

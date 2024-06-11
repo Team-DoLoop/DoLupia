@@ -77,4 +77,6 @@ private:
 
 	float Time;
 
+	float GravityScale = 0.77f;
+
 };
