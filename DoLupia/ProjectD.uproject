@@ -27,11 +27,6 @@
 		{
 			"Name": "SkeletalMeshModelingTools",
 			"Enabled": true
-		},
-		{
-			"Name": "OctopusBackpack",
-			"Enabled": false,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/d83d83a0334646018f1eaddb8b5b0afc"
 		}
 	]
 }
