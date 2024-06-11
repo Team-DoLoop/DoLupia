@@ -57,6 +57,7 @@ void UQuestTracker::WidgetUpdate()
     if (QuestActor)
     {
         //퀘스트 엑터에서 온 델리게이트 받기
+        QuestActor->OnObjectiveHeard.RemoveDynamic( this , &UQuestTracker::OnObjectiveHeard );
         QuestActor->OnObjectiveHeard.AddDynamic( this , &UQuestTracker::OnObjectiveHeard );
         if (txt_QuestName)
         {
@@ -91,7 +92,7 @@ void UQuestTracker::WidgetUpdate()
                 }
 
                 //반복 완료
-
+                QuestLogComp->QuestCompleted.RemoveDynamic( this , &UQuestTracker::QuestCompleted );
                 QuestLogComp->QuestCompleted.AddDynamic( this , &UQuestTracker::QuestCompleted );
             }
             else {

@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+#include "UserInterface/Tutorial/TutorialWidget.h"
 
 
 void UPlayerDefaultsWidget::NativeOnInitialized()
@@ -20,6 +21,12 @@ void UPlayerDefaultsWidget::NativeOnInitialized()
 	{
 		PlayerBattleUI = CreateWidget<UPlayerBattleWidget>(GetWorld(), PlayerBattleUIFactory);
 		PlayerBattleUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
+	}
+
+	if(TutorialWidgetFactory)
+	{
+		TutorialUI = CreateWidget<UTutorialWidget>(GetWorld(), TutorialWidgetFactory);
+		TutorialUI->AddToViewport(static_cast<uint32>(ViewPortPriority::Main));
 	}
 }
 

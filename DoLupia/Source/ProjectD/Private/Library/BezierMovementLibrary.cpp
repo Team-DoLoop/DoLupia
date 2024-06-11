@@ -7,15 +7,17 @@
 #include "World/Pickup.h"
 
 void UBezierMovementLibrary::MoveObjectAlongCurve( UObject* WorldContextObject , AActor* Item , FVector StartPoint, 
-	FVector ActorSpeed, float GravityScale )
+	FVector ActorSpeed, float GravityScale, float Time )
 {
     if (!WorldContextObject || !Item)
         return;
 
-    FTimerDelegate TimerDelegate;
-    TimerDelegate.BindStatic( &UBezierMovementLibrary::UpdateObjectPosition , WorldContextObject , Item , StartPoint, ActorSpeed, GravityScale, 0.0f );
 
-    WorldContextObject->GetWorld()->GetTimerManager().SetTimerForNextTick( TimerDelegate );
+    UpdateObjectPosition( WorldContextObject , Item, StartPoint, ActorSpeed, GravityScale, Time);
+
+    //TimerDelegate.BindStatic( &UBezierMovementLibrary::UpdateObjectPosition , WorldContextObject , Item , StartPoint, ActorSpeed, GravityScale, 0.0f, Time );
+
+    //WorldContextObject->GetWorld()->GetTimerManager().SetTimerForNextTick( TimerDelegate );
 }
 
 FVector UBezierMovementLibrary::VectorSeed(AActor* ContextActor)
@@ -84,7 +86,7 @@ FVector UBezierMovementLibrary::VectorSeed(AActor* ContextActor)
 }
 
 void UBezierMovementLibrary::UpdateObjectPosition(UObject* WorldContextObject, AActor* Item, FVector StartPoint, 
-                                                  FVector ActorSpeed, float GravityScale, float Time)
+        FVector ActorSpeed, float GravityScale, float Time)
 {
     if (!WorldContextObject || !Item)
         return;
@@ -110,9 +112,9 @@ void UBezierMovementLibrary::UpdateObjectPosition(UObject* WorldContextObject, A
 
     Item->SetActorLocation( NewPosition );
 
-    FTimerDelegate TimerDelegate;
-    TimerDelegate.BindStatic( &UBezierMovementLibrary::UpdateObjectPosition , WorldContextObject , Item , StartPoint, 
-		ActorSpeed, GravityScale, Time + WorldContextObject->GetWorld()->GetDeltaSeconds() );
+  //  FTimerDelegate TimerDelegate;
+  //  TimerDelegate.BindStatic( &UBezierMovementLibrary::UpdateObjectPosition , WorldContextObject , Item , StartPoint, 
+		//ActorSpeed, GravityScale, Time + WorldContextObject->GetWorld()->GetDeltaSeconds() );
 
-    WorldContextObject->GetWorld()->GetTimerManager().SetTimerForNextTick( TimerDelegate );
+  //  WorldContextObject->GetWorld()->GetTimerManager().SetTimerForNextTick( TimerDelegate );
 }

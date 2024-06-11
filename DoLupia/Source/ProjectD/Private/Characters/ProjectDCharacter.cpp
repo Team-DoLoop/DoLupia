@@ -28,6 +28,7 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/GadgetComponent.h"
+#include "Characters/Components/PlayerTutorialComp.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
@@ -132,9 +133,16 @@ AProjectDCharacter::AProjectDCharacter()
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
 
+	// Tutorial
+	TutorialComp = CreateDefaultSubobject<UPlayerTutorialComp>(TEXT("TutorialComp"));
+	
+
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	// Dialog
+	//bIsDialogueEnabled = true;
 }
 
 void AProjectDCharacter::BeginPlay()
@@ -426,10 +434,6 @@ void AProjectDCharacter::TakeDamage(float Damage)
 
 void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 {
-	// AI 적용
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-	if(gm) gm->ApplyAITxtB();
-
 	// 이펙트 적용
 	float EffectTime = 0.0f;
 	
@@ -445,7 +449,15 @@ void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 		if(ElecNS) EffectNS = ElecNS;
 	}
 
+	// 상태이상이 걸린 이미 상태면 타이머 갱신
 	if(GetWorld()->GetTimerManager().IsTimerActive(EffectTimerHandle)) TakeEffectAttackHitEnd();
+	else
+	{
+		// 안걸렸다면 AI 적용
+		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		if(gm) gm->ApplyAITxtB();
+	}
+	
 	GetWorld()->GetTimerManager().SetTimer(EffectTimerHandle, this, &AProjectDCharacter::TakeEffectAttackHitEnd, EffectTime, false);
 
 	// Effect 적용
@@ -820,3 +832,20 @@ void AProjectDCharacter::PerformTrace()
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
 }
+
+/* Quest Decline 기능 삭제
+void AProjectDCharacter::EnableDialogue()
+{
+	bIsDialogueEnabled = true;
+}
+
+void AProjectDCharacter::DisableDialogue()
+{
+	bIsDialogueEnabled = false;
+}
+
+bool AProjectDCharacter::IsDialogueEnabled() const
+{
+	return bIsDialogueEnabled;
+}
+*/

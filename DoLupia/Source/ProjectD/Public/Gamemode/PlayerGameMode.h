@@ -103,6 +103,13 @@ public:
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetQuestID( int32 NewQuestID );
 
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	FString GetStringQuestID();
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetStringQuestID( FString QuestID );
+
+	FString FStringQuestID;
+
 private:
 	int32 questID = -1;
 
@@ -115,4 +122,7 @@ public:
 	TSubclassOf<class ULocationTitleWidget> LocationFactory;
 
 	void CreateLocationTitleWidget(int32 currentlevel);
+
+	/*---------- Level Portal Trigger --------*/
+	void ActiveLvTrigger();
 };

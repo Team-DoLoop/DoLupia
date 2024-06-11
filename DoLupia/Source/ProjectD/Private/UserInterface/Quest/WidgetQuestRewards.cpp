@@ -133,7 +133,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     gm->ApplyAITxtP();
-    //AI
+    //AI*/
 
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (!IsValid( PlayerController ))
@@ -160,7 +160,6 @@ void UWidgetQuestRewards::OnAcceptClicked()
     }
 
     QuestLogComp->CompleteQuest(QuestID);
-    QuestLogComp->RemoveTracker();
 
     if (QuestID.IsNone())
     {
@@ -174,6 +173,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
 
     //Delete(ObjectiveItems)
 
+    /*
     //아이템 지울 게 있을 때
     auto RemoveItem = QuestDetails.Stages.GetData()->Objectives;
     if (!RemoveItem.IsEmpty())
@@ -190,7 +190,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
 	        InvetoryComp->HandelRemoveItem( removeItem.ItemObjectives );
 	    }  
     }
-
+    */
 
 
     //보상이 있을 때

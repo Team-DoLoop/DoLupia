@@ -1,6 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Quest/QuestLogComponent.h"
+
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
 #include "UserInterface/Quest/QuestTracker.h"
 
@@ -59,15 +62,23 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
     }
     else
     {
-        //QuestID quest_Base에 보내기
-        OnQuestDataLoaded.Broadcast( QuestID );
-        CurrentActiveQuests.AddUnique( QuestID );
-        SpawneQuest->QuestID = QuestID;
+       //spawneQuest->QuestID = QuestID;
         UE_LOG( LogTemp , Error , TEXT( "void UQuestLogComponent::AddNewQuest(FName QuestID): %s" ) , *QuestID.ToString() );
+
+        //현재 퀘스트에 스폰한 퀘스트를 추가
+        CurrentQuest.Add( SpawneQuest );
+        UE_LOG( LogTemp , Error , TEXT( "CurrentQuest.Num(): %d" ) , CurrentQuest.Num() );
+        //QuestID quest_Base에 보내기
+        //OnQuestDataLoaded.Broadcast( QuestID );
+
+        CurrentActiveQuests.AddUnique( QuestID );
+
+        //QuestBase에서 보내기
+        UpdateCurrentActiveQuest.Broadcast();
     }
 
 	//현재 퀘스트에 스폰한 퀘스트를 추가
-	CurrentQuest.Add( SpawneQuest );
+	//CurrentQuest.Add( SpawneQuest );
 
     //생성한 퀘스트 액터를 그냥 가져와서 바로 트래커로 만들기
     //TrackQuest( SpawneQuest );
@@ -75,6 +86,18 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
 {
+    /*망토 바꾸기
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    auto AIlib = gm->GetAIConnectionLibrary();
+    gm->ApplyAITxtP();
+    */
+
+    // 플레이어 대화 상태 갱신
+    //auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+    //player->EnableDialogue();
+
+
+	UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
     CompletedQuests.AddUnique( QuestID );
     CurrentActiveQuests.Remove( QuestID );
 
@@ -96,6 +119,8 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         	break;
         }
     }
+
+    RemoveTracker();
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )
@@ -114,29 +139,29 @@ void UQuestLogComponent::TurnInQuest( FName QuestID )
 
 }
 
-void UQuestLogComponent::AddToTracker(FName QuestID)
+void UQuestLogComponent::AddToTracker()
 {
-    if(GetQuestActor(QuestID))
+    /*if(GetQuestActor(QuestID))
     {
         UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ) );
         TrackQuest( GetQuestActor( QuestID ) );
     }else
     {
         UE_LOG( LogTemp , Error , TEXT( "CurrentQuest.IsEmpty()" ) );
-    }
+    }*/
 
-    /*if (!CurrentQuest.IsEmpty())
+    if (CurrentQuest.IsValidIndex(0))
     {
         for (const auto& Quest : CurrentQuest)
         {
-            UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ));
+            UE_LOG( LogTemp , Error , TEXT( "TrackQuest( Quest )" ) );
             TrackQuest( Quest );
         }
-    }else
+    }
+    else
     {
         UE_LOG( LogTemp , Error , TEXT( "CurrentQuest.IsEmpty()" ) );
-    }*/
-    
+    }
 }
 
 void UQuestLogComponent::RemoveTracker()

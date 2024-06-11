@@ -16,7 +16,7 @@ class PROJECTD_API UBezierMovementLibrary : public UBlueprintFunctionLibrary
 
 public:
 	static void MoveObjectAlongCurve( UObject* WorldContextObject , AActor* Item , FVector StartPoint, 
-		FVector ActorSpeed, float GravityScale );
+		FVector ActorSpeed, float GravityScale, float Time );
 
 	static FVector VectorSeed( AActor* ContextActor);
 

@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Interfaces/DamageInterface.h"
 #include "Interfaces/InteractionInterface.h"
 #include "Quest/QuestInteractionInterface.h"
 #include "ProjectDCharacter.generated.h"
 
+class UPlayerTutorialComp;
 class UNPCInteractionWidget;
 class ADoLupiaHUD;
 class UPlayerDefaultsWidget;
@@ -67,19 +69,19 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* TopDownCameraComponent;
 
-protected:
-	
-public:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class USpringArmComponent* CameraBoom;
+	
+protected:
+	
+public:
 
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	
 	
 	// <---------------------- Player ---------------------->
 private:
@@ -157,9 +159,6 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Child")
 	class UChildActorComponent* CapeComp;
-	
-public:
-
 
 	
 	// <---------------------- Move ---------------------->
@@ -273,8 +272,7 @@ protected:
 
 public:
 	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory; };
-
-
+	
 
 	// <---------------------- Quest ---------------------->
 private:
@@ -324,5 +322,27 @@ public:
 	/*UPROPERTY(BlueprintAssignable , Category = "Events")
 	FOnQuestIDCalled OnQuestIDCalled;
 	*/
+
+
+	/* Quest Decline 기능 삭제
+	// <---------------------- Dialog ---------------------->
+	void EnableDialogue();
+	void DisableDialogue();
+	bool IsDialogueEnabled() const;
+
+private:
+	bool bIsDialogueEnabled;
+	*/
+
+
+	
+	// <---------------------- Tutorial ---------------------->
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Character | Tutorial")
+	UPlayerTutorialComp* TutorialComp;
+	
+public:
+	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; };
+	
 };
 

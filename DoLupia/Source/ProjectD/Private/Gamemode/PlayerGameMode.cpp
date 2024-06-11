@@ -20,6 +20,7 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
+#include "World/Trigger/TriggerBaseActor.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -169,7 +170,7 @@ void APlayerGameMode::SetPlayerCameraboom(float camboom)
 	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
 	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
-	player->CameraBoom->TargetArmLength = camboom ;
+	player->GetCameraBoom()->TargetArmLength = camboom ;
 }
 
 int32 APlayerGameMode::GetQuestID() const
@@ -180,7 +181,17 @@ int32 APlayerGameMode::GetQuestID() const
 void APlayerGameMode::SetQuestID(int32 NewQuestID )
 {
 	questID = NewQuestID;
-	UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::SetQuestID: %d" ) , questID );
+	
+}
+
+FString APlayerGameMode::GetStringQuestID()
+{
+	return FStringQuestID;
+}
+
+void APlayerGameMode::SetStringQuestID(FString QuestID)
+{
+	FStringQuestID = QuestID;
 }
 
 void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
@@ -211,5 +222,14 @@ void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
 			LocationWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
 
 		}
+	}
+}
+
+void APlayerGameMode::ActiveLvTrigger()
+{
+	for (TActorIterator<ATriggerBaseActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->ShowTrigger();
 	}
 }

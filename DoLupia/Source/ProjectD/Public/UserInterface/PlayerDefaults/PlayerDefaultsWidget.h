@@ -7,6 +7,7 @@
 #include "PlayerDefaultsWidget.generated.h"
 
 
+class UTutorialWidget;
 class AProjectDCharacter;
 class UMainQuickSlotWidget;
 class UQuickSlotWidget;
@@ -64,5 +65,23 @@ protected:
 
 public:
 	FORCEINLINE UPlayerBattleWidget* GetPlayerBattleWidget() const {return PlayerBattleUI;}
+
+
+
+	// <------------------------- Player Tutorial ------------------------->
+private:
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UTutorialWidget> TutorialWidgetFactory;
+
+	UPROPERTY()
+	UTutorialWidget* TutorialUI;
+	
+public:
+	FORCEINLINE UTutorialWidget* GetTutorialWidget() const { return TutorialUI; }
+
+
 	
 };

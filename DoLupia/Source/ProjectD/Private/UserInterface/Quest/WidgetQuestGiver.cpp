@@ -90,8 +90,8 @@ void UWidgetQuestGiver::NativeDestruct()
     if(PlayerController)
     {
 	    auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
-        FInputModeGameAndUI InputMode;
-        //InputMode.SetConsumeCaptureMouseDown(true);
+        FInputModeGameOnly InputMode;
+        InputMode.SetConsumeCaptureMouseDown(false);
         PlayerControllerD->SetInputMode( InputMode );
     }
         
@@ -151,18 +151,26 @@ void UWidgetQuestGiver::OnAcceptClicked()
 
    //AI*/
 
-    //겜모에 퀘스트 아이디 int32로 넘김.
+   //겜모에 퀘스트 아이디 int32로 넘김.
    gm->SetQuestID( tmpNum );
+
+	// NPC 대화 가능 상태 갱신
+    //PlayerCharacterD->DisableDialogue();
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();
 
     // 플레이어 행동 가능하게
     ChangePlayerStateIdle();
+
+    
 }
 
 void UWidgetQuestGiver::OnDeclineClicked()
 {
+    //auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+    //player->EnableDialogue();
     RemoveFromParent();
     ChangePlayerStateIdle();
 }
