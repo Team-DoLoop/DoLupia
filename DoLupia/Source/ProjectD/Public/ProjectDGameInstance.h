@@ -44,14 +44,19 @@ private:
 	// <------------------ Tutorial ------------------>
 public:
 	void InitTutorialIndex();
-	void GetTutorialData(EExplainType _ExplainType);
+	FTutorialData* GetTutorialData(int32 _TutorialID);
+	void ExecuteTutorial(EExplainType _ExplainType);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
 	
 	UPROPERTY()
 	class UDataTable* TutorialTable;
 
+	FORCEINLINE int32 GetTutorialID() const {return TutorialID;}
+
 
 private:
+	int32 TutorialID;
+	
 	// 몇번 확인했는지 저장 / 만약 DataTable의 Index와 다르면 return
 	TMap<EExplainType, int32> TutorialIndexMap;
 };

@@ -18,7 +18,7 @@ UProjectDGameInstance::UProjectDGameInstance()
 		PlayerSkillTable = DT_PlayerSkill.Object;
 	}
 
-	FString TutorialDataPath = TEXT("/Script/Engine.DataTable'/Game/Player/Data/DT_PlayerSkill.DT_PlayerSkill'");
+	FString TutorialDataPath = TEXT("/Script/Engine.DataTable'/Game/Tutorial/Data/DT_Tutorial.DT_Tutorial'");
 	static ConstructorHelpers::FObjectFinder<UDataTable> DT_Tutorial(*TutorialDataPath);
 	if(DT_Tutorial.Succeeded())
 	{
@@ -66,11 +66,16 @@ void UProjectDGameInstance::InitTutorialIndex()
 	}
 }
 
-void UProjectDGameInstance::GetTutorialData(EExplainType _ExplainType)
+FTutorialData* UProjectDGameInstance::GetTutorialData(int32 _TutorialID)
 {
-	// 데이터 가져오기
-	int32 _TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
-	auto TutoData = TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
+	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
+}
+
+void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType)
+{
+	// 첫 데이터 찾기
+	TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
+	FTutorialData* TutoData = GetTutorialData(TutorialID);
 	
 	// 데이터가 있다면
 	if(!TutoData) return;
@@ -79,8 +84,14 @@ void UProjectDGameInstance::GetTutorialData(EExplainType _ExplainType)
 	TutorialIndexMap[TutoData->ExplainType]++;
 
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
-	AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	Player->GetTutorialComp()->SetTutorialUI(TutoData);
+	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	{
+		if(auto PlayerTuto = Player->GetTutorialComp())
+		{
+			PlayerTuto->SetTutorialID(TutorialID);
+			PlayerTuto->SetTutorialUI(TutoData);
+		}
+	}
 }
 
 int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex)

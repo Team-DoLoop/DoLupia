@@ -7,6 +7,7 @@
 #include "PlayerDefaultsWidget.generated.h"
 
 
+struct FTutorialData;
 class UTutorialWidget;
 class AProjectDCharacter;
 class UMainQuickSlotWidget;
@@ -81,7 +82,9 @@ protected:
 	
 public:
 	FORCEINLINE UTutorialWidget* GetTutorialWidget() const { return TutorialUI; }
-
+	void ShowTutorialWidget(FTutorialData* _TutoData );
+	void HideTutorialWidget();
+	void ChangeNextBtn(FString _Str);
 
 	
 };

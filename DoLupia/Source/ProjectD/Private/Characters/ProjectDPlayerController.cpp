@@ -17,6 +17,7 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
+#include "Characters/Components/PlayerTutorialComp.h"
 #include "Engine/LocalPlayer.h"
 #include "UserInterface/DoLupiaHUD.h"
 #include "UserInterface/MainMenu.h"
@@ -163,14 +164,22 @@ void AProjectDPlayerController::TestAnyFunction()
 	*/
 
 	// 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
-	ControlledCharacter->GetAttackComp()->SetSkillUseState(true, QUEST);
+	if(TestCount == 0)
+	{
+		ControlledCharacter->GetAttackComp()->SetSkillUseState(true, QUEST);
 
-	// 각 색깔 열리게
-	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
-	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
-	ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
+		// 각 색깔 열리게
+		ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
+		ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
+		ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
+	}
 
-	ControlledCharacter->TakeEffectAttackHit(EEffectAttackType::ELECTRIC);
+	else
+	{
+		ControlledCharacter->GetTutorialComp()->NextTutorial();
+	}
+
+	// ControlledCharacter->TakeEffectAttackHit(EEffectAttackType::ELECTRIC);
 }
 
 	

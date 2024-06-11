@@ -6,6 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "TutorialWidget.generated.h"
 
+class UPlayerTutorialComp;
+class UProjectDGameInstance;
+class AProjectDCharacter;
+struct FTutorialData;
 /**
  * 
  */
@@ -16,22 +20,36 @@ class PROJECTD_API UTutorialWidget : public UUserWidget
 
 
 public:
+	void ShowTutorialWidget(FTutorialData* _TutoData);
 
+	UFUNCTION()
+	void NextTutorialBtn();
+
+	void ChangeNextBtn(FString _Str);
 	
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 
-	void ShowTutorialWidget();
-
 	
 private:
-	float FadeOutTime = 1.0f; // 클수록 빨리 사라짐
+	UPROPERTY()
+	AProjectDCharacter* Player;
+
+	UPROPERTY()
+	UProjectDGameInstance* GI;
+
+	UPROPERTY()
+	UPlayerTutorialComp* PlayerTutorialComp;
 
 	
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UTextBlock* TXT_Explain;
 
-	UPROPERTY(EditDefaultsOnly, Transient, meta = (BindWidgetAnim))
-	class UWidgetAnimation* FadeOutAnim;
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UButton* Btn_Next;
+
+	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	class UTextBlock* TXT_Next;
+	
 };
