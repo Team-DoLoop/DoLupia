@@ -9,6 +9,7 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
 UItemBase::UItemBase() : bIsCopy(false), bIsPickup(false)
 {
@@ -77,9 +78,15 @@ void UItemBase::Use(AProjectDCharacter* Character)
 				PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
 				Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP, MaxHP );
 			}
-			
-			//PlayerStat->SetMP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
-			//Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP , MaxHP );
+
+			if(ItemStatistics.ManaValue)
+			{
+				int32 CurrentMP = PlayerStat->GetMP();
+				int32 MaxMP = PlayerStat->GetMaxMP();
+
+				PlayerStat->SetMP( PlayerStat->GetMP() + ItemStatistics.HealthValue );
+				Character->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar( CurrentMP , MaxMP );
+			}
 		}
 	}
 }

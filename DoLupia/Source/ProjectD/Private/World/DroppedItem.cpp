@@ -57,12 +57,14 @@ void ADroppedItem::BeginPlay()
 
 	FRandomStream RandomStream( Seed );
 
-	SpinRotator = FRotator
+	/*SpinRotator = FRotator
 	(
 		(float)RandomStream.RandRange( 1 , 10 ) * 0.3f,
 		(float)RandomStream.RandRange( 1 , 10 ) * 0.3f ,
 		(float)RandomStream.RandRange( 1 , 10 ) * 0.3f
-	);
+	);*/
+
+	ActorSpeed = UBezierMovementLibrary::VectorSeed( this );
 
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADroppedItem::OnTouchesGroundBeginOverlap);
 }
@@ -73,7 +75,7 @@ void ADroppedItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if(SphereComponent->GetCollisionEnabled() == ECollisionEnabled::NoCollision)
-		PerformBoxTrace();
+		PerformBoxTrace( DeltaTime );
 
 }
 
@@ -86,16 +88,29 @@ void ADroppedItem::OnTouchesGroundBeginOverlap(UPrimitiveComponent* OverlappedCo
 	if(MyCharacter)
 	{
 		// 나중에 시스템 콜 추가예정 -> 인벤토리 부족
-		MyCharacter->GetInventory()->HandelAddItem(ItemReference, true);
-		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		MyItemSpawner->ReturnItem( this );
-		MyItemSpawner->SetActive( this , false );
-		ItemMesh->SetRelativeRotation(OriRotator);
-		ItemMesh->SetSimulatePhysics( false );
+		FItemAddResult AddResult = MyCharacter->GetInventory()->HandelAddItem(ItemReference, true);
+
+		switch (AddResult.OperationResult)
+		{
+		case EItemAddResult::IAR_NoItemAdded:
+			MyCharacter->OnSystemCall( AddResult.ResultMessage );
+			break;
+		case EItemAddResult::IAR_PartialAmoutItemAdded:
+			MyCharacter->OnSystemCall( AddResult.ResultMessage );
+			break;
+		default :
+			SphereComponent->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+			MyItemSpawner->ReturnItem( this );
+			MyItemSpawner->SetActive( this , false );
+			ItemMesh->SetRelativeRotation( OriRotator );
+			ItemMesh->SetSimulatePhysics( false );
+			break;
+		}
+
 	}
 }
 
-void ADroppedItem::PerformBoxTrace()
+void ADroppedItem::PerformBoxTrace( float DeltaTime )
 {
 	const FVector& Start = GetActorLocation() + FVector(0.f, 0.f, ItemMesh->Bounds.BoxExtent.Z);
 	const FVector& End = Start - FVector( 0.f , 0.f , ItemMesh->Bounds.BoxExtent.Z);
@@ -134,7 +149,22 @@ void ADroppedItem::PerformBoxTrace()
 	else
 	{
 		const FRotator& CurrentRotatar = ItemMesh->GetRelativeRotation();
-		ItemMesh->SetRelativeRotation( FMath::RInterpTo( CurrentRotatar , CurrentRotatar + SpinRotator , GetWorld()->GetTimeSeconds() , 0.1f ) );
+		ItemMesh->SetRelativeRotation( FMath::RInterpTo( CurrentRotatar , CurrentRotatar + SpinRotator , DeltaTime , 0.1f ) );
+		
+		const float Gravity = 980.0f; // 중력 가속도 (cm/s²)
+		const float Radians = FMath::DegreesToRadians( 45.0 );
+
+		// 시간에 따른 x와 y 좌표 계산
+		const float X = ActorSpeed.X * Time * FMath::Cos( Radians );
+		const float Y = ActorSpeed.Y * Time * FMath::Sin( Radians ) - 0.77f * Gravity * Time * Time; //  
+		const float Z = ActorSpeed.Z * Time * FMath::Cos( Radians );
+
+		const FVector& NewPosition = FVector( (float)StartLocation.X + X , (float)StartLocation.Y + Z , (float)StartLocation.Z + Y );
+
+		SetActorLocation( NewPosition );
+
+		//MyItemSpawner->MoveItemAlongCurve( GetWorld(), this, StartLocation, Time, FVector( 0.0 , 0.0 , 0.0 ) , 0.77f );
+		Time += DeltaTime;
 	}
 
 }
