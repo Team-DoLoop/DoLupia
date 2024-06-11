@@ -25,20 +25,30 @@ ADroppedItem::ADroppedItem()
 	SphereComponent->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 	SphereComponent->SetupAttachment( GetRootComponent() );
 
-
-
 }
 
-void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh) const
+void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh)
 {
 	ItemMesh->SetStaticMesh( StaticMesh );
-	SphereComponent->SetSphereRadius( FMath::Max3( ItemMesh->Bounds.BoxExtent.X , ItemMesh->Bounds.BoxExtent.Y , ItemMesh->Bounds.BoxExtent.Z ) * 2.0 );
+
+	const FItemStatistics& Statistics = ItemReference->GetItemStatistics();
+
+	ItemMesh->SetMassScale( FName("Root") , Statistics.MassScale);
+	SetActorScale3D( Statistics.MeshScale );
+	const FVector& MeshScale =  GetActorScale3D() * ItemMesh->Bounds.BoxExtent;
+	SphereComponent->SetSphereRadius( FMath::Max3( MeshScale.X , MeshScale.Y , MeshScale.Z ) * 2.0 );
 }
 
 // Called when the game starts or when spawned
 void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if(ItemReference)
+	{
+		
+	}
+
 
 	//UBezierMovementLibrary::MoveObjectAlongCurve( this , this , GetActorLocation() , FVector(100.f,100.f,100.f) , 0.77f);
 	OriRotator = ItemMesh->GetRelativeRotation();

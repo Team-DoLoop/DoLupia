@@ -30,7 +30,7 @@ public:
 	FORCEINLINE void SetMyItemSpawner( AItemSpawner* NewMyItemSpawner ) { MyItemSpawner = NewMyItemSpawner; }
 	FORCEINLINE void SetStartLocation( FVector NewStartLocation ) { StartLocation = NewStartLocation; }
 
-	void SetItemStaticMesh(UStaticMesh* StaticMesh) const;
+	void SetItemStaticMesh(UStaticMesh* StaticMesh);
 
 
 protected:
@@ -72,6 +72,8 @@ private:
 	FVector StartLocation;
 
 	FVector ActorSpeed;
+
+	FVector MeshScale;
 
 	float Time;
 
