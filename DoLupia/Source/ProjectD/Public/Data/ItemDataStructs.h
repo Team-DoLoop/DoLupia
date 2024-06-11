@@ -74,6 +74,9 @@ struct FItemStatistics
 	UPROPERTY( EditAnywhere , Category = "Item" )
 	float HealthValue;
 
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	float ManaValue;
+
 	UPROPERTY(EditAnywhere , Category = "Store" )
 	float RestorationAmout;
 

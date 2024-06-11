@@ -44,7 +44,7 @@ class PROJECTD_API AItemSpawner : public AActor
 public:	
 	AItemSpawner();
 
-	static void MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem, FVector StartPoint, 
+	static void MoveItemAlongCurve( UObject* WorldContextObject, AActor* NewItem, FVector StartPoint, float Time,
 		FVector ActorSpeed = FVector(0.0, 0.0, 0.0) , float GravityScale = 0.5f);
 
 	UItemBase* GetItem( const FString& ID );

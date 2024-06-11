@@ -14,20 +14,27 @@ void UInventoryTooltip::SetupTooltip()
 
 	switch (const EItemType& MyItemType = ItemBeingHovered->GetItemType())
 	{
+	case EItemType::Head:
+		ItemType->SetText( FText::FromString( L"머리" ) );
 	case EItemType::Top:
-		ItemType->SetText(FText::FromString("Armor"));
+		ItemType->SetText( FText::FromString( L"상의" ) );
+	case EItemType::Pants:
+		ItemType->SetText( FText::FromString( L"하의" ) );
+	case EItemType::Shoes:
+		ItemType->SetText( FText::FromString( L"신발" ) );
+		
 		break;
 	case EItemType::Weapon:
-		ItemType->SetText(FText::FromString("Weapon"));
+		ItemType->SetText(FText::FromString(L"무기"));
 		break;
 	case EItemType::Shield:
-		ItemType->SetText(FText::FromString("Shield"));
+		ItemType->SetText(FText::FromString(L"방패"));
 		break;
 	case EItemType::Spell:
-		ItemType->SetText(FText::FromString("Spell"));
+		ItemType->SetText(FText::FromString(L"보조무기"));
 		break;
 	case EItemType::Consumable:
-		ItemType->SetText( FText::FromString( "Consumable" ) );
+		ItemType->SetText( FText::FromString( L"소비" ) );
 		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
 		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
 		SellValue->SetVisibility( ESlateVisibility::Collapsed );
@@ -36,7 +43,7 @@ void UInventoryTooltip::SetupTooltip()
 	case EItemType::Quest:
 		break;
 	case EItemType::Mundane:
-		ItemType->SetText( FText::FromString( "Mundane" ) );
+		ItemType->SetText( FText::FromString( L"기타" ) );
 		DamageValue->SetVisibility( ESlateVisibility::Collapsed );
 		ArmorRating->SetVisibility( ESlateVisibility::Collapsed );
 		UsageText->SetVisibility( ESlateVisibility::Collapsed );
@@ -60,13 +67,13 @@ void UInventoryTooltip::SetupTooltip()
 		? ItemBeingHovered->GetItemStackWeight()
 		: ItemBeingHovered->GetItemSingleWeight();
 
-	const FString& WeightInfo = { "Weight : " + FString::Printf(TEXT("%.2f"), Weight)};
+	const FString& WeightInfo = FString::Printf( TEXT( "L무게 : %.2f" ) , Weight );
 
 	StackWeight->SetText( FText::FromString( WeightInfo ) );
 
 	if (NumericData.bIsStackable)
 	{
-		const FString& StackInfo = { "Max stack size : " + FString::FromInt( NumericData.MaxStackSize ) };
+		const FString& StackInfo = FString::Printf( TEXT( "L아이템 최대 소유량 : %d" ) , NumericData.MaxStackSize );
 		MaxStackSize->SetText( FText::FromString( StackInfo ) );
 	}
 	else
