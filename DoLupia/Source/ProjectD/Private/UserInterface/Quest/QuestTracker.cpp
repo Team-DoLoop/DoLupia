@@ -92,7 +92,7 @@ void UQuestTracker::WidgetUpdate()
                 }
 
                 //반복 완료
-
+                QuestLogComp->QuestCompleted.RemoveDynamic( this , &UQuestTracker::QuestCompleted );
                 QuestLogComp->QuestCompleted.AddDynamic( this , &UQuestTracker::QuestCompleted );
             }
             else {

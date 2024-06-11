@@ -1,6 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Quest/QuestLogComponent.h"
+
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
 #include "UserInterface/Quest/QuestTracker.h"
 
@@ -70,7 +73,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
         CurrentActiveQuests.AddUnique( QuestID );
 
-        //QuestBase에서 받기
+        //QuestBase에서 보내기
         UpdateCurrentActiveQuest.Broadcast();
     }
 
@@ -83,7 +86,13 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
 void UQuestLogComponent::CompleteQuest( FName QuestID )
 {
-      UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
+    //망토 바꾸기
+
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    auto AIlib = gm->GetAIConnectionLibrary();
+    gm->ApplyAITxtP();
+
+	UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
     CompletedQuests.AddUnique( QuestID );
     CurrentActiveQuests.Remove( QuestID );
 
