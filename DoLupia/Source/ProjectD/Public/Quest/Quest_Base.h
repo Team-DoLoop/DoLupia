@@ -55,6 +55,9 @@ public:
 	bool AreObjectivesComplete();
 
 	UFUNCTION()
+	void CurrentActiveQuest();
+
+	UFUNCTION()
 	FObjectiveDetails GetObjectiveDataByID( FString ObjectiveID );
 
 	UPROPERTY(EditAnywhere) //expose on spawn 안됨

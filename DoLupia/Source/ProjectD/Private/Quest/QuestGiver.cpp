@@ -16,6 +16,7 @@
 #include "UserInterface/Quest/WidgetQuestRewards.h"
 #include "Quest/Quest_Base.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "World/Pickup.h"
 
 // Sets default values for this component's properties
@@ -86,9 +87,9 @@ FString UQuestGiver::InteractWith()
     bool CompleteQuestTurnedIn = QuestComponent->QueryCompleteQuestsTurnedIn( QuestData.RowName );
     if (!ActiveQuest && !CompleteQuest)
     {
-        FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+        FQuestDetails* Row1 = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
 
-        if (Row->AutoAccept) {
+        if (Row1->AutoAccept) {
             //자동으로 AddNewQuest 실행 ( Logcomp 에 있는
             QuestComponent->AddNewQuest( QuestData.RowName );
             return GetOwner()->GetName();
@@ -101,6 +102,8 @@ FString UQuestGiver::InteractWith()
     }
     else
     {
+        FQuestDetails* Row2 = QuestData.DataTable->FindRow<FQuestDetails>( QuestData.RowName , TEXT( "Searching for row" ) , true );
+
         if (QuestComponent == nullptr)
         {
             UE_LOG( LogTemp , Error , TEXT( "QuestComponent not found or cast failed." ) );
@@ -112,11 +115,10 @@ FString UQuestGiver::InteractWith()
         {
             UE_LOG( LogTemp , Error , TEXT( "AQuest_Base* CompleteValuePtr = QuestComponent->GetQuestActor( QuestData.RowName )" ) );
             if (CompleteValuePtr->IsCompleted && !CompleteValuePtr->IsTurnedIn && !CompleteQuestTurnedIn)
-            {
-                UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
-                //완료가 true이면
-                DisplayRewards();
-                return GetOwner()->GetName();
+            {   UE_LOG( LogTemp , Error , TEXT( "DisplayRewards();" ) );
+				//완료가 true이면
+				DisplayRewards();
+				return GetOwner()->GetName();
             }
         }
 
@@ -138,6 +140,11 @@ void UQuestGiver::DisplayQuest(int32 CurrentStage)
             QuestWidget->QuestID = QuestData.RowName;
             QuestWidget->CurrentStage = CurrentStage;
 			QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest)); // 위젯을 화면에 추가
+
+            //이 위치가 맞는지는 모르겠지만
+            auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+            FString tmpString = QuestData.RowName.ToString();
+            gm->SetStringQuestID( tmpString );
         }
     }
 }
