@@ -794,6 +794,9 @@ void UPlayerAttackComp::AttackEndState()
 	// MP가 꽉 찼다면
 	if(CurrentMP >= PlayerMaxMP)
 	{
+		// 처음 MP가 꽉 찼다면 열 게이지 튜토리얼
+		
+		
 		for(int i = 1; i <= SkillCount; i++)
 			SetSkillLockUI(i, true);
 	}

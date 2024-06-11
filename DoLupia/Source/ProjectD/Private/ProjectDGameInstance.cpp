@@ -30,6 +30,8 @@ void UProjectDGameInstance::Init()
 	InitTutorialIndex();
 }
 
+// <----------------------------- Player Skill ----------------------------->
+
 void UProjectDGameInstance::InitCanUseColor()
 {
 	UEnum* ColorEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUseColor"), true);
@@ -40,6 +42,14 @@ void UProjectDGameInstance::InitCanUseColor()
 		CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), false);
 	}
 }
+
+FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)
+{
+	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(SkillID), TEXT(""));
+}
+
+
+// <----------------------------- Tutorial ----------------------------->
 
 void UProjectDGameInstance::InitTutorialIndex()
 {
@@ -52,12 +62,23 @@ void UProjectDGameInstance::InitTutorialIndex()
 	}
 }
 
-FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)
-{
-	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(SkillID), TEXT(""));
-}
-
 FTutorialData* UProjectDGameInstance::GetTutorialData(int32 TutorialID)
 {
 	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(TutorialID), TEXT(""));
+}
+
+int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex)
+{
+	return (static_cast<int32>(_ExplainType) * 1000) + (_ExplainIndex * 100);
+}
+
+void UProjectDGameInstance::SetTutorialUI(EExplainType _ExplainType, int32 _ExplainIndex)
+{
+	// 데이터 가져오기
+	int32 _TutorialID = FindTutorialID(_ExplainType, _ExplainIndex);
+
+	// 확인했던 튜토리얼이라고 알려주기
+
+	
+	// 튜토리얼 UI를 보여주는 부분
 }
