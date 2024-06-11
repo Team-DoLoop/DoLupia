@@ -23,6 +23,7 @@ public:
 	static const FName TargetKey;
 	static const FName IsAliveKey;
 	static const FName IsInAttackRangeKey;
+	static const FName IsGameOverKey;
 
 private:
 	UPROPERTY()

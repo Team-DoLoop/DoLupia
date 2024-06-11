@@ -26,7 +26,8 @@ enum class EBossSkill : uint8
 {
 	Hit ,
 	Fire ,
-	GrabAndThrow ,
+	Grab,
+	Throw,
 	BlastFire ,
 	BlastLightening ,
 };
@@ -108,7 +109,8 @@ public:
 	// ---------ATTACK-------------
 	void HitAttack();
 	void FireAttack();
-	void GrabAndThrowAttack();
+	void GrabAttack();
+	void ThrowAttack();
 	void BlastFire();
 	void BlastLightening();
 
@@ -116,6 +118,9 @@ public:
 	TArray<void(ABossMonster::*)()> AttackStack;
 
 	void InitializeAttackStack();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool bGrab = false;
 
 	//-----------DELAY-------------
 	void LookAround();

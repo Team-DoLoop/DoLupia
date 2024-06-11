@@ -1,4 +1,4 @@
-// Copyright 2024 CAS. All Rights Reserved.
+﻿// Copyright 2024 CAS. All Rights Reserved.
 
 
 #include "OctopusBackpackComponent.h"
@@ -135,27 +135,27 @@ void UOctopusBackpackComponent::GenerateIdleAnimateTransform(const int& handID)
 	{
 		handsArr[handID].animRandRate = FMath::RandRange(10.f, 15.f);
 		//bCanCameraMove_ = true;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle1"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle1"));
 	}
 	else if (randPercent_ > 70.f)
 	{
 		handsArr[handID].animRandRate = FMath::RandRange(5.f, 10.f);
 		//bCanCameraMove_ = true;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle2"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle2"));
 	}
 	else if (randPercent_ > 30.f)
 	{
 		handsArr[handID].animRandRate = FMath::RandRange(0.5f, 5.f);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle3"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle3"));
 	}
 	else if (randPercent_ >= 0.f)
 	{
 		handsArr[handID].animRandRate = FMath::RandRange(0.25f, 3.f);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle4"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Idle4"));
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Exception !"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Exception !"));
 	}
 
 	/*
@@ -1025,6 +1025,7 @@ void UOctopusBackpackComponent::RegisterOctopusBackpack()
 
 void UOctopusBackpackComponent::Attack(FHitResult targetHitResult)
 {
+	
 	if (bBattleMode && bRegistred)
 	{
 		TArray<int> handIndexArr_;
@@ -1038,14 +1039,17 @@ void UOctopusBackpackComponent::Attack(FHitResult targetHitResult)
 
 		if (handIndexArr_.Num() > 0)
 		{
+			//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Red , TEXT( "CheckPoint2" ) );
 			int handIndex_(handIndexArr_[0]);
 			if (handIndexArr_.Num() > 1)
 			{
 				handIndex_ = handIndexArr_[FMath::RandRange(0, handIndexArr_.Num() - 1)];
+				//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Red , TEXT( "CheckPoint3" ) );
 			}
 
 			if (handIndexArr_.Num() > 0)
 			{
+				//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Red , TEXT( "CheckPoint4" ) );
 				if (targetHitResult.bBlockingHit)
 				{
 					FRotator handRotation_ = UKismetMathLibrary::FindLookAtRotation(handsArr[handIndex_].handTransform.GetLocation(), targetHitResult.ImpactPoint);
@@ -1064,6 +1068,10 @@ void UOctopusBackpackComponent::Attack(FHitResult targetHitResult)
 				backPackOcto->AttackMoveEvent(backPackOcto->tentaclesArr[handIndex_]);
 			}
 		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CheckPoint1"));
 	}
 }
 

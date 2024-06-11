@@ -49,12 +49,12 @@ void AFloorAttack::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 			if(FloorAttackType==EFloorAttackType::BlastFire)
 			{
-				Character->TakeHit( EAttackType::BASIC , EEffectAttackType::FIRE , 100 );
+				Character->TakeHit( EAttackType::BASIC , EEffectAttackType::FIRE , 50 );
 			}
 
 			if (FloorAttackType == EFloorAttackType::BlastLightening)
 			{
-				Character->TakeHit( EAttackType::BASIC , EEffectAttackType::ELECTRIC , 100 );
+				Character->TakeHit( EAttackType::BASIC , EEffectAttackType::ELECTRIC , 50 );
 
 			}
 			//FVector Normal = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();

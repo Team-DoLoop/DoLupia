@@ -89,16 +89,6 @@ void ABossMonster::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	//// 보스의 위치와 회전 업데이트
-	//FVector NewLocation = GetActorLocation() + FVector( 1.0f , 0.0f , 0.0f );
-	//SetActorLocation( NewLocation );
-
-	//// Child Actor의 위치와 회전 업데이트
-	//if (ChildActorComponent)
-	//{
-	//	ChildActorComponent->SetWorldLocation( NewLocation );
-	//}
-
 	switch (state)
 	{
 	case EBossState::Idle:		IdleState();		break;
@@ -159,8 +149,6 @@ void ABossMonster::AttackState()
 	attackDelayTime = UKismetMathLibrary::RandomIntegerInRange( 2 , 4 );
 	anim->bAttackState = true;
 	anim->animState = state;
-
-	UE_LOG( LogTemp , Warning , TEXT( "currentTime : %f" ) , currentTime );
 
 	auto player = GetWorld()->GetFirstPlayerController()->GetPawn();
 
@@ -258,10 +246,19 @@ void ABossMonster::FireAttack()
 	anim->animBossSkill = skillState;
 }
 
-void ABossMonster::GrabAndThrowAttack()
+void ABossMonster::GrabAttack()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::GrabAndThrowAttack()" ) );
-	skillState = EBossSkill::GrabAndThrow;
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::GrabAttack()" ) );
+	skillState = EBossSkill::Grab;
+	anim->animState = state;
+	anim->animBossSkill = skillState;
+	
+}
+
+void ABossMonster::ThrowAttack()
+{
+	UE_LOG( LogTemp , Warning , TEXT( "ABossMonster::ThrowAttack()" ) );
+	skillState = EBossSkill::Throw;
 	anim->animState = state;
 	anim->animBossSkill = skillState;
 }
@@ -283,8 +280,8 @@ void ABossMonster::BlastLightening()
 void ABossMonster::InitializeAttackStack()
 {
 	// 공격 함수 포인터 배열 초기화
-	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAndThrowAttack,
-						&ABossMonster::BlastFire,&ABossMonster::BlastLightening };
+	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAttack,
+						&ABossMonster::BlastFire,&ABossMonster::BlastLightening};
 
 	// 공격 함수들을 랜덤하게 스택에 추가
 	while (AttackFunctions.Num() > 0)
@@ -383,7 +380,7 @@ void ABossMonster::DestroyMonster()
 	AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
 	player->OnObjectiveIDCalled.Broadcast( "Boss" , 1 );
 
-	this->Destroy();
+	//this->Destroy();
 }
 
 

@@ -73,6 +73,10 @@ public:
 	UFUNCTION( BlueprintCallable )
 	void OnEndGrabAttackAnimation();
 
+	//===============Throw Attack=======================
+	UFUNCTION( BlueprintCallable )
+	void OnEndThrowAttackAnimation();
+
 	//===============BlastFire Attack=======================
 	UFUNCTION( BlueprintCallable )
 	void OnDoBlastFireAttackAnimation();
