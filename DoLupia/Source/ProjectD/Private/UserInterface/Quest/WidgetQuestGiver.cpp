@@ -8,6 +8,7 @@
 #include "Components/TextBlock.h"
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Components/PlayerAttackComp.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Common/UseColor.h"
 #include "Components/VerticalBox.h"
 #include "Gamemode/PlayerGameMode.h"
@@ -155,9 +156,26 @@ void UWidgetQuestGiver::OnAcceptClicked()
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();
+
+    // 플레이어 행동 가능하게
+    ChangePlayerStateIdle();
 }
 
 void UWidgetQuestGiver::OnDeclineClicked()
 {
     RemoveFromParent();
+    ChangePlayerStateIdle();
+}
+
+void UWidgetQuestGiver::ChangePlayerStateIdle()
+{
+    // 플레이어 행동 가능하게
+    if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+    {
+        if(auto PlayerFSM = Player->GetPlayerFSMComp())
+        {
+            if(PlayerFSM->CanChangeState(EPlayerState::IDLE))
+                PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
+        }
+    }
 }

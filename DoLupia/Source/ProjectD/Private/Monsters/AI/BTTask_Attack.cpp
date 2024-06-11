@@ -27,25 +27,13 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	//Boss->currentTime = Boss->attackDelayTime;
 	IsAttacking = true;
 
-	Boss->anim->OnEndHitAttack.AddLambda( [this]()->void
+	Boss->anim->OnEndAttack.AddLambda( [this]()->void
 	{
 		IsAttacking = false;
-		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndHitAttack.AddLambda" ) );
+		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndAttack.AddLambda" ) );
 
 	} );
-	Boss->anim->OnEndFireAttack.AddLambda( [this]()->void
-	{
-		IsAttacking = false;
-		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndFireAttack.AddLambda" ) );
-
-	} );
-	Boss->anim->OnEndGrabAttack.AddLambda( [this]()->void
-	{
-		IsAttacking = false;
-		UE_LOG( LogTemp , Warning , TEXT( "Boss->anim->OnEndGrabAttack.AddLambda" ) );
-
-	} );
-
+	
 	return EBTNodeResult::InProgress;
 
 }

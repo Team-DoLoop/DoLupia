@@ -46,8 +46,17 @@ void AFloorAttack::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 		if (OtherActor && !IgnoerActors.Contains( OtherActor ))
 		{
 			AProjectDCharacter* Character = Cast<AProjectDCharacter>( OtherActor );
-			Character->TakeDamage( AttackDamage );
 
+			if(FloorAttackType==EFloorAttackType::BlastFire)
+			{
+				Character->TakeHit( EAttackType::BASIC , EEffectAttackType::FIRE , 100 );
+			}
+
+			if (FloorAttackType == EFloorAttackType::BlastLightening)
+			{
+				Character->TakeHit( EAttackType::BASIC , EEffectAttackType::ELECTRIC , 100 );
+
+			}
 			//FVector Normal = (Character->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
 			//if(abs(Normal.X) <= 0.05f)

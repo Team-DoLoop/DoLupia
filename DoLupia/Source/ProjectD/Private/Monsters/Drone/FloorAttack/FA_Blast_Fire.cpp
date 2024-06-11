@@ -12,6 +12,8 @@ void AFA_Blast_Fire::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FloorAttackType = EFloorAttackType::BlastFire;
+
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld() , SpawnSecondEffect , GetActorLocation() );
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld() , SpawnSecondEffect , GetActorLocation() );
 

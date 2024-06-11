@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\unrealproject\\octogameplugin\\plugins\\octopusbackpack\\source\\octopusbackpack\\private\\octopusbackpack.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\unrealproject\\octogameplugin\\intermediate\\build\\win64\\x64\\octogameplugineditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\unrealproject\\octogameplugin\\plugins\\octopusbackpack\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\octopusbackpack\\definitions.octopusbackpack.h",
+            "c:\\unrealproject\\octogameplugin\\plugins\\octopusbackpack\\source\\octopusbackpack\\public\\octopusbackpack.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

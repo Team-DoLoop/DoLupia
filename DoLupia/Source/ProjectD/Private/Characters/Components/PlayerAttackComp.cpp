@@ -18,6 +18,7 @@
 #include "Characters/Skill/PlayerSkillLightning.h"
 #include "Characters/Skill/PlayerSkillShield.h"
 #include "Characters/Skill/PlayerSkillUlt.h"
+#include "Characters/Skill/PlayerSkillWaterBlade.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "GameFramework/GameSession.h"
 #include "Items/Sword/SwordBase.h"
@@ -240,6 +241,17 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	// UI
 	SkillKeyIndex_Combo = SkillKeyIndex;
 	SetComboAttackUI(SkillKeyIndex, true);
+
+	// 차징 스킬이라면
+	if(IsSkillCharging)
+	{
+		// 차징 UI 띄우기
+		Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->StartChargingSkill();
+		IsChargingInputOn = true;
+
+		// 차징 타이머 시작
+		GetWorld()->GetTimerManager().SetTimer(ChargingTimerHandle, ChargingTime, false);
+	}
 	
 	Player->TurnPlayer();
 	
@@ -260,12 +272,21 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 void UPlayerAttackComp::CompleteSkill()
 {
 	if (!PlayerFSMComp) return;
-	PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
-	IgnoreAttackActors.Empty();
-	IgnoreAttackActors.AddUnique(Player);
+
+	if(IsSkillCharging &&  IsChargingInputOn)
+	{
+		PlayerChargingEndSkill();
+	}
+	else
+	{
+		PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
 	
-	SetComboAttackUI(SkillKeyIndex_Combo, false);
-	SkillKeyIndex_Combo = -1;
+		IgnoreAttackActors.Empty();
+		IgnoreAttackActors.AddUnique(Player);
+	
+		SetComboAttackUI(SkillKeyIndex_Combo, false);
+		SkillKeyIndex_Combo = -1;
+	}
 	
 	AttackEndState();
 
@@ -458,6 +479,30 @@ void UPlayerAttackComp::ShieldSkillEnd()
 }
 
 
+
+// <------------------------------ Skill WaterBlade ------------------------------>
+
+void UPlayerAttackComp::PlayerWaterBladeSkill()
+{
+	if(!PlayerWaterBladeFactory) return;
+
+	PlayerWaterBlade = GetWorld()->SpawnActor<APlayerSkillWaterBlade>(PlayerWaterBladeFactory, Player->GetActorLocation(), FRotator(0));
+	PlayerWaterBlade->SetSkillDirection(Player->GetActorForwardVector());
+	PlayerWaterBlade->SetSkillRot(Player->GetActorRotation());
+	PlayerWaterBlade->SetSkillDamage(SkillLevel * SkillDamage);
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
+	DestroyWaterBlade();
+}, WaterBladeRemainTime, false);
+}
+
+void UPlayerAttackComp::DestroyWaterBlade()
+{
+	if(PlayerWaterBlade) PlayerWaterBlade->Destroy();
+}
+
+
 // <------------------------------ Skill Swap ------------------------------>
 
 void UPlayerAttackComp::ExecuteSwapSkill()
@@ -534,25 +579,36 @@ void UPlayerAttackComp::ExecuteUltEnd()
 void UPlayerAttackComp::PlayerChargingSkill()
 {
 	if(!IsSkillCharging) return;
-	IsChargingInputOn = true;
+	
+	if(IsChargingInputOn)
+	{
+		float RemainingTime = 1 - (GetWorld()->GetTimerManager().GetTimerRemaining(ChargingTimerHandle)) / ChargingTime;
+		Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->UpdateChargingSkill(RemainingTime, CanChargingSkill);
+	}
 }
 
 void UPlayerAttackComp::PlayerChargingEndSkill()
 {
-	if(!IsSkillCharging) return;
+	if(!IsSkillCharging || !IsChargingInputOn) return;
 
-	// 차징 중간에 끊겼다면
 	if(!CanChargingSkill) 
 	{
-		PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+		// 차징 중간에 끊겼다면
 		PlayerAnim->StopMontage();
-		return;
 	}
 
-	// 콤보 공격 실행
-	PlayerAnim->PlayAttackAnimation(SkillMontage);
-	PlayerAnim->JumpToAttackMontageSection(2);
-	CanChargingSkill = false;
+	else
+	{
+		// 콤보 공격 실행
+		Player->TurnPlayer();
+		PlayerAnim->PlayAttackAnimation(SkillMontage);
+		PlayerAnim->JumpToAttackMontageSection(2);
+		CanChargingSkill = false;
+	}
+
+	// 차징 UI 끄기
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->EndChargingSkill();
+	if(ChargingTimerHandle.IsValid()) GetWorld()->GetTimerManager().ClearTimer(ChargingTimerHandle);
 }
 
 void UPlayerAttackComp::NextChargingCheck()
@@ -560,8 +616,18 @@ void UPlayerAttackComp::NextChargingCheck()
 	if(!IsChargingInputOn) return;
 
 	UE_LOG(LogTemp, Log, TEXT("NextChargingCheck"));
+	
 	CanChargingSkill = true;
-	PlayerChargingEndSkill();
+}
+
+float UPlayerAttackComp::GetChargingPercent(float RemainingTime, float _ChargingTime)
+{
+	if (_ChargingTime > 0)
+	{
+		return 1- (RemainingTime / _ChargingTime);
+	}
+	
+	return 0.0f;
 }
 
 // <---------------------- Skill Data ---------------------->
@@ -739,7 +805,7 @@ void UPlayerAttackComp::AttackEndState()
 	CurrentSkillInfo = nullptr;
 
 	// Charging
-	IsChargingInputOn =false;
+	IsChargingInputOn = false;
 	CanChargingSkill = false;
 }
 
