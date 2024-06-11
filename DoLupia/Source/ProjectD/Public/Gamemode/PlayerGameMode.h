@@ -122,4 +122,7 @@ public:
 	TSubclassOf<class ULocationTitleWidget> LocationFactory;
 
 	void CreateLocationTitleWidget(int32 currentlevel);
+
+	/*---------- Level Portal Trigger --------*/
+	void ActiveLvTrigger();
 };
