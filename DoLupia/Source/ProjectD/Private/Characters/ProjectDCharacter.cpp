@@ -426,10 +426,6 @@ void AProjectDCharacter::TakeDamage(float Damage)
 
 void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 {
-	// AI 적용
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-	if(gm) gm->ApplyAITxtB();
-
 	// 이펙트 적용
 	float EffectTime = 0.0f;
 	
@@ -445,7 +441,15 @@ void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 		if(ElecNS) EffectNS = ElecNS;
 	}
 
+	// 상태이상이 걸린 이미 상태면 타이머 갱신
 	if(GetWorld()->GetTimerManager().IsTimerActive(EffectTimerHandle)) TakeEffectAttackHitEnd();
+	else
+	{
+		// 안걸렸다면 AI 적용
+		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		if(gm) gm->ApplyAITxtB();
+	}
+	
 	GetWorld()->GetTimerManager().SetTimer(EffectTimerHandle, this, &AProjectDCharacter::TakeEffectAttackHitEnd, EffectTime, false);
 
 	// Effect 적용

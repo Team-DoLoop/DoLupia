@@ -10,8 +10,10 @@
  * 
  */
 
+enum class EExplainType : uint8;
 enum class EUseColor : uint8;
 struct FPlayerSkillData;
+struct FTutorialData;
 UCLASS()
 class PROJECTD_API UProjectDGameInstance : public UGameInstance
 {
@@ -24,11 +26,15 @@ public:
 
 	virtual void Init() override;
 	void InitCanUseColor();
+	void InitTutorialIndex();
 	
 	FPlayerSkillData* GetPlayerSkillData(int32 SkillID);
+	FTutorialData* GetTutorialData(int32 TutorialID);
+	
 	FORCEINLINE TMap<EUseColor, bool> GetCanUseColor(){return CanUseColor;}
 	FORCEINLINE void SetCanUseColor(EUseColor _Color, bool bCanUse) {CanUseColor[_Color] = bCanUse;}
-	
+
+	TMap<EExplainType, int32> TutorialIndexMap;
 
 private:
 	UPROPERTY()
@@ -36,6 +42,9 @@ private:
 
 	UPROPERTY()
 	TMap<EUseColor, bool> CanUseColor;
+
+	UPROPERTY()
+	class UDataTable* TutorialTable;
 
 
 
