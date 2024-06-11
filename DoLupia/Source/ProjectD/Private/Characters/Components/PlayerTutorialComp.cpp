@@ -4,6 +4,7 @@
 #include "Characters/Components/PlayerTutorialComp.h"
 
 #include "Data/ItemDataStructs.h"
+#include "Data/TutorialData.h"
 #include "Items/ItemBase.h"
 
 class UItemBase;
@@ -37,6 +38,19 @@ void UPlayerTutorialComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 	// ...
 }
+
+
+
+// <----------------------------- Tutorial UI ----------------------------->
+
+void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
+{
+	
+	
+}
+
+
+// <----------------------------- Quest ----------------------------->
 
 void UPlayerTutorialComp::CreateItem( int32 _ItemNum, int32 _Quantity)
 {

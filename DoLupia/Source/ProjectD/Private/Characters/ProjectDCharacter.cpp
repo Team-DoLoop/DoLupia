@@ -28,6 +28,7 @@
 #include "Characters/ProjectDPlayerController.h"
 #include "Characters/Animations/PlayerAnimInstance.h"
 #include "Characters/Components/GadgetComponent.h"
+#include "Characters/Components/PlayerTutorialComp.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
@@ -131,6 +132,10 @@ AProjectDCharacter::AProjectDCharacter()
 	
 	// Quest
 	PlayerQuest = CreateDefaultSubobject<UQuestLogComponent>(TEXT("PlayerQuest"));
+
+	// Tutorial
+	TutorialComp = CreateDefaultSubobject<UPlayerTutorialComp>(TEXT("TutorialComp"));
+	
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;

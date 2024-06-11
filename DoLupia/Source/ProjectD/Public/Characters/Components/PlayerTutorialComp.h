@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTutorialComp.generated.h"
 
+struct FTutorialData;
+enum class EExplainType : uint8;
 class UItemBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -26,6 +28,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
+
+	// <----------------------------- Tutorial UI ----------------------------->
+public:
+	void SetTutorialUI(FTutorialData* _TutoData);
+
+	
 	
 	// <----------------------------- Quest ----------------------------->
 public:

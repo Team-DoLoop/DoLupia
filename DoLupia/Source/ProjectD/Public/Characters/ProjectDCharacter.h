@@ -10,6 +10,7 @@
 #include "Quest/QuestInteractionInterface.h"
 #include "ProjectDCharacter.generated.h"
 
+class UPlayerTutorialComp;
 class UNPCInteractionWidget;
 class ADoLupiaHUD;
 class UPlayerDefaultsWidget;
@@ -271,8 +272,7 @@ protected:
 
 public:
 	FORCEINLINE UInventoryComponent* GetInventory() const { return PlayerInventory; };
-
-
+	
 
 	// <---------------------- Quest ---------------------->
 private:
@@ -333,5 +333,16 @@ public:
 private:
 	bool bIsDialogueEnabled;
 	*/
+
+
+	
+	// <---------------------- Tutorial ---------------------->
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Character | Tutorial")
+	UPlayerTutorialComp* TutorialComp;
+	
+public:
+	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; };
+	
 };
 

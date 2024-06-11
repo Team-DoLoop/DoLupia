@@ -44,16 +44,14 @@ private:
 	// <------------------ Tutorial ------------------>
 public:
 	void InitTutorialIndex();
-	FTutorialData* GetTutorialData(int32 TutorialID);
+	void GetTutorialData(EExplainType _ExplainType);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
-	void SetTutorialUI(EExplainType _ExplainType, int32 _ExplainIndex);
 	
 	UPROPERTY()
 	class UDataTable* TutorialTable;
 
 
 private:
-	// 몇번째 나온 설명인지
-	// ex) 0 일때 냉각수 사용방법까지 모두 설명 / 1일때는 사용하라고만 말하기
+	// 몇번 확인했는지 저장 / 만약 DataTable의 Index와 다르면 return
 	TMap<EExplainType, int32> TutorialIndexMap;
 };

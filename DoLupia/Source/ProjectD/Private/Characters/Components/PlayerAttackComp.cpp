@@ -20,6 +20,7 @@
 #include "Characters/Skill/PlayerSkillUlt.h"
 #include "Characters/Skill/PlayerSkillWaterBlade.h"
 #include "Data/PlayerSkillDataStructs.h"
+#include "Data/TutorialData.h"
 #include "GameFramework/GameSession.h"
 #include "Items/Sword/SwordBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -794,8 +795,8 @@ void UPlayerAttackComp::AttackEndState()
 	// MP가 꽉 찼다면
 	if(CurrentMP >= PlayerMaxMP)
 	{
-		// 처음 MP가 꽉 찼다면 열 게이지 튜토리얼
-		
+		// MP가 꽉 찼다면 열 게이지 관련 설명
+		if(GI) GI->GetTutorialData(EExplainType::FULL_HIT_GAUGE);
 		
 		for(int i = 1; i <= SkillCount; i++)
 			SetSkillLockUI(i, true);

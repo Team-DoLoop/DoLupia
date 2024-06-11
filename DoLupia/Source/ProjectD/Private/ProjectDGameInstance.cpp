@@ -2,8 +2,12 @@
 
 
 #include "ProjectDGameInstance.h"
+
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerTutorialComp.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "Data/TutorialData.h"
+#include "Kismet/GameplayStatics.h"
 
 UProjectDGameInstance::UProjectDGameInstance()
 {
@@ -62,23 +66,24 @@ void UProjectDGameInstance::InitTutorialIndex()
 	}
 }
 
-FTutorialData* UProjectDGameInstance::GetTutorialData(int32 TutorialID)
+void UProjectDGameInstance::GetTutorialData(EExplainType _ExplainType)
 {
-	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(TutorialID), TEXT(""));
+	// 데이터 가져오기
+	int32 _TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
+	auto TutoData = TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
+	
+	// 데이터가 있다면
+	if(!TutoData) return;
+	
+	// 확인했다고 튜토리얼임을 저장
+	TutorialIndexMap[TutoData->ExplainType]++;
+
+	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
+	AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	Player->GetTutorialComp()->SetTutorialUI(TutoData);
 }
 
 int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex)
 {
 	return (static_cast<int32>(_ExplainType) * 1000) + (_ExplainIndex * 100);
-}
-
-void UProjectDGameInstance::SetTutorialUI(EExplainType _ExplainType, int32 _ExplainIndex)
-{
-	// 데이터 가져오기
-	int32 _TutorialID = FindTutorialID(_ExplainType, _ExplainIndex);
-
-	// 확인했던 튜토리얼이라고 알려주기
-
-	
-	// 튜토리얼 UI를 보여주는 부분
 }
