@@ -28,12 +28,15 @@ void AGrid2048::BeginPlay()
 				if (UMiniGameTile2048Widget* Widget = CreateWidget<UMiniGameTile2048Widget>( GetWorld() , GridWidgetClass ))
                 {
                     GridWidget.Add( Widget );
-                    Widget->SetPositionInViewport(FVector2D(static_cast<float>(x) * 100.f + 100.f, static_cast<float>(y) * 100.f + 100.f));
-                    Widget->AddToViewport();
+                    Widget->SetPositionInViewport(FVector2D(static_cast<float>(x) * 120.f + 120.f, static_cast<float>(y) * 120.f + 120.f));
+                    Widget->AddToViewport(1);
                 }
 			}
 		}
     }
+
+    ExplainWidget = CreateWidget<UUserWidget>( GetWorld() , Explain2048 );
+    ExplainWidget->AddToViewport(0);
 
     PreGrid = Grid;
     NewNumber();
@@ -150,6 +153,7 @@ void AGrid2048::SquashColumn( TArray<int32>& Column )
 
                 // 게임 클리어 시, 퀘스트 완료
             	player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
+                ExplainWidget->RemoveFromParent();
                 isSucess = true;
                 break;
             }
@@ -245,8 +249,9 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
             FSlateColor TextColor;
             FSlateFontInfo FontInfo = CellTextBlock->GetFont();
             FontInfo.Size = 24;  // Default size, adjust as needed
+            TextColor = FSlateColor( FLinearColor::Black );
 
-            switch (Value)
+            /*switch (Value)
             {
             case 2:
                 TextColor = FSlateColor( FLinearColor::Black );
@@ -258,7 +263,8 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
             default:
                 TextColor = FSlateColor( FLinearColor::Yellow );
                 break;
-            }
+            }*/
+            
 
             CellTextBlock->SetColorAndOpacity( TextColor );
             CellTextBlock->SetFont( FontInfo );

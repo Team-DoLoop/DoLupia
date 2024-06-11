@@ -31,6 +31,12 @@ public:
     UPROPERTY()
 	TArray<UMiniGameTile2048Widget*> GridWidget;
 
+    UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "UI" )
+    TSubclassOf<UUserWidget> Explain2048;
+
+    UPROPERTY()
+    class UUserWidget* ExplainWidget;
+
     UFUNCTION( BlueprintCallable , Category = "Grid" )
     void NewGrid();
 

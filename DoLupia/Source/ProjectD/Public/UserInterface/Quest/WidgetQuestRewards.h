@@ -24,8 +24,8 @@ public:
     UFUNCTION()
     void OnAcceptClicked();
 
-    UFUNCTION()
-    void OnDeclineClicked();
+    //UFUNCTION()
+    //void OnDeclineClicked();
 
     UPROPERTY( EditAnywhere ) //expose on spawn
     FQuestDetails QuestDetails;
@@ -46,8 +46,8 @@ protected:
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
     class UTextBlock* txt_StageDesc;
 
-    UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
-    class UButton* btn_Decline;
+    //UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
+    //class UButton* btn_Decline;
 
     UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
     class UButton* btn_Accept;
