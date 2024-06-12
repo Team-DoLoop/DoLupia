@@ -51,6 +51,7 @@ public:
 	FORCEINLINE void SetTutorialID(int32 _TutorialID) {TutorialID = _TutorialID;}
 	
 private:
+	FTutorialData* TutoData;
 	bool IsFirstIndex;
 	int32 TutorialID;
 	

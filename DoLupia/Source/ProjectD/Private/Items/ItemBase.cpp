@@ -84,7 +84,7 @@ void UItemBase::Use(AProjectDCharacter* Character)
 				int32 CurrentMP = PlayerStat->GetMP();
 				int32 MaxMP = PlayerStat->GetMaxMP();
 
-				PlayerStat->SetMP( PlayerStat->GetMP() + ItemStatistics.HealthValue );
+				PlayerStat->SetMP( PlayerStat->GetMP() - ItemStatistics.ManaValue );
 				Character->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar( CurrentMP , MaxMP );
 			}
 		}
