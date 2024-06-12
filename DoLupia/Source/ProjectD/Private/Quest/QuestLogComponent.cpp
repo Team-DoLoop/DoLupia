@@ -2,7 +2,6 @@
 
 #include "Quest/QuestLogComponent.h"
 
-#include "ProjectDGameInstance.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
@@ -34,8 +33,6 @@ void UQuestLogComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-    	
-    GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 

@@ -7,7 +7,6 @@
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest_Base.generated.h"
 
-class UQuestLogComponent;
 class AQuestLogComponent;
 class UWidgetQuestNotification;
 
