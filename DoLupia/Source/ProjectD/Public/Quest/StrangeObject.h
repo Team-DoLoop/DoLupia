@@ -10,6 +10,7 @@
 
 class UNPCInteractionWidget;
 class UBoxComponent;
+class UMeshComponent;
 
 UCLASS()
 class PROJECTD_API AStrangeObject : public AActor, public IQuestInteractionInterface
@@ -33,6 +34,9 @@ public:
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
 
+	UPROPERTY( VisibleAnywhere )
+	UMeshComponent* MeshComponent; // BoxComponent 포인터 생성
+
 	UPROPERTY( EditAnywhere )
 	FString ObjectID;
 
@@ -43,5 +47,7 @@ public:
 	UNPCInteractionWidget* NPCInteractGWidget;
 
 	virtual FString InteractWith() override;
+
+	void ChangeObjectOutline( int32 depth );
 
 };
