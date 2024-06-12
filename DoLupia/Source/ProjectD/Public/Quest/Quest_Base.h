@@ -9,6 +9,7 @@
 
 class AQuestLogComponent;
 class UWidgetQuestNotification;
+class UQuestLogComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnObjectiveHeard );
 UCLASS()
