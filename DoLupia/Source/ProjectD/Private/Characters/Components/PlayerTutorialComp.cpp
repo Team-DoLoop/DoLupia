@@ -5,6 +5,7 @@
 
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/InventoryComponent.h"
 #include "Data/ItemDataStructs.h"
 #include "Data/TutorialData.h"
 #include "Items/ItemBase.h"
@@ -32,10 +33,15 @@ void UPlayerTutorialComp::BeginPlay()
 
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if(Player)
+	{
+		InventoryComp = Cast<UInventoryComponent>( Player->GetComponentByClass( UInventoryComponent::StaticClass() ) );
+	}
+
 	
 	// ItemIdData.Add(0, "Consumeable_001"); // 베터리
-	ItemIdData.Add(ETutoItemType::COOL_WATER, "Consumeable_002"); // 냉각수
-	ItemIdData.Add(ETutoItemType::OIL, "Consumeable_003"); // 오일
+	ItemIdData.Add(ETutoItemType::COOL_WATER, TEXT("Consumeable_002")); // 냉각수
+	ItemIdData.Add(ETutoItemType::OIL, TEXT("Consumeable_003")); // 오일
 }
 
 
@@ -119,6 +125,8 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 
 void UPlayerTutorialComp::StartQuest(int32 _QuestID)
 {
+	if(!GI) return;
+
 	
 }
 
@@ -127,26 +135,17 @@ void UPlayerTutorialComp::StartQuest(int32 _QuestID)
 
 void UPlayerTutorialComp::CreateItem(ETutoItemType _TutoItemType, int32 _Quantity)
 {
-	FName _DesiredItemID = ItemIdData[_TutoItemType];
-	if (ItemDataTable && !_DesiredItemID.IsNone())
+	if(!GI) return;
+	FString _DesiredItemID = ItemIdData[_TutoItemType];
+	auto ItemData = GI->GetItemData(_DesiredItemID);
+	if (ItemData)
 	{
-		const FItemData* ItemData = ItemDataTable->FindRow<FItemData>( _DesiredItemID , _DesiredItemID.ToString() );
-
+		UE_LOG(LogTemp, Log, TEXT("PlayerTuto Create Item : %s"), *_DesiredItemID);
+		
 		UItemBase* ItemReference = NewObject<UItemBase>( this , UItemBase::StaticClass() );
 
-		ItemReference->SetID( ItemData->ID );
-		ItemReference->SetItemType( ItemData->ItemType );
-		ItemReference->SetItemQuality( ItemData->ItemQuality );
-		ItemReference->SetItemStatistics( ItemData->ItemStatistics );
-		ItemReference->SetTextData( ItemData->TextData );
-		ItemReference->SetNumericData( ItemData->NumericData );
-		ItemReference->SetAssetData( ItemData->AssetData );
-		ItemReference->SetItemSkillColorData( ItemData->ItemSkillColor );
-
-		// 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
-		FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
-		ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
-		_Quantity <= 0 ? ItemReference->SetQuantity( 1, false ) : ItemReference->SetQuantity( _Quantity, false );
+		ItemReference->CreateItemCopy(ItemData, _Quantity);
+		InventoryComp->HandelAddItem( ItemReference);
 	}
 }
 

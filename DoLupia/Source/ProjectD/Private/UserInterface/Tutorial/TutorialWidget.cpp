@@ -37,6 +37,7 @@ void UTutorialWidget::ShowTutorialWidget(FTutorialData* _TutoData)
 	
 	// 데이터로 세팅
 	FText ExplainText = FText::FromString(_TutoData->TutorialWidgetData.ExplainText);
+	UE_LOG(LogTemp, Log, TEXT("ShowTutorialWidget TutoData->NextIndex : %d"), _TutoData->NextIndex);
 	TXT_Explain->SetText(ExplainText);
 }
 

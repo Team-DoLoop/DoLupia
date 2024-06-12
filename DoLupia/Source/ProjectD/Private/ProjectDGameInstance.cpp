@@ -5,9 +5,11 @@
 
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerTutorialComp.h"
+#include "Data/ItemDataStructs.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "Data/TutorialData.h"
 #include "Kismet/GameplayStatics.h"
+#include "Quest/Struct_QuestSystem.h"
 
 UProjectDGameInstance::UProjectDGameInstance()
 {
@@ -23,6 +25,20 @@ UProjectDGameInstance::UProjectDGameInstance()
 	if(DT_Tutorial.Succeeded())
 	{
 		TutorialTable = DT_Tutorial.Object;
+	}
+
+	FString QuestDataPath = TEXT("/Script/Engine.DataTable'/Game/QuestSystem/Data/QuestDataTable.QuestDataTable'");
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_Quest(*QuestDataPath);
+	if(DT_Quest.Succeeded())
+	{
+		QuestTable = DT_Quest.Object;
+	}
+	
+	FString ItemDataPath = TEXT("/Script/Engine.DataTable'/Game/Item/ItemData/MundaneItems.MundaneItems'");
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_Item(*ItemDataPath);
+	if(DT_Item.Succeeded())
+	{
+		ItemTable = DT_Item.Object;
 	}
 }
 
@@ -97,4 +113,20 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType)
 int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex)
 {
 	return (static_cast<int32>(_ExplainType) * 1000) + (_ExplainIndex * 100);
+}
+
+
+// <----------------------------- Quest ----------------------------->
+
+FQuestDetails* UProjectDGameInstance::GetQuestData(int32 QuestID)
+{
+	return QuestTable->FindRow<FQuestDetails>(*FString::FromInt(QuestID), TEXT(""));
+}
+
+
+// <----------------------------- Item ----------------------------->
+
+FItemData* UProjectDGameInstance::GetItemData(FString ItemID)
+{
+	return ItemTable->FindRow<FItemData>(FName(*ItemID), TEXT(""));
 }

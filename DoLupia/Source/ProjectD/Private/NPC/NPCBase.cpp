@@ -160,6 +160,8 @@ FString ANPCBase::InteractWith()
 		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 	}
+	
+	ChangePlayerState();
 
 	return QuestInterface->InteractWith();
 }

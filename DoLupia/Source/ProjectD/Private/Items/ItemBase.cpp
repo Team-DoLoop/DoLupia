@@ -36,6 +36,22 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 	this->bIsPickup = true;
 }
 
+void UItemBase::CreateItemCopy(const FItemData* MyItemData, int32 _ItemQuantity)
+{
+	this->ID = MyItemData->ID;
+	this->Quantity = Quantity;
+	this->ItemQuality = MyItemData->ItemQuality;
+	this->ItemType = MyItemData->ItemType;
+	this->TextData = MyItemData->TextData;
+	this->NumericData = MyItemData->NumericData;
+	this->ItemStatistics = MyItemData->ItemStatistics;
+	this->ItemSkillColor = MyItemData->ItemSkillColor;
+	this->AssetData = MyItemData->AssetData;
+	this->SkillAttribute = MyItemData->SkillAttribute;
+	this->bIsCopy = true;
+	this->bIsPickup = true;
+}
+
 void UItemBase::SetQuantity(const int32 NewQuantity, bool IsRemoveItem)
 {
 	if(NewQuantity != Quantity)
