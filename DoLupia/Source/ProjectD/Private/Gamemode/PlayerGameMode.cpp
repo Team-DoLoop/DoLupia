@@ -21,6 +21,7 @@
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
 #include "Quest/AutoQuestAcceptActor.h"
+#include "World/Trigger/DestructableWallActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
 
 APlayerGameMode::APlayerGameMode()
@@ -148,7 +149,7 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 		{
 			if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 			{
-				SoundManager->PlayBGM( NewBGM, 0.2 );
+				SoundManager->PlayBGM( NewBGM, 0.1f );
 				CurrentBGM = NewBGM;
 			}
 		}
@@ -205,6 +206,11 @@ void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
 	}
 
 	// 옆에 벽 터지도록하는 코드 들어갈 예정
+	for (TActorIterator<ADestructableWallActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->ExplosionWalls();
+	}
 
 }
 
