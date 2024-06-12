@@ -189,3 +189,8 @@ void ANPCBase::ChangePlayerState()
 	}
 }
 
+void ANPCBase::HideNPC()
+{
+	this->SetActorHiddenInGame( true );
+}
+

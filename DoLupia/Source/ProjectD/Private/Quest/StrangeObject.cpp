@@ -12,14 +12,18 @@
 AStrangeObject::AStrangeObject()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "MeshComponent" ) );
+	MeshComponent->SetupAttachment( BoxComponent );
 }
 
 // Called when the game starts or when spawned
 void AStrangeObject::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ChangeObjectOutline( 1 );
 }
 
 // Called every frame
@@ -57,5 +61,14 @@ FString AStrangeObject::InteractWith()
 {
 	//QuestData 에 있는 Objective ID와 같아야함.
 	return ObjectID;
+}
+
+void AStrangeObject::ChangeObjectOutline(int32 depth)
+{
+	if (MeshComponent)
+	{
+		MeshComponent->SetRenderCustomDepth( true );
+		MeshComponent->CustomDepthStencilValue = depth;
+	}
 }
 
