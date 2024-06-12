@@ -8,8 +8,10 @@
 #include "Data/ItemDataStructs.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "Data/TutorialData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Struct_QuestSystem.h"
+#include "Quest/QuestLogComponent.h"
 
 UProjectDGameInstance::UProjectDGameInstance()
 {
@@ -118,9 +120,27 @@ int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _Ex
 
 // <----------------------------- Quest ----------------------------->
 
-FQuestDetails* UProjectDGameInstance::GetQuestData(int32 QuestID)
+FQuestDetails* UProjectDGameInstance::GetQuestData(int32 _QuestID)
 {
-	return QuestTable->FindRow<FQuestDetails>(*FString::FromInt(QuestID), TEXT(""));
+	return QuestTable->FindRow<FQuestDetails>(*FString::FromInt(_QuestID), TEXT(""));
+}
+
+void UProjectDGameInstance::GiveQuest(int32 _QuestID)
+{
+	if (AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	{
+		FName _QuestIdName = FName(*FString::FromInt(_QuestID));
+		UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
+
+		bool ActiveQuest = QuestComp->QueryActiveQuest(_QuestIdName);
+		if (!ActiveQuest) {
+			auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+			//겜모에 퀘스트 아이디 string 로 넘김.
+			gm->SetStringQuestID( _QuestIdName.ToString() );
+			QuestComp->AddNewQuest( _QuestIdName );
+		}
+	}
 }
 
 

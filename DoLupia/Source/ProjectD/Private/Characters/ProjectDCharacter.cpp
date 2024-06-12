@@ -206,11 +206,6 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 		PerformInteractionCheck();
 		//PerformTrace();
 	}
-
-	if(PlayerController->IsInputKeyDown(EKeys::N))
-	{
-		AFA_Blast_Base* Blast = GetWorld()->SpawnActor<AFA_Blast_Base>();
-	}
 }
 
 void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -502,8 +497,8 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
-		FRotator BoxRotation = FRotator::ZeroRotator;
-		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
+		FRotator BoxRotation = GetActorRotation();
+		FVector BoxHalfSize = FVector( 200 , 200 , 200 );
 
 		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{

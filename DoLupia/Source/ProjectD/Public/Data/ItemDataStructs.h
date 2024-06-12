@@ -40,9 +40,8 @@ enum class EItemType : uint8
 UENUM( BlueprintType )
 enum class ESkillAttribute : uint8
 {
-	Fire UMETA( DisplayName = "Fire" ) ,
-	Water UMETA( DisplayName = "Water" ) ,
-	Ground UMETA( DisplayName = "Ground" ) ,
+	CYLINDRICAL UMETA(DisplayName = "Cylindrical"),
+	PRISMATIC UMETA( DisplayName = "Prismatic" ),
 };
 
 USTRUCT()
