@@ -32,6 +32,7 @@ ANPCBase::ANPCBase()
 	anim = nullptr;
 	gm = nullptr;
 
+	this->SetActorScale3D( FVector(1.5f, 1.5f, 1.5f) );
 	// Post Process depth 설정값
 	//GetMesh()->SetRenderCustomDepth( true );
 }

@@ -87,12 +87,14 @@ void APlayerGameMode::BeginPlay()
 		LevelIdx = 2;
 		PlayerCameraboom = 700.0f;
 		CreateLocationTitleWidget( LevelIdx );
+		ApplyAITxtP();
 	}
 	else if (CurLevelName == LevelNames[3])
 	{
 		LevelIdx = 3;
 		PlayerCameraboom = 1200.0f;
 		CreateLocationTitleWidget( LevelIdx );
+		ApplyAITxtP();
 	}
 	else
 	{
@@ -203,6 +205,7 @@ void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
 	{
 		// Call the function on the actor
 		ActorItr->GiveQuest();
+		AIlib->SendPImgToSrv( 2004 );
 	}
 
 	// 옆에 벽 터지도록하는 코드 들어갈 예정

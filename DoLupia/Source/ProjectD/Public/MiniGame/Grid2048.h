@@ -51,6 +51,7 @@ public:
 
     void UpdateCell( int32 x , int32 y , int32 Value );
 
+    UFUNCTION( BlueprintCallable , Category = "Grid" )
     void ClearGridWidgets();
 
 protected:
@@ -74,8 +75,11 @@ protected:
     UPROPERTY( EditDefaultsOnly )
     FVector2D WidgetPosition;
 
-private:
+public:
+    UFUNCTION( BlueprintCallable , Category = "Grid" )
     void GameClear();
+
+private:
     bool GameOver();
 
 

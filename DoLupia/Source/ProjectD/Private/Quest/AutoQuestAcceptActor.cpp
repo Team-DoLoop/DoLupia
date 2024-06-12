@@ -63,6 +63,8 @@ void AAutoQuestAcceptActor::NotifyActorBeginOverlap(AActor* OtherActor)
 			GiveQuest();
 		}
 	}
+
+	this->AutoQuestDestroy();
 }
 
 void AAutoQuestAcceptActor::GiveQuest()

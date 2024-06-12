@@ -142,13 +142,18 @@ void UWidgetQuestGiver::OnAcceptClicked()
     // 수락을 하면!!!!!
     QuestLogComp->AddNewQuest( QuestID );
 
+
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    auto AIlib = gm->GetAIConnectionLibrary();
+    FString tmpString = QuestID.ToString();
+    int32 tmpNum = FCString::Atoi( *tmpString );
+
     //AI 서버에 보내기(망토 색깔)
-   auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-   auto AIlib = gm->GetAIConnectionLibrary();
-   FString tmpString = QuestID.ToString();
-   int32 tmpNum = FCString::Atoi( *tmpString );
-   UE_LOG( LogTemp , Error , TEXT( "tmpNum : %d" ) , tmpNum );
-   AIlib->SendPImgToSrv( tmpNum );
+    if( QuestID == "1003" || QuestID == "2003" || QuestID == "2004")
+    {
+        UE_LOG( LogTemp , Error , TEXT( "tmpNum : %d" ) , tmpNum );
+        AIlib->SendPImgToSrv( tmpNum );
+    }
 
    //AI*/
 

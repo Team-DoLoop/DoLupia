@@ -57,6 +57,8 @@ protected:
 
     UPROPERTY( EditAnywhere )
     TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;
-  
+
+private:
+    void ChangePlayerStateIdle();
 
 };
