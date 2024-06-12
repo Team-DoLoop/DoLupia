@@ -126,6 +126,14 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     if (QuestID == "1000" || QuestID == "3001" || QuestID == "1002") {
         gm->ActiveLvTrigger();
     }
+
+    // 퀘스트 2003 완료 시, 자동으로 퀘스트 발생
+    if(QuestID == "2003")
+    {
+        gm->TriggerQuest2004( QuestID , 1 );
+    }
+    
+
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )

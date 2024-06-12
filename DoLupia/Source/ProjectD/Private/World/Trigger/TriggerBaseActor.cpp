@@ -111,7 +111,6 @@ void ATriggerBaseActor::ShowTrigger()
 
 void ATriggerBaseActor::HideTrigger()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "HIDE" ) );
 	locationVFX->SetVisibility( false );
 	triggerComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }

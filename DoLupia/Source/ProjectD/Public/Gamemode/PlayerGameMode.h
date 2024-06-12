@@ -110,9 +110,10 @@ public:
 
 	FString FStringQuestID;
 
+	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
+
 private:
 	int32 questID = -1;
-
 
 	/*---------- Level Location Title Widget --------*/
 
