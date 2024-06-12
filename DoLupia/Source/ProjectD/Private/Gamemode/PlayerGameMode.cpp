@@ -20,6 +20,7 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
+#include "Quest/AutoQuestAcceptActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
 
 APlayerGameMode::APlayerGameMode()
@@ -178,10 +179,10 @@ int32 APlayerGameMode::GetQuestID() const
 	return questID;
 }
 
-void APlayerGameMode::SetQuestID(int32 NewQuestID )
+void APlayerGameMode::SetQuestID( int32 NewQuestID )
 {
 	questID = NewQuestID;
-	
+
 }
 
 FString APlayerGameMode::GetStringQuestID()
@@ -192,6 +193,19 @@ FString APlayerGameMode::GetStringQuestID()
 void APlayerGameMode::SetStringQuestID(FString QuestID)
 {
 	FStringQuestID = QuestID;
+}
+
+void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
+{
+	// 퀘스트 2003 완료 시, 자동으로 2004 퀘스트 받음
+	for (TActorIterator<AAutoQuestAcceptActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		// Call the function on the actor
+		ActorItr->GiveQuest();
+	}
+
+	// 옆에 벽 터지도록하는 코드 들어갈 예정
+
 }
 
 void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )

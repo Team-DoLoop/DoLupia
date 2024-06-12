@@ -56,6 +56,8 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 	if(DefaultUI)
 	{
 		if(!_TutoData) return;
+
+		TutoData = _TutoData;
 		
 		// 처음 들어왔다면
 		if(IsFirstIndex)
@@ -64,10 +66,11 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 			IsFirstIndex = false;
 		}
 		
-		// 데이터가 마지막이라면
+		// 다음 데이터가 마지막이라면
 		if(_TutoData->NextIndex == -1)
 		{
 			DefaultUI->ChangeNextBtn(CloseString);
+			
 		}
 		
 		DefaultUI->ShowTutorialWidget(_TutoData);
@@ -79,14 +82,16 @@ void UPlayerTutorialComp::NextTutorial()
 {
 	if(!GI || TutorialID == 0) return;
 	
-	if(auto _TutoData = GI->GetTutorialData(TutorialID))
+	if(TutorialID == -1)
+	{
+		EndTutorial(TutoData);
+		return;
+	}
+	
+	auto _TutoData = GI->GetTutorialData(TutorialID);
+	if(_TutoData)
 	{
 		SetTutorialUI(_TutoData);
-	}
-	else
-	{
-		// 종료되게 + 아이템 제공? + 퀘스트 연관?
-		EndTutorial(_TutoData);
 	}
 }
 
@@ -98,6 +103,8 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	TutorialID = 0;
 	DefaultUI->HideTutorialWidget();
 
+	if(!_TutoData) return;
+	
 	// 만약 아이템을 제공하는 튜토리얼이었다면
 	if(_TutoData->TutorialItem.IsGiveItem)
 		Player->GetTutorialComp()->CreateItem(_TutoData->TutorialItem.GiveItem,_TutoData->TutorialItem.GiveItemQuantity);

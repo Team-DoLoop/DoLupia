@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/TutorialData.h"
 #include "Engine/GameInstance.h"
 #include "ProjectDGameInstance.generated.h"
 
@@ -52,6 +53,7 @@ public:
 	class UDataTable* TutorialTable;
 
 	FORCEINLINE int32 GetTutorialID() const {return TutorialID;}
+	
 
 
 private:
