@@ -81,7 +81,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType)
 	if(!TutoData) return;
 	
 	// 확인했다고 튜토리얼임을 저장
-	TutorialIndexMap[TutoData->ExplainType]++;
+	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex;
 
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
 	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
