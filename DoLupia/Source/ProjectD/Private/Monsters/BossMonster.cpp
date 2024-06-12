@@ -160,13 +160,13 @@ void ABossMonster::AttackState()
 
 		if (anim->bIsAttackComplete)
 		{
-			FRotator newRotation = direction.ToOrientationRotator();
-			FRotator currentRotation = this->GetActorRotation();
-			currentRotation.Yaw = newRotation.Yaw;
-			this->SetActorRotation( currentRotation );
-
-			//currentTime += GetWorld()->GetDeltaSeconds();
-
+			if (IsAlive)
+			{
+				FRotator newRotation = direction.ToOrientationRotator();
+				FRotator currentRotation = this->GetActorRotation();
+				currentRotation.Yaw = newRotation.Yaw;
+				this->SetActorRotation( currentRotation );
+			}
 
 		}
 		if (IsDelaying) // Delay 한번만 호출 되도록
@@ -280,8 +280,8 @@ void ABossMonster::BlastLightening()
 void ABossMonster::InitializeAttackStack()
 {
 	// 공격 함수 포인터 배열 초기화
-	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAttack,
-						&ABossMonster::BlastFire,&ABossMonster::BlastLightening};
+	AttackFunctions = { &ABossMonster::GrabAttack
+						};
 
 	// 공격 함수들을 랜덤하게 스택에 추가
 	while (AttackFunctions.Num() > 0)
