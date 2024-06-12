@@ -19,24 +19,12 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+
+
 public:
     virtual void Tick( float DeltaTime ) override;
 
-    TArray<TArray<int32>> PreGrid;
-    TArray<TArray<int32>> Grid;
-
-    UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "UI" )
-    TSubclassOf<UMiniGameTile2048Widget> GridWidgetClass;
-
-    UPROPERTY()
-	TArray<UMiniGameTile2048Widget*> GridWidget;
-
-    UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "UI" )
-    TSubclassOf<UUserWidget> Explain2048;
-
-    UPROPERTY()
-    class UUserWidget* ExplainWidget;
-
+public:
     UFUNCTION( BlueprintCallable , Category = "Grid" )
     void NewGrid();
 
@@ -61,9 +49,35 @@ public:
     UFUNCTION( BlueprintCallable , Category = "Grid" )
     void Squash( int32 Key );
 
-    void UpdateCell(int32 x, int32 y, int32 Value);
+    void UpdateCell( int32 x , int32 y , int32 Value );
 
     void ClearGridWidgets();
+
+protected:
+    TArray<TArray<int32>> Grid;
+
+    UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "UI" )
+    TSubclassOf<UMiniGameTile2048Widget> GridWidgetClass;
+
+    UPROPERTY()
+	TArray<UMiniGameTile2048Widget*> GridWidget;
+
+    UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "UI" )
+    TSubclassOf<UUserWidget> Explain2048;
+
+    UPROPERTY()
+    class UUserWidget* ExplainWidget;
+
+    UPROPERTY(EditDefaultsOnly)
+    FVector2D WidgetChildScale;
+
+    UPROPERTY( EditDefaultsOnly )
+    FVector2D WidgetPosition;
+
+private:
+    void GameClear();
+    bool GameOver();
+
 
 private:
     bool isSucess = false;
