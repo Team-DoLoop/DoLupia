@@ -26,12 +26,21 @@ void UItemCarouselWidget::NativeConstruct()
 {
     Super::NativeConstruct();
     ItemWidgetPool->AddWidget( LootingWidgetFactory );
+
+    FTimerHandle Handle;
+    GetWorld()->GetTimerManager().SetTimer
+	( 
+		Handle, FTimerDelegate::CreateLambda([&](){ ItemCarouselTrigger = true;}), 0.1f, false
+    );
 }
 
 void UItemCarouselWidget::AddItemWidget( FText ItemName , int32 Quantity , UTexture2D* Icon )
 {
-    ULootingItemWidget* Widget = ItemWidgetPool->GetWidget( ItemName, Quantity, Icon );
-    WidgetBox->AddChild( Widget );
+    if(ItemCarouselTrigger)
+    {
+        ULootingItemWidget* Widget = ItemWidgetPool->GetWidget( ItemName , Quantity , Icon );
+        WidgetBox->AddChild( Widget );
+    }
 }
 
 
