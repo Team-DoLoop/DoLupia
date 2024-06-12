@@ -22,6 +22,7 @@ public:
 	UItemBase();
 
 	void CreateItemCopy(const UItemBase* MyItemBase);
+	void CreateItemCopy(const FItemData* MyItemData, int32 _ItemQuantity);
 
 	FORCEINLINE float GetItemStackWeight() const { return Quantity * NumericData.Weight; };
 	FORCEINLINE float GetItemSingleWeight() const { return NumericData.Weight; };

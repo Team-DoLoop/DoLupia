@@ -48,6 +48,7 @@
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
+#include "UserInterface/Event/PlayerDieWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -313,12 +314,11 @@ bool AProjectDCharacter::PossibleChangeGameMode()
 		// 퀘스트 창이 뜨면
 		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver() || GetQuestLogComponent())
 			return false;
-
-		// 플레이어가 죽으면
-		if(moveComp->PlayerDieUI)
-			return false;
-
 	}
+
+	// 플레이어가 죽으면
+	if (moveComp->PlayerDieUI)
+		return false;
 
 	return true;
 }

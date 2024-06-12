@@ -11,6 +11,8 @@
  * 
  */
 
+struct FItemData;
+struct FQuestDetails;
 enum class EExplainType : uint8;
 enum class EUseColor : uint8;
 struct FPlayerSkillData;
@@ -49,16 +51,34 @@ public:
 	void ExecuteTutorial(EExplainType _ExplainType);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
 	
-	UPROPERTY()
-	class UDataTable* TutorialTable;
-
-	FORCEINLINE int32 GetTutorialID() const {return TutorialID;}
-	
-
+	FORCEINLINE int32 GetTutorialID() const { return TutorialID; }
 
 private:
+	UPROPERTY()
+	class UDataTable* TutorialTable;
+	
 	int32 TutorialID;
 	
 	// 몇번 확인했는지 저장 / 만약 DataTable의 Index와 다르면 return
 	TMap<EExplainType, int32> TutorialIndexMap;
+
+	
+
+	// <------------------ Quest ------------------>
+public:
+	FQuestDetails* GetQuestData(int32 QuestID);
+
+private:
+	UPROPERTY()
+	class UDataTable* QuestTable;
+
+
+	// <------------------ Item ------------------>
+public:
+	FItemData* GetItemData(FString ItemID);
+
+private:
+	UPROPERTY()
+	class UDataTable* ItemTable;
+	
 };

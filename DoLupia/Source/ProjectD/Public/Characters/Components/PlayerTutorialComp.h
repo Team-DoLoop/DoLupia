@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTutorialComp.generated.h"
 
+class UInventoryComponent;
 class UProjectDGameInstance;
 class UPlayerDefaultsWidget;
 enum class ETutoItemType : uint8;
@@ -40,6 +41,9 @@ protected:
 private:
 	UPROPERTY()
 	AProjectDCharacter* Player;
+
+	UPROPERTY()
+	UInventoryComponent* InventoryComp;
 
 	UPROPERTY()
 	UProjectDGameInstance* GI;
@@ -84,10 +88,6 @@ public:
 public:
 	void CreateItem(ETutoItemType _TutoItemType, int32 _Quantity);
 	
-	UPROPERTY( EditInstanceOnly)
-	UDataTable* ItemDataTable;
-
-	
 private:
-	TMap<ETutoItemType, FName> ItemIdData;
+	TMap<ETutoItemType, FString> ItemIdData;
 };
