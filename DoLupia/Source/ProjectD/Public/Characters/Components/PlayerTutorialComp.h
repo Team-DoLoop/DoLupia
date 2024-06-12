@@ -6,6 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTutorialComp.generated.h"
 
+class UInventoryComponent;
+class UProjectDGameInstance;
+class UPlayerDefaultsWidget;
+enum class ETutoItemType : uint8;
+class AProjectDCharacter;
 struct FTutorialData;
 enum class EExplainType : uint8;
 class UItemBase;
@@ -28,21 +33,61 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 
+	// <----------------------------- Player ----------------------------->
+public:
 
+protected:
+
+private:
+	UPROPERTY()
+	AProjectDCharacter* Player;
+
+	UPROPERTY()
+	UInventoryComponent* InventoryComp;
+
+	UPROPERTY()
+	UProjectDGameInstance* GI;
+
+	
+
+	// <----------------------------- Tutorial Data ----------------------------->
+public:
+	FORCEINLINE void SetTutorialID(int32 _TutorialID) {TutorialID = _TutorialID;}
+	
+private:
+	FTutorialData* TutoData;
+	bool IsFirstIndex;
+	int32 TutorialID;
+	
+	
 	// <----------------------------- Tutorial UI ----------------------------->
 public:
 	void SetTutorialUI(FTutorialData* _TutoData);
+	void NextTutorial();
+	void EndTutorial(FTutorialData* _TutoData);
 
+	FORCEINLINE void SetDefaultUI(UPlayerDefaultsWidget* _DefaultUI){DefaultUI = _DefaultUI;}
+
+private:
+	FString NextString = TEXT("다음");
+	FString CloseString = TEXT("닫기");
 	
-	
+	UPROPERTY()
+	UPlayerDefaultsWidget* DefaultUI;
+
+
+
+
 	// <----------------------------- Quest ----------------------------->
 public:
-	void CreateItem(int32 _ItemNum, int32 _Quantity);
+	void StartQuest(int32 _QuestID);
 	
-	UPROPERTY( EditInstanceOnly)
-	UDataTable* ItemDataTable;
-
+	
+	
+	// <----------------------------- Item ----------------------------->
+public:
+	void CreateItem(ETutoItemType _TutoItemType, int32 _Quantity);
 	
 private:
-	TMap<int32, FName> ItemIdData;
+	TMap<ETutoItemType, FString> ItemIdData;
 };

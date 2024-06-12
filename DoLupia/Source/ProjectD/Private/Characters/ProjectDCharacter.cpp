@@ -48,6 +48,7 @@
 #include "NPC/NPCBase.h"
 #include "NPC/QuestAcceptNPC.h"
 #include "Quest/QuestGiver.h"
+#include "UserInterface/Event/PlayerDieWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -205,11 +206,6 @@ void AProjectDCharacter::Tick(float DeltaSeconds)
 		PerformInteractionCheck();
 		//PerformTrace();
 	}
-
-	if(PlayerController->IsInputKeyDown(EKeys::N))
-	{
-		AFA_Blast_Base* Blast = GetWorld()->SpawnActor<AFA_Blast_Base>();
-	}
 }
 
 void AProjectDCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -313,12 +309,11 @@ bool AProjectDCharacter::PossibleChangeGameMode()
 		// 퀘스트 창이 뜨면
 		if(QuestGiver->GetRewardQuestGiver() || QuestGiver->GetWidgetQuestGiver() || GetQuestLogComponent())
 			return false;
-
-		// 플레이어가 죽으면
-		if(moveComp->PlayerDieUI)
-			return false;
-
 	}
+
+	// 플레이어가 죽으면
+	if (moveComp->PlayerDieUI)
+		return false;
 
 	return true;
 }
@@ -502,8 +497,8 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
-		FRotator BoxRotation = FRotator::ZeroRotator;
-		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
+		FRotator BoxRotation = GetActorRotation();
+		FVector BoxHalfSize = FVector( 200 , 200 , 200 );
 
 		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{

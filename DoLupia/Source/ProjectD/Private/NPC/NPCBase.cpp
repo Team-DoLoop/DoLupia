@@ -32,6 +32,7 @@ ANPCBase::ANPCBase()
 	anim = nullptr;
 	gm = nullptr;
 
+	this->SetActorScale3D( FVector(1.5f, 1.5f, 1.5f) );
 	// Post Process depth 설정값
 	//GetMesh()->SetRenderCustomDepth( true );
 }
@@ -160,6 +161,8 @@ FString ANPCBase::InteractWith()
 		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 	}
+	
+	ChangePlayerState();
 
 	return QuestInterface->InteractWith();
 }
@@ -185,5 +188,10 @@ void ANPCBase::ChangePlayerState()
 				PlayerFSM->ChangePlayerState(EPlayerState::TALK_NPC);
 		}
 	}
+}
+
+void ANPCBase::HideNPC()
+{
+	this->SetActorHiddenInGame( true );
 }
 

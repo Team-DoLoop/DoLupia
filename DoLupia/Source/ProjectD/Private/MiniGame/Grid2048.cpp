@@ -28,14 +28,17 @@ void AGrid2048::BeginPlay()
 				if (UMiniGameTile2048Widget* Widget = CreateWidget<UMiniGameTile2048Widget>( GetWorld() , GridWidgetClass ))
                 {
                     GridWidget.Add( Widget );
-                    Widget->SetPositionInViewport(FVector2D(static_cast<float>(x) * 100.f + 100.f, static_cast<float>(y) * 100.f + 100.f));
-                    Widget->AddToViewport();
+                    Widget->SetPositionInViewport(FVector2D(static_cast<float>(x) * WidgetChildScale.X + WidgetPosition .X, 
+						static_cast<float>(y) * WidgetChildScale.Y + WidgetPosition.Y));
+                    Widget->AddToViewport(1);
                 }
 			}
 		}
     }
 
-    PreGrid = Grid;
+    ExplainWidget = CreateWidget<UUserWidget>( GetWorld() , Explain2048 );
+    ExplainWidget->AddToViewport(0);
+
     NewNumber();
     NewNumber();
     Draw();
@@ -63,21 +66,8 @@ void AGrid2048::NewNumber()
 {
     if(isSucess) return;
 
-	if(IsFull())
-	{   
-        for (int32 i = 0; i < 4; ++i)
-        {
-            for (int32 j = 0; j < 4; ++j)
-            {
-                GridWidget[i * 4 + j]->ReStartMiniGame();
-                Grid[i][j] = 0;
-            }
-
-        }
-
-        GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Over!" ) );
+	if(GameOver())
         return;
-	}
 
     while (true)
     {
@@ -145,12 +135,7 @@ void AGrid2048::SquashColumn( TArray<int32>& Column )
 
                 }
 
-                GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
-                auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
-
-                // 게임 클리어 시, 퀘스트 완료
-            	player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
-                isSucess = true;
+                GameClear();
                 break;
             }
 
@@ -245,8 +230,9 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
             FSlateColor TextColor;
             FSlateFontInfo FontInfo = CellTextBlock->GetFont();
             FontInfo.Size = 24;  // Default size, adjust as needed
+            TextColor = FSlateColor( FLinearColor::Black );
 
-            switch (Value)
+            /*switch (Value)
             {
             case 2:
                 TextColor = FSlateColor( FLinearColor::Black );
@@ -258,7 +244,8 @@ void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
             default:
                 TextColor = FSlateColor( FLinearColor::Yellow );
                 break;
-            }
+            }*/
+            
 
             CellTextBlock->SetColorAndOpacity( TextColor );
             CellTextBlock->SetFont( FontInfo );
@@ -281,4 +268,36 @@ void AGrid2048::ClearGridWidgets()
         }
     }
     GridWidget.Empty();
+}
+
+void AGrid2048::GameClear()
+{
+    GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
+    auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+    // 게임 클리어 시, 퀘스트 완료
+    player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
+    ExplainWidget->RemoveFromParent();
+    isSucess = true;
+}
+
+bool AGrid2048::GameOver()
+{
+    if (IsFull())
+    {
+        for (int32 i = 0; i < 4; ++i)
+        {
+            for (int32 j = 0; j < 4; ++j)
+            {
+                GridWidget[i * 4 + j]->ReStartMiniGame();
+                Grid[i][j] = 0;
+            }
+
+        }
+
+        GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Over!" ) );
+        return true;
+    }
+
+    return false;
 }

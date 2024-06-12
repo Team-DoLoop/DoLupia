@@ -30,7 +30,7 @@ void UDialogWidget::UpdateDialogText(FText NewText)
 		txt_dialog->SetText( FText::FromString( CurrentText ) );
 
         // 타이핑 시작
-        ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( npcSFX , ENPCSound::NPCSound2 );
+        ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( npcSFX , ENPCSound::NPCSound2,0.1f );
         GetWorld()->GetTimerManager().SetTimer( TypingTimerHandle , this , &UDialogWidget::TypeNextCharacter , TypingSpeed , true );
 	}
 }

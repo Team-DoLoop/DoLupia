@@ -274,7 +274,7 @@ void UPlayerAttackComp::CompleteSkill()
 {
 	if (!PlayerFSMComp) return;
 
-	if(IsSkillCharging &&  IsChargingInputOn)
+	if(IsSkillCharging && IsChargingInputOn)
 	{
 		PlayerChargingEndSkill();
 	}
@@ -596,6 +596,7 @@ void UPlayerAttackComp::PlayerChargingEndSkill()
 	{
 		// 차징 중간에 끊겼다면
 		PlayerAnim->StopMontage();
+		IsChargingInputOn = false;
 	}
 
 	else
@@ -796,7 +797,7 @@ void UPlayerAttackComp::AttackEndState()
 	if(CurrentMP >= PlayerMaxMP)
 	{
 		// MP가 꽉 찼다면 열 게이지 관련 설명
-		if(GI) GI->GetTutorialData(EExplainType::FULL_HIT_GAUGE);
+		if(GI) GI->ExecuteTutorial(EExplainType::FULL_HIT_GAUGE);
 		
 		for(int i = 1; i <= SkillCount; i++)
 			SetSkillLockUI(i, true);

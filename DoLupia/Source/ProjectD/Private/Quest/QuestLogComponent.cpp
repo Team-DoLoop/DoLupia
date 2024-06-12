@@ -96,7 +96,6 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     //auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
     //player->EnableDialogue();
 
-
 	UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( FName QuestID )" ) );
     CompletedQuests.AddUnique( QuestID );
     CurrentActiveQuests.Remove( QuestID );
@@ -121,6 +120,20 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     }
 
     RemoveTracker();
+
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    //포털 열기
+    if (QuestID == "1000" || QuestID == "3001" || QuestID == "1002") {
+        gm->ActiveLvTrigger();
+    }
+
+    // 퀘스트 2003 완료 시, 자동으로 퀘스트 발생
+    if(QuestID == "2003")
+    {
+        gm->TriggerQuest2004( QuestID , 1 );
+    }
+    
+
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )

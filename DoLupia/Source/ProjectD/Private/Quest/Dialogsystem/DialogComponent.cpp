@@ -140,11 +140,11 @@ void UDialogComponent::TriggerQuest()
 	// 퀘스트 창 끄기 전 대화창 끄기
 	HideDialogWidget();
 
-	// CurrentNPC가 유효한지 확인
-	if (CurrentNPC)
+	// CurrentNPC에서 UQuestComponent를 가져오기
+	ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+
+	if (npc)
 	{
-		// CurrentNPC에서 UQuestComponent를 가져오기
-		ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
 		auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 		IQuestInteractionInterface* QuestInterface = Cast<IQuestInteractionInterface>( npc );
 
@@ -158,6 +158,9 @@ void UDialogComponent::TriggerQuest()
 		{
 			UE_LOG( LogTemp , Warning , TEXT( "UQuestComponent not found on NPC" ) );
 		}
+
+		// 퀘스트 받은 npc는 숨기기
+		npc->HideNPC();
 	}
 	else
 	{

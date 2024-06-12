@@ -14,9 +14,11 @@
 #include "Components/HorizontalBox.h"
 #include "Components/Spacer.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include <Components/SizeBoxSlot.h>
 #include <Components/SizeBox.h>
 
+#include "Characters/PlayerStateBase.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Common/UseColor.h"
 #include "Gamemode/PlayerGameMode.h"
@@ -97,10 +99,11 @@ void UWidgetQuestRewards::NativeConstruct()
         btn_Accept->OnClicked.AddDynamic( this , &UWidgetQuestRewards::OnAcceptClicked );
     }
 
-    if (btn_Decline)
+    /*if (btn_Decline)
     {
         btn_Decline->OnClicked.AddDynamic( this , &UWidgetQuestRewards::OnDeclineClicked );
-    }
+    }*/
+    
 
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     auto PlayerControllerD = Cast<AProjectDPlayerController>( PlayerController );
@@ -215,9 +218,26 @@ void UWidgetQuestRewards::OnAcceptClicked()
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();
+
+    // 플레이어 행동 가능하게
+    ChangePlayerStateIdle();
 }
 
-void UWidgetQuestRewards::OnDeclineClicked()
+void UWidgetQuestRewards::ChangePlayerStateIdle()
+{
+    // 플레이어 행동 가능하게
+    if (AProjectDCharacter* Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) ))
+    {
+        if (auto PlayerFSM = Player->GetPlayerFSMComp())
+        {
+            if (PlayerFSM->CanChangeState( EPlayerState::IDLE ))
+                PlayerFSM->ChangePlayerState( EPlayerState::IDLE );
+        }
+    }
+}
+
+/*void UWidgetQuestRewards::OnDeclineClicked()
 {
     RemoveFromParent();
-}
+}*/
+

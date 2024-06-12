@@ -40,9 +40,8 @@ enum class EItemType : uint8
 UENUM( BlueprintType )
 enum class ESkillAttribute : uint8
 {
-	Fire UMETA( DisplayName = "Fire" ) ,
-	Water UMETA( DisplayName = "Water" ) ,
-	Ground UMETA( DisplayName = "Ground" ) ,
+	CYLINDRICAL UMETA(DisplayName = "Cylindrical"),
+	PRISMATIC UMETA( DisplayName = "Prismatic" ),
 };
 
 USTRUCT()
@@ -82,6 +81,17 @@ struct FItemStatistics
 
 	UPROPERTY(EditAnywhere, Category = "Store" )
 	float SellValue;
+
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	FVector MeshScale = FVector(1.0, 1.0, 1.0);
+
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	float MassScale = 20.f;
+
+	UPROPERTY( EditAnywhere , Category = "Item" )
+	float GravityScale = 0.77f;
+
+
 };
 
 USTRUCT()

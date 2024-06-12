@@ -99,6 +99,10 @@ public:
 	/*-------------------- Player State ---------------------*/
 	void ChangePlayerState();
 
+	/*---------------------- NPC Hide ------------------*/
+	void HideNPC();
+
+
 
 
 };

@@ -35,6 +35,7 @@ public:
 
 	//UPROPERTY( BlueprintAssignable )
 	//FQuestDataLoadedSignature OnQuestDataLoaded;
+	
 
 	FUpdateCurrentActiveQuest UpdateCurrentActiveQuest;
 

@@ -65,5 +65,5 @@ private:
 
     const int32 MaxItemCount = 5;
 
-
+    bool ItemCarouselTrigger = false;
 };

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/TutorialData.h"
 #include "Engine/GameInstance.h"
 #include "ProjectDGameInstance.generated.h"
 
@@ -10,6 +11,8 @@
  * 
  */
 
+struct FItemData;
+struct FQuestDetails;
 enum class EExplainType : uint8;
 enum class EUseColor : uint8;
 struct FPlayerSkillData;
@@ -44,14 +47,40 @@ private:
 	// <------------------ Tutorial ------------------>
 public:
 	void InitTutorialIndex();
-	void GetTutorialData(EExplainType _ExplainType);
+	FTutorialData* GetTutorialData(int32 _TutorialID);
+	void ExecuteTutorial(EExplainType _ExplainType);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
 	
-	UPROPERTY()
-	class UDataTable* TutorialTable;
-
+	FORCEINLINE int32 GetTutorialID() const { return TutorialID; }
 
 private:
+	UPROPERTY()
+	class UDataTable* TutorialTable;
+	
+	int32 TutorialID;
+	
 	// 몇번 확인했는지 저장 / 만약 DataTable의 Index와 다르면 return
 	TMap<EExplainType, int32> TutorialIndexMap;
+
+	
+
+	// <------------------ Quest ------------------>
+public:
+	FQuestDetails* GetQuestData(int32 _QuestID);
+	void GiveQuest(int32 _QuestID);
+
+private:
+	
+	UPROPERTY()
+	class UDataTable* QuestTable;
+
+
+	// <------------------ Item ------------------>
+public:
+	FItemData* GetItemData(FString ItemID);
+
+private:
+	UPROPERTY()
+	class UDataTable* ItemTable;
+	
 };

@@ -18,7 +18,7 @@ AAutoQuestAcceptActor::AAutoQuestAcceptActor()
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
 
-	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );;
+	UDataTable* DataTable = LoadObject<UDataTable>( nullptr , TEXT( "/Game/QuestSystem/Data/QuestDataTable.QuestDataTable" ) );
 	if (DataTable)
 	{
 		// 데이터 테이블이 성공적으로 로드된 경우 작업 수행
@@ -63,6 +63,8 @@ void AAutoQuestAcceptActor::NotifyActorBeginOverlap(AActor* OtherActor)
 			GiveQuest();
 		}
 	}
+
+	this->AutoQuestDestroy();
 }
 
 void AAutoQuestAcceptActor::GiveQuest()
