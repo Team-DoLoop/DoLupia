@@ -502,6 +502,10 @@ void AProjectDCharacter::PerformInteractionCheck()
 
 		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
+			AActor* HitActor = TraceHit.GetActor();
+
+			if (!HitActor) return;
+
 			FString name = TraceHit.GetActor()->GetName();
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
 			{
