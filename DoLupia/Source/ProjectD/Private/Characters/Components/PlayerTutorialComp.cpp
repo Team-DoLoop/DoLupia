@@ -127,7 +127,7 @@ void UPlayerTutorialComp::StartQuest(int32 _QuestID)
 {
 	if(!GI) return;
 
-	
+	GI->GiveQuest(_QuestID);
 }
 
 

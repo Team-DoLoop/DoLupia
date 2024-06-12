@@ -66,9 +66,11 @@ private:
 
 	// <------------------ Quest ------------------>
 public:
-	FQuestDetails* GetQuestData(int32 QuestID);
+	FQuestDetails* GetQuestData(int32 _QuestID);
+	void GiveQuest(int32 _QuestID);
 
 private:
+	
 	UPROPERTY()
 	class UDataTable* QuestTable;
 

@@ -35,6 +35,9 @@ public:
 
 	//UPROPERTY( BlueprintAssignable )
 	//FQuestDataLoadedSignature OnQuestDataLoaded;
+	
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
 
 	FUpdateCurrentActiveQuest UpdateCurrentActiveQuest;
 
