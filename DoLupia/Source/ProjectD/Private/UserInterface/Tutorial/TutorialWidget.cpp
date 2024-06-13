@@ -49,6 +49,6 @@ void UTutorialWidget::NextTutorialBtn()
 
 void UTutorialWidget::ChangeNextBtn(FString _Str)
 {
-	TXT_Next->SetText(FText::FromString(_Str));
+	// TXT_Next->SetText(FText::FromString(_Str));
 }
 

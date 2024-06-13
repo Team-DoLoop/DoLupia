@@ -48,6 +48,7 @@ APlayerGameMode::APlayerGameMode()
 	LevelNames.Add( TEXT( "GameLv1" ) );
 	LevelNames.Add( TEXT( "GameLv2" ) );
 	LevelNames.Add( TEXT( "GameLv3" ) );
+	LevelNames.Add( TEXT( "Tutorial" ) ); // Lv0이랑 같은거면 수정하기
 }
 
 void APlayerGameMode::StartPlay()
@@ -95,6 +96,12 @@ void APlayerGameMode::BeginPlay()
 		PlayerCameraboom = 1200.0f;
 		CreateLocationTitleWidget( LevelIdx );
 		ApplyAITxtP();
+	}
+	else if(CurLevelName == LevelNames[4])
+	{
+		LevelIdx = 4;
+		PlayerCameraboom = 1000.0f;
+		CreateLocationTitleWidget( LevelIdx );
 	}
 	else
 	{

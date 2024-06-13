@@ -24,11 +24,12 @@ enum class ETutoItemType : uint8
 	OIL UMETA(DisplayName = "Oil"),								// 기름
 	COOL_WATER UMETA(DisplayName = "Cool_Water"),				// 냉각수
 	BATTERY_RED_Q UMETA(DisplayName = "Battery_Red_Q"),			// 스킬 업그레이드
-	BATTERY_RED_W UMETA(DisplayName = "Battery_Red_Q"),	
+	BATTERY_RED_W UMETA(DisplayName = "Battery_Red_Q"),			// 배터리
 	BATTERY_YELLOW_Q UMETA(DisplayName = "Battery_Yellow_Q"),
 	BATTERY_YELLOW_W UMETA(DisplayName = "Battery_Yellow_W"),
 	BATTERY_BLUE_Q UMETA(DisplayName = "Battery_Blue_Q"),
 	BATTERY_BLUE_W UMETA(DisplayName = "Battery_Blue_W"),
+	MAIN_STORY UMETA(DisplayName = "Main_Story"),
 };
 
 USTRUCT(BlueprintType)

@@ -49,7 +49,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UButton* Btn_Next;
 
-	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	class UTextBlock* TXT_Next;
+	//UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
+	//class UTextBlock* TXT_Next;
 	
 };
