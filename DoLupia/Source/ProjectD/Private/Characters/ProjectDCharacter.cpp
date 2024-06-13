@@ -54,6 +54,8 @@
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
+#include "MapIconComponent.h"
+#include "MapViewComponent.h"
 
 AProjectDCharacter::AProjectDCharacter()
 {
@@ -145,6 +147,27 @@ AProjectDCharacter::AProjectDCharacter()
 
 	// Dialog
 	//bIsDialogueEnabled = true;
+
+	//minimap
+	// MapIconComponent makes the character appear on the minimap
+	static ConstructorHelpers::FObjectFinder<UTexture2D> PlayerIcon( TEXT( "/MinimapPlugin/Textures/Icons/T_Icon_Placeholder" ) );
+	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
+	MapIcon->SetupAttachment( GetRootComponent() );
+	// Set the player icon as texture
+	MapIcon->SetIconTexture( PlayerIcon.Object );
+	// The icon will rotate to represent the character's rotation
+	MapIcon->SetIconRotates( true );
+
+	// MapViewComponent allows the minimap to follow the character
+	MapView = CreateDefaultSubobject<UMapViewComponent>( TEXT( "MapView" ) );
+	MapView->SetupAttachment( GetRootComponent() );
+	// How far the player can see on the minimap. Change during gameplay to apply zooming. Aspect ratio must match the minimap widget's aspect ratio.
+	MapView->SetViewExtent( 1024.f , 1024.f );
+	// Whether the minimap should rotate with the player. Set to false for fixed rotation minimap.
+	MapView->RotationMode = EMapViewRotationMode::InheritYaw;
+	// The angle that represents north
+	MapView->InheritedYawOffset = 90.0f;
+	
 }
 
 void AProjectDCharacter::BeginPlay()

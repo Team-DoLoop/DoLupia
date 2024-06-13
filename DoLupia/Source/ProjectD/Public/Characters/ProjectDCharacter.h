@@ -23,6 +23,9 @@ class UPlayerBattleWidget;
 class ATestNPCCharacter;
 class ANPCBase;
 
+class UMapViewComponent;
+class UMapIconComponent;
+
 enum class EAttackType : uint8;
 enum class EEffectAttackType : uint8;
 
@@ -343,6 +346,15 @@ private:
 	
 public:
 	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; };
-	
+
+
+	// <---------------------- MiniMap ---------------------->
+
+private:
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class UMapViewComponent* MapView;
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class UMapIconComponent* MapIcon;
+
 };
 
