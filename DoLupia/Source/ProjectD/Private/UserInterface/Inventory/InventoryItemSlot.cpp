@@ -113,7 +113,6 @@ void UInventoryItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const
 	{
 		const TObjectPtr<UDragItemVisual> DragItemVisual = CreateWidget<UDragItemVisual>(this, DragItemVisualFactory);
 		DragItemVisual->GetItemIcon()->SetBrushFromTexture(ItemReference->GetAssetData().Icon);
-		DragItemVisual->GetItemBorder()->SetBrushColor(ItemBorder->GetBrushColor());
 
 		ItemReference->GetNumericData().bIsStackable 
 			? DragItemVisual->GetItemQuantity()->SetText(FText::AsNumber(ItemReference->GetQuantity()))
@@ -184,6 +183,8 @@ bool UInventoryItemSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDr
 	//return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
 
+
+
 void UInventoryItemSlot::RefreshItemSlot()
 {
 	if (ItemReference)
@@ -200,27 +201,48 @@ void UInventoryItemSlot::RefreshItemSlot()
 		SetToolTip( Tooltip );
 
 
-		switch (ItemReference->GetItemQuality())
+		//switch (ItemReference->GetItemQuality())
+		//{
+		//case EItemQuality::Shoddy:
+		//	ItemBorder->SetBrushColor( OutlineColor1 );
+		//	break;
+		//case EItemQuality::Common:
+		//	ItemBorder->SetBrushColor( OutlineColor2 );
+		//	break;
+		//case EItemQuality::Quality:
+		//	ItemBorder->SetBrushColor( OutlineColor3 );
+		//	break;
+		//case EItemQuality::Masterwork:
+		//	ItemBorder->SetBrushColor( OutlineColor4 );
+		//	break;
+		//case EItemQuality::Grandmaster:
+		//	ItemBorder->SetBrushColor( OutlineColor5 ); // orange
+		//	break;
+		//default:;
+		//}
+
+		if(ItemReference->GetAssetData().IconMaterial)
 		{
-		case EItemQuality::Shoddy:
-			ItemBorder->SetBrushColor( OutlineColor1 );
-			break;
-		case EItemQuality::Common:
-			ItemBorder->SetBrushColor( OutlineColor2 );
-			break;
-		case EItemQuality::Quality:
-			ItemBorder->SetBrushColor( OutlineColor3 );
-			break;
-		case EItemQuality::Masterwork:
-			ItemBorder->SetBrushColor( OutlineColor4 );
-			break;
-		case EItemQuality::Grandmaster:
-			ItemBorder->SetBrushColor( OutlineColor5 ); // orange
-			break;
-		default:;
+			UMaterialInstanceDynamic* ImageMatrialTemplate = UMaterialInstanceDynamic::Create(
+				ItemReference->GetAssetData().IconMaterial,
+				this
+			);
+
+			ItemIcon->SetBrushFromMaterial( ImageMatrialTemplate );
+
+			Gradient( ImageMatrialTemplate );
+			BackGround( ImageMatrialTemplate );
+			Texture( ImageMatrialTemplate );
+			Frame( ImageMatrialTemplate );
+
+		}
+		else
+		{
+			ItemIcon->SetBrushFromTexture( ItemReference->GetAssetData().Icon );
 		}
 
-		ItemIcon->SetBrushFromTexture( ItemReference->GetAssetData().Icon );
+		
+		
 
 		if (ItemReference->GetNumericData().bIsStackable)
 		{
@@ -238,7 +260,6 @@ void UInventoryItemSlot::RefreshItemSlot()
 
 void UInventoryItemSlot::ResetItemSlot()
 {
-	ItemBorder->SetBrushColor( FLinearColor::White );
 	ItemIcon->SetBrushFromTexture( nullptr );
 	ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 
@@ -248,4 +269,56 @@ void UInventoryItemSlot::ResetItemSlot()
 
 	if (ItemReference)
 		ItemReference = nullptr;
+}
+
+void UInventoryItemSlot::Gradient( UMaterialInstanceDynamic* MaterialInstanceDynamic )
+{
+	MaterialInstanceDynamic->SetVectorParameterValue( "BG gradient color 1" , ItemReference->GetMaterialGradient().Color1 );
+	MaterialInstanceDynamic->SetVectorParameterValue( "BG Gradient color 2" , ItemReference->GetMaterialGradient().Color2 );
+	MaterialInstanceDynamic->SetVectorParameterValue( "BG Gradient color 3" , ItemReference->GetMaterialGradient().Color3 );
+	MaterialInstanceDynamic->SetVectorParameterValue( "BG gradient color 3 - active" , ItemReference->GetMaterialGradient().Color3_Active );
+
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient glow min" , ItemReference->GetMaterialGradient().Glow_min );
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient glow max" , ItemReference->GetMaterialGradient().Glow_max );
+
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient noise intensity" , ItemReference->GetMaterialGradient().NoiseIntensity );
+
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient pos color 1" , ItemReference->GetMaterialGradient().PosColor1 );
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient pos color 2" , ItemReference->GetMaterialGradient().PosColor2 );
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient pos color 3" , ItemReference->GetMaterialGradient().PosColor3 );
+
+	MaterialInstanceDynamic->SetScalarParameterValue( "BG gradient size" , ItemReference->GetMaterialGradient().Size );
+
+	MaterialInstanceDynamic->SetVectorParameterValue( "Noise panning speed" , ItemReference->GetMaterialGradient().NoisePanningSpeed );
+}
+
+void UInventoryItemSlot::BackGround( UMaterialInstanceDynamic* MaterialInstanceDynamic )
+{
+	MaterialInstanceDynamic->SetScalarParameterValue( "Box fill opacity" , ItemReference->GetMaterialBackGround().BoxFillOpacity );
+	MaterialInstanceDynamic->SetScalarParameterValue( "Box scale" , ItemReference->GetMaterialBackGround().BoxScale );
+	MaterialInstanceDynamic->SetScalarParameterValue( "Frame thickness" , ItemReference->GetMaterialBackGround().FrameThickness );
+	MaterialInstanceDynamic->SetScalarParameterValue( "Glow max" , ItemReference->GetMaterialBackGround().GlowMax );
+	MaterialInstanceDynamic->SetScalarParameterValue( "Glow min" , ItemReference->GetMaterialBackGround().GlowMin );
+	MaterialInstanceDynamic->SetScalarParameterValue( "Noise intensity" , ItemReference->GetMaterialBackGround().NoiseIntensity );
+
+
+
+}
+
+void UInventoryItemSlot::Texture( UMaterialInstanceDynamic* MaterialInstanceDynamic )
+{
+	MaterialInstanceDynamic->SetTextureParameterValue( "ItemTexture" , ItemReference->GetAssetData().Icon );
+
+	MaterialInstanceDynamic->SetScalarParameterValue( "Texture hovered additional scale" , ItemReference->GetMaterialTexture().HoveredAdditinal );
+
+	MaterialInstanceDynamic->SetVectorParameterValue( "Texture offset" , ItemReference->GetMaterialTexture().Offset );
+	MaterialInstanceDynamic->SetVectorParameterValue( "Texture offset - active" , ItemReference->GetMaterialTexture().Offset_Active );
+
+	MaterialInstanceDynamic->SetScalarParameterValue( "Texture scale" , ItemReference->GetMaterialTexture().Scale );
+	MaterialInstanceDynamic->SetScalarParameterValue( "Texture scale - active" , ItemReference->GetMaterialTexture().Scale_Active );
+}
+
+void UInventoryItemSlot::Frame( UMaterialInstanceDynamic* MaterialInstanceDynamic )
+{
+	//MaterialInstanceDynamic->SetTextureParameterValue( "ItemTexture" , ItemReference->GetAssetData().Icon );
 }

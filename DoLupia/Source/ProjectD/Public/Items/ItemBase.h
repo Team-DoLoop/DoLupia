@@ -39,6 +39,7 @@ public:
 	FORCEINLINE void SetNumericData(FItemNumericData _NumericData) { NumericData = _NumericData; }
 	FORCEINLINE void SetAssetData(FItemAssetData _AssetData) { AssetData = _AssetData; }
 	FORCEINLINE void SetItemSkillColorData(EUseColor _ItemSkillColor) { ItemSkillColor = _ItemSkillColor; }
+	FORCEINLINE void SetItemMaterial( FItemMaterial _ItemMaterial ) { ItemMaterial = _ItemMaterial; }
 
 	FORCEINLINE const FName& GetID() const { return ID; }
 	FORCEINLINE EItemType GetItemType() const { return ItemType; }
@@ -48,6 +49,10 @@ public:
 	FORCEINLINE const FItemTextData& GetTextData() const { return TextData; }
 	FORCEINLINE FItemNumericData& GetNumericData() { return NumericData; }
 	FORCEINLINE const FItemAssetData& GetAssetData() const { return AssetData; }
+	FORCEINLINE const FItemMaterialBackGround& GetMaterialBackGround() const { return ItemMaterial.ItemMaterialBackGround; }
+	FORCEINLINE const FItemMaterialGradient& GetMaterialGradient() const { return ItemMaterial.ItemMaterialGradient; }
+	FORCEINLINE const FItemMaterialFrame& GetMaterialFrame() const { return ItemMaterial.ItemMaterialFrame; }
+	FORCEINLINE const FItemMaterialTexture& GetMaterialTexture() const { return ItemMaterial.ItemMaterialTexture; }
 	FORCEINLINE const EUseColor& GetItemSkillColorData() const { return ItemSkillColor; }
 
 	FORCEINLINE UInventoryComponent* GetOwningInventory() const { return OwningInventory; };
@@ -95,6 +100,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Item" )
 	ESkillAttribute SkillAttribute;
+
+	UPROPERTY( VisibleAnywhere , Category = "Item" )
+	FItemMaterial ItemMaterial;
+
+	
 
 	bool bIsCopy;
 	bool bIsPickup;
