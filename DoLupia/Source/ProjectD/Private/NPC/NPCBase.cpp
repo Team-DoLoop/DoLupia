@@ -48,6 +48,7 @@ ANPCBase::ANPCBase()
 	MapIcon->SetIconTexture( QuestGiveIcon.Object );
 	// The icon will rotate to represent the character's rotation
 	MapIcon->SetIconRotates( false );
+	//MapIcon->SetIconVisible( false );
 }
 
 // Called when the game starts or when spawned
