@@ -9,6 +9,7 @@
 class UNiagaraComponent;
 class UBoxComponent;
 class UMeshComponent;
+class UMapIconComponent;
 
 UCLASS()
 class PROJECTD_API ALocationMarker : public AActor
@@ -41,4 +42,7 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	UNiagaraComponent* locationVFX;
 
+	/*---------------------- Minimap ------------------*/
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class UMapIconComponent* MapIcon;
 };
