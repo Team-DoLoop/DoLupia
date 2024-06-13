@@ -126,7 +126,7 @@ void UInventoryItemSlot::NativeOnDragDetected(const FGeometry& InGeometry, const
 
 		DragItemOperation->DefaultDragVisual = DragItemVisual;
 		DragItemOperation->Pivot = EDragPivot::CenterLeft;
-
+		
 		OutOperation = DragItemOperation;
 	}
 }
@@ -203,19 +203,19 @@ void UInventoryItemSlot::RefreshItemSlot()
 		switch (ItemReference->GetItemQuality())
 		{
 		case EItemQuality::Shoddy:
-			ItemBorder->SetBrushColor( FLinearColor::Gray );
+			ItemBorder->SetBrushColor( OutlineColor1 );
 			break;
 		case EItemQuality::Common:
-			ItemBorder->SetBrushColor( FLinearColor::White );
+			ItemBorder->SetBrushColor( OutlineColor2 );
 			break;
 		case EItemQuality::Quality:
-			ItemBorder->SetBrushColor( FLinearColor( 0.0f , 0.51f , 0.169f ) );
+			ItemBorder->SetBrushColor( OutlineColor3 );
 			break;
 		case EItemQuality::Masterwork:
-			ItemBorder->SetBrushColor( FLinearColor( 0.0f , 0.4f , 0.75f ) );
+			ItemBorder->SetBrushColor( OutlineColor4 );
 			break;
 		case EItemQuality::Grandmaster:
-			ItemBorder->SetBrushColor( FLinearColor( 1.0f , 0.45f , 0.0f ) ); // orange
+			ItemBorder->SetBrushColor( OutlineColor5 ); // orange
 			break;
 		default:;
 		}

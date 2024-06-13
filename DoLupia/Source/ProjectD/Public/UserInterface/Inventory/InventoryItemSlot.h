@@ -64,6 +64,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot", meta = (BindWidget))
 	UTextBlock* ItemQuantity;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite , Category = "Outline" )
+	FLinearColor OutlineColor1;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
+	FLinearColor OutlineColor2;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
+	FLinearColor OutlineColor3;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
+	FLinearColor OutlineColor4;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
+	FLinearColor OutlineColor5;
+
 	int32 SlotIndex;
 
 	bool bIsEmpty = true;

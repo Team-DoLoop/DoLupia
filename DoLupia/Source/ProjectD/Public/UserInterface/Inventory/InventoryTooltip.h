@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ItemType;
 
+	UPROPERTY( meta = (BindWidget) )
+	UTextBlock* ItemQuality;
+
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* DamageValue;
 
