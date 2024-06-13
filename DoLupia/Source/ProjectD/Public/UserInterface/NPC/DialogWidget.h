@@ -60,8 +60,7 @@ private:
 	float TypingSpeed;
 
 	void TypeNextCharacter();
-
-
-
+	void SkipTypingAnimation();
+	bool IsTyping() const;
 	
 };
