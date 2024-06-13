@@ -23,11 +23,8 @@ class UPlayerBattleWidget;
 class ATestNPCCharacter;
 class ANPCBase;
 
-/*/Minimap
-class UDialogueTree;
 class UMapViewComponent;
 class UMapIconComponent;
-class UMapFogRevealerComponent;*/
 
 enum class EAttackType : uint8;
 enum class EEffectAttackType : uint8;
@@ -351,13 +348,18 @@ public:
 	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; };
 
 
-	// <-------------------- MiniMap ---------------------->
+	// <---------------------- MiniMap ---------------------->
+
 private:
+	/*	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class USpringArmComponent* CameraBoom;
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class UCameraComponent* FollowCamera;*/
+
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapViewComponent* MapView;
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
-	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
-	class UMapRevealerComponent* MapRevealer;
+
 };
 

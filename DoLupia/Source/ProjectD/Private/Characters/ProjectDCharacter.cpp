@@ -54,6 +54,9 @@
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
+#include "MapIconComponent.h"
+#include "MapViewComponent.h"
+
 AProjectDCharacter::AProjectDCharacter()
 {
 	// Mesh
@@ -145,8 +148,8 @@ AProjectDCharacter::AProjectDCharacter()
 	// Dialog
 	//bIsDialogueEnabled = true;
 
-	//Mini Map
-	/*// MapIconComponent makes the character appear on the minimap
+	//minimap
+	// MapIconComponent makes the character appear on the minimap
 	static ConstructorHelpers::FObjectFinder<UTexture2D> PlayerIcon( TEXT( "/MinimapPlugin/Textures/Icons/T_Icon_Placeholder" ) );
 	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
 	MapIcon->SetupAttachment( GetRootComponent() );
@@ -164,15 +167,6 @@ AProjectDCharacter::AProjectDCharacter()
 	MapView->RotationMode = EMapViewRotationMode::InheritYaw;
 	// The angle that represents north
 	MapView->InheritedYawOffset = 90.0f;
-
-	// MapRevealerComponent makes the character reveal fog
-	MapRevealer = CreateDefaultSubobject<UMapRevealerComponent>( TEXT( "MapRevealer" ) );
-	MapRevealer->SetupAttachment( GetRootComponent() );
-	// Sets the radius that the player reveals 100%, and the distance over which it linearly drops off
-	MapRevealer->SetRevealExtent( 200.f , 200.f );
-	MapRevealer->SetRevealDropOffDistance( 100.f );
-	// Reveal temporarily to make areas hidden again after leaving. Reveal permanently to make areas explored forever.
-	MapRevealer->SetRevealMode( EMapFogRevealMode::Temporary );*/
 	
 }
 
