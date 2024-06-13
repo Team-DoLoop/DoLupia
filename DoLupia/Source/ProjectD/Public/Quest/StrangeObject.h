@@ -11,6 +11,7 @@
 class UNPCInteractionWidget;
 class UBoxComponent;
 class UMeshComponent;
+class UMapIconComponent;
 
 UCLASS()
 class PROJECTD_API AStrangeObject : public AActor, public IQuestInteractionInterface
@@ -49,5 +50,8 @@ public:
 	virtual FString InteractWith() override;
 
 	void ChangeObjectOutline( int32 depth );
+
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class UMapIconComponent* MapIcon;
 
 };

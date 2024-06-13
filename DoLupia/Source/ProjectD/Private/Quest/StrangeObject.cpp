@@ -7,6 +7,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Data/WidgetData.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
+#include "MapIconComponent.h"
 
 // Sets default values
 AStrangeObject::AStrangeObject()
@@ -16,6 +17,16 @@ AStrangeObject::AStrangeObject()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "MeshComponent" ) );
 	MeshComponent->SetupAttachment( BoxComponent );
+
+	/*static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/speech-bubble.speech-bubble" ) );
+	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
+	MapIcon->SetupAttachment( GetRootComponent() );
+	// Set the player icon as texture
+	MapIcon->SetIconTexture( LocationIcon.Object );
+	// The icon will rotate to represent the character's rotation
+	MapIcon->SetIconRotates( false );
+	//MapIcon->SetIconVisible( false );*/
+	
 }
 
 // Called when the game starts or when spawned

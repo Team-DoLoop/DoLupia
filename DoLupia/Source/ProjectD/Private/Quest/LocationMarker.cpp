@@ -6,7 +6,7 @@
 
 #include "NiagaraComponent.h"
 #include "Characters/ProjectDCharacter.h"
-
+#include "MapIconComponent.h"
 
 // Sets default values
 ALocationMarker::ALocationMarker()
@@ -18,6 +18,15 @@ ALocationMarker::ALocationMarker()
 
     locationVFX = CreateDefaultSubobject<UNiagaraComponent>( TEXT( "locationVFX" ) );
     locationVFX->SetupAttachment( BoxComponent );
+
+	static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/pin.pin" ) );
+	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
+	MapIcon->SetupAttachment( BoxComponent );
+	// Set the player icon as texture
+	MapIcon->SetIconTexture( LocationIcon.Object );
+	// The icon will rotate to represent the character's rotation
+	MapIcon->SetIconRotates( false );
+	//MapIcon->SetIconVisible( false );
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +50,7 @@ void ALocationMarker::NotifyActorBeginOverlap( AActor* OtherActor )
         if (player) {
             player->OnObjectiveIDCalled.Broadcast( ObjectiveID , 1);
             locationVFX->SetVisibility( false );
+			MapIcon->SetIconVisible( false );
         }
     }
 }
