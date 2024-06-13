@@ -62,42 +62,35 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 	if(DefaultUI)
 	{
 		if(!_TutoData) return;
-
-		TutoData = _TutoData;
+		
+		UE_LOG(LogTemp, Log, TEXT("SetTutorialUI : %d"), ExplainIndex);
 		
 		// 처음 들어왔다면
-		if(IsFirstIndex)
+		if(ExplainIndex == 0)
 		{
-			DefaultUI->ChangeNextBtn(NextString);
-			IsFirstIndex = false;
+			// DefaultUI->ChangeNextBtn(NextString);
+			TutoData = _TutoData;
 		}
 		
-		// 다음 데이터가 마지막이라면
-		if(_TutoData->NextIndex == -1)
-		{
-			DefaultUI->ChangeNextBtn(CloseString);
-			
-		}
-		
-		DefaultUI->ShowTutorialWidget(_TutoData);
-		TutorialID = _TutoData->NextIndex;
+		DefaultUI->ShowTutorialWidget(_TutoData, ExplainIndex);
 	}
 }
 
 void UPlayerTutorialComp::NextTutorial()
 {
-	if(!GI || TutorialID == 0) return;
-	
-	if(TutorialID == -1)
+	if(!GI || !TutoData) return;
+
+	ExplainIndex = ExplainIndex + 1;
+	if(TutoData->TutorialWidgetData.StoryExplainText.Num() == ExplainIndex)
 	{
 		EndTutorial(TutoData);
 		return;
 	}
 	
-	auto _TutoData = GI->GetTutorialData(TutorialID);
-	if(_TutoData)
+	// auto _TutoData = GI->GetTutorialData(TutorialID);
+	if(TutoData)
 	{
-		SetTutorialUI(_TutoData);
+		SetTutorialUI(TutoData);
 	}
 }
 
@@ -105,8 +98,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 {
 	if(!DefaultUI) return;
 	
-	IsFirstIndex = true;
-	TutorialID = 0;
+	ExplainIndex = -1;
 	DefaultUI->HideTutorialWidget();
 
 	if(!_TutoData) return;

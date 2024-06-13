@@ -17,6 +17,7 @@
 #include "Items/Cape/PlayerCape.h"
 #include <AI/AITxtBossAttack.h>
 
+#include "ProjectDGameInstance.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
@@ -44,11 +45,10 @@ APlayerGameMode::APlayerGameMode()
 	}
 
 	// Level
-	LevelNames.Add( TEXT( "GameLv0" ) );
+	LevelNames.Add( TEXT( "Tutorial" ) );
 	LevelNames.Add( TEXT( "GameLv1" ) );
 	LevelNames.Add( TEXT( "GameLv2" ) );
 	LevelNames.Add( TEXT( "GameLv3" ) );
-	LevelNames.Add( TEXT( "Tutorial" ) ); // Lv0이랑 같은거면 수정하기
 }
 
 void APlayerGameMode::StartPlay()
@@ -70,12 +70,13 @@ void APlayerGameMode::StartPlay()
 void APlayerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	if (CurLevelName == LevelNames[0])
 	{
 		LevelIdx = 0;
-		//PlayerCameraboom = 1000.0f;
+		PlayerCameraboom = 1000.0f;
 	}
 	else if (CurLevelName == LevelNames[1])
 	{
@@ -96,12 +97,6 @@ void APlayerGameMode::BeginPlay()
 		PlayerCameraboom = 1200.0f;
 		CreateLocationTitleWidget( LevelIdx );
 		ApplyAITxtP();
-	}
-	else if(CurLevelName == LevelNames[4])
-	{
-		LevelIdx = 4;
-		PlayerCameraboom = 1000.0f;
-		CreateLocationTitleWidget( LevelIdx );
 	}
 	else
 	{
@@ -223,6 +218,21 @@ void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
 	}
 
 }
+
+void APlayerGameMode::StartGameStory()
+{
+	int32 index = 0;
+	switch (LevelIdx)
+	{
+	case 0 : index = 0; break;
+	case 1: index = 2; break;
+	case 2: index = 0; break; // 스토리에 맞춰 수정할 예정
+	case 3: index = 0; break; 
+		default: break;
+	}
+	GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+}
+
 
 void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
 {

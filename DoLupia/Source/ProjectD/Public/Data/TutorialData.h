@@ -4,17 +4,20 @@
 #include "Engine/DataTable.h"
 #include "TutorialData.generated.h"
 
+
 UENUM(BlueprintType)
 enum class EExplainType : uint8
 {
 	NONE UMETA(DisplayName = "None"),
 	MOVE UMETA(DisplayName = "Move"),									// 이동
+	INTERACTION UMETA(DisplayName = "Interaction"),						// 상호작용
 	ATTACK UMETA(DisplayName = "Attack"),								// 공격(전투)
 	SKILL UMETA(DisplayName = "Skill"),									// 스킬
 	ITEM_OIL UMETA(DisplayName = "Item_Oil"),							// 기름
 	ITEM_COOL_WATER UMETA(DisplayName = "Item_Cool_Water"),				// 냉각수
 	ITEM_SKILL_UPGRADE UMETA(DisplayName = "Item_Skill_Upgrade"),		// 스킬 업그레이드
 	FULL_HIT_GAUGE UMETA(DisplayName = "Full_Hit_Gauge"),				// MP가 꽉 찬 경우
+	MAIN_STORY UMETA(DisplayName = "Main_Story"),						// Main Story
 };
 
 UENUM(BlueprintType)
@@ -40,6 +43,10 @@ struct FTutorialWidgetData
 	// 설명 텍스트
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString ExplainText;
+
+	// 설명 텍스트 배열 (우선 스토리용으로)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FString> StoryExplainText;
 };
 
 

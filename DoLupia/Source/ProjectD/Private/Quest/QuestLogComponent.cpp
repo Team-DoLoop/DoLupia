@@ -2,6 +2,7 @@
 
 #include "Quest/QuestLogComponent.h"
 
+#include "ProjectDGameInstance.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
@@ -33,6 +34,8 @@ void UQuestLogComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+    
+    GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 
@@ -127,8 +130,18 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     {
         gm->TriggerQuest2004( QuestID , 1 );
     }
-    
 
+    // 튜토리얼 퀘스트 완료 관련
+    if(GI)
+    {
+        if(auto _QuestData = GI->GetQuestData(QuestID))
+        {
+            if(_QuestData->AutoStory.IsAutoStory)
+            {
+                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType);
+            }
+        }
+    }
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )

@@ -52,12 +52,13 @@ private:
 
 	// <----------------------------- Tutorial Data ----------------------------->
 public:
-	FORCEINLINE void SetTutorialID(int32 _TutorialID) {TutorialID = _TutorialID;}
+	// FORCEINLINE void SetTutorialID(int32 _TutorialID) {TutorialID = _TutorialID;}
+	FORCEINLINE void SetExplainIndex(int32 _ExplainIndex) {ExplainIndex = _ExplainIndex;}
 	
 private:
 	FTutorialData* TutoData;
-	bool IsFirstIndex;
-	int32 TutorialID;
+	int32 ExplainIndex = -1;
+	//int32 TutorialID;
 	
 	
 	// <----------------------------- Tutorial UI ----------------------------->

@@ -30,14 +30,15 @@ void UTutorialWidget::NativeConstruct()
 	
 }
 
-void UTutorialWidget::ShowTutorialWidget(FTutorialData* _TutoData)
+void UTutorialWidget::ShowTutorialWidget(FTutorialData* _TutoData, int32 _Index)
 {
 	// 데이터가 없다면 끝내기
 	if(!_TutoData) return;
 	
+	UE_LOG(LogTemp, Log, TEXT("ShowTutorialWidget TutoData Index : %d"), _Index);
+	
 	// 데이터로 세팅
-	FText ExplainText = FText::FromString(_TutoData->TutorialWidgetData.ExplainText);
-	UE_LOG(LogTemp, Log, TEXT("ShowTutorialWidget TutoData->NextIndex : %d"), _TutoData->NextIndex);
+	FText ExplainText = FText::FromString(_TutoData->TutorialWidgetData.StoryExplainText[_Index]);
 	TXT_Explain->SetText(ExplainText);
 }
 

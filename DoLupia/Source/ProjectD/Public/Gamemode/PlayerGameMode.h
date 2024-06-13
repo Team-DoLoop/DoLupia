@@ -59,6 +59,9 @@ public:
 
 private:
 	UPROPERTY()
+	class UProjectDGameInstance* GI;
+	
+	UPROPERTY()
 	TArray<FName> LevelNames;
 
 	UPROPERTY( EditDefaultsOnly )
@@ -111,6 +114,7 @@ public:
 	FString FStringQuestID;
 
 	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
+	void StartGameStory();
 
 private:
 	int32 questID = -1;

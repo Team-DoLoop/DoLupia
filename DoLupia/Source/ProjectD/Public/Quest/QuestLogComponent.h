@@ -39,6 +39,9 @@ public:
 
 	FUpdateCurrentActiveQuest UpdateCurrentActiveQuest;
 
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
+
 	UPROPERTY( BlueprintAssignable )
 	FQuestCompleted QuestCompleted;
 

@@ -20,7 +20,7 @@ class PROJECTD_API UTutorialWidget : public UUserWidget
 
 
 public:
-	void ShowTutorialWidget(FTutorialData* _TutoData);
+	void ShowTutorialWidget(FTutorialData* _TutoData, int32 _Index );
 
 	UFUNCTION()
 	void NextTutorialBtn();

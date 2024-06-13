@@ -89,24 +89,27 @@ FTutorialData* UProjectDGameInstance::GetTutorialData(int32 _TutorialID)
 	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
 }
 
-void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType)
+void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _Index)
 {
 	// 첫 데이터 찾기
+	if(_Index != -1) TutorialIndexMap[_ExplainType] = _Index;
 	TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
+	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
 	
 	// 데이터가 있다면
 	if(!TutoData) return;
-	
-	// 확인했다고 튜토리얼임을 저장
-	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex;
+
+	// 확인한 튜토리얼임을 저장
+	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
 
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
 	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
-			PlayerTuto->SetTutorialID(TutorialID);
+			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
+			PlayerTuto->SetExplainIndex(0);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}
 	}
@@ -122,14 +125,25 @@ int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _Ex
 
 FQuestDetails* UProjectDGameInstance::GetQuestData(int32 _QuestID)
 {
-	return QuestTable->FindRow<FQuestDetails>(*FString::FromInt(_QuestID), TEXT(""));
+	return QuestTable->FindRow<FQuestDetails>(*FString::Printf(TEXT("%04d"), _QuestID), TEXT(""));
 }
+
+FQuestDetails* UProjectDGameInstance::GetQuestData(FString _QuestID)
+{
+	return QuestTable->FindRow<FQuestDetails>(FName(*_QuestID), TEXT(""));
+}
+
+FQuestDetails* UProjectDGameInstance::GetQuestData(FName _QuestID)
+{
+	return QuestTable->FindRow<FQuestDetails>(_QuestID, TEXT(""));
+}
+
 
 void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 {
 	if (AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
-		FName _QuestIdName = FName(*FString::FromInt(_QuestID));
+		FName _QuestIdName = FName(*FString::Printf(TEXT("%04d"), _QuestID));
 		UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
 
 		bool ActiveQuest = QuestComp->QueryActiveQuest(_QuestIdName);
