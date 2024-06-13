@@ -40,6 +40,7 @@ enum class EItemType : uint8
 UENUM( BlueprintType )
 enum class ESkillAttribute : uint8
 {
+	NONE UMETA(DisplayName = "None"),
 	CYLINDRICAL UMETA(DisplayName = "Cylindrical"),
 	PRISMATIC UMETA( DisplayName = "Prismatic" ),
 };
