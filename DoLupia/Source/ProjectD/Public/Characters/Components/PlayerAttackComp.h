@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -64,6 +64,7 @@ class PROJECTD_API UPlayerAttackComp : public UActorComponent, public ISkillInte
 public:	
 	// Sets default values for this component's properties
 	UPlayerAttackComp();
+	//~virtual UPlayerAttackComp();
 
 private:
 	

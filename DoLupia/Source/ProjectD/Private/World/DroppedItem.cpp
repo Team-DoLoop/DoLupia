@@ -41,6 +41,9 @@ void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh)
 
 	SphereComponent->SetSphereRadius( FMath::Max3( ItemMesh->Bounds.BoxExtent.X , ItemMesh->Bounds.BoxExtent.Y , ItemMesh->Bounds.BoxExtent.Z ) 
 		* 2.5 / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
+
+	ItemMesh->SetRenderCustomDepth( true );
+	ItemMesh->CustomDepthStencilValue = 1;
 }
 
 // Called when the game starts or when spawned
@@ -66,12 +69,12 @@ void ADroppedItem::BeginPlay()
 
 	FRandomStream RandomStream( Seed );
 
-	/*SpinRotator = FRotator
+	SpinRotator = FRotator
 	(
 		(float)RandomStream.RandRange( 1 , 10 ) * 0.3f,
 		(float)RandomStream.RandRange( 1 , 10 ) * 0.3f ,
 		(float)RandomStream.RandRange( 1 , 10 ) * 0.3f
-	);*/
+	);
 
 	ActorSpeed = UBezierMovementLibrary::VectorSeed( this );
 

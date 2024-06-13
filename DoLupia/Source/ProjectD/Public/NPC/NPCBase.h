@@ -15,7 +15,7 @@ class UQuestGiver;
 class UNPCAnim;
 class APlayerGameMode;
 class UAIConnectionLibrary;
-
+class UMapIconComponent;
 
 UCLASS()
 class PROJECTD_API ANPCBase : public ACharacter , public IQuestInteractionInterface
@@ -102,7 +102,8 @@ public:
 	/*---------------------- NPC Hide ------------------*/
 	void HideNPC();
 
-
-
+	/*---------------------- Minimap ------------------*/
+	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	class UMapIconComponent* MapIcon;
 
 };

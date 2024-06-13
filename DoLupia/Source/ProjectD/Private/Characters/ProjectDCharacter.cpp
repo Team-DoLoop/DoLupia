@@ -22,6 +22,7 @@
 // engine
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "TransformConstraint.h"
 #include "AI/NavigationSystemBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -53,6 +54,8 @@
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
 
+#include "MapIconComponent.h"
+#include "MapViewComponent.h"
 
 AProjectDCharacter::AProjectDCharacter()
 {
@@ -144,6 +147,27 @@ AProjectDCharacter::AProjectDCharacter()
 
 	// Dialog
 	//bIsDialogueEnabled = true;
+
+	//minimap
+	// MapIconComponent makes the character appear on the minimap
+	static ConstructorHelpers::FObjectFinder<UTexture2D> PlayerIcon( TEXT( "/MinimapPlugin/Textures/Icons/T_Icon_Placeholder" ) );
+	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
+	MapIcon->SetupAttachment( GetRootComponent() );
+	// Set the player icon as texture
+	MapIcon->SetIconTexture( PlayerIcon.Object );
+	// The icon will rotate to represent the character's rotation
+	MapIcon->SetIconRotates( true );
+
+	// MapViewComponent allows the minimap to follow the character
+	MapView = CreateDefaultSubobject<UMapViewComponent>( TEXT( "MapView" ) );
+	MapView->SetupAttachment( GetRootComponent() );
+	// How far the player can see on the minimap. Change during gameplay to apply zooming. Aspect ratio must match the minimap widget's aspect ratio.
+	MapView->SetViewExtent( 1024.f , 1024.f );
+	// Whether the minimap should rotate with the player. Set to false for fixed rotation minimap.
+	MapView->RotationMode = EMapViewRotationMode::InheritYaw;
+	// The angle that represents north
+	MapView->InheritedYawOffset = 90.0f;
+	
 }
 
 void AProjectDCharacter::BeginPlay()
@@ -497,11 +521,18 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
-		FRotator BoxRotation = GetActorRotation();
-		FVector BoxHalfSize = FVector( 200 , 200 , 200 );
+		//FRotator BoxRotation = GetActorRotation();
+		//FVector BoxHalfSize = FVector( 200 , 200 , 200 );
+		FRotator BoxRotation = FRotator::ZeroRotator;
+		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
+
 
 		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
+			AActor* HitActor = TraceHit.GetActor();
+
+			//if (!HitActor) return;
+
 			FString name = TraceHit.GetActor()->GetName();
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
 			{
@@ -523,6 +554,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 				//InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
 			}
+
 			// NPC 인터페이스 검사
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
@@ -622,6 +654,7 @@ void AProjectDCharacter::BeginInteract()
 			}
 		}
 	}
+
 	//퀘스트 액터 확인
 	if (LookAtActor && LookAtActor->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 	{
@@ -632,11 +665,9 @@ void AProjectDCharacter::BeginInteract()
 
 			if (npc)
 			{
-				UE_LOG( LogTemp , Error , TEXT( "NPC-TEST" ) );
 				AQuestAcceptNPC* Questnpc = Cast<AQuestAcceptNPC>( LookAtActor );
 				if(Questnpc)
 				{
-					UE_LOG( LogTemp , Error , TEXT( "QUESTNPC-TEST" ) );
 					const FString& ActorObjectID = QuestInterface->InteractWith();
 					//캐릭터가 베이스 한테
 					OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );

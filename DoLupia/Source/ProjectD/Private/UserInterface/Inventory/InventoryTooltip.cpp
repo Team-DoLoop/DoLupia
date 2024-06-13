@@ -52,6 +52,26 @@ void UInventoryTooltip::SetupTooltip()
 	default:;
 	}
 
+	switch (ItemBeingHovered->GetItemQuality())
+	{
+	case EItemQuality::Shoddy:
+		ItemQuality->SetText( FText::FromString( L"일반" ) );
+		break;
+	case EItemQuality::Common:
+		ItemQuality->SetText( FText::FromString( L"고급" ) );
+		break;
+	case EItemQuality::Quality:
+		ItemQuality->SetText( FText::FromString( L"희귀" ) );
+		break;
+	case EItemQuality::Masterwork:
+		ItemQuality->SetText( FText::FromString( L"전설" ) );
+		break;
+	case EItemQuality::Grandmaster:
+		ItemQuality->SetText( FText::FromString( L"유물" ) );
+		break;
+	}
+
+
 	const FItemTextData& TextData = ItemBeingHovered->GetTextData();
 	const FItemStatistics& ItemStatistics = ItemBeingHovered->GetItemStatistics();
 	const FItemNumericData& NumericData = ItemBeingHovered->GetNumericData();
@@ -67,13 +87,13 @@ void UInventoryTooltip::SetupTooltip()
 		? ItemBeingHovered->GetItemStackWeight()
 		: ItemBeingHovered->GetItemSingleWeight();
 
-	const FString& WeightInfo = FString::Printf( TEXT( "L무게 : %.2f" ) , Weight );
+	const FString& WeightInfo = FString::Printf( TEXT( "무게 : %.2f" ) , Weight );
 
 	StackWeight->SetText( FText::FromString( WeightInfo ) );
 
 	if (NumericData.bIsStackable)
 	{
-		const FString& StackInfo = FString::Printf( TEXT( "L아이템 최대 소유량 : %d" ) , NumericData.MaxStackSize );
+		const FString& StackInfo = FString::Printf( TEXT( "아이템 최대 소유량 : %d" ) , NumericData.MaxStackSize );
 		MaxStackSize->SetText( FText::FromString( StackInfo ) );
 	}
 	else

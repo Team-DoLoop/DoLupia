@@ -29,13 +29,13 @@
 			"Enabled": true
 		},
 		{
-			"Name": "OctopusBackpack",
-			"Enabled": true,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/d83d83a0334646018f1eaddb8b5b0afc"
-		},
-		{
 			"Name": "ApexDestruction",
 			"Enabled": true
+		},
+		{
+			"Name": "MinimapPlugin",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/ad08325742e24fb0836391bca25c72bb"
 		}
 	]
 }

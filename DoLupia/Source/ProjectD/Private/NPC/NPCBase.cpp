@@ -17,6 +17,8 @@
 #include "Quest/Dialogsystem/DialogComponent.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
 
+#include "MapIconComponent.h"
+
 // Sets default values
 ANPCBase::ANPCBase()
 {
@@ -35,6 +37,18 @@ ANPCBase::ANPCBase()
 	this->SetActorScale3D( FVector(1.5f, 1.5f, 1.5f) );
 	// Post Process depth 설정값
 	//GetMesh()->SetRenderCustomDepth( true );
+	
+	//minimap icon
+	// MapIconComponent makes the character appear on the minimap
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/request_icon" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/speech-bubble" ) );
+	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
+	MapIcon->SetupAttachment( GetRootComponent() );
+	// Set the player icon as texture
+	MapIcon->SetIconTexture( QuestRewardsIcon.Object );
+	// The icon will rotate to represent the character's rotation
+	MapIcon->SetIconRotates( false );
+	//MapIcon->SetIconVisible( false );
 }
 
 // Called when the game starts or when spawned

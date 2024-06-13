@@ -105,18 +105,6 @@ public:
 
 	bool GetRandomPositionInNavMesh( FVector centerLocation , float radius , FVector& dest );
 
-	//퀘스트 이넘 타입 스트링으로 변환하는 함수
-	FString EnumToString( EMonsterType EnumValue )
-	{
-		const UEnum* EnumPtr = FindObject<UEnum>( ANY_PACKAGE , TEXT( "EMonsterType" ) , true );
-		if (!EnumPtr)
-		{
-			return FString( "Invalid" );
-		}
-
-		return EnumPtr->GetDisplayNameTextByValue( static_cast<int64>(EnumValue) ).ToString();
-	}
-
 protected:
 	// 아이템 스포너
 	UPROPERTY(EditAnywhere)
