@@ -78,7 +78,8 @@ void UPlayerAttackComp::BeginPlay()
 
 	CantSkill.SetNum(5);
 	for(int i = 0; i < CantSkill.Num(); i++) CantSkill[i] = new FSkillInfo();
-	
+
+	// 여기 누수나는 코드
 	AutoSkill = new FSkillInfo();
 	RedQSkill = new FSkillInfo();
 	RedWSkill = new FSkillInfo();
