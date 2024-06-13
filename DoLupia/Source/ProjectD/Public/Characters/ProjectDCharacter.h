@@ -351,11 +351,6 @@ public:
 	// <---------------------- MiniMap ---------------------->
 
 private:
-	/*	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
-	class USpringArmComponent* CameraBoom;
-	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
-	class UCameraComponent* FollowCamera;*/
-
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapViewComponent* MapView;
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
