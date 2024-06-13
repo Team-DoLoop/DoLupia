@@ -7,6 +7,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
 #include "Data/WidgetData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "NPC/NPCBase.h"
 #include "Quest/QuestGiver.h"
@@ -99,6 +100,12 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 			DialogueWidget->RemoveFromParent();
 		}
+
+		// PlaeyerCamera 원상복귀
+		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		float LvCamlength = gm->PlayerCameraboom;
+		gm->LerpPlayerCameraLength( LvCamlength );
+
 		return;
 	}
 

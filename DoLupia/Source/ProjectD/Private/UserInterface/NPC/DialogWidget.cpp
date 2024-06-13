@@ -55,8 +55,16 @@ void UDialogWidget::OnNxtBtnClicked()
         UDialogComponent* DialogueComponent = CurrentNPC->FindComponentByClass<UDialogComponent>();
         if (DialogueComponent)
         {
-            DialogueComponent->AdvanceDialog();
-            ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D(clickSFX, ENPCSound::NPCSound1, 0.25f);
+            if (IsTyping())
+            {
+                SkipTypingAnimation();
+            }
+        	else
+            {
+                DialogueComponent->AdvanceDialog();
+                ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( clickSFX , ENPCSound::NPCSound1 , 0.25f );
+            }
+            
         }
     }
 }
@@ -74,4 +82,18 @@ void UDialogWidget::TypeNextCharacter()
         // Stop the timer once the full text is displayed
         GetWorld()->GetTimerManager().ClearTimer( TypingTimerHandle );
     }
+}
+
+void UDialogWidget::SkipTypingAnimation()
+{
+    // Stop the typing timer to display full text immediately
+    GetWorld()->GetTimerManager().ClearTimer( TypingTimerHandle );
+
+    // Show full text
+    txt_dialog->SetText( FullText );
+}
+
+bool UDialogWidget::IsTyping() const
+{
+    return TypingTimerHandle.IsValid();
 }

@@ -24,6 +24,9 @@ class UAIConnectionLibrary;
 class UNPCConvWidget; 
 class UAITestWidget;
 class ALevelManager;
+class USpringArmComponent;
+class UTimelineComponent;
+class UCurveFloat;
 
 enum class ESaveType;
 
@@ -41,31 +44,20 @@ public:
 	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 
-	class UAIConnectionLibrary* GetAIConnectionLibrary() const;
-
-	void InitializeNPCConvWidget();
-	void ReceiveNPCMsg(FString msg);
+	UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	// 2024.05.26 Player / Boss 텍스처 변경 분기처리
 	void ApplyAITxtP();
 	void ApplyAITxtB();
 
-	UPROPERTY( BlueprintReadOnly )
-	class UNPCConvWidget* NPCConvUI;
-
-	UPROPERTY( BlueprintReadOnly )
-	class UAITestWidget* AITestUI;
-
-
 private:
 	UPROPERTY()
 	TArray<FName> LevelNames;
 
-	UPROPERTY( EditDefaultsOnly )
-	class UAIConnectionLibrary* AIlib;
+	int32 LevelIdx;
 
 	UPROPERTY( EditDefaultsOnly )
-	TSubclassOf<class UUserWidget> NPCUIFactory;
+	UAIConnectionLibrary* AIlib;
 
 	/*---------- Level 별 bgm ----------*/
 public:
@@ -78,9 +70,6 @@ protected:
 
 	UPROPERTY( Transient )
 	USoundBase* CurrentBGM;
-
-private:
-	int32 LevelIdx;
 
 	/*---------- Level Open ----------*/
 public:
@@ -126,4 +115,30 @@ public:
 
 	/*---------- Level Portal Trigger --------*/
 	void ActiveLvTrigger();
+
+	/*---------- Camera lerp --------*/
+public:
+	void LerpPlayerCameraLength( float NewTargetArmLength );
+
+private:
+	UPROPERTY()
+	USpringArmComponent* CameraBoom;
+
+	// lerp 적용
+	UPROPERTY()
+	UTimelineComponent* TimelineComp;
+
+	float InitialArmLength;
+	float NewTargetArmLength;
+
+	UFUNCTION()
+	void HandleTimelineProgress( float Value );
+
+	UFUNCTION()
+	void OnTimelineFinished();
+
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	UCurveFloat* PlayerCamCurve;
+
+
 };

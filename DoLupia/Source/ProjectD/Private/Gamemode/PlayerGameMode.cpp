@@ -48,6 +48,9 @@ APlayerGameMode::APlayerGameMode()
 	LevelNames.Add( TEXT( "GameLv1" ) );
 	LevelNames.Add( TEXT( "GameLv2" ) );
 	LevelNames.Add( TEXT( "GameLv3" ) );
+
+	TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComp" ) );
+
 }
 
 void APlayerGameMode::StartPlay()
@@ -104,25 +107,24 @@ void APlayerGameMode::BeginPlay()
 
 	PlayBGMForLevel( LevelIdx );
 	SetPlayerCameraboom( PlayerCameraboom );
+
+	// Camera lerp settings
+	if(PlayerCamCurve)
+	{
+		FOnTimelineFloat ProgressFunction;
+		ProgressFunction.BindUFunction( this , FName( "HandleTimelineProgress" ) );
+		TimelineComp->AddInterpFloat( PlayerCamCurve , ProgressFunction );
+
+		FOnTimelineEvent TimelineFinishedFunction;
+		TimelineFinishedFunction.BindUFunction( this , FName( "OnTimelineFinished" ) );
+		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
+	}
+
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
 {
 	return AIlib;
-}
-
-void APlayerGameMode::InitializeNPCConvWidget()
-{
-	NPCConvUI = CreateWidget<UNPCConvWidget>( GetWorld() , NPCUIFactory );
-	if (NPCConvUI)
-	{
-		NPCConvUI->AddToViewport(); 
-	}
-}
-
-void APlayerGameMode::ReceiveNPCMsg( FString msg )
-{
-	NPCConvUI->SetupNPCConv( msg );
 }
 
 void APlayerGameMode::ApplyAITxtP()
@@ -173,7 +175,6 @@ void APlayerGameMode::SetPlayerCameraboom(float camboom)
 	// Player Load
 	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
-	// 플레이어 쪽에서 카메라 설정값 셋팅하는 함수나, camera 변수 public 으로 바꿔줘야 겜모에서 변경 가능
 	player->GetCameraBoom()->TargetArmLength = camboom ;
 }
 
@@ -203,15 +204,13 @@ void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
 	// 퀘스트 2003 완료 시, 자동으로 2004 퀘스트 받음
 	for (TActorIterator<AAutoQuestAcceptActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
-		// Call the function on the actor
 		ActorItr->GiveQuest();
 		AIlib->SendPImgToSrv( 2004 );
 	}
 
-	// 옆에 벽 터지도록하는 코드 들어갈 예정
+	// Quest2004 생성 시, 벽 부숴지는 이벤트 발생
 	for (TActorIterator<ADestructableWallActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
-		// Call the function on the actor
 		ActorItr->ExplosionWalls();
 	}
 
@@ -255,4 +254,33 @@ void APlayerGameMode::ActiveLvTrigger()
 		// Call the function on the actor
 		ActorItr->ShowTrigger();
 	}
+}
+
+void APlayerGameMode::LerpPlayerCameraLength(float TargetArmLength)
+{
+	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	if (player)
+	{
+		CameraBoom = player->GetCameraBoom();
+		if (CameraBoom)
+		{
+			InitialArmLength = CameraBoom->TargetArmLength;
+			NewTargetArmLength = TargetArmLength;
+
+			TimelineComp->PlayFromStart();
+		}
+	}
+}
+
+void APlayerGameMode::HandleTimelineProgress(float Value)
+{
+	if (CameraBoom)
+	{
+		float Newcamlength = FMath::Lerp( InitialArmLength , NewTargetArmLength , Value );
+		CameraBoom->TargetArmLength = Newcamlength;
+	}
+}
+
+void APlayerGameMode::OnTimelineFinished()
+{
 }

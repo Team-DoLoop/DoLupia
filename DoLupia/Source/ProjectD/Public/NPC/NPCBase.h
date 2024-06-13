@@ -45,7 +45,8 @@ private:
 	UPROPERTY()
 	UAIConnectionLibrary* AIlib;
 
-	/*-----------  AI Chatbot 연동  -----------*/
+	/*-----------  AI Chatbot 연동 >> 사용 안하는 기능  -----------*/
+	/*
 private:
 	FString NPCConversation;
 
@@ -54,6 +55,7 @@ private:
 
 	UFUNCTION()
 	void CallNPCMessageDelegate( FString Message );
+	*/
 
 	/*-----------  Dialog Component  -----------*/
 public:
@@ -78,6 +80,8 @@ public:
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
+
+	
 
 	/*---------------------- Post Process Depth ------------------*/
 public:
