@@ -22,6 +22,7 @@
 // engine
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "TransformConstraint.h"
 #include "AI/NavigationSystemBase.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -497,14 +498,17 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
-		FRotator BoxRotation = GetActorRotation();
-		FVector BoxHalfSize = FVector( 200 , 200 , 200 );
+		//FRotator BoxRotation = GetActorRotation();
+		//FVector BoxHalfSize = FVector( 200 , 200 , 200 );
+		FRotator BoxRotation = FRotator::ZeroRotator;
+		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
+
 
 		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			AActor* HitActor = TraceHit.GetActor();
 
-			if (!HitActor) return;
+			//if (!HitActor) return;
 
 			FString name = TraceHit.GetActor()->GetName();
 			if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
@@ -527,6 +531,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 				//InteractWidgetRemove();
 				//UE_LOG( LogTemp , Warning , TEXT( "LookatActor : nullptr" ) );
 			}
+
 			// NPC 인터페이스 검사
 			if (TraceHit.GetActor()->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 			{
@@ -626,6 +631,7 @@ void AProjectDCharacter::BeginInteract()
 			}
 		}
 	}
+
 	//퀘스트 액터 확인
 	if (LookAtActor && LookAtActor->GetClass()->ImplementsInterface( UQuestInteractionInterface::StaticClass() ))
 	{
@@ -636,11 +642,9 @@ void AProjectDCharacter::BeginInteract()
 
 			if (npc)
 			{
-				UE_LOG( LogTemp , Error , TEXT( "NPC-TEST" ) );
 				AQuestAcceptNPC* Questnpc = Cast<AQuestAcceptNPC>( LookAtActor );
 				if(Questnpc)
 				{
-					UE_LOG( LogTemp , Error , TEXT( "QUESTNPC-TEST" ) );
 					const FString& ActorObjectID = QuestInterface->InteractWith();
 					//캐릭터가 베이스 한테
 					OnObjectiveIDCalled.Broadcast( ActorObjectID , 1 );
