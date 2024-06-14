@@ -9,6 +9,7 @@
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
 #include "Data/TutorialData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Items/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
@@ -123,12 +124,16 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	
 	// 만약 아이템을 제공하는 튜토리얼이었다면
 	if(_TutoData->TutorialItem.IsGiveItem)
-		Player->GetTutorialComp()->CreateItem(_TutoData->TutorialItem.GiveItem,_TutoData->TutorialItem.GiveItemQuantity);
+		CreateItem(_TutoData->TutorialItem.GiveItem,_TutoData->TutorialItem.GiveItemQuantity);
 
 	// 퀘스트와 연관된 튜토리얼이라면
 	if(_TutoData->TutorialQuest.IsQuest)
-		Player->GetTutorialComp()->StartQuest(_TutoData->TutorialQuest.QuestID);
+		StartQuest(_TutoData->TutorialQuest.QuestID);
 
+	// 트리거 관련된 튜토리얼이라면
+	if(_TutoData->TutorialTrigger.IsTrigger)
+		StartTrigger(_TutoData->TutorialTrigger.TriggerID);
+	
 	TutoData = nullptr;
 }
 
@@ -138,7 +143,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 void UPlayerTutorialComp::StartQuest(int32 _QuestID)
 {
 	if(!GI) return;
-
+	
 	GI->GiveQuest(_QuestID);
 }
 
@@ -158,6 +163,24 @@ void UPlayerTutorialComp::CreateItem(ETutoItemType _TutoItemType, int32 _Quantit
 
 		ItemReference->CreateItemCopy(ItemData, _Quantity);
 		InventoryComp->HandelAddItem( ItemReference);
+	}
+}
+
+
+// <----------------------------- Item ----------------------------->
+
+void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
+{
+	// 포탈
+	if(_TriggerID == 1)
+	{
+		GM->ActiveLvTrigger();
+	}
+
+	// 맵2 연출
+	else if(_TriggerID == 1)
+	{
+		
 	}
 }
 

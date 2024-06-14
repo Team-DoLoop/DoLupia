@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTutorialComp.generated.h"
 
+class APlayerGameMode;
 class UPlayerFSMComp;
 class UInventoryComponent;
 class UProjectDGameInstance;
@@ -52,6 +53,10 @@ private:
 	UPROPERTY()
 	UProjectDGameInstance* GI;
 
+	UPROPERTY()
+	APlayerGameMode* GM;
+
+
 	
 
 	// <----------------------------- Tutorial Data ----------------------------->
@@ -96,4 +101,12 @@ public:
 	
 private:
 	TMap<ETutoItemType, FString> ItemIdData;
+
+
+
+	// <----------------------------- Trigger ----------------------------->
+public:
+	void StartTrigger(int32 _TriggerID);
+
+	
 };

@@ -93,6 +93,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 {
 	// 첫 데이터 찾기
 	if(_Index != -1) TutorialIndexMap[_ExplainType] = _Index;
+	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap1 : %d "), TutorialIndexMap[_ExplainType]);
 	TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
 	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
@@ -102,6 +103,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 
 	// 확인한 튜토리얼임을 저장
 	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
+	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap2 : %d "), TutorialIndexMap[_ExplainType]);
 
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
 	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
