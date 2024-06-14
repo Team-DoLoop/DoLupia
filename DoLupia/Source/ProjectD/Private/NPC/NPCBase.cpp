@@ -74,7 +74,15 @@ void ANPCBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
-
+	if (NPCInteractWidget)
+	{
+		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}
+	else
+	{
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}
 }
 
 void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
@@ -176,5 +184,6 @@ void ANPCBase::ChangePlayerState()
 void ANPCBase::HideNPC()
 {
 	this->SetActorHiddenInGame( true );
+	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
 }
 
