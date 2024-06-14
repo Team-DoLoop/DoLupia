@@ -124,6 +124,8 @@ void AProjectDPlayerController::SetupInputComponent()
 
 		// Test
 		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
+		
+		EnhancedInputComponent->BindAction(ToToAction, ETriggerEvent::Started, this, &AProjectDPlayerController::StartToToStory);							// ToTo
 	}
 	else
 	{
@@ -164,21 +166,13 @@ void AProjectDPlayerController::TestAnyFunction()
 	*/
 
 	// 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
-	if(TestCount == 0)
-	{
+
 		ControlledCharacter->GetAttackComp()->SetSkillUseState(true, QUEST);
 
 		// 각 색깔 열리게
 		ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
 		ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
 		ControlledCharacter->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
-		TestCount++;
-	}
-
-	else
-	{
-		ControlledCharacter->GetTutorialComp()->NextTutorial();
-	}
 
 	// ControlledCharacter->TakeEffectAttackHit(EEffectAttackType::ELECTRIC);
 }
@@ -357,4 +351,12 @@ void AProjectDPlayerController::QuestLogMenu()
 	{
 		QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
 	}
+}
+
+
+// <---------------------- Tutorial ---------------------->
+
+void AProjectDPlayerController::StartToToStory()
+{
+	ControlledCharacter->GetTutorialComp()->NextTutorial();
 }

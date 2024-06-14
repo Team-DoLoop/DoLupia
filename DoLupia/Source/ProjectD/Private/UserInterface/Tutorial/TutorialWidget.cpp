@@ -20,7 +20,7 @@ void UTutorialWidget::NativeOnInitialized()
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	PlayerTutorialComp = Player->GetTutorialComp();
 
-	Btn_Next->OnClicked.AddDynamic(this, &UTutorialWidget::NextTutorialBtn);
+	// Btn_Next->OnClicked.AddDynamic(this, &UTutorialWidget::NextTutorialBtn);
 }
 
 void UTutorialWidget::NativeConstruct()
@@ -36,7 +36,7 @@ void UTutorialWidget::ShowTutorialWidget(FTutorialData* _TutoData, int32 _Index)
 	if(!_TutoData) return;
 	
 	UE_LOG(LogTemp, Log, TEXT("ShowTutorialWidget TutoData Index : %d"), _Index);
-	
+		
 	// 데이터로 세팅
 	FText ExplainText = FText::FromString(_TutoData->TutorialWidgetData.StoryExplainText[_Index]);
 	TXT_Explain->SetText(ExplainText);

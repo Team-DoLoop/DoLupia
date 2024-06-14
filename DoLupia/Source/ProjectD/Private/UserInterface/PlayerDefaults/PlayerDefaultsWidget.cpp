@@ -48,7 +48,7 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	Player->GetAttackComp()->InitSkillUI();
 	Player->GetTutorialComp()->SetDefaultUI(this);
 	
-	// HideTutorialWidget();
+	 HideTutorialWidget();
 	
 	APlayerGameMode* gm = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	gm->StartGameStory();

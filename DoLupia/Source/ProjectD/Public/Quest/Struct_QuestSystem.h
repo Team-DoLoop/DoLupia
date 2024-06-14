@@ -139,4 +139,7 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FStoryDetails AutoStory;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	FString NextQuestID;
 };
