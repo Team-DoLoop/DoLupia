@@ -64,6 +64,7 @@ private:
 	// <----------------------------- Tutorial UI ----------------------------->
 public:
 	void SetTutorialUI(FTutorialData* _TutoData);
+	void PressNextTutorial();
 	void NextTutorial();
 	void EndTutorial(FTutorialData* _TutoData);
 

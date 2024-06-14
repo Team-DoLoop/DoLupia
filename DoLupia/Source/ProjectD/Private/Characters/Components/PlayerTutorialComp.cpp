@@ -76,22 +76,25 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 	}
 }
 
+void UPlayerTutorialComp::PressNextTutorial()
+{
+	// 버튼 누른 경우 UI 세팅 -> 만약 두번째 눌렀다면 UI 에서 NextTutorial() 호출 -> ShowTutorialWidget
+	if(!GI || !TutoData) return;
+	
+	// auto _TutoData = GI->GetTutorialData(TutorialID);
+	DefaultUI->NextTutorial();
+}
+
 void UPlayerTutorialComp::NextTutorial()
 {
-	if(!GI || !TutoData) return;
-
 	ExplainIndex = ExplainIndex + 1;
 	if(TutoData->TutorialWidgetData.StoryExplainText.Num() == ExplainIndex)
 	{
 		EndTutorial(TutoData);
 		return;
 	}
-	
-	// auto _TutoData = GI->GetTutorialData(TutorialID);
-	if(TutoData)
-	{
-		SetTutorialUI(TutoData);
-	}
+
+	DefaultUI->ShowTutorialWidget(TutoData, ExplainIndex);
 }
 
 void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
