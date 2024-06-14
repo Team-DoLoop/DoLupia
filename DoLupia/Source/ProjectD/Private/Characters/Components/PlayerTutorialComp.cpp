@@ -94,6 +94,8 @@ void UPlayerTutorialComp::PressNextTutorial()
 
 void UPlayerTutorialComp::NextTutorial()
 {
+	if(!TutoData) return;
+	
 	ExplainIndex = ExplainIndex + 1;
 	if(TutoData->TutorialWidgetData.StoryExplainText.Num() == ExplainIndex)
 	{
@@ -126,6 +128,8 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	// 퀘스트와 연관된 튜토리얼이라면
 	if(_TutoData->TutorialQuest.IsQuest)
 		Player->GetTutorialComp()->StartQuest(_TutoData->TutorialQuest.QuestID);
+
+	TutoData = nullptr;
 }
 
 
