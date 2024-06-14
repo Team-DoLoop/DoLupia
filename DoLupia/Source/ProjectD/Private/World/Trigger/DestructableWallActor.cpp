@@ -2,6 +2,8 @@
 
 
 #include "World/Trigger/DestructableWallActor.h"
+
+#include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 
 // Sets default values
@@ -11,16 +13,19 @@ ADestructableWallActor::ADestructableWallActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	DestructableWallComp = CreateDefaultSubobject<UGeometryCollectionComponent>( TEXT( "DestructableWallComp" ) );
-	DestructableWallComp->SetupAttachment( RootComponent );
+	RootComponent = DestructableWallComp;
+
+	BoxComp = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComp" ) );
+	BoxComp->SetupAttachment( RootComponent );
 
 	DestructableWallComp->SetSimulatePhysics( false );
+	BoxComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 }
 
 // Called when the game starts or when spawned
 void ADestructableWallActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -33,6 +38,6 @@ void ADestructableWallActor::Tick(float DeltaTime)
 void ADestructableWallActor::ExplosionWalls()
 {
 	DestructableWallComp->SetSimulatePhysics( true );
-	//DestructableWallComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 
