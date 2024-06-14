@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTutorialComp.generated.h"
 
+class UPlayerFSMComp;
 class UInventoryComponent;
 class UProjectDGameInstance;
 class UPlayerDefaultsWidget;
@@ -44,6 +45,9 @@ private:
 
 	UPROPERTY()
 	UInventoryComponent* InventoryComp;
+
+	UPROPERTY()
+	UPlayerFSMComp* PlayerFSMComp;
 
 	UPROPERTY()
 	UProjectDGameInstance* GI;

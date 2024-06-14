@@ -86,6 +86,9 @@ void UTutorialWidget::SetVisibleTabImage(bool IsVisible)
 	{
 		Img_Tab_Bottom->SetVisibility(ESlateVisibility::Visible);
 		Img_Tab->SetVisibility(ESlateVisibility::Visible);
+
+		// WidgetAnimation, StartAtTime, NumLoopsToPlay(0 = Loop), EUMGSequencePlayMode, PlaybackSpeed, bRestoreState
+		PlayAnimation(TabPressAnim, 0, 0, EUMGSequencePlayMode::Forward, 2, true);
 	}
 	else
 	{
@@ -107,6 +110,7 @@ void UTutorialWidget::TypeNextCharacter()
 	}
 	else
 	{
+		SetVisibleTabImage(true);
 		GetWorld()->GetTimerManager().ClearTimer( ToToTypingTimerHandle );
 	}
 }
@@ -119,9 +123,7 @@ void UTutorialWidget::SkipTypingAnimation()
 	// Show full text
 	TXT_Explain->SetText( FullText );
 	
-	// WidgetAnimation, StartAtTime, NumLoopsToPlay(0 = Loop), EUMGSequencePlayMode, PlaybackSpeed, bRestoreState
 	SetVisibleTabImage(true);
-	PlayAnimation(TabPressAnim, 0, 0, EUMGSequencePlayMode::Forward, 2, true);
 }
 
 bool UTutorialWidget::IsTyping() const

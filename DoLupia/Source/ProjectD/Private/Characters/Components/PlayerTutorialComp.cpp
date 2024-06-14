@@ -6,6 +6,7 @@
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
 #include "Data/TutorialData.h"
 #include "Items/ItemBase.h"
@@ -36,6 +37,7 @@ void UPlayerTutorialComp::BeginPlay()
 	if(Player)
 	{
 		InventoryComp = Cast<UInventoryComponent>( Player->GetComponentByClass( UInventoryComponent::StaticClass() ) );
+		PlayerFSMComp = Player->GetPlayerFSMComp();
 	}
 
 	
@@ -69,6 +71,11 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 		if(ExplainIndex == 0)
 		{
 			// DefaultUI->ChangeNextBtn(NextString);
+			if(_TutoData->ExplainType == EExplainType::MAIN_STORY && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
+			{
+				PlayerFSMComp->ChangePlayerState(EPlayerState::TALK_NPC);
+			}
+			
 			TutoData = _TutoData;
 		}
 		
@@ -105,6 +112,12 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	DefaultUI->HideTutorialWidget();
 
 	if(!_TutoData) return;
+
+	// MAIN_STORY 였다면 Idle로 돌려놓기
+	if(_TutoData->ExplainType == EExplainType::MAIN_STORY)
+	{
+		PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+	}
 	
 	// 만약 아이템을 제공하는 튜토리얼이었다면
 	if(_TutoData->TutorialItem.IsGiveItem)
