@@ -39,9 +39,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString ObjectiveID;
 
-	UPROPERTY( EditAnywhere , BlueprintReadWrite )
-	UNiagaraComponent* locationVFX;
-
 	/*---------------------- Minimap ------------------*/
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
