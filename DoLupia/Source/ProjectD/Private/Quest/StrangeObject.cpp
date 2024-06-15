@@ -33,8 +33,6 @@ AStrangeObject::AStrangeObject()
 void AStrangeObject::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ChangeObjectOutline( 1 );
 }
 
 // Called every frame
@@ -72,14 +70,5 @@ FString AStrangeObject::InteractWith()
 {
 	//QuestData 에 있는 Objective ID와 같아야함.
 	return ObjectID;
-}
-
-void AStrangeObject::ChangeObjectOutline(int32 depth)
-{
-	if (MeshComponent)
-	{
-		MeshComponent->SetRenderCustomDepth( true );
-		MeshComponent->CustomDepthStencilValue = depth;
-	}
 }
 

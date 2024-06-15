@@ -91,22 +91,29 @@ public:
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	int32 GetQuestID() const;
 
-	// Setter 함수 선언
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetQuestID( int32 NewQuestID );
 
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	FString GetStringQuestID();
+
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetStringQuestID( FString QuestID );
 
-	FString FStringQuestID;
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	FString GetNxtQuestID() const;
+
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetNxtQuestID( FString nextquestID );
+
+	FString FStringQuestID = "";
 
 	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
 	void StartGameStory();
 
 private:
 	int32 questID = -1;
+	FString NextquestID ;
 
 	/*---------- Level Location Title Widget --------*/
 
@@ -144,5 +151,9 @@ private:
 	UPROPERTY( EditAnywhere , Category = "Timeline" )
 	UCurveFloat* PlayerCamCurve;
 
+	/*---------- Quest, Dialog <> NPC, Minigame --------*/
+	void FindNextNPC();
+
+	void FindMiniGame();
 
 };

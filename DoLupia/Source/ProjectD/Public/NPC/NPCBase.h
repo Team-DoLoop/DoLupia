@@ -81,15 +81,9 @@ private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
 
-	
-
 	/*---------------------- Post Process Depth ------------------*/
 public:
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "PostProcess" )
-	int32 stencilDepth = 0 ;
-
-private:
-	void ChangeNPCStatus( int32 depth );
+	void ChangeNPCColor( int32 depth );
 
 	/*-------------------- Interaction Widget ---------------------*/
 public:
@@ -109,5 +103,11 @@ public:
 	/*---------------------- Minimap ------------------*/
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
+
+	/*-------------------- NPC State ---------------------*/
+	FString GetNxtQuestID() const;
+
+	UPROPERTY( BlueprintReadWrite,  EditAnywhere , Category = "Dialog" )
+	FString NxtQuestID = "";
 
 };

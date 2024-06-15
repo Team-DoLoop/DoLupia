@@ -49,8 +49,6 @@ public:
 
 	virtual FString InteractWith() override;
 
-	void ChangeObjectOutline( int32 depth );
-
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
 
