@@ -96,6 +96,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap1 : %d "), TutorialIndexMap[_ExplainType]);
 
 	if(_TutorialID != -1) TutorialID = _TutorialID;
+	
 	else TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
 	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
@@ -116,6 +117,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	
 	// 확인한 튜토리얼임을 저장
 	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
+
 	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap2 : %d "), TutorialIndexMap[_ExplainType]);
 }
 
