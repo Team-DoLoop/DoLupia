@@ -27,7 +27,7 @@ class ALevelManager;
 class USpringArmComponent;
 class UTimelineComponent;
 class UCurveFloat;
-
+class AProjectDCharacter;
 enum class ESaveType;
 
 /**
@@ -53,7 +53,10 @@ public:
 private:
 	UPROPERTY()
 	class UProjectDGameInstance* GI;
-	
+
+	UPROPERTY()
+	class AProjectDCharacter* Player;
+
 	UPROPERTY()
 	TArray<FName> LevelNames;
 
@@ -108,7 +111,7 @@ public:
 
 	FString FStringQuestID = "";
 
-	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
+	void HandleIntrusionEvent();
 	void StartGameStory();
 
 private:
@@ -152,8 +155,8 @@ private:
 	UCurveFloat* PlayerCamCurve;
 
 	/*---------- Quest, Dialog <> NPC, Minigame --------*/
+private:
 	void FindNextNPC();
-
 	void FindMiniGame();
 
 };

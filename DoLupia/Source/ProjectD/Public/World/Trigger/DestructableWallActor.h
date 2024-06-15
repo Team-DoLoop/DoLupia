@@ -34,6 +34,9 @@ private:
 
 	UPROPERTY( EditAnywhere )
 	UBoxComponent* BoxComp;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* ExplosionSFX;
 	
 
 };
