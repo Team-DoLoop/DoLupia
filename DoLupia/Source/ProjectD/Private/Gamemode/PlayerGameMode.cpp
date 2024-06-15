@@ -7,21 +7,19 @@
 #include "Characters/ProjectDCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Library/AIConnectionLibrary.h"
-#include "UserInterface/NPC/NPCConvWidget.h"
-#include "UserInterface/Test/AITestWidget.h"
 #include  "UserInterface/Event/LocationTitleWidget.h"
 #include "Components/TextBlock.h"
-#include "AI/AITxtPlayer.h"
 #include "Data/WidgetData.h"
 #include "Engine.h"
 #include "Items/Cape/PlayerCape.h"
 #include <AI/AITxtBossAttack.h>
-
+#include "NPC/NPCBase.h"
 #include "ProjectDGameInstance.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
 #include "Quest/AutoQuestAcceptActor.h"
+#include "Quest/MinigameQuestObject.h"
 #include "World/Trigger/DestructableWallActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
 
@@ -201,6 +199,20 @@ void APlayerGameMode::SetStringQuestID(FString QuestID)
 	FStringQuestID = QuestID;
 }
 
+FString APlayerGameMode::GetNxtQuestID() const
+{
+	return NextquestID;
+}
+
+void APlayerGameMode::SetNxtQuestID(FString nextquestID)
+{
+	UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest ID: %s" ) , *nextquestID );
+	NextquestID = nextquestID;
+
+	FindNextNPC();
+	FindMiniGame();
+}
+
 void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
 {
 	// 퀘스트 2003 완료 시, 자동으로 2004 퀘스트 받음
@@ -303,3 +315,36 @@ void APlayerGameMode::HandleTimelineProgress(float Value)
 void APlayerGameMode::OnTimelineFinished()
 {
 }
+
+void APlayerGameMode::FindNextNPC()
+{
+	for (TActorIterator<ANPCBase> It( GetWorld() ); It; ++It)
+	{
+		ANPCBase* NPC = *It;
+
+		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+		if (NPC && NPC->GetNxtQuestID() == NextquestID)
+		{
+			NPC->ChangeNPCColor( 4 ); 
+			//return NPC;
+		}
+	}
+	//return nullptr; // 해당 퀘스트 ID를 가진 NPC를 찾지 못한 경우
+}
+
+void APlayerGameMode::FindMiniGame()
+{
+	for (TActorIterator<AMinigameQuestObject> It( GetWorld() ); It; ++It)
+	{
+		AMinigameQuestObject* Minigame = *It;
+
+		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+		if (Minigame && Minigame->GetOwnQuestID() == NextquestID)
+		{
+			Minigame->ChangeMinigameColor( 3 );
+			//return NPC;
+		}
+	}
+}
+
+

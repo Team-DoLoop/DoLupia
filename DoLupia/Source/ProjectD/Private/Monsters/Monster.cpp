@@ -190,7 +190,7 @@ void AMonster::DamageState()
 	anim->animState = MonsterFSM->state;
 
 	currentTime += GetWorld()->GetDeltaSeconds();
-	if (currentTime > 1.5)
+	if (currentTime > 1.2)
 	{
 		MonsterFSM->state = EMonsterState::Move;
 		currentTime = 0;

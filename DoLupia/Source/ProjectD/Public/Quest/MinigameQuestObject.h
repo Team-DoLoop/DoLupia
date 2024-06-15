@@ -22,6 +22,12 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "MiniGame" )
 	TSubclassOf<AActor> MiniGameClass;
 
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
+	FString OwnQuestID = "";
+
+	FString GetOwnQuestID() const;
+	void ChangeMinigameColor( int32 depth );
+
 private:
 	void SpawnMiniGame();
 
