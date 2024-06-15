@@ -18,6 +18,7 @@
 #include <Components/SizeBoxSlot.h>
 #include <Components/SizeBox.h>
 
+#include "ProjectDGameInstance.h"
 #include "Characters/PlayerStateBase.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Common/UseColor.h"
@@ -25,6 +26,7 @@
 
 void UWidgetQuestRewards::NativePreConstruct()
 {
+    GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
     if (!QuestDetails.QuestName.IsEmpty())
     {
@@ -205,16 +207,25 @@ void UWidgetQuestRewards::OnAcceptClicked()
 		}    
     }
 
-    // 퀘스트 보상으로 스킬 해제
-    if (QuestID == "2003")
+    if(QuestID == "1002" || QuestID == "2002" || QuestID == "2003")
     {
-        PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+        // 퀘스트 보상으로 스킬 해제
+        if( QuestID == "1002")
+        {
+            PlayerCharacterD->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
+            PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
+        }
+        else if (QuestID == "2002")
+        {
+            PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+        }
+        else if (QuestID == "2003")
+        {
+            PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
+        }
+        
+        GI->ExecuteTutorial(QuestDetails.AutoStory.QuestStoryType, -1, QuestDetails.AutoStory.QuestStoryID);
     }
-    else if (QuestID == "2004")
-    {
-        PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
-    }
-    
 
     // 위젯을 화면에서 제거합니다.
     RemoveFromParent();

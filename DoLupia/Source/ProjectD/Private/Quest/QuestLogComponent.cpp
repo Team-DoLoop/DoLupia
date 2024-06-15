@@ -143,21 +143,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
             {
                 GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
             }
-            
-            // 특정 Quest 완료 시, Player 스킬 Unlock
-            else if( QuestID == "1002" ||  QuestID == "2002")
-            {
-                if( QuestID == "1002")
-                {
-                    Player->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
-                    Player->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
-                }
-                else if( QuestID == "2002") Player->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
-                //else if( QuestID == "2002") PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
 
-                // 토토 시작
-                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
-            }
         }
     }
 }
