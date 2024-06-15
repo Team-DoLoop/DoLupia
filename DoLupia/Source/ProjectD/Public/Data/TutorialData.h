@@ -110,6 +110,10 @@ struct FTutorialData : public FTableRowBase
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// int32 NextIndex;
 
+	// 움직임 막을건지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCantActing;
+
 	// 아이템 지급 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTutorialItem TutorialItem;

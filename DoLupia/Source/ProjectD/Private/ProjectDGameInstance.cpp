@@ -89,12 +89,14 @@ FTutorialData* UProjectDGameInstance::GetTutorialData(int32 _TutorialID)
 	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
 }
 
-void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _Index)
+void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _Index, int32 _TutorialID)
 {
 	// 첫 데이터 찾기
 	if(_Index != -1) TutorialIndexMap[_ExplainType] = _Index;
 	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap1 : %d "), TutorialIndexMap[_ExplainType]);
-	TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
+
+	if(_TutorialID != -1) TutorialID = _TutorialID;
+	else TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
 	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
 	
