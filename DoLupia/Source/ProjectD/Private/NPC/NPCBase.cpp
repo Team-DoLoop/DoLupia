@@ -8,7 +8,7 @@
 #include "Engine.h"
 #include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
-
+#include "Library/AIConnectionLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
@@ -122,7 +122,15 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	//ChangeNPCColor( stencilDepth );
+
+	// Dialog 503 일 때, AI서버 요청
+	if(DialogNum == 501)
+	{
+		AIlib = gm->GetAIConnectionLibrary();
+		AIlib->SendPImgToSrv( 2004 );
+	}
+	
+
 	anim->bTalking = true;
 
 	ChangePlayerState();
