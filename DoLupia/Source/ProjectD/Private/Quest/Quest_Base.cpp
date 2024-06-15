@@ -301,7 +301,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 						UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete(FString ObjectiveID) QuestDetails.AutoComplete." ) );
 						QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
 						QuestLogComponent->TurnInQuest( QuestID );
-						QuestLogComponent->CompleteQuest( QuestID );
+						//QuestLogComponent->CompleteQuest( QuestID );
 					}
 				}
 			}
