@@ -111,6 +111,11 @@ void UPlayerDefaultsWidget::HideTutorialWidget()
 	TutorialUI->SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UPlayerDefaultsWidget::NextTutorial()
+{
+	TutorialUI->NextTutorialBtn();
+}
+
 void UPlayerDefaultsWidget::ChangeNextBtn(FString _Str)
 {
 	TutorialUI->ChangeNextBtn(_Str);

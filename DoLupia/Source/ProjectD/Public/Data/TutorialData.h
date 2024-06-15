@@ -79,6 +79,20 @@ struct FTutorialQuest
 	int32 QuestID;
 };
 
+USTRUCT(BlueprintType)
+struct FTutorialTrigger
+{
+	GENERATED_BODY()
+
+	// 트리거 관련인지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsTrigger;
+
+	// 어떤 트리거인지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TriggerID;
+};
+
 
 USTRUCT(BlueprintType)
 struct FTutorialData : public FTableRowBase
@@ -107,4 +121,8 @@ struct FTutorialData : public FTableRowBase
 	// 퀘스트 관련 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTutorialQuest TutorialQuest;
+
+	// 트리거 관련 데이터
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTutorialTrigger TutorialTrigger;
 };
