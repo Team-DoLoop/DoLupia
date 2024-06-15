@@ -105,6 +105,9 @@ public:
 	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
 	void StartGameStory();
 
+	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	bool IsToToNotInMapStart;
+
 private:
 	int32 questID = -1;
 

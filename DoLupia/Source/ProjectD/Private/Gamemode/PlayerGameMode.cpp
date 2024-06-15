@@ -229,7 +229,9 @@ void APlayerGameMode::StartGameStory()
 	case 3: index = 7; break; 
 		default: break;
 	}
-	GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+
+	if(!IsToToNotInMapStart)
+		GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
 }
 
 

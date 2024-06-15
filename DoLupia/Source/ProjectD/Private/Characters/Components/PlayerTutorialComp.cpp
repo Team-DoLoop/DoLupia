@@ -12,6 +12,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Items/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
 class UItemBase;
@@ -79,6 +80,11 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 			}
 			
 			TutoData = _TutoData;
+
+			// 사운드 시작
+			if(ToToSFX)
+				ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ToToSFX , ENPCSound::NPCSound1 , 0.25f );
+
 		}
 		
 		DefaultUI->ShowTutorialWidget(_TutoData, ExplainIndex);
@@ -136,6 +142,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 		StartTrigger(_TutoData->TutorialTrigger.TriggerID);
 	
 	TutoData = nullptr;
+	IsTotoSaying = false;
 }
 
 
@@ -168,7 +175,7 @@ void UPlayerTutorialComp::CreateItem(ETutoItemType _TutoItemType, int32 _Quantit
 }
 
 
-// <----------------------------- Item ----------------------------->
+// <----------------------------- Trigger ----------------------------->
 
 void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 {

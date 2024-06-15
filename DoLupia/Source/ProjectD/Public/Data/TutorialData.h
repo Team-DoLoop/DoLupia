@@ -114,6 +114,10 @@ struct FTutorialData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCantActing;
 
+	// Type 대사 중 마지막 대사인지 (마지막이라면 계속 반복)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsTypeEnd;
+
 	// 아이템 지급 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTutorialItem TutorialItem;
