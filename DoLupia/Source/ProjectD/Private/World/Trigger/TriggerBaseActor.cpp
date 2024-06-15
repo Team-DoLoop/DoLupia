@@ -48,9 +48,11 @@ void ATriggerBaseActor::BeginPlay()
 		HideTrigger();
 	}
 
-	// 카메라 회전 트리거면 Timeline 적용
+	// 카메라 회전 트리거면 Timeline 적용, 시작할 때, NoColiision
 	if (triggerType == EPlayerTriggerType::CameraAngle || CurveFloat)
 	{
+		triggerComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+
 		FOnTimelineFloat ProgressFunction;
 		ProgressFunction.BindUFunction( this , FName( "HandleTimelineProgress" ) );
 		TimelineComp->AddInterpFloat( CurveFloat , ProgressFunction );
@@ -157,5 +159,10 @@ void ATriggerBaseActor::HideTrigger()
 {
 	locationVFX->SetVisibility( false );
 	triggerComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+}
+
+void ATriggerBaseActor::ActiveTriggerCollision()
+{
+	triggerComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 }
 

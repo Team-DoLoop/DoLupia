@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Pooling/SoundManager.h"
 
 // Sets default values
 ADestructableWallActor::ADestructableWallActor()
@@ -37,6 +38,10 @@ void ADestructableWallActor::Tick(float DeltaTime)
 
 void ADestructableWallActor::ExplosionWalls()
 {
+	// 벽폭발음
+	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
+
+	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );
 	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }

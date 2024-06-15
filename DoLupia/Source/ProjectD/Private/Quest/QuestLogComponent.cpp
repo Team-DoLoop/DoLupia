@@ -128,12 +128,6 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         gm->ActiveLvTrigger();
     }
 
-    // 퀘스트 2003 완료 시, 자동으로 퀘스트 발생
-    if(QuestID == "2003")
-    {
-        gm->TriggerQuest2004( QuestID , 1 );
-    }
-
     // 튜토리얼 퀘스트 완료 관련
     if(GI)
     {
