@@ -107,8 +107,8 @@ struct FTutorialData : public FTableRowBase
 	int32 ExplainIndex;
 
 	// 다음 지문
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 NextIndex;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// int32 NextIndex;
 
 	// 아이템 지급 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
