@@ -35,6 +35,7 @@ void UPlayerTutorialComp::BeginPlay()
 
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	GM = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if(Player)
 	{
 		InventoryComp = Cast<UInventoryComponent>( Player->GetComponentByClass( UInventoryComponent::StaticClass() ) );

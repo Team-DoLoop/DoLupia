@@ -121,7 +121,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
 
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     //포털 열기
-    if (QuestID == "3001" || QuestID == "1003" || QuestID == "0003") {
+    if (QuestID == "3001" || QuestID == "1003") {
         gm->ActiveLvTrigger();
     }
 
