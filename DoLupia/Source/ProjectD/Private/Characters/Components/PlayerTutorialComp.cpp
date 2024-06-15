@@ -5,6 +5,7 @@
 
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
@@ -73,6 +74,10 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 		// 처음 들어왔다면
 		if(ExplainIndex == 0)
 		{
+			FInputModeGameOnly InputMode;
+			InputMode.SetConsumeCaptureMouseDown(false);
+			Player->GetProjectDPlayerController()->SetInputMode( InputMode );
+			
 			// DefaultUI->ChangeNextBtn(NextString);
 			if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
 			{
@@ -122,7 +127,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	DefaultUI->HideTutorialWidget();
 
 	if(!_TutoData) return;
-
+	
 	// MAIN_STORY 였다면 Idle로 돌려놓기
 	if(_TutoData->bCantActing)
 	{
@@ -191,7 +196,14 @@ void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 		GM->HandleIntrusionEvent();
 		
 		// 뭔가 있다는 토토 대사 시작( 연출 끝나면 들어갈 부분. 지금은 임시로 넣어둠)
-		GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, 9500);
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer( TimerHandle , this , &UPlayerTutorialComp::ExecuteTutorial , 2.0f , false );
+		
 	}
+}
+
+void UPlayerTutorialComp::ExecuteTutorial()
+{
+	GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, 9500);
 }
 

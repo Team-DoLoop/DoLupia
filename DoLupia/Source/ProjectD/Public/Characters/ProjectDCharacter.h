@@ -116,6 +116,7 @@ public:
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
 	FORCEINLINE class UNiagaraComponent* GetNiagaraComp()const {return NiagaraComp;}
+	FORCEINLINE class AProjectDPlayerController* GetProjectDPlayerController()const {return PlayerController;}
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
