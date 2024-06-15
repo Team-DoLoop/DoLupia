@@ -6,8 +6,10 @@
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
 #include "Data/TutorialData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Items/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
@@ -33,9 +35,11 @@ void UPlayerTutorialComp::BeginPlay()
 
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	GM = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if(Player)
 	{
 		InventoryComp = Cast<UInventoryComponent>( Player->GetComponentByClass( UInventoryComponent::StaticClass() ) );
+		PlayerFSMComp = Player->GetPlayerFSMComp();
 	}
 
 	
@@ -62,62 +66,76 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 	if(DefaultUI)
 	{
 		if(!_TutoData) return;
-
-		TutoData = _TutoData;
+		
+		UE_LOG(LogTemp, Log, TEXT("SetTutorialUI : %d"), ExplainIndex);
 		
 		// 처음 들어왔다면
-		if(IsFirstIndex)
+		if(ExplainIndex == 0)
 		{
-			DefaultUI->ChangeNextBtn(NextString);
-			IsFirstIndex = false;
-		}
-		
-		// 다음 데이터가 마지막이라면
-		if(_TutoData->NextIndex == -1)
-		{
-			DefaultUI->ChangeNextBtn(CloseString);
+			// DefaultUI->ChangeNextBtn(NextString);
+			if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
+			{
+				PlayerFSMComp->ChangePlayerState(EPlayerState::TALK_NPC);
+			}
 			
+			TutoData = _TutoData;
 		}
 		
-		DefaultUI->ShowTutorialWidget(_TutoData);
-		TutorialID = _TutoData->NextIndex;
+		DefaultUI->ShowTutorialWidget(_TutoData, ExplainIndex);
 	}
+}
+
+void UPlayerTutorialComp::PressNextTutorial()
+{
+	// 버튼 누른 경우 UI 세팅 -> 만약 두번째 눌렀다면 UI 에서 NextTutorial() 호출 -> ShowTutorialWidget
+	if(!GI || !TutoData) return;
+	
+	// auto _TutoData = GI->GetTutorialData(TutorialID);
+	DefaultUI->NextTutorial();
 }
 
 void UPlayerTutorialComp::NextTutorial()
 {
-	if(!GI || TutorialID == 0) return;
+	if(!TutoData) return;
 	
-	if(TutorialID == -1)
+	ExplainIndex = ExplainIndex + 1;
+	if(TutoData->TutorialWidgetData.StoryExplainText.Num() == ExplainIndex)
 	{
 		EndTutorial(TutoData);
 		return;
 	}
-	
-	auto _TutoData = GI->GetTutorialData(TutorialID);
-	if(_TutoData)
-	{
-		SetTutorialUI(_TutoData);
-	}
+
+	DefaultUI->ShowTutorialWidget(TutoData, ExplainIndex);
 }
 
 void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 {
 	if(!DefaultUI) return;
 	
-	IsFirstIndex = true;
-	TutorialID = 0;
+	ExplainIndex = -1;
 	DefaultUI->HideTutorialWidget();
 
 	if(!_TutoData) return;
+
+	// MAIN_STORY 였다면 Idle로 돌려놓기
+	if(_TutoData->bCantActing)
+	{
+		PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
+	}
 	
 	// 만약 아이템을 제공하는 튜토리얼이었다면
 	if(_TutoData->TutorialItem.IsGiveItem)
-		Player->GetTutorialComp()->CreateItem(_TutoData->TutorialItem.GiveItem,_TutoData->TutorialItem.GiveItemQuantity);
+		CreateItem(_TutoData->TutorialItem.GiveItem,_TutoData->TutorialItem.GiveItemQuantity);
 
 	// 퀘스트와 연관된 튜토리얼이라면
 	if(_TutoData->TutorialQuest.IsQuest)
-		Player->GetTutorialComp()->StartQuest(_TutoData->TutorialQuest.QuestID);
+		StartQuest(_TutoData->TutorialQuest.QuestID);
+
+	// 트리거 관련된 튜토리얼이라면
+	if(_TutoData->TutorialTrigger.IsTrigger)
+		StartTrigger(_TutoData->TutorialTrigger.TriggerID);
+	
+	TutoData = nullptr;
 }
 
 
@@ -126,7 +144,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 void UPlayerTutorialComp::StartQuest(int32 _QuestID)
 {
 	if(!GI) return;
-
+	
 	GI->GiveQuest(_QuestID);
 }
 
@@ -146,6 +164,24 @@ void UPlayerTutorialComp::CreateItem(ETutoItemType _TutoItemType, int32 _Quantit
 
 		ItemReference->CreateItemCopy(ItemData, _Quantity);
 		InventoryComp->HandelAddItem( ItemReference);
+	}
+}
+
+
+// <----------------------------- Item ----------------------------->
+
+void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
+{
+	// 포탈
+	if(_TriggerID == 1)
+	{
+		GM->ActiveLvTrigger();
+	}
+
+	// 맵2 연출
+	else if(_TriggerID == 2)
+	{
+		UE_LOG(LogTemp, Log, TEXT("우르르르쾅쾅 연출 들어가용"));
 	}
 }
 

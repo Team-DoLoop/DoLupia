@@ -7,6 +7,8 @@
 #include "Engine/DataTable.h"
 #include "Struct_QuestSystem.generated.h"
 
+enum class EExplainType : uint8;
+
 UENUM( BlueprintType )
 enum class EObjectiveType : uint8
 {
@@ -95,6 +97,24 @@ public:
 };
 
 USTRUCT( Atomic , BlueprintType )
+struct FStoryDetails
+{
+	GENERATED_BODY()
+
+	// 다음에 스토리 지문이 나오는지
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	bool IsAutoStory;;
+
+	// 나온다면 어떤 유형인지
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	EExplainType QuestStoryType;
+
+	// 나온다면 어떤 유형인지
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	int32 QuestStoryID;
+};
+
+USTRUCT( Atomic , BlueprintType )
 struct FQuestDetails :public FTableRowBase
 {
 	GENERATED_BODY()
@@ -120,4 +140,10 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	bool AutoComplete;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	FStoryDetails AutoStory;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	FString NextQuestID;
 };

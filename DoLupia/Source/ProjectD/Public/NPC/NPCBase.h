@@ -45,7 +45,8 @@ private:
 	UPROPERTY()
 	UAIConnectionLibrary* AIlib;
 
-	/*-----------  AI Chatbot 연동  -----------*/
+	/*-----------  AI Chatbot 연동 >> 사용 안하는 기능  -----------*/
+	/*
 private:
 	FString NPCConversation;
 
@@ -54,6 +55,7 @@ private:
 
 	UFUNCTION()
 	void CallNPCMessageDelegate( FString Message );
+	*/
 
 	/*-----------  Dialog Component  -----------*/
 public:
@@ -81,11 +83,7 @@ private:
 
 	/*---------------------- Post Process Depth ------------------*/
 public:
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "PostProcess" )
-	int32 stencilDepth = 0 ;
-
-private:
-	void ChangeNPCStatus( int32 depth );
+	void ChangeNPCColor( int32 depth );
 
 	/*-------------------- Interaction Widget ---------------------*/
 public:
@@ -105,5 +103,11 @@ public:
 	/*---------------------- Minimap ------------------*/
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
+
+	/*-------------------- NPC State ---------------------*/
+	FString GetNxtQuestID() const;
+
+	UPROPERTY( BlueprintReadWrite,  EditAnywhere , Category = "Dialog" )
+	FString NxtQuestID = "";
 
 };

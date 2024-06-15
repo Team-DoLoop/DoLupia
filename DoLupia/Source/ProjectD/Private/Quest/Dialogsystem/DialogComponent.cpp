@@ -7,6 +7,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
 #include "Data/WidgetData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "NPC/NPCBase.h"
 #include "Quest/QuestGiver.h"
@@ -99,12 +100,17 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 			DialogueWidget->RemoveFromParent();
 		}
+
+		// PlaeyerCamera 원상복귀
+		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		float LvCamlength = gm->PlayerCameraboom;
+		gm->LerpPlayerCameraLength( LvCamlength );
+
 		return;
 	}
 
 	if (DialogueDataTable)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "DialogueDataTable" ) );
 		static const FString ContextString( TEXT( "GENERAL" ) );
 		FDialogueData* DialogueData = DialogueDataTable->FindRow<FDialogueData>( FName( *FString::FromInt( DialogueID ) ) , ContextString );
 
@@ -112,6 +118,24 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 		{
 			CurrentDialogue = DialogueData;
 			CurrentDialogueID = DialogueID;
+
+			ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+
+			// 특정 DialogID에서 NPC Color 변경
+			switch (DialogueID)
+			{
+			case 201:
+				npc->ChangeNPCColor( 1 );
+				break;
+			case 401:
+				npc->ChangeNPCColor( 3 );
+				break;
+			case 503:
+				npc->ChangeNPCColor( 2 );
+				break;
+			default:
+				break;
+			}
 
 			if (DialogueWidget)
 			{

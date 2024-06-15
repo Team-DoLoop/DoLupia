@@ -78,8 +78,11 @@ void UPlayerFSMComp::ChangePlayerState(EPlayerState _state)
 	if(_state == EPlayerState::MOVE) Player->GetPlayerAnim()->StopMontage();
 	if(_state == EPlayerState::TALK_NPC)
 	{
-		Player->GetPlayerAnim()->StopMontage();
-		PlayerController->StopMovement();
+		if(auto PlayerAnim = Player->GetPlayerAnim())
+		{
+			PlayerAnim->StopMontage();
+			PlayerController->StopMovement();
+		}
 	}
 		
 	CurrentState = _state;

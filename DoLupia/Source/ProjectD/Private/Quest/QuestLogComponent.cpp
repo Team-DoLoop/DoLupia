@@ -2,6 +2,9 @@
 
 #include "Quest/QuestLogComponent.h"
 
+#include "ProjectDGameInstance.h"
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
@@ -33,6 +36,9 @@ void UQuestLogComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+    
+    GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 
@@ -118,7 +124,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
 
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     //포털 열기
-    if (QuestID == "1000" || QuestID == "3001" || QuestID == "1002") {
+    if (QuestID == "3001" || QuestID == "1003") {
         gm->ActiveLvTrigger();
     }
 
@@ -127,8 +133,33 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     {
         gm->TriggerQuest2004( QuestID , 1 );
     }
-    
 
+    // 튜토리얼 퀘스트 완료 관련
+    if(GI)
+    {
+        if(auto _QuestData = GI->GetQuestData(QuestID))
+        {
+            if(_QuestData->AutoStory.IsAutoStory)
+            {
+                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
+            }
+            
+            // 특정 Quest 완료 시, Player 스킬 Unlock
+            else if( QuestID == "1002" ||  QuestID == "2002")
+            {
+                if( QuestID == "1002")
+                {
+                    Player->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
+                    Player->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
+                }
+                else if( QuestID == "2002") Player->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+                //else if( QuestID == "2002") PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
+
+                // 토토 시작
+                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
+            }
+        }
+    }
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )

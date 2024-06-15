@@ -37,6 +37,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDataTableRowHandle QuestData;
 
+
 	UFUNCTION()
 	void DisplayQuest( int32 CurrentStage );
 

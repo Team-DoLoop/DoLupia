@@ -113,4 +113,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FItemSpawnerInfo> ItemTuples;
 
+	UPROPERTY( EditDefaultsOnly )
+	float DissolveSpeed = 30.f;
+
+private:
+	UPROPERTY( EditAnywhere , Category = "Effects" )
+	UMaterialInstanceDynamic* DynamicDissolveMaterial;
+
+	float Amount = 40.f;
+
+	
+	
+
 };

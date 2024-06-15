@@ -35,8 +35,6 @@ ANPCBase::ANPCBase()
 	gm = nullptr;
 
 	this->SetActorScale3D( FVector(1.5f, 1.5f, 1.5f) );
-	// Post Process depth 설정값
-	//GetMesh()->SetRenderCustomDepth( true );
 	
 	//minimap icon
 	// MapIconComponent makes the character appear on the minimap
@@ -59,21 +57,12 @@ void ANPCBase::BeginPlay()
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
 
-
-	if (gm)
-	{
-		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Success" ) );
-	}
-	else {
-		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
-	}
 }
 
 // Called every frame
 void ANPCBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -85,28 +74,15 @@ void ANPCBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
-	AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
-
-	/*
-	if (player)
+	if (NPCInteractWidget)
 	{
-		AIlib = gm->GetAIConnectionLibrary();
-		
-		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
-		if (AIlib)
-		{
-			//BeginChat();
-		}
-		else {
-			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
-		}
 		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
-	}else
+	}
+	else
 	{
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
-	*/
 }
 
 void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
@@ -119,6 +95,7 @@ void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
 	}
 }
 
+/* AI Chatbot 관련 주석처리
 void ANPCBase::BeginChat()
 {
 	if (AIlib) {
@@ -137,19 +114,19 @@ void ANPCBase::BeginChat()
 void ANPCBase::CallNPCMessageDelegate( FString Message )
 {
 	NPCConversation = Message;
-	UE_LOG( LogTemp , Warning , TEXT( "Message : [%s]" ) , *Message )
-
 	gm->ReceiveNPCMsg( NPCConversation );
 
 }
+*/
 
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	ChangeNPCStatus( stencilDepth );
+	//ChangeNPCColor( stencilDepth );
 	anim->bTalking = true;
 
 	ChangePlayerState();
+	gm->LerpPlayerCameraLength(300.0f);
 }
 
 FString ANPCBase::InteractWith()
@@ -175,7 +152,9 @@ FString ANPCBase::InteractWith()
 		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 	}
-	
+
+	FString Result = QuestInterface->InteractWith();
+
 	ChangePlayerState();
 
 	return QuestInterface->InteractWith();
@@ -185,10 +164,12 @@ void ANPCBase::LookAt()
 {
 }
 
-void ANPCBase::ChangeNPCStatus(int32 depth)
+void ANPCBase::ChangeNPCColor(int32 depth)
 {
+	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
-	GetMesh()->CustomDepthStencilValue = depth;
+	GetMesh()->SetCustomDepthStencilValue( depth );
+	//GetMesh()->CustomDepthStencilValue = depth;
 }
 
 void ANPCBase::ChangePlayerState()
@@ -207,5 +188,18 @@ void ANPCBase::ChangePlayerState()
 void ANPCBase::HideNPC()
 {
 	this->SetActorHiddenInGame( true );
+	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
+}
+
+FString ANPCBase::GetNxtQuestID() const
+{
+	return NxtQuestID;
+	/*
+	if (QuestGiverComp)
+	{
+		return QuestGiverComp->QuestData.RowName.ToString();
+	}
+	return LexToString(NAME_None); // 유효하지 않은 경우
+	*/
 }
 
