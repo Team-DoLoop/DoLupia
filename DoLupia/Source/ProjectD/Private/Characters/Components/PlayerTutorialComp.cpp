@@ -188,7 +188,10 @@ void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 	// 맵2 연출
 	else if(_TriggerID == 2)
 	{
-		UE_LOG(LogTemp, Log, TEXT("우르르르쾅쾅 연출 들어가용"));
+		GM->HandleIntrusionEvent();
+		
+		// 뭔가 있다는 토토 대사 시작( 연출 끝나면 들어갈 부분. 지금은 임시로 넣어둠)
+		GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, 9500);
 	}
 }
 

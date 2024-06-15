@@ -207,7 +207,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
 		}    
     }
 
-    if(QuestID == "1002" || QuestID == "2002" || QuestID == "2003")
+    if(QuestID == "1002" || QuestID == "2002" || QuestID == "2004")
     {
         // 퀘스트 보상으로 스킬 해제
         if( QuestID == "1002")
@@ -219,7 +219,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
         {
             PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
         }
-        else if (QuestID == "2003")
+        else if (QuestID == "2004")
         {
             PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
         }
