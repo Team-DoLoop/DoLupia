@@ -73,7 +73,7 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 		if(ExplainIndex == 0)
 		{
 			// DefaultUI->ChangeNextBtn(NextString);
-			if(_TutoData->ExplainType == EExplainType::MAIN_STORY && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
+			if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
 			{
 				PlayerFSMComp->ChangePlayerState(EPlayerState::TALK_NPC);
 			}
@@ -118,7 +118,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	if(!_TutoData) return;
 
 	// MAIN_STORY 였다면 Idle로 돌려놓기
-	if(_TutoData->ExplainType == EExplainType::MAIN_STORY)
+	if(_TutoData->bCantActing)
 	{
 		PlayerFSMComp->ChangePlayerState(EPlayerState::IDLE);
 	}
@@ -179,9 +179,9 @@ void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 	}
 
 	// 맵2 연출
-	else if(_TriggerID == 1)
+	else if(_TriggerID == 2)
 	{
-		
+		UE_LOG(LogTemp, Log, TEXT("우르르르쾅쾅 연출 들어가용"));
 	}
 }
 

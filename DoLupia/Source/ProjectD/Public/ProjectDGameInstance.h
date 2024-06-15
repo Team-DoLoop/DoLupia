@@ -48,7 +48,7 @@ private:
 public:
 	void InitTutorialIndex();
 	FTutorialData* GetTutorialData(int32 _TutorialID);
-	void ExecuteTutorial(EExplainType _ExplainType, int32 _Index = -1);
+	void ExecuteTutorial(EExplainType _ExplainType, int32 _Index = -1, int32 _TutorialID = -1);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
 	
 	FORCEINLINE int32 GetTutorialID() const { return TutorialID; }

@@ -225,8 +225,8 @@ void APlayerGameMode::StartGameStory()
 	{
 	case 0 : index = 0; break;
 	case 1: index = 2; break;
-	case 2: index = 0; break; // 스토리에 맞춰 수정할 예정
-	case 3: index = 0; break; 
+	case 2: index = 4; break;
+	case 3: index = 7; break; 
 		default: break;
 	}
 	GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
