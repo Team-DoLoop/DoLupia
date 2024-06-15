@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -71,11 +71,14 @@ public:
 	FQuestDetails* GetQuestData(FName _QuestID);
 	void GiveQuest(int32 _QuestID);
 
+	void InitCompletedQuests();
+
 private:
 	
 	UPROPERTY()
 	class UDataTable* QuestTable;
 
+	TArray<FName> CompletedQuests;
 
 	// <------------------ Item ------------------>
 public:
