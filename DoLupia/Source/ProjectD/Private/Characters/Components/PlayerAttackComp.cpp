@@ -315,7 +315,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	{
 		if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 		{
-			if(CantAttackSoundWave) SoundManager->PlaySoundWave( CantAttackSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), 0.1f );
+			if(CantAttackSoundWave) SoundManager->PlaySoundWave( CantAttackSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), SkillVolume );
 		}
 		return;
 	}
@@ -525,7 +525,7 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 
 	if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 	{
-		if(SwapSoundWave) SoundManager->PlaySoundWave( SwapSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), 0.1f );
+		if(SwapSoundWave) SoundManager->PlaySoundWave( SwapSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), SkillVolume );
 	}
 	
 	SetSkillCoolDownUI();

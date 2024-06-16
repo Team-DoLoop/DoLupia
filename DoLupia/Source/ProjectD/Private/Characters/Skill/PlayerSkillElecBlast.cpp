@@ -61,5 +61,5 @@ void APlayerSkillElecBlast::ActivateSkill()
 			}
 		}
 	}
-	DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
+	DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, SkillVolume);
 }

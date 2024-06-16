@@ -307,6 +307,7 @@ public:
 	FORCEINLINE virtual int32 GetSkillLevel() const {return SkillLevel;}
 	FORCEINLINE virtual int32 GetSkillCount() const {return SkillCount;}
 	FORCEINLINE virtual int32 GetSkillDamage() const {return SkillDamage;}
+	FORCEINLINE virtual int32 GetSkillVolume() const {return SkillVolume;}
 
 	
 private:
@@ -344,5 +345,8 @@ private:
 	float SkillMaxRange; //
 	bool IsSkillCharging; //
 
-	 
+
+	float SkillVolume = 0.2f;
+
+	
 };

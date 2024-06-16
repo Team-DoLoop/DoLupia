@@ -3,6 +3,9 @@
 
 #include "Characters/Skill/PlayerSkillBase.h"
 
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerAttackComp.h"
+
 // Sets default values
 APlayerSkillBase::APlayerSkillBase()
 {
@@ -15,7 +18,15 @@ APlayerSkillBase::APlayerSkillBase()
 void APlayerSkillBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	auto Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+	if(Player)
+	{
+		if(auto attackComp =  Player->GetAttackComp())
+		{
+			SkillVolume = attackComp->GetSkillVolume();
+		}
+	}
 }
 
 void APlayerSkillBase::ActivateSkill()
