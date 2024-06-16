@@ -41,6 +41,8 @@ void ADestructableWallActor::ExplosionWalls()
 	// 벽폭발음
 	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
 
+	UE_LOG( LogTemp , Error , TEXT( "destroy Walls" )  );
+
 	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );
 	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );

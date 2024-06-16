@@ -215,7 +215,7 @@ void APlayerGameMode::SetNxtQuestID(FString nextquestID)
 
 	FindNextNPC();
 	FindMiniGame();
-	if(NextquestID == "2001" || NextquestID == "2003" || NextquestID == "3001")
+	if(NextquestID == "2001" || NextquestID == "2004" || NextquestID == "4001")
 	{
 		UE_LOG( LogTemp , Error , TEXT( "gm - FindMonsterSpawner" ) );
 		FindMonsterSpawner( FName( *NextquestID ) , true );
@@ -223,6 +223,11 @@ void APlayerGameMode::SetNxtQuestID(FString nextquestID)
 	{
 		FindMonsterSpawner( FName( *NextquestID ) , false );
 	}
+	/*else if(NextquestID == "3001" || NextquestID == "4001")
+	{
+		FindMonsterSpawner( FName( *NextquestID ) , false );
+	}
+	*/
 }
 
 void APlayerGameMode::HandleIntrusionEvent()
@@ -245,6 +250,7 @@ void APlayerGameMode::HandleIntrusionEvent()
 	// 벽 부숴지는 효과
 	for (TActorIterator<ADestructableWallActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
+
 		ActorItr->ExplosionWalls();
 	}
 
@@ -394,10 +400,9 @@ void APlayerGameMode::FindMonsterSpawner( FName Tag , bool bActivate )
 			{
 				Spawner->ActiveMonsterSpawner();
 			}
-			else
-			{
-				Spawner->DeactiveMonsterSpawner();
-			}
+		} else
+		{
+			Spawner->DeactiveMonsterSpawner();
 		}
 	}
 }

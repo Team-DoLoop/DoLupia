@@ -55,12 +55,9 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject( AMonsterAIController::TargetKey , player );
 
-				DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Green , false , 0.2f );
+				/*DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Green , false , 0.2f );
 				DrawDebugPoint( World , player->GetActorLocation() , 10 , FColor::Blue , false , 0.2f );
-				DrawDebugLine( World , ControllingPawn->GetActorLocation() ,player->GetActorLocation(), FColor::Blue , false , 0.2f );
-				//Boss->state = EBossState::Move;
-				//const bool isBattle = Boss->OctopusBackpackComponent->bBattleMode;
-				//if(!isBattle)Boss->OctopusBackpackComponent->OctopusBackpackBattleMode( true );
+				DrawDebugLine( World , ControllingPawn->GetActorLocation() ,player->GetActorLocation(), FColor::Blue , false , 0.2f );*/
 
 				return;
 			}
@@ -69,6 +66,6 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject( AMonsterAIController::TargetKey , nullptr );
 
-	DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Red , false , 0.2f );
+	//DrawDebugSphere( World , Center , DetectRadius , 16 , FColor::Red , false , 0.2f );
 	
 }
