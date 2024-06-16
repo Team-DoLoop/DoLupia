@@ -71,8 +71,6 @@ void AAITxtHandlerBase::BeginPlay()
     {
         return;
     }
-
-
 }
 
 // Called every frame
@@ -101,8 +99,6 @@ void AAITxtHandlerBase::OnTimelineFinished()
     {
         DynamicMaterial->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
     }
-
-    //gm->LerpPlayerCameraLength( gm->PlayerCameraboom );
 }
 
 void AAITxtHandlerBase::LoadWebImage()
@@ -116,12 +112,8 @@ void AAITxtHandlerBase::LoadWebImage()
     {
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Downloading..." ) );
 
-        //gm->LerpPlayerCameraLength( 300.0f );
-
         DownloadTask->OnSuccess.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloadFailed );
-
-        //gm->LerpPlayerCameraLength( gm->PlayerCameraboom );
     }
 }
 
@@ -148,9 +140,6 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
         {
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
             UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded - PlayFromStart" ) );
-
-            // 카메라 줌 땡기기
-            //gm->LerpPlayerCameraLength( 300.0f );
 
             TimelineComp->PlayFromStart();
         }
