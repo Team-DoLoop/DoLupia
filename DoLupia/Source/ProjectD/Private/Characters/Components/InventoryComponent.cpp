@@ -327,14 +327,14 @@ FItemAddResult UInventoryComponent::HandelNonStackableItems(UItemBase* InputItem
 	if(FMath::IsNearlyZero(StackWeigt) || StackWeigt < 0)
 	{
 		return FItemAddResult::AddedNone(FText::Format
-		(FText::FromString("Count not add {0} to the Inventory. Item has invalid weight value."), InputItem->GetTextData().Name));
+		(FText::FromString(L"인벤토리에 {0}를(을) 추가할 수 없습니다. 아이템 무게를 넣었는 지 확인하십시오.(개발자 전용)"), InputItem->GetTextData().Name));
 	}
 
 	// 만약 무게를 추가할 때 무게가 초과된다면 추가하지 않는다.
 	if(InventoryTotalWeight + StackWeigt > GetWeightCapacity())
 	{
 		return FItemAddResult::AddedNone(FText::Format
-		(FText::FromString("Count not add {0} to the Inventory. Item would overflow weight limit."), InputItem->GetTextData().Name));
+		(FText::FromString(L"인벤토리에 {0}를(을) 추가할 수 없습니다. 아이템 무게를 확인하십시오."), InputItem->GetTextData().Name));
 	}
 
 	// 인벤토리 빈 곳의 Index를 찾는다.
@@ -344,7 +344,7 @@ FItemAddResult UInventoryComponent::HandelNonStackableItems(UItemBase* InputItem
 	if(FindItemIdx == NONFIND_INDEX)
 	{
 		return FItemAddResult::AddedNone(FText::Format
-		(FText::FromString("Count not add {0} to the Inventory. All invetory slots are full."), InputItem->GetTextData().Name));
+		(FText::FromString(L"인벤토리에 {0}를(을) 추가할 수 없습니다. 인벤토리가 꽉 찼습니다."), InputItem->GetTextData().Name));
 	}
 
 	// 인벤토리 빈 곳의 아이템을 넣어준다.
@@ -353,7 +353,7 @@ FItemAddResult UInventoryComponent::HandelNonStackableItems(UItemBase* InputItem
 
 	// 슬롯에 모든 아이템을 담았기 때문에 Instance을 Destory() 시킨다.
 	return FItemAddResult::AddedAll(1, FText::Format
-	(FText::FromString("Successfully added a single {0} to the Inventory."), InputItem->GetTextData().Name));
+	(FText::FromString(L"성공적으로 {0}이(가) 인벤토리에 추가되었습니다."), InputItem->GetTextData().Name));
 }
 
 int32 UInventoryComponent::HandelStackableItems(UItemBase* ItemIn, int32 RequestedAddAmount)
@@ -517,7 +517,7 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem, bool bRe
 
 			// 모두 인벤토리에 넣어주자.
 			return FItemAddResult::AddedAll(InitialRequestedAddAmount, FText::Format
-			(FText::FromString("Successfully added {0} {1} to the Inventory."), 
+			(FText::FromString(L"성공적으로 {0}, {1}이(가) 인벤토리에 추가되었습니다."), 
 			InitialRequestedAddAmount, InputItem->GetTextData().Name));
 			
 		}
@@ -536,7 +536,7 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem, bool bRe
 
 			// 부분만 인벤토리에 넣어주자.
 			return FItemAddResult::AddedPartial(InitialRequestedAddAmount, FText::Format
-			(FText::FromString("Partial amount of {0} added to thie Inventory. Number added {1}"), 
+			(FText::FromString(L"부분적으로 {0}개가 인벤토리에 추가 완료되었습니다. 남은 추가량은 {1} 입니다."), 
 			InputItem->GetTextData().Name, AddedAmount ));
 		}
 
@@ -545,7 +545,7 @@ FItemAddResult UInventoryComponent::HandelAddItem(UItemBase* InputItem, bool bRe
 		{
 			// 인벤토리에 넣지 못한다.
 			return FItemAddResult::AddedNone(FText::Format
-			(FText::FromString("Count not add {0} to the Inventory. No remaining inventory slots, or invalid item."), 
+			(FText::FromString(L"{0} 아이템을 인벤토리에 추가할 수 없습니다. 남은 인벤토리 슬롯이 없거나 아이템이 유효하지 않습니다."), 
 			InputItem->GetTextData().Name));
 		}
 	}

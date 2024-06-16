@@ -10,6 +10,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "NPC/NPCBase.h"
+#include "Pooling/SoundManager.h"
 #include "Quest/QuestGiver.h"
 #include "Quest/TestNPCCharacter.h"
 #include "UserInterface/NPC/DialogWidget.h"
@@ -191,6 +192,11 @@ void UDialogComponent::HideDialogWidget()
 	if (DialogueWidget && DialogueWidget->IsInViewport())
 	{
 		DialogueWidget->RemoveFromParent();
+
+		ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() );
+
+		SoundManager->StopSound( ENPCSound::NPCSound1 );
+		SoundManager->StopSound( ENPCSound::NPCSound2 );
 	}
 }
 

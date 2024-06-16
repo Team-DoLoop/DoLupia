@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -34,7 +34,7 @@ private:
 	class UImage* SkillThumnail;
 	
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	class UProgressBar* CoolTimeBar;
+	class UImage* CoolTimeImage;
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UHorizontalBox* SkillLevelBox;
@@ -44,6 +44,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
 	class UImage* SkillLockImage;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* MaterialInstanceDynamic;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* Icon;
 
 	
 public:
