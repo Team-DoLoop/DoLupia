@@ -14,8 +14,14 @@
 #include "Quest/QuestGiver.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
+#include "UserInterface/NPC/FadeInOutWidget.h"
 
 #include "MapIconComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "UserInterface/DoLupiaHUD.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
 // Sets default values
 ANPCBase::ANPCBase()
@@ -25,6 +31,12 @@ ANPCBase::ANPCBase()
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>( TEXT("Camera"));
+	CameraPosition = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CameraPosition"));
+	TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComp" ) );
+
+	CameraComponent->SetupAttachment( GetRootComponent() );
+	CameraPosition->SetupAttachment(GetRootComponent());
 
 	// 초기화
 	AIlib = nullptr;
@@ -60,6 +72,19 @@ void ANPCBase::BeginPlay()
 		anim->bDie = true;
 	}
 
+	if (PlayerCamCurve)
+	{
+		FOnTimelineFloat ProgressFunction;
+		ProgressFunction.BindUFunction( this , FName( "OnMoveCamera" ) );
+		TimelineComp->AddInterpFloat( PlayerCamCurve , ProgressFunction );
+
+		FOnTimelineEvent TimelineFinishedFunction;
+		TimelineFinishedFunction.BindUFunction( this , FName( "OnTimelineFinished" ) );
+		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
+	}
+
+	Target = Cast<AProjectDCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
 }
 
 // Called every frame
@@ -137,7 +162,22 @@ void ANPCBase::DialogWith()
 	anim->bTalking = true;
 
 	ChangePlayerState();
-	gm->LerpPlayerCameraLength(300.0f);
+
+	if(!TimelineTrigger)
+	{
+		TimelineComp->PlayFromStart();
+		TimelineTrigger = true;
+	}
+
+	if (FadeInOutWidgetFactory)
+	{
+		FadeInOutWidget = CreateWidget<UFadeInOutWidget>( GetWorld() , FadeInOutWidgetFactory );
+		FadeInOutWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Quest));
+		FadeInOutWidget->SetVisibility( ESlateVisibility::HitTestInvisible );
+		FadeInOutWidget->FadeInOut();
+		Target->GetPlayerBattleWidget()->SetVisibility(ESlateVisibility::Hidden);
+		Target->GetPlayerDefaultsWidget()->GetMainQuickSlot()->SetVisibility( ESlateVisibility::Hidden );
+	}
 }
 
 FString ANPCBase::InteractWith()
@@ -185,14 +225,10 @@ void ANPCBase::ChangeNPCColor(int32 depth)
 
 void ANPCBase::ChangePlayerState()
 {
-	// 플레이어 행동 가능하게
-	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	if(auto PlayerFSM = Target->GetPlayerFSMComp())
 	{
-		if(auto PlayerFSM = Player->GetPlayerFSMComp())
-		{
-			if(PlayerFSM->CanChangeState(EPlayerState::TALK_NPC))
-				PlayerFSM->ChangePlayerState(EPlayerState::TALK_NPC);
-		}
+		if(PlayerFSM->CanChangeState(EPlayerState::TALK_NPC))
+			PlayerFSM->ChangePlayerState(EPlayerState::TALK_NPC);
 	}
 }
 
@@ -214,4 +250,53 @@ FString ANPCBase::GetNxtQuestID() const
 	return LexToString(NAME_None); // 유효하지 않은 경우
 	*/
 }
+
+void ANPCBase::SwitchToPlayerCamera()
+{
+	if(OriginalViewTarget)
+	{
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( Target, 1.0f );
+		Target->GetPlayerBattleWidget()->SetVisibility( ESlateVisibility::HitTestInvisible );
+		Target->GetPlayerDefaultsWidget()->GetMainQuickSlot()->SetVisibility( ESlateVisibility::SelfHitTestInvisible );
+
+		if (auto PlayerFSM = Target->GetPlayerFSMComp())
+		{
+			if (PlayerFSM->CanChangeState( EPlayerState::TALK_NPC ))
+				PlayerFSM->ChangePlayerState( EPlayerState::IDLE );
+		}
+	}
+}
+
+
+void ANPCBase::OnMoveCamera( float Value )
+{
+	const FVector& TargetLocation = Target->GetActorLocation();
+	const FVector& MyLocation = CameraPosition->GetComponentLocation();
+
+	// 타겟의 위치를 보간하여 업데이트
+	FVector NewLocation = FMath::Lerp( TargetLocation , FVector( MyLocation.X , MyLocation.Y , TargetLocation.Z ) , Value );
+	Target->SetActorLocation( NewLocation );
+
+	// NPC의 방향으로 회전 벡터를 계산
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation( TargetLocation , GetActorLocation() );
+
+	// 회전 보간하여 설정
+	Target->SetActorRotation( FMath::Lerp( Target->GetActorRotation(), LookAtRotation, Value)  );
+
+	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( this , 1.0f );
+
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]()
+	{
+		OnTimelineFinished();
+	}), 1.f, false);
+}
+
+void ANPCBase::OnTimelineFinished()
+{
+	Target->GetCharacterMovement()->Velocity = FVector(0.0, 0.0, 0.0);
+	TimelineComp->Stop();
+
+}
+
 
