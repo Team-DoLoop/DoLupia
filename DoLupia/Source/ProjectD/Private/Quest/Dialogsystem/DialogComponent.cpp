@@ -214,6 +214,9 @@ void UDialogComponent::HideDialogWidget()
 
 		SoundManager->StopSound( ENPCSound::NPCSound1 );
 		SoundManager->StopSound( ENPCSound::NPCSound2 );
+
+		ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+		npc->SwitchToPlayerCamera();
 	}
 }
 
