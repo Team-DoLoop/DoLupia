@@ -204,6 +204,7 @@ protected:
 
 public:
 	FORCEINLINE class UPlayerAttackComp* GetAttackComp() const {return attackComp;}
+	UFUNCTION(BlueprintCallable)
 	void TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage);
 	virtual void TakeDamage( float Damage ) override;
 	void LyingEnd();
