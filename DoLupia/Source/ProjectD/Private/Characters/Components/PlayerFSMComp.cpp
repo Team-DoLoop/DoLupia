@@ -75,8 +75,9 @@ void UPlayerFSMComp::CheckState(EPlayerState _state)
 void UPlayerFSMComp::ChangePlayerState(EPlayerState _state)
 {
 	if(!CanChangeState(_state)) return;
+	
 	if(_state == EPlayerState::MOVE) Player->GetPlayerAnim()->StopMontage();
-	if(_state == EPlayerState::TALK_NPC)
+	if(_state == EPlayerState::TALK_NPC || _state == EPlayerState::DIE)
 	{
 		if(auto PlayerAnim = Player->GetPlayerAnim())
 		{

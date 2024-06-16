@@ -206,7 +206,13 @@ void UWidgetQuestRewards::OnAcceptClicked()
         InvetoryComp->HandelAddItem( items);
 		}    
     }
+    
+    // 위젯을 화면에서 제거합니다.
+    RemoveFromParent();
 
+    // 플레이어 행동 가능하게
+    ChangePlayerStateIdle();
+    
     if(QuestID == "1002" || QuestID == "2002" || QuestID == "2004")
     {
         // 퀘스트 보상으로 스킬 해제
@@ -226,12 +232,6 @@ void UWidgetQuestRewards::OnAcceptClicked()
         
         GI->ExecuteTutorial(QuestDetails.AutoStory.QuestStoryType, -1, QuestDetails.AutoStory.QuestStoryID);
     }
-
-    // 위젯을 화면에서 제거합니다.
-    RemoveFromParent();
-
-    // 플레이어 행동 가능하게
-    ChangePlayerStateIdle();
 }
 
 void UWidgetQuestRewards::ChangePlayerStateIdle()
