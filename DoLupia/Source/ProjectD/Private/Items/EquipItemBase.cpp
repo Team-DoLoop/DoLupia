@@ -26,7 +26,11 @@ void AEquipItemBase::ReceiveItemData( UItemBase* NewItemBase , bool UsedSubMesh 
 		: OriginalMesh = ItemBase->GetAssetData().SubMesh;
 
 	if(!USeAvatar)
-		ItemStaticMesh->SetStaticMesh( OriginalMesh );
+	{
+		if(OriginalMesh)
+			ItemStaticMesh->SetStaticMesh( OriginalMesh );
+	}
+		
 }
 
 void AEquipItemBase::ChangeAvatar( UStaticMesh* ItemMesh )
@@ -37,7 +41,9 @@ void AEquipItemBase::ChangeAvatar( UStaticMesh* ItemMesh )
 
 void AEquipItemBase::UnUsedAvatar()
 {
-	ItemStaticMesh->SetStaticMesh( OriginalMesh );
+	if(OriginalMesh)
+		ItemStaticMesh->SetStaticMesh( OriginalMesh );
+
 	USeAvatar = false;
 }
 

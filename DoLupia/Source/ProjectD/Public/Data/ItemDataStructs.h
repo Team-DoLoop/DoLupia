@@ -8,6 +8,7 @@
 
 
 enum class EUseColor : uint8;
+class UNiagaraSystem;
 
 UENUM(BlueprintType)
 enum class EItemQuality : uint8
@@ -154,6 +155,8 @@ struct FItemAssetData
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* SubMesh;
 
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* EquipeedItemEffect;
 };
 
 USTRUCT()
