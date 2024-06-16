@@ -17,6 +17,7 @@ enum class EMonsterType : uint8
 	Ranged UMETA(DisplayName = "Ranged") ,
 };
 
+
 UCLASS()
 class PROJECTD_API AMonster : public ACharacter
 {
