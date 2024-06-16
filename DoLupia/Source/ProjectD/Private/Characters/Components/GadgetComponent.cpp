@@ -3,6 +3,8 @@
 
 #include "Characters/Components/GadgetComponent.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
@@ -14,6 +16,7 @@
 #include "Items/Clothes_Shoes/Clothes_ShoesBase.h"
 #include "Items/Clothes_Top/Clothes_TopBase.h"
 #include "Items/Sword/SwordBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/DoLupiaHUD.h"
 
 
@@ -108,8 +111,15 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 {
 	TObjectPtr<UItemBase> EquippedItem = nullptr;
 
+
+
 	if (ItemBase)
 	{
+		UNiagaraComponent* NiagaraComponent = nullptr;
+
+		if(UNiagaraSystem* Effect =  ItemBase->GetAssetData().EquipeedItemEffect)
+			NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld() , Effect , GetOwner()->GetActorLocation() );
+
 		switch (EItemType ItemType = ItemBase->GetItemType())
 		{
 
@@ -118,6 +128,9 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 			{
 				EquippedItem = HeadBase->GetItemBase();
 				HeadBase->ReceiveItemData( ItemBase );
+
+				if(NiagaraComponent)
+					NiagaraComponent->SetupAttachment( HeadBase->GetRootComponent() );
 			}
 			break;
 		case EItemType::Top:
@@ -125,6 +138,9 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 			{
 				EquippedItem = TopBase->GetItemBase();
 				TopBase->ReceiveItemData( ItemBase );
+
+				if(NiagaraComponent)
+					NiagaraComponent->SetupAttachment( TopBase->GetRootComponent() );
 			}
 			break;
 		case EItemType::Pants:
@@ -132,6 +148,9 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 			{
 				EquippedItem = PantsBase->GetItemBase();
 				PantsBase->ReceiveItemData( ItemBase );
+
+				if (NiagaraComponent)
+					NiagaraComponent->SetupAttachment( PantsBase->GetRootComponent() );
 			}
 			break;
 		case EItemType::Shoes:
@@ -142,6 +161,15 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 
 				if (Shoes_L)
 					Shoes_L->ReceiveItemData( ItemBase , true );
+
+				if (NiagaraComponent)
+				{
+					NiagaraComponent->SetupAttachment( ShoesBase->GetRootComponent() );
+
+					if(Shoes_L)
+						NiagaraComponent->SetupAttachment( Shoes_L->GetRootComponent() );
+				}
+					
 			}
 			break;
 		case EItemType::Weapon:
@@ -150,6 +178,10 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 				Character->GetPlayerFSMComp()->ChangePlayerWeaponState(EPlayerWeaponState::SWORD);
 				EquippedItem = SwordBase->GetItemBase();
 				SwordBase->ReceiveItemData( ItemBase );
+
+				if (NiagaraComponent)
+					NiagaraComponent->SetupAttachment( SwordBase->GetRootComponent() );
+
 			}
 			break;
 		case EItemType::Spell:
@@ -160,6 +192,7 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 		}
 
 		Character->GetDoLupiaHUD()->UpdateEquipmentWidget( ItemBase );
+
 
 		if(EquippedItem)
 		{

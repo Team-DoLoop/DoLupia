@@ -72,6 +72,17 @@ void AMonster::BeginPlay()
 		}
 	}
 	//
+
+	if (GetMesh())
+	{
+		UMaterialInterface* Material = GetMesh()->GetMaterial( 0 );
+		if (Material)
+		{
+			DynamicDissolveMaterial = UMaterialInstanceDynamic::Create( Material , this );
+			GetMesh()->SetMaterial( 0 , DynamicDissolveMaterial );
+			DynamicDissolveMaterial->SetScalarParameterValue( "Amount (S)" , 1.f );
+		}
+	}
 }
 
 // Called every frame
@@ -195,7 +206,8 @@ void AMonster::DieState()
 	IsAlive = false;
 	anim->animState = MonsterFSM->state;
 	this->GetCapsuleComponent()->SetCollisionEnabled( ECollisionEnabled::NoCollision );
-	
+	Amount -= GetWorld()->GetDeltaSeconds() * DissolveSpeed;
+	DynamicDissolveMaterial->SetScalarParameterValue( "Amount (S)" , Amount );
 }
 
 void AMonster::MoveToTarget()

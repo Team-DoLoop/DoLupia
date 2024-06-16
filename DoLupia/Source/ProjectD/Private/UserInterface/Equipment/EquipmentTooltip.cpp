@@ -13,8 +13,10 @@ void UEquipmentTooltip::SetupTooltip( UItemBase* ItemBase )
 	const FItemNumericData& NumericData = ItemBase->GetNumericData();
 
 	ItemName->SetText( TextData.Name );
-	DamageValue->SetText( FText::AsNumber( ItemStatistics.DamageValue ) );
-	ArmorRating->SetText( FText::AsNumber( ItemStatistics.ArmorRating ) );
+
+	DamageValue->SetText( FText::FromString( FString( L"공격력 : " ) + FText::AsNumber( ItemStatistics.DamageValue ).ToString() ) );
+	ArmorRating->SetText( FText::FromString( FString( L"방어력 : " ) + FText::AsNumber( ItemStatistics.ArmorRating ).ToString() ) );
+
 	UsageText->SetText( TextData.UsageText );
 	ItemDescription->SetText( TextData.Description );
 	SellValue->SetText( FText::AsNumber( ItemStatistics.SellValue ) );
