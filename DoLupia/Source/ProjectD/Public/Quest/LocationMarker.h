@@ -30,8 +30,19 @@ public:
 
 	virtual void NotifyActorBeginOverlap( AActor* OtherActor ) override;
 
+	void ActiveLocationMarker();
+
+	UFUNCTION( BlueprintCallable , Category = "Marker" )
+	int32 GetMarkerID() const { return MarkerID; }
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Marker" )
+	int32 MarkerID;
+
 	UPROPERTY( VisibleAnywhere )
 	UBoxComponent* BoxComponent; // BoxComponent 포인터 생성
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	UNiagaraComponent* locationVFX;
 
 	UPROPERTY()
 	FText LocationName;

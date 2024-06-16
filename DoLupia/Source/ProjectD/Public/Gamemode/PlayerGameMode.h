@@ -162,4 +162,8 @@ private:
 	void FindNextNPC();
 	void FindMiniGame();
 
+
+	/*---------- Quest Location actor  --------*/
+public:
+	void ActivateMarkers(int32 MarkerID);
 };

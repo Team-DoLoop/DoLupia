@@ -22,6 +22,7 @@
 #include "Quest/MinigameQuestObject.h"
 #include "World/Trigger/DestructableWallActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
+#include <Quest/LocationMarker.h>
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -355,6 +356,20 @@ void APlayerGameMode::FindMiniGame()
 		{
 			Minigame->ChangeMinigameColor( 3 );
 			//return NPC;
+		}
+	}
+}
+
+void APlayerGameMode::ActivateMarkers( int32 MarkerID )
+{
+	for (TActorIterator<ALocationMarker> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		ALocationMarker* Marker = *ActorItr;
+
+		if (Marker && Marker->GetMarkerID() == MarkerID)
+		{		
+			//켜고 끄는 코드
+			Marker->ActiveLocationMarker();
 		}
 	}
 }
