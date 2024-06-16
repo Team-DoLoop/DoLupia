@@ -248,9 +248,19 @@ bool UQuickSlotWidget::CheckHorveredQuickSlotUI(const FVector2D& MousePosition)
 }
 
 
-void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity) const
+void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity)
 {
-	if(!ItemReference) return;
+	if(!ItemReference) 
+	{
+		if (UInventoryComponent* InventoryComponent = Cast<AProjectDCharacter>( PlayerController->GetCharacter() )->GetInventory())
+		{
+			ItemReference = InventoryComponent->FindMatchItem( ItemID );
+
+			if(!ItemReference)
+				return;
+		}
+	}
+
 	if(ItemReference->GetTextData().Name.ToString() != ItemID) return;
 
 	ItemQuantity->SetText(FText::FromString(FString::FromInt(NewQuantity)));

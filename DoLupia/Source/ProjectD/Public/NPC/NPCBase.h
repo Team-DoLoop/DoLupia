@@ -110,4 +110,42 @@ public:
 	UPROPERTY( BlueprintReadWrite,  EditAnywhere , Category = "Dialog" )
 	FString NxtQuestID = "";
 
+
+public:
+	void SwitchToPlayerCamera();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	class UStaticMeshComponent* CameraPosition;
+
+	UPROPERTY(EditAnywhere, Category = "Camera" )
+	class UCameraComponent* CameraComponent;
+
+	UPROPERTY()
+	class UTimelineComponent* TimelineComp;
+
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	UCurveFloat* PlayerCamCurve;
+
+	UPROPERTY()
+	class AProjectDCharacter* Target;
+
+	UPROPERTY()
+	AActor* OriginalViewTarget;
+
+	UPROPERTY()
+	class UFadeInOutWidget* FadeInOutWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UFadeInOutWidget> FadeInOutWidgetFactory;
+
+	bool TimelineTrigger = false;
+
+protected:
+	UFUNCTION()
+	void OnMoveCamera( float Value );
+	UFUNCTION()
+	void OnTimelineFinished();
+
+
 };
