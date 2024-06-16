@@ -329,12 +329,12 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	// 첫 공격이 아니고 콤보 구간이라면
 	else if(CurrentState == EPlayerState::ATTACK_ONLY)
 	{
-		UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
+		// UE_LOG(LogTemp, Log, TEXT("In Combo State Press"));
 		// 만약 콤보 가능 구간이라면
 		if(CanNextCombo)
 		{
 			// 콤보 공격 입력
-			UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
+			// UE_LOG(LogTemp, Log, TEXT("IsComboInputOn = true"));
 
 			// 그 중 첫번째 눌린 경우에는 Press UI 뜨게
 			if(!IsComboInputOn) SetComboAttackUI(SkillKeyIndex, true);

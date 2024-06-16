@@ -117,11 +117,11 @@ void UWidgetQuestGiver::OnAcceptClicked()
 	AProjectDCharacter* PlayerCharacterD = Cast<AProjectDCharacter>( PlayerCharacter );
 
     // 특정 Quest 완료 시, Player 스킬 Unlock
-    if( QuestID == "1002" )
-    {
-        PlayerCharacterD->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
-        PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
-    }
+    // if( QuestID == "1002" )
+    // {
+    //    PlayerCharacterD->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
+    //    PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
+    // }
     // 첫 퀘스트(아무색 없다가 Red라도 생기는 경우) or 무기 장착한 경우
     
 

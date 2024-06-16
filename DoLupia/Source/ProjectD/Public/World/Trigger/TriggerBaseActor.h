@@ -11,6 +11,9 @@ class UBoxComponent;
 class APlayerGameMode;
 class UNiagaraComponent;
 class AProjectDCharacter;
+class USpringArmComponent;
+class UTimelineComponent;
+class UCurveFloat;
 
 UCLASS()
 class PROJECTD_API ATriggerBaseActor : public AActor
@@ -45,19 +48,37 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Change Level" )
 	FName LvName;
 
-	void CallLevel( FName Lvname, AProjectDCharacter* Character );
-
-public:
-	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	UNiagaraComponent* locationVFX;
+
+	void CallLevel( FName Lvname, AProjectDCharacter* Character );
+	void ShowTrigger();
+	void HideTrigger();
+
+	void ActiveTriggerCollision();
 
 	/* ------------------- CameraBoom ------------------- */
 private:
 	void ChangeCameraAngle(float angle);
 	void ChangeCameraBooms( float angle );
 
-public:
-	void ShowTrigger();
-	void HideTrigger();
+	UPROPERTY()
+	USpringArmComponent* CameraBoom;
+
+	// lerp 적용
+	UPROPERTY()
+	UTimelineComponent* TimelineComp;
+
+	FRotator InitialRotation;
+	FRotator TargetRotation;
+
+	UFUNCTION()
+	void HandleTimelineProgress( float Value );
+
+	UFUNCTION()
+	void OnTimelineFinished();
+
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	UCurveFloat* CurveFloat;
 
 };

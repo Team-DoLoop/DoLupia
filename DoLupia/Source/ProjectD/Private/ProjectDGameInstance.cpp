@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ProjectDGameInstance.h"
@@ -50,6 +50,7 @@ void UProjectDGameInstance::Init()
 	
 	InitCanUseColor();
 	InitTutorialIndex();
+	InitCompletedQuests();
 }
 
 // <----------------------------- Player Skill ----------------------------->
@@ -89,27 +90,40 @@ FTutorialData* UProjectDGameInstance::GetTutorialData(int32 _TutorialID)
 	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
 }
 
-void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType)
+void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _Index, int32 _TutorialID)
 {
 	// 첫 데이터 찾기
-	TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
+	if(_Index != -1) TutorialIndexMap[_ExplainType] = _Index;
+	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap1 : %d "), TutorialIndexMap[_ExplainType]);
+
+	if(_TutorialID != -1) TutorialID = _TutorialID;
+	
+	else TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
+	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
 	
 	// 데이터가 있다면
 	if(!TutoData) return;
 	
-	// 확인했다고 튜토리얼임을 저장
-	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex;
-
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
 	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
-			PlayerTuto->SetTutorialID(TutorialID);
+			// 토토가 말하는 중이고 그게 메인 스토리 관련이라면 return
+			if(PlayerTuto->GetToToSaying() && TutoData->bCantActing) return;
+			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
+				
+			PlayerTuto->SetExplainIndex(0);
+			PlayerTuto->SetTotoSaying(true);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}
 	}
+	
+	// 확인한 튜토리얼임을 저장
+	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
+
+	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap2 : %d "), TutorialIndexMap[_ExplainType]);
 }
 
 int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex)
@@ -122,14 +136,25 @@ int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _Ex
 
 FQuestDetails* UProjectDGameInstance::GetQuestData(int32 _QuestID)
 {
-	return QuestTable->FindRow<FQuestDetails>(*FString::FromInt(_QuestID), TEXT(""));
+	return QuestTable->FindRow<FQuestDetails>(*FString::Printf(TEXT("%04d"), _QuestID), TEXT(""));
 }
+
+FQuestDetails* UProjectDGameInstance::GetQuestData(FString _QuestID)
+{
+	return QuestTable->FindRow<FQuestDetails>(FName(*_QuestID), TEXT(""));
+}
+
+FQuestDetails* UProjectDGameInstance::GetQuestData(FName _QuestID)
+{
+	return QuestTable->FindRow<FQuestDetails>(_QuestID, TEXT(""));
+}
+
 
 void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 {
 	if (AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
-		FName _QuestIdName = FName(*FString::FromInt(_QuestID));
+		FName _QuestIdName = FName(*FString::Printf(TEXT("%04d"), _QuestID));
 		UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
 
 		bool ActiveQuest = QuestComp->QueryActiveQuest(_QuestIdName);
@@ -140,6 +165,34 @@ void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 			gm->SetStringQuestID( _QuestIdName.ToString() );
 			QuestComp->AddNewQuest( _QuestIdName );
 		}
+	}
+}
+
+void UProjectDGameInstance::InitCompletedQuests()
+{
+
+	AProjectDCharacter* Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	if (!Player)
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Player is null in InitCompletedQuests" ) );
+		return;
+	}
+
+	UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
+	if (!QuestComp)
+	{
+		UE_LOG( LogTemp , Error , TEXT( "QuestComp is null in InitCompletedQuests" ) );
+		return;
+	}
+
+	if (!GetCompletedQuest().IsEmpty())
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is not empty in InitCompletedQuests" ) );
+		QuestComp->CompletedQuests = GetCompletedQuest();
+	}
+	else
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is empty in InitCompletedQuests" ) );
 	}
 }
 

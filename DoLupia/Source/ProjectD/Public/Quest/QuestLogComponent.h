@@ -39,6 +39,12 @@ public:
 
 	FUpdateCurrentActiveQuest UpdateCurrentActiveQuest;
 
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
+
+	UPROPERTY()
+	class AProjectDCharacter* Player;
+
 	UPROPERTY( BlueprintAssignable )
 	FQuestCompleted QuestCompleted;
 
@@ -83,6 +89,8 @@ public:
 
 	UFUNCTION()
 	void TrackQuest( AQuest_Base* QuestActor );
+
+	void InitCompletedQuests( FName InitQuestID );
 
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UQuestTracker> QuestTracker_Widget;

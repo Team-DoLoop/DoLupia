@@ -8,6 +8,7 @@
 #include "Characters/Components/PlayerTutorialComp.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "Data/WidgetData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
@@ -46,8 +47,11 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	Player->GetAttackComp()->InitSkillUI();
 	Player->GetTutorialComp()->SetDefaultUI(this);
-
-	HideTutorialWidget();
+	
+	 HideTutorialWidget();
+	
+	APlayerGameMode* gm = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	gm->StartGameStory();
 }
 
 void UPlayerDefaultsWidget::UseQuickSlot(int32 SlotNumber)
@@ -94,17 +98,22 @@ bool UPlayerDefaultsWidget::QuickSlotMouseHoveredWidget(FVector2D MousePosition)
 	return true;
 }
 
-void UPlayerDefaultsWidget::ShowTutorialWidget(FTutorialData* _TutoData)
+void UPlayerDefaultsWidget::ShowTutorialWidget(FTutorialData* _TutoData, int32 _Index)
 {
 	if(!_TutoData) return;
 	
 	TutorialUI->SetVisibility(ESlateVisibility::Visible);
-	TutorialUI->ShowTutorialWidget(_TutoData);
+	TutorialUI->ShowTutorialWidget(_TutoData, _Index);
 }
 
 void UPlayerDefaultsWidget::HideTutorialWidget()
 {
 	TutorialUI->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UPlayerDefaultsWidget::NextTutorial()
+{
+	TutorialUI->NextTutorialBtn();
 }
 
 void UPlayerDefaultsWidget::ChangeNextBtn(FString _Str)

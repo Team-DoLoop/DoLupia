@@ -6,9 +6,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Library/AIConnectionLibrary.h"
 #include "Engine.h"
-#include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
-
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
@@ -16,8 +14,14 @@
 #include "Quest/QuestGiver.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
+#include "UserInterface/NPC/FadeInOutWidget.h"
 
 #include "MapIconComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "UserInterface/DoLupiaHUD.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
 // Sets default values
 ANPCBase::ANPCBase()
@@ -27,6 +31,12 @@ ANPCBase::ANPCBase()
 
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>( TEXT("Camera"));
+	CameraPosition = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CameraPosition"));
+	TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComp" ) );
+
+	CameraComponent->SetupAttachment( GetRootComponent() );
+	CameraPosition->SetupAttachment(GetRootComponent());
 
 	// 초기화
 	AIlib = nullptr;
@@ -35,8 +45,6 @@ ANPCBase::ANPCBase()
 	gm = nullptr;
 
 	this->SetActorScale3D( FVector(1.5f, 1.5f, 1.5f) );
-	// Post Process depth 설정값
-	//GetMesh()->SetRenderCustomDepth( true );
 	
 	//minimap icon
 	// MapIconComponent makes the character appear on the minimap
@@ -59,21 +67,30 @@ void ANPCBase::BeginPlay()
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
 
-
-	if (gm)
+	if (DialogNum == 501)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Success" ) );
+		anim->bDie = true;
 	}
-	else {
-		UE_LOG( LogTemp , Warning , TEXT( "gm - Load Failed" ) );
+
+	if (PlayerCamCurve)
+	{
+		FOnTimelineFloat ProgressFunction;
+		ProgressFunction.BindUFunction( this , FName( "OnMoveCamera" ) );
+		TimelineComp->AddInterpFloat( PlayerCamCurve , ProgressFunction );
+
+		FOnTimelineEvent TimelineFinishedFunction;
+		TimelineFinishedFunction.BindUFunction( this , FName( "OnTimelineFinished" ) );
+		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
+
+	Target = Cast<AProjectDCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
 }
 
 // Called every frame
 void ANPCBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -85,28 +102,15 @@ void ANPCBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
-	AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
-
-	/*
-	if (player)
+	if (NPCInteractWidget)
 	{
-		AIlib = gm->GetAIConnectionLibrary();
-		
-		// 현재 활성 레벨을 world context object로 사용하여 AIlib 함수를 호출합니다.
-		if (AIlib)
-		{
-			//BeginChat();
-		}
-		else {
-			UE_LOG( LogTemp , Warning , TEXT( "AIlib - Load failed" ) );
-		}
 		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
-	}else
+	}
+	else
 	{
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
-	*/
 }
 
 void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
@@ -119,6 +123,7 @@ void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
 	}
 }
 
+/* AI Chatbot 관련 주석처리
 void ANPCBase::BeginChat()
 {
 	if (AIlib) {
@@ -137,19 +142,42 @@ void ANPCBase::BeginChat()
 void ANPCBase::CallNPCMessageDelegate( FString Message )
 {
 	NPCConversation = Message;
-	UE_LOG( LogTemp , Warning , TEXT( "Message : [%s]" ) , *Message )
-
 	gm->ReceiveNPCMsg( NPCConversation );
 
 }
+*/
 
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	ChangeNPCStatus( stencilDepth );
+
+	// Dialog 503 일 때, AI서버 요청
+	if(DialogNum == 501)
+	{
+		AIlib = gm->GetAIConnectionLibrary();
+		AIlib->SendPImgToSrv( 2004 );
+	}
+	
+
 	anim->bTalking = true;
 
 	ChangePlayerState();
+
+	if(!TimelineTrigger)
+	{
+		TimelineComp->PlayFromStart();
+		TimelineTrigger = true;
+	}
+
+	if (FadeInOutWidgetFactory)
+	{
+		FadeInOutWidget = CreateWidget<UFadeInOutWidget>( GetWorld() , FadeInOutWidgetFactory );
+		FadeInOutWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Quest));
+		FadeInOutWidget->SetVisibility( ESlateVisibility::HitTestInvisible );
+		FadeInOutWidget->FadeInOut();
+		Target->GetPlayerBattleWidget()->SetVisibility(ESlateVisibility::Hidden);
+		Target->GetPlayerDefaultsWidget()->GetMainQuickSlot()->SetVisibility( ESlateVisibility::Hidden );
+	}
 }
 
 FString ANPCBase::InteractWith()
@@ -175,37 +203,100 @@ FString ANPCBase::InteractWith()
 		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 	}
-	
+
+	FString Result = QuestInterface->InteractWith();
+
 	ChangePlayerState();
 
-	return QuestInterface->InteractWith();
+	return Result;
 }
 
 void ANPCBase::LookAt()
 {
 }
 
-void ANPCBase::ChangeNPCStatus(int32 depth)
+void ANPCBase::ChangeNPCColor(int32 depth)
 {
+	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
-	GetMesh()->CustomDepthStencilValue = depth;
+	GetMesh()->SetCustomDepthStencilValue( depth );
+	//GetMesh()->CustomDepthStencilValue = depth;
 }
 
 void ANPCBase::ChangePlayerState()
 {
-	// 플레이어 행동 가능하게
-	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	if(auto PlayerFSM = Target->GetPlayerFSMComp())
 	{
-		if(auto PlayerFSM = Player->GetPlayerFSMComp())
-		{
-			if(PlayerFSM->CanChangeState(EPlayerState::TALK_NPC))
-				PlayerFSM->ChangePlayerState(EPlayerState::TALK_NPC);
-		}
+		if(PlayerFSM->CanChangeState(EPlayerState::TALK_NPC))
+			PlayerFSM->ChangePlayerState(EPlayerState::TALK_NPC);
 	}
 }
 
 void ANPCBase::HideNPC()
 {
 	this->SetActorHiddenInGame( true );
+	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
+	this->MapIcon->SetIconVisible(false);
 }
+
+FString ANPCBase::GetNxtQuestID() const
+{
+	return NxtQuestID;
+	/*
+	if (QuestGiverComp)
+	{
+		return QuestGiverComp->QuestData.RowName.ToString();
+	}
+	return LexToString(NAME_None); // 유효하지 않은 경우
+	*/
+}
+
+void ANPCBase::SwitchToPlayerCamera()
+{
+	if(OriginalViewTarget)
+	{
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( Target, 1.0f );
+		Target->GetPlayerBattleWidget()->SetVisibility( ESlateVisibility::HitTestInvisible );
+		Target->GetPlayerDefaultsWidget()->GetMainQuickSlot()->SetVisibility( ESlateVisibility::SelfHitTestInvisible );
+
+		if (auto PlayerFSM = Target->GetPlayerFSMComp())
+		{
+			if (PlayerFSM->CanChangeState( EPlayerState::TALK_NPC ))
+				PlayerFSM->ChangePlayerState( EPlayerState::IDLE );
+		}
+	}
+}
+
+
+void ANPCBase::OnMoveCamera( float Value )
+{
+	const FVector& TargetLocation = Target->GetActorLocation();
+	const FVector& MyLocation = CameraPosition->GetComponentLocation();
+
+	// 타겟의 위치를 보간하여 업데이트
+	FVector NewLocation = FMath::Lerp( TargetLocation , FVector( MyLocation.X , MyLocation.Y , TargetLocation.Z ) , Value );
+	Target->SetActorLocation( NewLocation );
+
+	// NPC의 방향으로 회전 벡터를 계산
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation( TargetLocation , GetActorLocation() );
+
+	// 회전 보간하여 설정
+	Target->SetActorRotation( FMath::Lerp( Target->GetActorRotation(), LookAtRotation, Value)  );
+
+	GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( this , 1.0f );
+
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]()
+	{
+		OnTimelineFinished();
+	}), 1.f, false);
+}
+
+void ANPCBase::OnTimelineFinished()
+{
+	Target->GetCharacterMovement()->Velocity = FVector(0.0, 0.0, 0.0);
+	TimelineComp->Stop();
+
+}
+
 

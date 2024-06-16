@@ -49,7 +49,7 @@ void AQuest_Base::BeginPlay()
 	Super::BeginPlay();
 
 	//겜모에 QuestID 가져오기
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 	// 2단계: FString을 FName으로 변환
 	auto ValueString = gm->GetStringQuestID();
@@ -190,7 +190,7 @@ void AQuest_Base::GetQuestDetails()
 		UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ GetQuestDetails AQuest_Base" ) );
 	}
 
-	UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(): %s" ) , *QuestID.ToString() );
+	//UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(): %s" ) , *QuestID.ToString() );
 	
 	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
 	if (!Row)
@@ -200,6 +200,9 @@ void AQuest_Base::GetQuestDetails()
 	}
 
 	QuestDetails = *Row;
+
+	// Gamemode에 다음 진행할 퀘스트ID 보냄
+	gm->SetNxtQuestID( *QuestDetails.NextQuestID );
 
 	if (CurrentStage >= QuestDetails.Stages.Num())
 	{
@@ -301,7 +304,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 						UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete(FString ObjectiveID) QuestDetails.AutoComplete." ) );
 						QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
 						QuestLogComponent->TurnInQuest( QuestID );
-						QuestLogComponent->CompleteQuest( QuestID );
+						//QuestLogComponent->CompleteQuest( QuestID );
 					}
 				}
 			}

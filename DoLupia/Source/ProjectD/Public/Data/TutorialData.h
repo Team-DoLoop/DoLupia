@@ -4,17 +4,20 @@
 #include "Engine/DataTable.h"
 #include "TutorialData.generated.h"
 
+
 UENUM(BlueprintType)
 enum class EExplainType : uint8
 {
 	NONE UMETA(DisplayName = "None"),
 	MOVE UMETA(DisplayName = "Move"),									// 이동
+	INTERACTION UMETA(DisplayName = "Interaction"),						// 상호작용
 	ATTACK UMETA(DisplayName = "Attack"),								// 공격(전투)
 	SKILL UMETA(DisplayName = "Skill"),									// 스킬
 	ITEM_OIL UMETA(DisplayName = "Item_Oil"),							// 기름
 	ITEM_COOL_WATER UMETA(DisplayName = "Item_Cool_Water"),				// 냉각수
 	ITEM_SKILL_UPGRADE UMETA(DisplayName = "Item_Skill_Upgrade"),		// 스킬 업그레이드
 	FULL_HIT_GAUGE UMETA(DisplayName = "Full_Hit_Gauge"),				// MP가 꽉 찬 경우
+	MAIN_STORY UMETA(DisplayName = "Main_Story"),						// Main Story
 };
 
 UENUM(BlueprintType)
@@ -24,11 +27,12 @@ enum class ETutoItemType : uint8
 	OIL UMETA(DisplayName = "Oil"),								// 기름
 	COOL_WATER UMETA(DisplayName = "Cool_Water"),				// 냉각수
 	BATTERY_RED_Q UMETA(DisplayName = "Battery_Red_Q"),			// 스킬 업그레이드
-	BATTERY_RED_W UMETA(DisplayName = "Battery_Red_Q"),	
+	BATTERY_RED_W UMETA(DisplayName = "Battery_Red_Q"),			// 배터리
 	BATTERY_YELLOW_Q UMETA(DisplayName = "Battery_Yellow_Q"),
 	BATTERY_YELLOW_W UMETA(DisplayName = "Battery_Yellow_W"),
 	BATTERY_BLUE_Q UMETA(DisplayName = "Battery_Blue_Q"),
 	BATTERY_BLUE_W UMETA(DisplayName = "Battery_Blue_W"),
+	MAIN_STORY UMETA(DisplayName = "Main_Story"),
 };
 
 USTRUCT(BlueprintType)
@@ -39,6 +43,10 @@ struct FTutorialWidgetData
 	// 설명 텍스트
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString ExplainText;
+
+	// 설명 텍스트 배열 (우선 스토리용으로)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FString> StoryExplainText;
 };
 
 
@@ -71,6 +79,20 @@ struct FTutorialQuest
 	int32 QuestID;
 };
 
+USTRUCT(BlueprintType)
+struct FTutorialTrigger
+{
+	GENERATED_BODY()
+
+	// 트리거 관련인지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsTrigger;
+
+	// 어떤 트리거인지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TriggerID;
+};
+
 
 USTRUCT(BlueprintType)
 struct FTutorialData : public FTableRowBase
@@ -85,8 +107,16 @@ struct FTutorialData : public FTableRowBase
 	int32 ExplainIndex;
 
 	// 다음 지문
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// int32 NextIndex;
+
+	// 움직임 막을건지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 NextIndex;
+	bool bCantActing;
+
+	// Type 대사 중 마지막 대사인지 (마지막이라면 계속 반복)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsTypeEnd;
 
 	// 아이템 지급 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -99,4 +129,8 @@ struct FTutorialData : public FTableRowBase
 	// 퀘스트 관련 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTutorialQuest TutorialQuest;
+
+	// 트리거 관련 데이터
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTutorialTrigger TutorialTrigger;
 };

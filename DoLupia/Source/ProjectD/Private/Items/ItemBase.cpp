@@ -31,6 +31,7 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 	this->ItemStatistics = MyItemBase->ItemStatistics;
 	this->ItemSkillColor = MyItemBase->ItemSkillColor;
 	this->AssetData = MyItemBase->AssetData;
+	this->ItemMaterial = MyItemBase->ItemMaterial;
 	this->SkillAttribute = MyItemBase->SkillAttribute;
 	this->bIsCopy = true;
 	this->bIsPickup = true;
@@ -39,7 +40,7 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 void UItemBase::CreateItemCopy(const FItemData* MyItemData, int32 _ItemQuantity)
 {
 	this->ID = MyItemData->ID;
-	this->Quantity = Quantity;
+	this->Quantity = _ItemQuantity;
 	this->ItemQuality = MyItemData->ItemQuality;
 	this->ItemType = MyItemData->ItemType;
 	this->TextData = MyItemData->TextData;
@@ -47,6 +48,7 @@ void UItemBase::CreateItemCopy(const FItemData* MyItemData, int32 _ItemQuantity)
 	this->ItemStatistics = MyItemData->ItemStatistics;
 	this->ItemSkillColor = MyItemData->ItemSkillColor;
 	this->AssetData = MyItemData->AssetData;
+	this->ItemMaterial = MyItemData->ItemMaterial;
 	this->SkillAttribute = MyItemData->SkillAttribute;
 	this->bIsCopy = true;
 	this->bIsPickup = true;

@@ -11,22 +11,26 @@
 // Sets default values
 ALocationMarker::ALocationMarker()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
-    // 메시 컴포넌트 생성 및 부착
+    PrimaryActorTick.bCanEverTick = false;
+
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
+    RootComponent = BoxComponent; // BoxComponent를 루트 컴포넌트로 설정
 
     locationVFX = CreateDefaultSubobject<UNiagaraComponent>( TEXT( "locationVFX" ) );
     locationVFX->SetupAttachment( BoxComponent );
+    locationVFX->SetVisibility( false );
 
-	static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/pin.pin" ) );
-	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
-	MapIcon->SetupAttachment( BoxComponent );
-	// Set the player icon as texture
-	MapIcon->SetIconTexture( LocationIcon.Object );
-	// The icon will rotate to represent the character's rotation
-	MapIcon->SetIconRotates( false );
-	//MapIcon->SetIconVisible( false );
+    static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/pin.pin" ) );
+    MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
+    MapIcon->SetupAttachment( BoxComponent );
+    // Set the player icon as texture
+    if (LocationIcon.Succeeded())
+    {
+        MapIcon->SetIconTexture( LocationIcon.Object );
+    }
+    // The icon will rotate to represent the character's rotation
+    MapIcon->SetIconRotates( false );
+    MapIcon->SetIconVisible( false );
 }
 
 // Called when the game starts or when spawned
@@ -49,9 +53,17 @@ void ALocationMarker::NotifyActorBeginOverlap( AActor* OtherActor )
         AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
         if (player) {
             player->OnObjectiveIDCalled.Broadcast( ObjectiveID , 1);
-            locationVFX->SetVisibility( false );
 			MapIcon->SetIconVisible( false );
+			Destroy();
         }
     }
 }
+
+void ALocationMarker::ActiveLocationMarker()
+{
+	locationVFX->SetVisibility( true );
+	MapIcon->SetIconVisible( true );
+}
+
+
 

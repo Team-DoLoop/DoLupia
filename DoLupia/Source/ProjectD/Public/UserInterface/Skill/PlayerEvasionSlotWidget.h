@@ -15,9 +15,10 @@ class PROJECTD_API UPlayerEvasionSlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
 	void UpdateEvasionCoolTimeUI(float CoolTime);
 
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (BindWidget))
-	class UProgressBar* CoolTimeBar;
+	class UImage* CoolTimeImage;
 };

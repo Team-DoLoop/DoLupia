@@ -12,6 +12,7 @@ class UInventoryTooltip;
 class UBorder;
 class UImage;
 class UTextBlock;
+class UMaterialInstanceDynamic;
 
 /**
  * 
@@ -56,28 +57,10 @@ protected:
 	UItemBase* ItemReference;
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot", meta = (BindWidget))
-	UBorder* ItemBorder;
-
-	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot", meta = (BindWidget))
 	UImage* ItemIcon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Inventory Slot", meta = (BindWidget))
 	UTextBlock* ItemQuantity;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite , Category = "Outline" )
-	FLinearColor OutlineColor1;
-
-	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
-	FLinearColor OutlineColor2;
-
-	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
-	FLinearColor OutlineColor3;
-
-	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
-	FLinearColor OutlineColor4;
-
-	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Outline" )
-	FLinearColor OutlineColor5;
 
 	int32 SlotIndex;
 
@@ -85,5 +68,13 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UInventoryTooltip> Tooltip;
+
+private:
+	void Gradient( UMaterialInstanceDynamic* MaterialInstanceDynamic );
+	void BackGround( UMaterialInstanceDynamic* MaterialInstanceDynamic );
+	void Texture( UMaterialInstanceDynamic* MaterialInstanceDynamic );
+	void Frame(UMaterialInstanceDynamic* MaterialInstanceDynamic );
+
+	
 
 };

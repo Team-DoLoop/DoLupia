@@ -45,7 +45,8 @@ private:
 	UPROPERTY()
 	UAIConnectionLibrary* AIlib;
 
-	/*-----------  AI Chatbot 연동  -----------*/
+	/*-----------  AI Chatbot 연동 >> 사용 안하는 기능  -----------*/
+	/*
 private:
 	FString NPCConversation;
 
@@ -54,6 +55,7 @@ private:
 
 	UFUNCTION()
 	void CallNPCMessageDelegate( FString Message );
+	*/
 
 	/*-----------  Dialog Component  -----------*/
 public:
@@ -81,11 +83,7 @@ private:
 
 	/*---------------------- Post Process Depth ------------------*/
 public:
-	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "PostProcess" )
-	int32 stencilDepth = 0 ;
-
-private:
-	void ChangeNPCStatus( int32 depth );
+	void ChangeNPCColor( int32 depth );
 
 	/*-------------------- Interaction Widget ---------------------*/
 public:
@@ -105,5 +103,49 @@ public:
 	/*---------------------- Minimap ------------------*/
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
+
+	/*-------------------- NPC State ---------------------*/
+	FString GetNxtQuestID() const;
+
+	UPROPERTY( BlueprintReadWrite,  EditAnywhere , Category = "Dialog" )
+	FString NxtQuestID = "";
+
+
+public:
+	void SwitchToPlayerCamera();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	class UStaticMeshComponent* CameraPosition;
+
+	UPROPERTY(EditAnywhere, Category = "Camera" )
+	class UCameraComponent* CameraComponent;
+
+	UPROPERTY()
+	class UTimelineComponent* TimelineComp;
+
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	UCurveFloat* PlayerCamCurve;
+
+	UPROPERTY()
+	class AProjectDCharacter* Target;
+
+	UPROPERTY()
+	AActor* OriginalViewTarget;
+
+	UPROPERTY()
+	class UFadeInOutWidget* FadeInOutWidget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UFadeInOutWidget> FadeInOutWidgetFactory;
+
+	bool TimelineTrigger = false;
+
+protected:
+	UFUNCTION()
+	void OnMoveCamera( float Value );
+	UFUNCTION()
+	void OnTimelineFinished();
+
 
 };

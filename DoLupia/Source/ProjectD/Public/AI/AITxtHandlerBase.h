@@ -6,6 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "AITxtHandlerBase.generated.h"
 
+class UMaterialInstanceDynamic;
+class UMaterialInterface;
+class UAIConnectionLibrary;
+class UTimelineComponent;
+class UCurveFloat;
+class UTexture2DDynamic;
+class USkeletalMeshComponent;
+class APlayerGameMode;
+
 UCLASS()
 class PROJECTD_API AAITxtHandlerBase : public AActor
 {
@@ -18,26 +27,25 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaTime ) override;
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 	// Update actor's material
 	void UpdateActorMaterial();
 
-	UFUNCTION()
-	void UpdateDissolve( float dissolve );
+private:
+	UPROPERTY( EditDefaultsOnly )
+	class USkeletalMeshComponent* meshComp;
 
-	UFUNCTION()
-	void OnTimelineFinished();
+	UPROPERTY( EditDefaultsOnly )
+	class UAIConnectionLibrary* AIlib;
+
+	UPROPERTY()
+	APlayerGameMode* gm;
 
 	UPROPERTY( EditAnywhere , Category = "Materials" )
 	UMaterialInterface* AITxtMaterial;
 
-	UPROPERTY( EditDefaultsOnly )
-	class USkeletalMeshComponent* meshComp;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
 	void LoadWebImage();
 
 	UFUNCTION()
@@ -47,11 +55,16 @@ public:
 	void OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture );
 	
 
-	UPROPERTY( EditDefaultsOnly )
-	class UAIConnectionLibrary* AIlib;
+	
 
 
 	/* ------------- TimeLine ---------------- */
+	UFUNCTION()
+	void UpdateDissolve( float dissolve );
+
+	UFUNCTION()
+	void OnTimelineFinished();
+
 	UMaterialInstanceDynamic* DynamicMaterial;
 
 	// Timeline component

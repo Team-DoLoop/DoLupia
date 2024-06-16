@@ -16,16 +16,19 @@
 		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
 		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
 		SaveType , SaveSlotName , UseThread , UseLocation, OpenLevel );							\
-																								\
-
+																								
 
 
 class UAIConnectionLibrary;
 class UNPCConvWidget; 
 class UAITestWidget;
 class ALevelManager;
-
+class USpringArmComponent;
+class UTimelineComponent;
+class UCurveFloat;
+class AProjectDCharacter;
 enum class ESaveType;
+class AMonsterSpawnManager;
 
 /**
  * 
@@ -41,31 +44,26 @@ public:
 	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 
-	class UAIConnectionLibrary* GetAIConnectionLibrary() const;
-
-	void InitializeNPCConvWidget();
-	void ReceiveNPCMsg(FString msg);
+	UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	// 2024.05.26 Player / Boss 텍스처 변경 분기처리
 	void ApplyAITxtP();
 	void ApplyAITxtB();
 
-	UPROPERTY( BlueprintReadOnly )
-	class UNPCConvWidget* NPCConvUI;
-
-	UPROPERTY( BlueprintReadOnly )
-	class UAITestWidget* AITestUI;
-
-
 private:
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
+
+	UPROPERTY()
+	class AProjectDCharacter* Player;
+
 	UPROPERTY()
 	TArray<FName> LevelNames;
 
-	UPROPERTY( EditDefaultsOnly )
-	class UAIConnectionLibrary* AIlib;
+	int32 LevelIdx;
 
 	UPROPERTY( EditDefaultsOnly )
-	TSubclassOf<class UUserWidget> NPCUIFactory;
+	UAIConnectionLibrary* AIlib;
 
 	/*---------- Level 별 bgm ----------*/
 public:
@@ -78,9 +76,6 @@ protected:
 
 	UPROPERTY( Transient )
 	USoundBase* CurrentBGM;
-
-private:
-	int32 LevelIdx;
 
 	/*---------- Level Open ----------*/
 public:
@@ -99,21 +94,32 @@ public:
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	int32 GetQuestID() const;
 
-	// Setter 함수 선언
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetQuestID( int32 NewQuestID );
 
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	FString GetStringQuestID();
+
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetStringQuestID( FString QuestID );
 
-	FString FStringQuestID;
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	FString GetNxtQuestID() const;
 
-	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetNxtQuestID( FString nextquestID );
+
+	FString FStringQuestID = "";
+
+	void HandleIntrusionEvent();
+	void StartGameStory();
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	bool IsToToNotInMapStart;
 
 private:
 	int32 questID = -1;
+	FString NextquestID ;
 
 	/*---------- Level Location Title Widget --------*/
 
@@ -126,4 +132,44 @@ public:
 
 	/*---------- Level Portal Trigger --------*/
 	void ActiveLvTrigger();
+
+	/*---------- Camera lerp --------*/
+public:
+	void LerpPlayerCameraLength( float NewTargetArmLength );
+
+private:
+	UPROPERTY()
+	USpringArmComponent* CameraBoom;
+
+	// lerp 적용
+	UPROPERTY()
+	UTimelineComponent* TimelineComp;
+
+	float InitialArmLength;
+	float NewTargetArmLength;
+
+	UFUNCTION()
+	void HandleTimelineProgress( float Value );
+
+	UFUNCTION()
+	void OnTimelineFinished();
+
+	UPROPERTY( EditAnywhere , Category = "Timeline" )
+	UCurveFloat* PlayerCamCurve;
+
+	/*---------- Quest, Dialog <> NPC, Minigame, Monster Spawner --------*/
+private:
+	UPROPERTY()
+	TArray<AMonsterSpawnManager*> SpawnerActors; // AMonsterSpawnManager 타입으로 배열을 선언합니다.
+
+	void InitializeSpawnerActors();
+
+	void FindNextNPC();
+	void FindMiniGame();
+	void FindMonsterSpawner( FName Tag , bool bActivate );
+
+
+	/*---------- Quest Location actor  --------*/
+public:
+	void ActivateMarkers(int32 MarkerID);
 };

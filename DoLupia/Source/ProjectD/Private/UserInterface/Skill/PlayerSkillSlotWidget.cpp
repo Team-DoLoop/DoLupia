@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UserInterface/Skill/PlayerSkillSlotWidget.h"
@@ -82,14 +82,41 @@ void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* _SkillData)
 {
 	if(_SkillData && _SkillData->SkillThumnail)
 	{
-		CoolTimeBar->SetFillColorAndOpacity(ProgressBarColor[_SkillData->SkillColor]);
-		SkillThumnail->SetBrushFromTexture(_SkillData->SkillThumnail);
+		//SkillThumnail->SetColorAndOpacity(ProgressBarColor[_SkillData->SkillColor]);
+		
+		UMaterialInstanceDynamic* Material = CoolTimeImage->GetDynamicMaterial();
+
+		if(Material)
+		{
+			Material->SetScalarParameterValue( "Percent" , 1.f );
+			Material->SetScalarParameterValue( "Opacity" , 0.f );
+			Material->SetVectorParameterValue( "Color" , ProgressBarColor[_SkillData->SkillColor] );
+		}
+			
+		SkillThumnail->SetBrushFromTexture( _SkillData->SkillThumnail );
+		
 	}
 }
 
 void UPlayerSkillSlotWidget::SetCoolTimeBar(float CoolTime)
 {
-	CoolTimeBar->SetPercent(CoolTime);
+
+	UMaterialInstanceDynamic* Material = CoolTimeImage->GetDynamicMaterial();
+	if (Material)
+	{
+		if(CoolTime > 0.f)
+		{
+			Material->SetScalarParameterValue( "Percent" , CoolTime );
+			Material->SetScalarParameterValue( "Opacity" , 1.f );
+		}
+		else
+		{
+			Material->SetScalarParameterValue( "Percent" , 0.f );
+			Material->SetScalarParameterValue( "Opacity" , 0.f );
+		}
+			
+
+	}
 }
 
 

@@ -2,6 +2,9 @@
 
 #include "Quest/QuestLogComponent.h"
 
+#include "ProjectDGameInstance.h"
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
@@ -33,6 +36,9 @@ void UQuestLogComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+    
+    GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 
@@ -73,9 +79,25 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
         CurrentActiveQuests.AddUnique( QuestID );
 
-        //QuestBase에서 보내기
+        //QuestBase에서 보내기 GetQuestDetails
         UpdateCurrentActiveQuest.Broadcast();
     }
+
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    if (QuestID == "0001" || QuestID == "1001" || QuestID == "2001")
+    {
+        gm->ActivateMarkers( 1 );
+    }
+    else if (QuestID == "1002") 
+    {
+        gm->ActivateMarkers( 2 );
+        gm->ActivateMarkers( 3 );
+    }
+    else if (QuestID == "1003" || QuestID == "2004")
+    {
+        gm->ActivateMarkers( 4 );
+    }
+    
 
 }
 
@@ -118,17 +140,23 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
 
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     //포털 열기
-    if (QuestID == "1000" || QuestID == "3001" || QuestID == "1002") {
+    if (QuestID == "3001" || QuestID == "1003") {
         gm->ActiveLvTrigger();
     }
 
-    // 퀘스트 2003 완료 시, 자동으로 퀘스트 발생
-    if(QuestID == "2003")
+    // 튜토리얼 퀘스트 완료 관련
+    if(GI)
     {
-        gm->TriggerQuest2004( QuestID , 1 );
-    }
-    
+        if(auto _QuestData = GI->GetQuestData(QuestID))
+        {
+            if(_QuestData->AutoStory.IsAutoStory)
+            {
+                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
+            }
 
+        }
+        InitCompletedQuests(QuestID);
+    }
 }
 
 void UQuestLogComponent::TurnInQuest( FName QuestID )
@@ -234,7 +262,7 @@ AQuest_Base* UQuestLogComponent::GetQuestActor( FName QuestID )
         UE_LOG( LogTemp , Error , TEXT( "void UQuestLogComponent::AddNewQuest(FName QuestID): %s" ) , *Quest->QuestID.ToString() );
         if (Quest->QuestID == QuestID)
         {
-            UE_LOG( LogTemp , Error , TEXT( "Quest->QuestID == QuestID" ));
+            UE_LOG( LogTemp , Error , TEXT( "GetQuestActor:Quest->QuestID == QuestID" ));
             return Quest;
         }
     }
@@ -279,5 +307,14 @@ void UQuestLogComponent::TrackQuest( AQuest_Base* QuestActor )
             Tracker->WidgetUpdate();
         }
     }
+}
+
+void UQuestLogComponent::InitCompletedQuests( FName InitQuestID )
+{
+    if (GI)
+    {
+        GI->SetCompletedQuest( InitQuestID );
+    }
+   
 }
 
