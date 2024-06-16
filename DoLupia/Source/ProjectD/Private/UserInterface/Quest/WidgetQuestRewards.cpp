@@ -138,6 +138,16 @@ void UWidgetQuestRewards::OnAcceptClicked()
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
     gm->ApplyAITxtP();
+
+    gm->LerpPlayerCameraLength( 300.0f );
+
+    FTimerHandle DelayTimerHandle;
+    // 5초의 딜레이를 설정하고 딜레이가 완료되면 람다 함수를 호출합니다.
+    GetWorld()->GetTimerManager().SetTimer( DelayTimerHandle , [gm]()
+    {
+        gm->LerpPlayerCameraLength( gm->PlayerCameraboom );
+    } , 5.0f , false );
+
     //AI*/
 
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
