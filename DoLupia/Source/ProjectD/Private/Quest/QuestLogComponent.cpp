@@ -79,9 +79,25 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
 
         CurrentActiveQuests.AddUnique( QuestID );
 
-        //QuestBase에서 보내기
+        //QuestBase에서 보내기 GetQuestDetails
         UpdateCurrentActiveQuest.Broadcast();
     }
+
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    if (QuestID == "0001" || QuestID == "1001" || QuestID == "2001")
+    {
+        gm->ActivateMarkers( 1 );
+    }
+    else if (QuestID == "1002") 
+    {
+        gm->ActivateMarkers( 2 );
+        gm->ActivateMarkers( 3 );
+    }
+    else if (QuestID == "1003" || QuestID == "2004")
+    {
+        gm->ActivateMarkers( 4 );
+    }
+    
 
 }
 
@@ -139,6 +155,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
             }
 
         }
+        InitCompletedQuests();
     }
 }
 
@@ -245,7 +262,7 @@ AQuest_Base* UQuestLogComponent::GetQuestActor( FName QuestID )
         UE_LOG( LogTemp , Error , TEXT( "void UQuestLogComponent::AddNewQuest(FName QuestID): %s" ) , *Quest->QuestID.ToString() );
         if (Quest->QuestID == QuestID)
         {
-            UE_LOG( LogTemp , Error , TEXT( "Quest->QuestID == QuestID" ));
+            UE_LOG( LogTemp , Error , TEXT( "GetQuestActor:Quest->QuestID == QuestID" ));
             return Quest;
         }
     }
@@ -290,5 +307,14 @@ void UQuestLogComponent::TrackQuest( AQuest_Base* QuestActor )
             Tracker->WidgetUpdate();
         }
     }
+}
+
+void UQuestLogComponent::InitCompletedQuests()
+{
+    if (GI)
+    {
+        GI->SetCompletedQuest(CompletedQuests );
+    }
+   
 }
 

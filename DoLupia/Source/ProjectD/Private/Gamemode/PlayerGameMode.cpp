@@ -22,6 +22,9 @@
 #include "Quest/MinigameQuestObject.h"
 #include "World/Trigger/DestructableWallActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
+#include <Quest/LocationMarker.h>
+
+#include "Monsters/MonsterSpawnManager.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -107,6 +110,7 @@ void APlayerGameMode::BeginPlay()
 
 	PlayBGMForLevel( LevelIdx );
 	SetPlayerCameraboom( PlayerCameraboom );
+	InitializeSpawnerActors();
 
 	// Camera lerp settings
 	if(PlayerCamCurve)
@@ -211,6 +215,14 @@ void APlayerGameMode::SetNxtQuestID(FString nextquestID)
 
 	FindNextNPC();
 	FindMiniGame();
+	if(NextquestID == "1003" || NextquestID == "2003" || NextquestID == "3001")
+	{
+		UE_LOG( LogTemp , Error , TEXT( "gm - FindMonsterSpawner" ) );
+		FindMonsterSpawner( FName( *NextquestID ) , true );
+	} else
+	{
+		FindMonsterSpawner( FName( *NextquestID ) , false );
+	}
 }
 
 void APlayerGameMode::HandleIntrusionEvent()
@@ -328,6 +340,17 @@ void APlayerGameMode::OnTimelineFinished()
 {
 }
 
+void APlayerGameMode::InitializeSpawnerActors()
+{
+	SpawnerActors.Empty(); // 배열 비우기 (선택적)
+
+	// 세계에서 스포너를 찾아서 배열에 추가
+	for (TActorIterator<AMonsterSpawnManager> It( GetWorld() ); It; ++It)
+	{
+		SpawnerActors.Add( *It );
+	}
+}
+
 void APlayerGameMode::FindNextNPC()
 {
 	for (TActorIterator<ANPCBase> It( GetWorld() ); It; ++It)
@@ -355,6 +378,40 @@ void APlayerGameMode::FindMiniGame()
 		{
 			Minigame->ChangeMinigameColor( 3 );
 			//return NPC;
+		}
+	}
+}
+
+void APlayerGameMode::FindMonsterSpawner( FName Tag , bool bActivate )
+{
+	for (AMonsterSpawnManager* Spawner : SpawnerActors)
+	{
+		// Check if the spawner's tag matches the specified Tag
+		if (Spawner->Tags.Contains( Tag ))
+		{
+			// Activate or deactivate the spawner based on bActivate flag
+			if (bActivate)
+			{
+				Spawner->ActiveMonsterSpawner();
+			}
+			else
+			{
+				Spawner->DeactiveMonsterSpawner();
+			}
+		}
+	}
+}
+
+void APlayerGameMode::ActivateMarkers( int32 MarkerID )
+{
+	for (TActorIterator<ALocationMarker> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		ALocationMarker* Marker = *ActorItr;
+
+		if (Marker && Marker->GetMarkerID() == MarkerID)
+		{		
+			//켜고 끄는 코드
+			Marker->ActiveLocationMarker();
 		}
 	}
 }

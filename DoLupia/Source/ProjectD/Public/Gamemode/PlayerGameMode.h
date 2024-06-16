@@ -16,8 +16,7 @@
 		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
 		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
 		SaveType , SaveSlotName , UseThread , UseLocation, OpenLevel );							\
-																								\
-
+																								
 
 
 class UAIConnectionLibrary;
@@ -29,6 +28,7 @@ class UTimelineComponent;
 class UCurveFloat;
 class AProjectDCharacter;
 enum class ESaveType;
+class AMonsterSpawnManager;
 
 /**
  * 
@@ -157,9 +157,19 @@ private:
 	UPROPERTY( EditAnywhere , Category = "Timeline" )
 	UCurveFloat* PlayerCamCurve;
 
-	/*---------- Quest, Dialog <> NPC, Minigame --------*/
+	/*---------- Quest, Dialog <> NPC, Minigame, Monster Spawner --------*/
 private:
+	UPROPERTY()
+	TArray<AMonsterSpawnManager*> SpawnerActors; // AMonsterSpawnManager 타입으로 배열을 선언합니다.
+
+	void InitializeSpawnerActors();
+
 	void FindNextNPC();
 	void FindMiniGame();
+	void FindMonsterSpawner( FName Tag , bool bActivate );
 
+
+	/*---------- Quest Location actor  --------*/
+public:
+	void ActivateMarkers(int32 MarkerID);
 };

@@ -2,6 +2,7 @@
 
 
 #include "Monsters/MonsterSpawnManager.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -19,6 +20,8 @@ void AMonsterSpawnManager::BeginPlay()
 	Super::BeginPlay();
 	StartSpawnMonster = false;
 
+	// 스포너에 태그 네임 지정
+	Tags.Add( FName( SpawnerQuestID ) );
 }
 
 // Called every frame
@@ -34,8 +37,19 @@ void AMonsterSpawnManager::Tick(float DeltaTime)
 			currentTime = 0;
 		}
 	}
+}
 
+void AMonsterSpawnManager::DeactiveMonsterSpawner()
+{
+	UE_LOG( LogTemp , Warning , TEXT( "DeactiveMonsterSpawner" ) )
+	StartSpawnMonster = false;
+	currentTime = 0;
+}
 
+void AMonsterSpawnManager::ActiveMonsterSpawner()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ActiveMonsterSpawner"))
+	StartSpawnMonster = true;
 }
 
 void AMonsterSpawnManager::SpawnMonster()
@@ -44,7 +58,7 @@ void AMonsterSpawnManager::SpawnMonster()
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		GetWorld()->SpawnActor<AActor>( MonsterClass , GetActorLocation() , GetActorRotation() , SpawnParams );
+		AStrikeMonster* monster = Cast<AStrikeMonster>(GetWorld()->SpawnActor<AActor>( MonsterClass , GetActorLocation() , GetActorRotation() , SpawnParams ));
 	}
 }
 

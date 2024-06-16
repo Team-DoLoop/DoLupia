@@ -190,7 +190,7 @@ void AQuest_Base::GetQuestDetails()
 		UE_LOG( LogTemp , Error , TEXT( "Invalid QuestID _ GetQuestDetails AQuest_Base" ) );
 	}
 
-	UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(): %s" ) , *QuestID.ToString() );
+	//UE_LOG( LogTemp , Error , TEXT( "GetQuestDetails(): %s" ) , *QuestID.ToString() );
 	
 	FQuestDetails* Row = QuestData.DataTable->FindRow<FQuestDetails>( QuestID , TEXT( "Searching for row" ) , true );
 	if (!Row)
