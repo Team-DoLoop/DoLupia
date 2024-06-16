@@ -39,7 +39,7 @@ private:
 	int32 SkillDamage;
 
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	float Speed = 1000.0f;
+	float Speed = 1500.0f;
 	
 	FVector Direction;
 	FRotator Rot;

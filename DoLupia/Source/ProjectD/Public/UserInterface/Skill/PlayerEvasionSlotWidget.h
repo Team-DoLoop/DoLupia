@@ -15,7 +15,7 @@ class PROJECTD_API UPlayerEvasionSlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void NativeConstruct() override;
+	virtual void NativeConstruct() override;
 	void UpdateEvasionCoolTimeUI(float CoolTime);
 
 private:
