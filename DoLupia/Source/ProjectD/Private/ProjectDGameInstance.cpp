@@ -170,7 +170,6 @@ void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 
 void UProjectDGameInstance::InitCompletedQuests()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "InitCompletedQuests started" ) );
 
 	AProjectDCharacter* Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 	if (!Player)
@@ -178,7 +177,6 @@ void UProjectDGameInstance::InitCompletedQuests()
 		UE_LOG( LogTemp , Error , TEXT( "Player is null in InitCompletedQuests" ) );
 		return;
 	}
-	UE_LOG( LogTemp , Warning , TEXT( "Player is valid in InitCompletedQuests" ) );
 
 	UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
 	if (!QuestComp)
@@ -186,7 +184,6 @@ void UProjectDGameInstance::InitCompletedQuests()
 		UE_LOG( LogTemp , Error , TEXT( "QuestComp is null in InitCompletedQuests" ) );
 		return;
 	}
-	UE_LOG( LogTemp , Warning , TEXT( "QuestComp is valid in InitCompletedQuests" ) );
 
 	if (!GetCompletedQuest().IsEmpty())
 	{
@@ -197,8 +194,6 @@ void UProjectDGameInstance::InitCompletedQuests()
 	{
 		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is empty in InitCompletedQuests" ) );
 	}
-
-	UE_LOG( LogTemp , Warning , TEXT( "InitCompletedQuests finished" ) );
 }
 
 
