@@ -82,15 +82,15 @@ void UPlayerSkillSlotWidget::SetUI(FPlayerSkillData* _SkillData)
 {
 	if(_SkillData && _SkillData->SkillThumnail)
 	{
-		SkillThumnail->SetColorAndOpacity(ProgressBarColor[_SkillData->SkillColor]);
+		//SkillThumnail->SetColorAndOpacity(ProgressBarColor[_SkillData->SkillColor]);
 		
 		UMaterialInstanceDynamic* Material = CoolTimeImage->GetDynamicMaterial();
 
 		if(Material)
 		{
 			Material->SetScalarParameterValue( "Percent" , 1.f );
+			Material->SetScalarParameterValue( "Opacity" , 0.f );
 			Material->SetVectorParameterValue( "Color" , ProgressBarColor[_SkillData->SkillColor] );
-			Material->SetTextureParameterValue( "Mask" , _SkillData->SkillThumnail );
 		}
 			
 		SkillThumnail->SetBrushFromTexture( _SkillData->SkillThumnail );
@@ -104,7 +104,18 @@ void UPlayerSkillSlotWidget::SetCoolTimeBar(float CoolTime)
 	UMaterialInstanceDynamic* Material = CoolTimeImage->GetDynamicMaterial();
 	if (Material)
 	{
-		CoolTime > 0.f ? Material->SetScalarParameterValue( "Percent" , CoolTime ) : Material->SetScalarParameterValue( "Percent" , 0 );
+		if(CoolTime > 0.f)
+		{
+			Material->SetScalarParameterValue( "Percent" , CoolTime );
+			Material->SetScalarParameterValue( "Opacity" , 1.f );
+		}
+		else
+		{
+			Material->SetScalarParameterValue( "Percent" , 0.f );
+			Material->SetScalarParameterValue( "Opacity" , 0.f );
+		}
+			
+
 	}
 }
 

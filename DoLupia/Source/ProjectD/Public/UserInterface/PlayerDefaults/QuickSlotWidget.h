@@ -60,7 +60,7 @@ private:
 	void MouseUpQuickSlotUI();
 
 	UFUNCTION()
-	void SetQuantity(FString ItemID , int32 NewQuantity) const;
+	void SetQuantity(FString ItemID , int32 NewQuantity);
 
 	bool SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot );
 
