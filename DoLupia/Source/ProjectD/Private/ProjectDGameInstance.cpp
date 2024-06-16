@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "ProjectDGameInstance.h"
@@ -50,6 +50,7 @@ void UProjectDGameInstance::Init()
 	
 	InitCanUseColor();
 	InitTutorialIndex();
+	InitCompletedQuests();
 }
 
 // <----------------------------- Player Skill ----------------------------->
@@ -165,6 +166,39 @@ void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 			QuestComp->AddNewQuest( _QuestIdName );
 		}
 	}
+}
+
+void UProjectDGameInstance::InitCompletedQuests()
+{
+	UE_LOG( LogTemp , Warning , TEXT( "InitCompletedQuests started" ) );
+
+	AProjectDCharacter* Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	if (!Player)
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Player is null in InitCompletedQuests" ) );
+		return;
+	}
+	UE_LOG( LogTemp , Warning , TEXT( "Player is valid in InitCompletedQuests" ) );
+
+	UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
+	if (!QuestComp)
+	{
+		UE_LOG( LogTemp , Error , TEXT( "QuestComp is null in InitCompletedQuests" ) );
+		return;
+	}
+	UE_LOG( LogTemp , Warning , TEXT( "QuestComp is valid in InitCompletedQuests" ) );
+
+	if (!GetCompletedQuest().IsEmpty())
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is not empty in InitCompletedQuests" ) );
+		QuestComp->CompletedQuests = GetCompletedQuest();
+	}
+	else
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is empty in InitCompletedQuests" ) );
+	}
+
+	UE_LOG( LogTemp , Warning , TEXT( "InitCompletedQuests finished" ) );
 }
 
 

@@ -200,6 +200,7 @@ void ANPCBase::HideNPC()
 {
 	this->SetActorHiddenInGame( true );
 	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
+	this->MapIcon->SetIconVisible(false);
 }
 
 FString ANPCBase::GetNxtQuestID() const

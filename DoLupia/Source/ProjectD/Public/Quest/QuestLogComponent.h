@@ -90,6 +90,8 @@ public:
 	UFUNCTION()
 	void TrackQuest( AQuest_Base* QuestActor );
 
+	void InitCompletedQuests();
+
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<UQuestTracker> QuestTracker_Widget;
 
