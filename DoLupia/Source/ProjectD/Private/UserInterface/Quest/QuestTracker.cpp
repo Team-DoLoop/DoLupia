@@ -64,7 +64,7 @@ void UQuestTracker::WidgetUpdate()
             FText QN_MyText = FText::FromString( QuestActor->QuestDetails.QuestName );
 
             // FText를 FString으로 변환하여 로그 출력
-            UE_LOG( LogTemp , Error , TEXT( "Quest Name: %s" ) , *QN_MyText.ToString() );
+            UE_LOG( LogTemp , Error , TEXT( "WidgetUpdate() - Quest Name: %s" ) , *QN_MyText.ToString() );
 
             txt_QuestName->SetText( QN_MyText );
         }

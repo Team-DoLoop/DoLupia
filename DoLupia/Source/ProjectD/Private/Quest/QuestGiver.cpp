@@ -80,7 +80,7 @@ FString UQuestGiver::InteractWith()
         return FString( TEXT( "QuestComponent not found or cast failed." ) );
     }
 
-    UE_LOG( LogTemp , Error , TEXT( "QuestData.RowName %s" ) , *QuestData.RowName.ToString() );
+    UE_LOG( LogTemp , Error , TEXT( "QuestGiver InteracWith - QuestData.RowName %s" ) , *QuestData.RowName.ToString() );
 
     bool ActiveQuest = QuestComponent->QueryActiveQuest( QuestData.RowName );
     bool CompleteQuest = QuestComponent->QueryCompleteQuests( QuestData.RowName );

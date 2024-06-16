@@ -168,7 +168,7 @@ FString ANPCBase::InteractWith()
 
 	ChangePlayerState();
 
-	return QuestInterface->InteractWith();
+	return Result;
 }
 
 void ANPCBase::LookAt()
