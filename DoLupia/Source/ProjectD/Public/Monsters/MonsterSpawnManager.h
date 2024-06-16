@@ -24,6 +24,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// 태그 값
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Spawn" )
+	FName SpawnerQuestID;
+
+	void ActiveMonsterSpawner();
+	void DeactiveMonsterSpawner();
+
+private:
 	UPROPERTY( EditAnywhere  )
 	TSubclassOf<AActor> MonsterClass;
 
@@ -34,8 +42,10 @@ public:
 
 	void SpawnMonster();
 
-	UPROPERTY( EditAnywhere,BlueprintReadWrite )
+	UPROPERTY( EditAnywhere )
 	bool StartSpawnMonster = false;
 
 	float currentTime = 5;
+
+	
 };
