@@ -17,11 +17,13 @@ class PROJECTD_API UBossHPWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	void SetHP( int32 hp , int32 maxHP );
+
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
 	class UProgressBar* BossHPBar;
 
-	void SetHP( int32 hp , int32 maxHP );
-
 	UPROPERTY()
 	class ABossMonster* Boss;
+
+
 };
