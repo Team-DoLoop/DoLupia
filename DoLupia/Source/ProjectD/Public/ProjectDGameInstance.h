@@ -73,7 +73,7 @@ public:
 
 	void InitCompletedQuests();
 	FORCEINLINE TArray<FName> GetCompletedQuest() { return CompletedQuests; }
-	FORCEINLINE void SetCompletedQuest( TArray<FName> LogCompCompletedQuests ) { CompletedQuests = LogCompCompletedQuests; }
+	FORCEINLINE void SetCompletedQuest( FName CompletedQuestID ) { CompletedQuests.Add(CompletedQuestID); }
 
 
 	TArray<FName> CompletedQuests;

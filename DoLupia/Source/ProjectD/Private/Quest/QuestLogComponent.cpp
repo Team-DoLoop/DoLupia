@@ -155,7 +155,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
             }
 
         }
-        InitCompletedQuests();
+        InitCompletedQuests(QuestID);
     }
 }
 
@@ -309,11 +309,11 @@ void UQuestLogComponent::TrackQuest( AQuest_Base* QuestActor )
     }
 }
 
-void UQuestLogComponent::InitCompletedQuests()
+void UQuestLogComponent::InitCompletedQuests( FName InitQuestID )
 {
     if (GI)
     {
-        GI->SetCompletedQuest(CompletedQuests );
+        GI->SetCompletedQuest( InitQuestID );
     }
    
 }
