@@ -6,9 +6,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Library/AIConnectionLibrary.h"
 #include "Engine.h"
-#include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
-#include "Library/AIConnectionLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
@@ -56,6 +54,11 @@ void ANPCBase::BeginPlay()
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
+
+	if (DialogNum == 501)
+	{
+		anim->bDie = true;
+	}
 
 }
 
