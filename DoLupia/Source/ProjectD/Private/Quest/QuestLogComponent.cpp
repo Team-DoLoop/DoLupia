@@ -3,6 +3,8 @@
 #include "Quest/QuestLogComponent.h"
 
 #include "ProjectDGameInstance.h"
+#include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
@@ -36,6 +38,7 @@ void UQuestLogComponent::BeginPlay()
 	// ...
     
     GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 
@@ -121,14 +124,8 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
 
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     //포털 열기
-    if (QuestID == "1000" || QuestID == "3001" || QuestID == "1002") {
+    if (QuestID == "3001" || QuestID == "1003") {
         gm->ActiveLvTrigger();
-    }
-
-    // 퀘스트 2003 완료 시, 자동으로 퀘스트 발생
-    if(QuestID == "2003")
-    {
-        gm->TriggerQuest2004( QuestID , 1 );
     }
 
     // 튜토리얼 퀘스트 완료 관련
@@ -138,8 +135,9 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         {
             if(_QuestData->AutoStory.IsAutoStory)
             {
-                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType);
+                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
             }
+
         }
     }
 }

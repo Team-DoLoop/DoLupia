@@ -49,7 +49,7 @@ void AQuest_Base::BeginPlay()
 	Super::BeginPlay();
 
 	//겜모에 QuestID 가져오기
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 	// 2단계: FString을 FName으로 변환
 	auto ValueString = gm->GetStringQuestID();
@@ -201,6 +201,9 @@ void AQuest_Base::GetQuestDetails()
 
 	QuestDetails = *Row;
 
+	// Gamemode에 다음 진행할 퀘스트ID 보냄
+	gm->SetNxtQuestID( *QuestDetails.NextQuestID );
+
 	if (CurrentStage >= QuestDetails.Stages.Num())
 	{
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / GetQuestDetails / CurrentStage is out of bounds" ) );
@@ -301,7 +304,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 						UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete(FString ObjectiveID) QuestDetails.AutoComplete." ) );
 						QuestLogComponent = ProjectDCharacter->FindComponentByClass<UQuestLogComponent>();
 						QuestLogComponent->TurnInQuest( QuestID );
-						QuestLogComponent->CompleteQuest( QuestID );
+						//QuestLogComponent->CompleteQuest( QuestID );
 					}
 				}
 			}

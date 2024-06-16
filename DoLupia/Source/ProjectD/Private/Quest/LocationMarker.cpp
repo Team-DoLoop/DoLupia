@@ -14,10 +14,6 @@ ALocationMarker::ALocationMarker()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComponent" ) );
-    // 메시 컴포넌트 생성 및 부착
-
-    locationVFX = CreateDefaultSubobject<UNiagaraComponent>( TEXT( "locationVFX" ) );
-    locationVFX->SetupAttachment( BoxComponent );
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/pin.pin" ) );
 	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
@@ -49,8 +45,8 @@ void ALocationMarker::NotifyActorBeginOverlap( AActor* OtherActor )
         AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
         if (player) {
             player->OnObjectiveIDCalled.Broadcast( ObjectiveID , 1);
-            locationVFX->SetVisibility( false );
 			MapIcon->SetIconVisible( false );
+			Destroy();
         }
     }
 }

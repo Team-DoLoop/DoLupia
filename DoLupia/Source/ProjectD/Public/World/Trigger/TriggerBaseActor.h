@@ -55,6 +55,8 @@ public:
 	void ShowTrigger();
 	void HideTrigger();
 
+	void ActiveTriggerCollision();
+
 	/* ------------------- CameraBoom ------------------- */
 private:
 	void ChangeCameraAngle(float angle);

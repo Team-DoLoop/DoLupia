@@ -112,7 +112,6 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 
 	if (DialogueDataTable)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "DialogueDataTable" ) );
 		static const FString ContextString( TEXT( "GENERAL" ) );
 		FDialogueData* DialogueData = DialogueDataTable->FindRow<FDialogueData>( FName( *FString::FromInt( DialogueID ) ) , ContextString );
 
@@ -120,6 +119,24 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 		{
 			CurrentDialogue = DialogueData;
 			CurrentDialogueID = DialogueID;
+
+			ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+
+			// 특정 DialogID에서 NPC Color 변경
+			switch (DialogueID)
+			{
+			case 201:
+				npc->ChangeNPCColor( 1 );
+				break;
+			case 401:
+				npc->ChangeNPCColor( 3 );
+				break;
+			case 503:
+				npc->ChangeNPCColor( 2 );
+				break;
+			default:
+				break;
+			}
 
 			if (DialogueWidget)
 			{

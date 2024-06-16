@@ -108,6 +108,10 @@ struct FStoryDetails
 	// 나온다면 어떤 유형인지
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EExplainType QuestStoryType;
+
+	// 나온다면 어떤 유형인지
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	int32 QuestStoryID;
 };
 
 USTRUCT( Atomic , BlueprintType )
@@ -139,4 +143,7 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FStoryDetails AutoStory;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	FString NextQuestID;
 };

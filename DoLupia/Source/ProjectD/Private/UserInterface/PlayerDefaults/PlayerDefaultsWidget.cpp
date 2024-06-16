@@ -48,7 +48,7 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	Player->GetAttackComp()->InitSkillUI();
 	Player->GetTutorialComp()->SetDefaultUI(this);
 	
-	// HideTutorialWidget();
+	 HideTutorialWidget();
 	
 	APlayerGameMode* gm = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	gm->StartGameStory();
@@ -109,6 +109,11 @@ void UPlayerDefaultsWidget::ShowTutorialWidget(FTutorialData* _TutoData, int32 _
 void UPlayerDefaultsWidget::HideTutorialWidget()
 {
 	TutorialUI->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UPlayerDefaultsWidget::NextTutorial()
+{
+	TutorialUI->NextTutorialBtn();
 }
 
 void UPlayerDefaultsWidget::ChangeNextBtn(FString _Str)

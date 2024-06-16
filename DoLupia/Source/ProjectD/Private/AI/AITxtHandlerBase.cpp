@@ -15,6 +15,8 @@
 #include "Async/Async.h"
 #include "TextureResource.h"
 #include "Components/TimelineComponent.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -46,6 +48,7 @@ void AAITxtHandlerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+    gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	AIlib = NewObject<UAIConnectionLibrary>();
 
     // Timeline 진행 중
@@ -66,7 +69,6 @@ void AAITxtHandlerBase::BeginPlay()
 
     if (!meshComp )
     {
-        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr in BeginPlay" ) );
         return;
     }
 
@@ -89,7 +91,6 @@ void AAITxtHandlerBase::UpdateDissolve(float dissolve )
 {
     if (DynamicMaterial)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAITxtHandlerBase::UpdateDissolve" ) );
         DynamicMaterial->SetScalarParameterValue( FName( "dissolve" ) , dissolve );
     }
 }
@@ -100,6 +101,8 @@ void AAITxtHandlerBase::OnTimelineFinished()
     {
         DynamicMaterial->SetScalarParameterValue( FName( "dissolve" ) , 1.0f );
     }
+
+    //gm->LerpPlayerCameraLength( gm->PlayerCameraboom );
 }
 
 void AAITxtHandlerBase::LoadWebImage()
@@ -111,9 +114,14 @@ void AAITxtHandlerBase::LoadWebImage()
     UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
     if (DownloadTask)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Downloading..." ) );
+
+        //gm->LerpPlayerCameraLength( 300.0f );
+
         DownloadTask->OnSuccess.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloadFailed );
+
+        //gm->LerpPlayerCameraLength( gm->PlayerCameraboom );
     }
 }
 
@@ -133,7 +141,6 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
         if (meshComp && AITxtMaterial)
         {
             DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , AITxtMaterial );
-            UE_LOG( LogTemp , Error , TEXT( "meshComp is DynamicMaterial" ) );
         }
 
         NewTexture = DownloadedTexture;
@@ -141,6 +148,10 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
         {
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
             UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded - PlayFromStart" ) );
+
+            // 카메라 줌 땡기기
+            //gm->LerpPlayerCameraLength( 300.0f );
+
             TimelineComp->PlayFromStart();
         }
     }

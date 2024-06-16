@@ -7,6 +7,7 @@
 #include "DestructableWallActor.generated.h"
 
 class UGeometryCollectionComponent;
+class UBoxComponent;
 
 UCLASS()
 class PROJECTD_API ADestructableWallActor : public AActor
@@ -25,9 +26,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	void ExplosionWalls();
+
+private:
+	UPROPERTY( EditAnywhere )
 	UGeometryCollectionComponent* DestructableWallComp;
 
-	void ExplosionWalls();
+	UPROPERTY( EditAnywhere )
+	UBoxComponent* BoxComp;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* ExplosionSFX;
+	
 
 };

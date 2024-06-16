@@ -84,6 +84,7 @@ public:
 	FORCEINLINE UTutorialWidget* GetTutorialWidget() const { return TutorialUI; }
 	void ShowTutorialWidget(FTutorialData* _TutoData, int32 _Index );
 	void HideTutorialWidget();
+	void NextTutorial();
 	void ChangeNextBtn(FString _Str);
 
 	

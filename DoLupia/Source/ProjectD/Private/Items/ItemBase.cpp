@@ -40,7 +40,7 @@ void UItemBase::CreateItemCopy(const UItemBase* MyItemBase)
 void UItemBase::CreateItemCopy(const FItemData* MyItemData, int32 _ItemQuantity)
 {
 	this->ID = MyItemData->ID;
-	this->Quantity = Quantity;
+	this->Quantity = _ItemQuantity;
 	this->ItemQuality = MyItemData->ItemQuality;
 	this->ItemType = MyItemData->ItemType;
 	this->TextData = MyItemData->TextData;

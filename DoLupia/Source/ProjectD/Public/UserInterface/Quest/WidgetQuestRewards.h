@@ -59,6 +59,9 @@ protected:
     TSubclassOf<UWidgetQuestLog_Objective> Objective_Widget;
 
 private:
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
+	
     void ChangePlayerStateIdle();
 
 };

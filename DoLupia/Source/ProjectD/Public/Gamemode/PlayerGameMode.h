@@ -27,7 +27,7 @@ class ALevelManager;
 class USpringArmComponent;
 class UTimelineComponent;
 class UCurveFloat;
-
+class AProjectDCharacter;
 enum class ESaveType;
 
 /**
@@ -53,7 +53,10 @@ public:
 private:
 	UPROPERTY()
 	class UProjectDGameInstance* GI;
-	
+
+	UPROPERTY()
+	class AProjectDCharacter* Player;
+
 	UPROPERTY()
 	TArray<FName> LevelNames;
 
@@ -91,22 +94,32 @@ public:
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	int32 GetQuestID() const;
 
-	// Setter 함수 선언
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetQuestID( int32 NewQuestID );
 
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	FString GetStringQuestID();
+
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetStringQuestID( FString QuestID );
 
-	FString FStringQuestID;
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	FString GetNxtQuestID() const;
 
-	void TriggerQuest2004(FName CurrentquestID, bool queststatus);
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetNxtQuestID( FString nextquestID );
+
+	FString FStringQuestID = "";
+
+	void HandleIntrusionEvent();
 	void StartGameStory();
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	bool IsToToNotInMapStart;
 
 private:
 	int32 questID = -1;
+	FString NextquestID ;
 
 	/*---------- Level Location Title Widget --------*/
 
@@ -144,5 +157,9 @@ private:
 	UPROPERTY( EditAnywhere , Category = "Timeline" )
 	UCurveFloat* PlayerCamCurve;
 
+	/*---------- Quest, Dialog <> NPC, Minigame --------*/
+private:
+	void FindNextNPC();
+	void FindMiniGame();
 
 };

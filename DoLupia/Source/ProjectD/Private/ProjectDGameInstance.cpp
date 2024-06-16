@@ -89,30 +89,40 @@ FTutorialData* UProjectDGameInstance::GetTutorialData(int32 _TutorialID)
 	return TutorialTable->FindRow<FTutorialData>(*FString::FromInt(_TutorialID), TEXT(""));
 }
 
-void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _Index)
+void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _Index, int32 _TutorialID)
 {
 	// 첫 데이터 찾기
 	if(_Index != -1) TutorialIndexMap[_ExplainType] = _Index;
-	TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
+	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap1 : %d "), TutorialIndexMap[_ExplainType]);
+
+	if(_TutorialID != -1) TutorialID = _TutorialID;
+	
+	else TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
 	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
 	
 	// 데이터가 있다면
 	if(!TutoData) return;
-
-	// 확인한 튜토리얼임을 저장
-	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
-
+	
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
 	if(AProjectDCharacter* Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
+			// 토토가 말하는 중이고 그게 메인 스토리 관련이라면 return
+			if(PlayerTuto->GetToToSaying() && TutoData->bCantActing) return;
 			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
+				
 			PlayerTuto->SetExplainIndex(0);
+			PlayerTuto->SetTotoSaying(true);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}
 	}
+	
+	// 확인한 튜토리얼임을 저장
+	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
+
+	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap2 : %d "), TutorialIndexMap[_ExplainType]);
 }
 
 int32 UProjectDGameInstance::FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex)

@@ -10,6 +10,7 @@
 class AQuestLogComponent;
 class UWidgetQuestNotification;
 class UQuestLogComponent;
+class APlayerGameMode;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnObjectiveHeard );
 UCLASS()
@@ -95,4 +96,8 @@ protected:
 	bool Local_AllComplete;
 	bool bQuestIDValid = false;
 	FTimerHandle TimerHandle;
+
+private:
+	UPROPERTY()
+	APlayerGameMode* gm;
 };

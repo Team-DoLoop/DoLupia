@@ -7,21 +7,19 @@
 #include "Characters/ProjectDCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Library/AIConnectionLibrary.h"
-#include "UserInterface/NPC/NPCConvWidget.h"
-#include "UserInterface/Test/AITestWidget.h"
 #include  "UserInterface/Event/LocationTitleWidget.h"
 #include "Components/TextBlock.h"
-#include "AI/AITxtPlayer.h"
 #include "Data/WidgetData.h"
 #include "Engine.h"
 #include "Items/Cape/PlayerCape.h"
 #include <AI/AITxtBossAttack.h>
-
+#include "NPC/NPCBase.h"
 #include "ProjectDGameInstance.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
 #include "Quest/AutoQuestAcceptActor.h"
+#include "Quest/MinigameQuestObject.h"
 #include "World/Trigger/DestructableWallActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
 
@@ -61,8 +59,6 @@ void APlayerGameMode::StartPlay()
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
-	//AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
-
 	//GameSaveManager->LoadGame( MyCharacter , ESaveType::SAVE_MAIN , "PlayerMainSave" );
 
 	ASoundManager::GetInstance(GetWorld());
@@ -75,6 +71,8 @@ void APlayerGameMode::BeginPlay()
 	Super::BeginPlay();
 	
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	if (CurLevelName == LevelNames[0])
 	{
@@ -175,9 +173,9 @@ void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Characte
 void APlayerGameMode::SetPlayerCameraboom(float camboom)
 {
 	// Player Load
-	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
-	player->GetCameraBoom()->TargetArmLength = camboom ;
+	Player->GetCameraBoom()->TargetArmLength = camboom ;
 }
 
 int32 APlayerGameMode::GetQuestID() const
@@ -201,21 +199,47 @@ void APlayerGameMode::SetStringQuestID(FString QuestID)
 	FStringQuestID = QuestID;
 }
 
-void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
+FString APlayerGameMode::GetNxtQuestID() const
 {
-	// 퀘스트 2003 완료 시, 자동으로 2004 퀘스트 받음
-	for (TActorIterator<AAutoQuestAcceptActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	return NextquestID;
+}
+
+void APlayerGameMode::SetNxtQuestID(FString nextquestID)
+{
+	UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest ID: %s" ) , *nextquestID );
+	NextquestID = nextquestID;
+
+	FindNextNPC();
+	FindMiniGame();
+}
+
+void APlayerGameMode::HandleIntrusionEvent()
+{
+	// 적의 침입
+	// 카메라 관련 연출
+
+	// 옆 통로로 갈 때, 카메라 각도 변경 트리거 활성화
+	for (TActorIterator<ATriggerBaseActor> It( GetWorld() ); It; ++It)
 	{
-		ActorItr->GiveQuest();
-		AIlib->SendPImgToSrv( 2004 );
+		ATriggerBaseActor* trigger = *It;
+
+		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+		if (trigger)
+		{
+			trigger->ActiveTriggerCollision();
+		}
 	}
 
-	// Quest2004 생성 시, 벽 부숴지는 이벤트 발생
+	// 벽 부숴지는 효과
 	for (TActorIterator<ADestructableWallActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		ActorItr->ExplosionWalls();
 	}
 
+	// 플레이어 카메라붐 각도 변경
+	FRotator NewRotation = Player->GetCameraBoom()->GetRelativeRotation();
+	NewRotation.Yaw = 180;
+	Player->GetCameraBoom()->SetRelativeRotation( NewRotation );
 }
 
 void APlayerGameMode::StartGameStory()
@@ -225,11 +249,13 @@ void APlayerGameMode::StartGameStory()
 	{
 	case 0 : index = 0; break;
 	case 1: index = 2; break;
-	case 2: index = 0; break; // 스토리에 맞춰 수정할 예정
-	case 3: index = 0; break; 
+	case 2: index = 4; break;
+	case 3: index = 7; break; 
 		default: break;
 	}
-	GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+
+	if(!IsToToNotInMapStart)
+		GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
 }
 
 
@@ -275,10 +301,10 @@ void APlayerGameMode::ActiveLvTrigger()
 
 void APlayerGameMode::LerpPlayerCameraLength(float TargetArmLength)
 {
-	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
-	if (player)
+	Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	if (Player)
 	{
-		CameraBoom = player->GetCameraBoom();
+		CameraBoom = Player->GetCameraBoom();
 		if (CameraBoom)
 		{
 			InitialArmLength = CameraBoom->TargetArmLength;
@@ -301,3 +327,36 @@ void APlayerGameMode::HandleTimelineProgress(float Value)
 void APlayerGameMode::OnTimelineFinished()
 {
 }
+
+void APlayerGameMode::FindNextNPC()
+{
+	for (TActorIterator<ANPCBase> It( GetWorld() ); It; ++It)
+	{
+		ANPCBase* NPC = *It;
+
+		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+		if (NPC && NPC->GetNxtQuestID() == NextquestID)
+		{
+			NPC->ChangeNPCColor( 4 ); 
+			//return NPC;
+		}
+	}
+	//return nullptr; // 해당 퀘스트 ID를 가진 NPC를 찾지 못한 경우
+}
+
+void APlayerGameMode::FindMiniGame()
+{
+	for (TActorIterator<AMinigameQuestObject> It( GetWorld() ); It; ++It)
+	{
+		AMinigameQuestObject* Minigame = *It;
+
+		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+		if (Minigame && Minigame->GetOwnQuestID() == NextquestID)
+		{
+			Minigame->ChangeMinigameColor( 3 );
+			//return NPC;
+		}
+	}
+}
+
+

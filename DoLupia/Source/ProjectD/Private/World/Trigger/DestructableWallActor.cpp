@@ -2,7 +2,10 @@
 
 
 #include "World/Trigger/DestructableWallActor.h"
+
+#include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Pooling/SoundManager.h"
 
 // Sets default values
 ADestructableWallActor::ADestructableWallActor()
@@ -11,16 +14,19 @@ ADestructableWallActor::ADestructableWallActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	DestructableWallComp = CreateDefaultSubobject<UGeometryCollectionComponent>( TEXT( "DestructableWallComp" ) );
-	DestructableWallComp->SetupAttachment( RootComponent );
+	RootComponent = DestructableWallComp;
+
+	BoxComp = CreateDefaultSubobject<UBoxComponent>( TEXT( "BoxComp" ) );
+	BoxComp->SetupAttachment( RootComponent );
 
 	DestructableWallComp->SetSimulatePhysics( false );
+	BoxComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
 }
 
 // Called when the game starts or when spawned
 void ADestructableWallActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -32,7 +38,11 @@ void ADestructableWallActor::Tick(float DeltaTime)
 
 void ADestructableWallActor::ExplosionWalls()
 {
+	// 벽폭발음
+	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
+
+	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );
-	//DestructableWallComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
 }
 

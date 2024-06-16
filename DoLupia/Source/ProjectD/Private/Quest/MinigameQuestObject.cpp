@@ -23,7 +23,7 @@ FString AMinigameQuestObject::InteractWith()
         auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
         int32 questid = gm->GetQuestID();
 
-        if (questid == 2003)
+        if (questid == 2002)
         {
             SpawnMiniGame();
             isAvailable = true;
@@ -32,6 +32,17 @@ FString AMinigameQuestObject::InteractWith()
     }
 
     return ObjectID;
+}
+
+FString AMinigameQuestObject::GetOwnQuestID() const
+{
+    return OwnQuestID;
+}
+
+void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
+{
+    MeshComponent->SetRenderCustomDepth( true );
+    MeshComponent->SetCustomDepthStencilValue( 3 );
 }
 
 void AMinigameQuestObject::SpawnMiniGame()

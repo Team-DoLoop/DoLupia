@@ -6,9 +6,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Library/AIConnectionLibrary.h"
 #include "Engine.h"
-#include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
-
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
@@ -57,6 +55,11 @@ void ANPCBase::BeginPlay()
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
 
+	if (DialogNum == 501)
+	{
+		anim->bDie = true;
+	}
+
 }
 
 // Called every frame
@@ -74,7 +77,15 @@ void ANPCBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
-
+	if (NPCInteractWidget)
+	{
+		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}
+	else
+	{
+		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
+	}
 }
 
 void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
@@ -114,7 +125,15 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	ChangeNPCStatus( stencilDepth );
+
+	// Dialog 503 일 때, AI서버 요청
+	if(DialogNum == 501)
+	{
+		AIlib = gm->GetAIConnectionLibrary();
+		AIlib->SendPImgToSrv( 2004 );
+	}
+	
+
 	anim->bTalking = true;
 
 	ChangePlayerState();
@@ -144,7 +163,9 @@ FString ANPCBase::InteractWith()
 		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 	}
-	
+
+	FString Result = QuestInterface->InteractWith();
+
 	ChangePlayerState();
 
 	return QuestInterface->InteractWith();
@@ -154,10 +175,12 @@ void ANPCBase::LookAt()
 {
 }
 
-void ANPCBase::ChangeNPCStatus(int32 depth)
+void ANPCBase::ChangeNPCColor(int32 depth)
 {
+	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
-	GetMesh()->CustomDepthStencilValue = depth;
+	GetMesh()->SetCustomDepthStencilValue( depth );
+	//GetMesh()->CustomDepthStencilValue = depth;
 }
 
 void ANPCBase::ChangePlayerState()
@@ -176,5 +199,18 @@ void ANPCBase::ChangePlayerState()
 void ANPCBase::HideNPC()
 {
 	this->SetActorHiddenInGame( true );
+	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
+}
+
+FString ANPCBase::GetNxtQuestID() const
+{
+	return NxtQuestID;
+	/*
+	if (QuestGiverComp)
+	{
+		return QuestGiverComp->QuestData.RowName.ToString();
+	}
+	return LexToString(NAME_None); // 유효하지 않은 경우
+	*/
 }
 

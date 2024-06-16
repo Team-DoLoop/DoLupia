@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTutorialComp.generated.h"
 
+class APlayerGameMode;
+class UPlayerFSMComp;
 class UInventoryComponent;
 class UProjectDGameInstance;
 class UPlayerDefaultsWidget;
@@ -46,7 +48,14 @@ private:
 	UInventoryComponent* InventoryComp;
 
 	UPROPERTY()
+	UPlayerFSMComp* PlayerFSMComp;
+
+	UPROPERTY()
 	UProjectDGameInstance* GI;
+
+	UPROPERTY()
+	APlayerGameMode* GM;
+
 
 	
 
@@ -54,16 +63,23 @@ private:
 public:
 	// FORCEINLINE void SetTutorialID(int32 _TutorialID) {TutorialID = _TutorialID;}
 	FORCEINLINE void SetExplainIndex(int32 _ExplainIndex) {ExplainIndex = _ExplainIndex;}
+	FORCEINLINE void SetTotoSaying(bool _IsTotoSaying) {IsTotoSaying = _IsTotoSaying;}
+	FORCEINLINE bool GetToToSaying() const {return IsTotoSaying;}
 	
 private:
 	FTutorialData* TutoData;
 	int32 ExplainIndex = -1;
 	//int32 TutorialID;
+	bool IsTotoSaying = false;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* ToToSFX;
 	
 	
 	// <----------------------------- Tutorial UI ----------------------------->
 public:
 	void SetTutorialUI(FTutorialData* _TutoData);
+	void PressNextTutorial();
 	void NextTutorial();
 	void EndTutorial(FTutorialData* _TutoData);
 
@@ -91,4 +107,13 @@ public:
 	
 private:
 	TMap<ETutoItemType, FString> ItemIdData;
+
+
+
+	// <----------------------------- Trigger ----------------------------->
+public:
+	void StartTrigger(int32 _TriggerID);
+	void ExecuteTutorial();
+
+	
 };
