@@ -33,11 +33,11 @@ ANPCBase::ANPCBase()
 	gm = nullptr;
 
 	this->SetActorScale3D( FVector(1.5f, 1.5f, 1.5f) );
-	
+
 	//minimap icon
 	// MapIconComponent makes the character appear on the minimap
-	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/request_icon" ) );
-	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/speech-bubble" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/request.request" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/speech-bubble.speech-bubble" ) );
 	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
 	MapIcon->SetupAttachment( GetRootComponent() );
 	// Set the player icon as texture
