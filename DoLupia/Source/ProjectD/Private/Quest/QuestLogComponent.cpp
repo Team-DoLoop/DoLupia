@@ -245,7 +245,7 @@ AQuest_Base* UQuestLogComponent::GetQuestActor( FName QuestID )
         UE_LOG( LogTemp , Error , TEXT( "void UQuestLogComponent::AddNewQuest(FName QuestID): %s" ) , *Quest->QuestID.ToString() );
         if (Quest->QuestID == QuestID)
         {
-            UE_LOG( LogTemp , Error , TEXT( "Quest->QuestID == QuestID" ));
+            UE_LOG( LogTemp , Error , TEXT( "GetQuestActor:Quest->QuestID == QuestID" ));
             return Quest;
         }
     }
