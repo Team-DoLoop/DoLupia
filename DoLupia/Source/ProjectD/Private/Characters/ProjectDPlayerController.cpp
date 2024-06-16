@@ -107,7 +107,7 @@ void AProjectDPlayerController::SetupInputComponent()
 
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
+		// EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AProjectDPlayerController::ExecuteSkill, 0);							// Click
 		
 		
 		EnhancedInputComponent->BindAction(SwingSkillAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ExecuteSkill, 1);						// Q

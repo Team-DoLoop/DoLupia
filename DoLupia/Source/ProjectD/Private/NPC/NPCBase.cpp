@@ -6,9 +6,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Library/AIConnectionLibrary.h"
 #include "Engine.h"
-#include "AI/AIMarterialTestActor.h"
 #include <Kismet/GameplayStatics.h>
-
 #include "Blueprint/UserWidget.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/WidgetData.h"
@@ -56,6 +54,11 @@ void ANPCBase::BeginPlay()
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
+
+	if (DialogNum == 501)
+	{
+		anim->bDie = true;
+	}
 
 }
 
@@ -122,7 +125,15 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 void ANPCBase::DialogWith()
 {
 	DialogComp->StartDialog( this , *NPCID , DialogNum );
-	//ChangeNPCColor( stencilDepth );
+
+	// Dialog 503 일 때, AI서버 요청
+	if(DialogNum == 501)
+	{
+		AIlib = gm->GetAIConnectionLibrary();
+		AIlib->SendPImgToSrv( 2004 );
+	}
+	
+
 	anim->bTalking = true;
 
 	ChangePlayerState();

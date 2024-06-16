@@ -5,6 +5,7 @@
 
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
@@ -12,6 +13,7 @@
 #include "Gamemode/PlayerGameMode.h"
 #include "Items/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
 class UItemBase;
@@ -72,6 +74,10 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 		// 처음 들어왔다면
 		if(ExplainIndex == 0)
 		{
+			FInputModeGameOnly InputMode;
+			InputMode.SetConsumeCaptureMouseDown(false);
+			Player->GetProjectDPlayerController()->SetInputMode( InputMode );
+			
 			// DefaultUI->ChangeNextBtn(NextString);
 			if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
 			{
@@ -79,6 +85,11 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 			}
 			
 			TutoData = _TutoData;
+
+			// 사운드 시작
+			if(ToToSFX)
+				ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ToToSFX , ENPCSound::NPCSound1 , 0.25f );
+
 		}
 		
 		DefaultUI->ShowTutorialWidget(_TutoData, ExplainIndex);
@@ -116,7 +127,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 	DefaultUI->HideTutorialWidget();
 
 	if(!_TutoData) return;
-
+	
 	// MAIN_STORY 였다면 Idle로 돌려놓기
 	if(_TutoData->bCantActing)
 	{
@@ -136,6 +147,7 @@ void UPlayerTutorialComp::EndTutorial(FTutorialData* _TutoData)
 		StartTrigger(_TutoData->TutorialTrigger.TriggerID);
 	
 	TutoData = nullptr;
+	IsTotoSaying = false;
 }
 
 
@@ -168,7 +180,7 @@ void UPlayerTutorialComp::CreateItem(ETutoItemType _TutoItemType, int32 _Quantit
 }
 
 
-// <----------------------------- Item ----------------------------->
+// <----------------------------- Trigger ----------------------------->
 
 void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 {
@@ -181,7 +193,17 @@ void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 	// 맵2 연출
 	else if(_TriggerID == 2)
 	{
-		UE_LOG(LogTemp, Log, TEXT("우르르르쾅쾅 연출 들어가용"));
+		GM->HandleIntrusionEvent();
+		
+		// 뭔가 있다는 토토 대사 시작( 연출 끝나면 들어갈 부분. 지금은 임시로 넣어둠)
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer( TimerHandle , this , &UPlayerTutorialComp::ExecuteTutorial , 2.0f , false );
+		
 	}
+}
+
+void UPlayerTutorialComp::ExecuteTutorial()
+{
+	GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, 9500);
 }
 

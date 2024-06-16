@@ -128,12 +128,6 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         gm->ActiveLvTrigger();
     }
 
-    // 퀘스트 2003 완료 시, 자동으로 퀘스트 발생
-    if(QuestID == "2003")
-    {
-        gm->TriggerQuest2004( QuestID , 1 );
-    }
-
     // 튜토리얼 퀘스트 완료 관련
     if(GI)
     {
@@ -143,21 +137,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
             {
                 GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
             }
-            
-            // 특정 Quest 완료 시, Player 스킬 Unlock
-            else if( QuestID == "1002" ||  QuestID == "2002")
-            {
-                if( QuestID == "1002")
-                {
-                    Player->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::QUEST );
-                    Player->GetAttackComp()->SetColorUseState( EUseColor::RED , true );
-                }
-                else if( QuestID == "2002") Player->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
-                //else if( QuestID == "2002") PlayerCharacterD->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
 
-                // 토토 시작
-                GI->ExecuteTutorial(_QuestData->AutoStory.QuestStoryType, -1, _QuestData->AutoStory.QuestStoryID);
-            }
         }
     }
 }

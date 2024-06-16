@@ -109,8 +109,12 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
+			// 토토가 말하는 중이고 그게 메인 스토리 관련이라면 return
+			if(PlayerTuto->GetToToSaying() && TutoData->bCantActing) return;
 			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
+				
 			PlayerTuto->SetExplainIndex(0);
+			PlayerTuto->SetTotoSaying(true);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}
 	}

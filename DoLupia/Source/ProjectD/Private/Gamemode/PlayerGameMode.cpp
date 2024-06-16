@@ -59,8 +59,6 @@ void APlayerGameMode::StartPlay()
 	// Get or create the AIConnectionLibrary instance
 	AIlib = UAIConnectionLibrary::GetInstance( this );
 
-	//AProjectDCharacter* MyCharacter = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
-
 	//GameSaveManager->LoadGame( MyCharacter , ESaveType::SAVE_MAIN , "PlayerMainSave" );
 
 	ASoundManager::GetInstance(GetWorld());
@@ -73,6 +71,8 @@ void APlayerGameMode::BeginPlay()
 	Super::BeginPlay();
 	
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	if (CurLevelName == LevelNames[0])
 	{
@@ -173,9 +173,9 @@ void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Characte
 void APlayerGameMode::SetPlayerCameraboom(float camboom)
 {
 	// Player Load
-	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
-	player->GetCameraBoom()->TargetArmLength = camboom ;
+	Player->GetCameraBoom()->TargetArmLength = camboom ;
 }
 
 int32 APlayerGameMode::GetQuestID() const
@@ -213,21 +213,33 @@ void APlayerGameMode::SetNxtQuestID(FString nextquestID)
 	FindMiniGame();
 }
 
-void APlayerGameMode::TriggerQuest2004(FName CurrentquestID , bool queststatus)
+void APlayerGameMode::HandleIntrusionEvent()
 {
-	// 퀘스트 2003 완료 시, 자동으로 2004 퀘스트 받음
-	for (TActorIterator<AAutoQuestAcceptActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	// 적의 침입
+	// 카메라 관련 연출
+
+	// 옆 통로로 갈 때, 카메라 각도 변경 트리거 활성화
+	for (TActorIterator<ATriggerBaseActor> It( GetWorld() ); It; ++It)
 	{
-		ActorItr->GiveQuest();
-		AIlib->SendPImgToSrv( 2004 );
+		ATriggerBaseActor* trigger = *It;
+
+		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+		if (trigger)
+		{
+			trigger->ActiveTriggerCollision();
+		}
 	}
 
-	// Quest2004 생성 시, 벽 부숴지는 이벤트 발생
+	// 벽 부숴지는 효과
 	for (TActorIterator<ADestructableWallActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		ActorItr->ExplosionWalls();
 	}
 
+	// 플레이어 카메라붐 각도 변경
+	FRotator NewRotation = Player->GetCameraBoom()->GetRelativeRotation();
+	NewRotation.Yaw = 180;
+	Player->GetCameraBoom()->SetRelativeRotation( NewRotation );
 }
 
 void APlayerGameMode::StartGameStory()
@@ -241,7 +253,9 @@ void APlayerGameMode::StartGameStory()
 	case 3: index = 7; break; 
 		default: break;
 	}
-	GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+
+	if(!IsToToNotInMapStart)
+		GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
 }
 
 
@@ -287,10 +301,10 @@ void APlayerGameMode::ActiveLvTrigger()
 
 void APlayerGameMode::LerpPlayerCameraLength(float TargetArmLength)
 {
-	auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
-	if (player)
+	Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+	if (Player)
 	{
-		CameraBoom = player->GetCameraBoom();
+		CameraBoom = Player->GetCameraBoom();
 		if (CameraBoom)
 		{
 			InitialArmLength = CameraBoom->TargetArmLength;

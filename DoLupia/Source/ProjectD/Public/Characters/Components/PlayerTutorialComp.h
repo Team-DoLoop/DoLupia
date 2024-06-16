@@ -63,11 +63,17 @@ private:
 public:
 	// FORCEINLINE void SetTutorialID(int32 _TutorialID) {TutorialID = _TutorialID;}
 	FORCEINLINE void SetExplainIndex(int32 _ExplainIndex) {ExplainIndex = _ExplainIndex;}
+	FORCEINLINE void SetTotoSaying(bool _IsTotoSaying) {IsTotoSaying = _IsTotoSaying;}
+	FORCEINLINE bool GetToToSaying() const {return IsTotoSaying;}
 	
 private:
 	FTutorialData* TutoData;
 	int32 ExplainIndex = -1;
 	//int32 TutorialID;
+	bool IsTotoSaying = false;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* ToToSFX;
 	
 	
 	// <----------------------------- Tutorial UI ----------------------------->
@@ -107,6 +113,7 @@ private:
 	// <----------------------------- Trigger ----------------------------->
 public:
 	void StartTrigger(int32 _TriggerID);
+	void ExecuteTutorial();
 
 	
 };
