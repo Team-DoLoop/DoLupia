@@ -215,7 +215,7 @@ void APlayerGameMode::SetNxtQuestID(FString nextquestID)
 
 	FindNextNPC();
 	FindMiniGame();
-	if(NextquestID == "1003" || NextquestID == "2003" || NextquestID == "3001")
+	if(NextquestID == "2001" || NextquestID == "2003" || NextquestID == "3001")
 	{
 		UE_LOG( LogTemp , Error , TEXT( "gm - FindMonsterSpawner" ) );
 		FindMonsterSpawner( FName( *NextquestID ) , true );
