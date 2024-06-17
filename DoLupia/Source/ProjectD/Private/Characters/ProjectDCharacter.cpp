@@ -56,6 +56,7 @@
 
 #include "MapIconComponent.h"
 #include "MapViewComponent.h"
+#include "UserInterface/Tutorial/TutorialWidget.h"
 
 AProjectDCharacter::AProjectDCharacter()
 {
@@ -321,6 +322,9 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
+	if(PlayerDefaultsWidget->GetTutorialWidget()->GetVisibility() == ESlateVisibility::Visible)
+		return true;
+
 
 	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
@@ -527,7 +531,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
 
 
-		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
+		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_GameTraceChannel10 , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			AActor* HitActor = TraceHit.GetActor();
 
