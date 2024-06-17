@@ -155,13 +155,20 @@ public:
 	
 	void RangedSkillAttackJudgementStart();
 	void RangedSkillAttackJudgmentEnd();
+	void BlastAttackEnd();
 
 private :
 	UPROPERTY()
 	APlayerSkillElecBlast* PlayerElecBlast;
 
+	FTimerHandle ElecBlastTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Shield")
+	float ElecBlastTime = 1.0f;
+	
 	UPROPERTY()
 	APlayerSkillLightning* PlayerLightning;
+	
 	
 
 	
@@ -291,7 +298,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float ChargingTime = 1.6f;
+	float ChargingTime = 0.93f;
 	
 	bool IsChargingInputOn;
 	bool CanChargingSkill;

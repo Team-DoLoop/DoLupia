@@ -431,6 +431,8 @@ void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 
 		PlayerElecBlast = GetWorld()->SpawnActor<APlayerSkillElecBlast>(PlayerElecBlastFactory, SpawnLocation, FRotator(0));
 		PlayerElecBlast->SetSkillDamage(SkillLevel * SkillDamage);
+
+		GetWorld()->GetTimerManager().SetTimer(ElecBlastTimerHandle, this, &UPlayerAttackComp::BlastAttackEnd, ElecBlastTime, false);
 	}
 	
 	else if(SkillKeyIndex_Combo == 2)
@@ -444,15 +446,16 @@ void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 
 void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 {
-	if(SkillKeyIndex_Combo == 1)
-	{
-		if(PlayerElecBlast) PlayerElecBlast->Destroy();
-	}
-
-	else if(SkillKeyIndex_Combo == 2)
+	if(SkillKeyIndex_Combo == 2)
 	{
 		if(PlayerLightning) PlayerLightning->Destroy();
 	}
+}
+
+void UPlayerAttackComp::BlastAttackEnd()
+{
+	GetWorld()->GetTimerManager().ClearTimer(ElecBlastTimerHandle);
+	if(PlayerElecBlast) PlayerElecBlast->Destroy();
 }
 
 

@@ -123,7 +123,8 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 		}
 	}
 	
-	// 확인한 튜토리얼임을 저장
+	// 반복 튜토리얼의 마지막이 아니라면 확인한 튜토리얼임을 저장
+	if(!TutoData->bIsTypeEnd)
 	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
 
 	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap2 : %d "), TutorialIndexMap[_ExplainType]);
