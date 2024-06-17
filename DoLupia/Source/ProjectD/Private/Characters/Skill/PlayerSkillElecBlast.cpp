@@ -34,7 +34,7 @@ void APlayerSkillElecBlast::ActivateSkill()
 	Super::ActivateSkill();
 
 	FVector SkillLocation = GetActorLocation();
-	SkillLocation.Z = 0;
+	// SkillLocation.Z = 0;
 
 	TArray<AActor*> TargetActors;
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), SkillLocation, SkillRadius,

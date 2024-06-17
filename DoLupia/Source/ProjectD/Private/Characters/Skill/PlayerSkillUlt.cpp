@@ -26,6 +26,8 @@ APlayerSkillUlt::APlayerSkillUlt()
 
 void APlayerSkillUlt::BeginPlay()
 {
+	Super::BeginPlay();
+	
 	ApplyDamage(CenterRadius, CenterDamage);
 	
 	FTimerHandle TimerHandle1;
@@ -72,7 +74,7 @@ void APlayerSkillUlt::NotifyActorBeginOverlap(AActor* OtherActor)
 void APlayerSkillUlt::ApplyDamage(float SkillRadius, int32 _Damage)
 {
 	FVector SkillLocation = GetActorLocation();
-	SkillLocation.Z = 0;
+	// SkillLocation.Z = 0;
 
 	TArray<AActor*> TargetActors;
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), SkillLocation, SkillRadius,
