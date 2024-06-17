@@ -212,17 +212,22 @@ UItemBase* UGadgetComponent::GetEquippedItem( EItemType ItemType )
 	switch (ItemType)
 	{
 	case EItemType::Head:
-		return HeadBase->GetItemBase();
+		if(HeadBase)
+			return HeadBase->GetItemBase();
 	case EItemType::Top:
-		return TopBase->GetItemBase();
+		if(TopBase)
+			return TopBase->GetItemBase();
 	case EItemType::Pants:
-		return PantsBase->GetItemBase();
+		if(PantsBase)
+			return PantsBase->GetItemBase();
 	case EItemType::Shoes:
-		return ShoesBase->GetItemBase();
+		if(ShoesBase)
+			return ShoesBase->GetItemBase();
 	case EItemType::Shield:
 		return nullptr;
 	case EItemType::Weapon:
-		return SwordBase->GetItemBase();
+		if(SwordBase)
+			return SwordBase->GetItemBase();
 	}
 
 	return nullptr;

@@ -14,31 +14,38 @@ void AFA_Blast_Lightning::BeginPlay()
 	Super::BeginPlay();
 	FloorAttackType = EFloorAttackType::BlastLightening;
 
+	TWeakObjectPtr<AFA_Blast_Lightning> WeakThis = this;
+
 	FTimerHandle Handle1;
+	FTimerDelegate TimerDel1;
 
-	GetWorld()->GetTimerManager().SetTimer
-	(
-		Handle1 ,
-		FTimerDelegate::CreateLambda( [this]()
+	if (!IsPendingKillPending())
+	{
+
+		TimerDel1.BindLambda( [WeakThis]()
+		{
+			if (WeakThis.IsValid())
 			{
-				CollisionStart();
-			} ) ,
-		1.0f , false
-	);
+				WeakThis->CollisionStart();
+			}
+		} );
 
-	FTimerHandle Handle2;
+		GetWorld()->GetTimerManager().SetTimer(Handle1 , TimerDel1 , 1.0f , false);
 
-	GetWorld()->GetTimerManager().SetTimer
-	(
-		Handle2 ,
-		FTimerDelegate::CreateLambda( [this]()
+		FTimerHandle Handle2;
+		FTimerDelegate TimerDel2;
+
+		TimerDel2.BindLambda( [WeakThis]()
+		{
+			if (WeakThis.IsValid())
 			{
-				if (DestroyTime > CurrentTime + 0.2f)
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld() , SpawnSecondEffect , GetActorLocation() );
-			} ) ,
-		0.05f, true
-	);
+				if (WeakThis->DestroyTime > WeakThis->CurrentTime + 0.2f)
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation( WeakThis->GetWorld() , WeakThis->SpawnSecondEffect , WeakThis->GetActorLocation() );
+			}
+		} );
 
+		GetWorld()->GetTimerManager().SetTimer(Handle2 , TimerDel2, 0.05f, true);
+	}
 
 
 
@@ -69,47 +76,56 @@ void AFA_Blast_Lightning::Trigger()
 
 void AFA_Blast_Lightning::CollisionEnd()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "AFA_Blast_Fire::CollisionEnd()" ) );
-	AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::NoCollision );
 
-	IgnoreActorsClear();
-
-	FTimerHandle Handle;
-
-	if(!IsPendingKillPending())
+	if (!IsPendingKillPending())
 	{
-		GetWorld()->GetTimerManager().SetTimer
-		(
-			Handle ,
-			FTimerDelegate::CreateLambda( [this]()
-				{
-					CollisionStart();
-				} ) ,
-			0.05f , false
-		);
+		FTimerHandle Handle;
+
+
+		TWeakObjectPtr<AFA_Blast_Lightning> WeakThis = this;
+
+		FTimerDelegate TimerDel;
+		TimerDel.BindLambda( [WeakThis]()
+		{
+			if (WeakThis.IsValid())
+			{
+				WeakThis->CollisionStart();
+			}
+		} );
+
+		GetWorld()->GetTimerManager().SetTimer( Handle , TimerDel , 0.05f , false );
+
+		IgnoreActorsClear();
+
+		if (AttackSphere)
+			AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::NoCollision );
 	}
-
-
 }
 
 void AFA_Blast_Lightning::CollisionStart()
 {
-	UE_LOG( LogTemp , Warning , TEXT( "AFA_Blast_Fire::CollisionStart()" ) );
-	AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
-
-	FTimerHandle Handle;
 
 	if (!IsPendingKillPending())
 	{
-		GetWorld()->GetTimerManager().SetTimer
-		(
-			Handle ,
-			FTimerDelegate::CreateLambda( [this]()
-				{
-					CollisionEnd();
-				} ) ,
-			0.05f , false
-		);
+		FTimerHandle Handle;
+
+		TWeakObjectPtr<AFA_Blast_Lightning> WeakThis = this;
+
+		FTimerDelegate TimerDel;
+		TimerDel.BindLambda( [WeakThis]()
+		{
+			if (WeakThis.IsValid())
+			{
+				WeakThis->CollisionEnd();
+			}
+		} );
+
+		GetWorld()->GetTimerManager().SetTimer( Handle , TimerDel , 0.05f , false );
+
+		IgnoreActorsClear();
+
+		if (AttackSphere)
+			AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
 	}
 }
 

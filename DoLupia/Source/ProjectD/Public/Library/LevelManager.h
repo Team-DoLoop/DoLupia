@@ -33,6 +33,10 @@ public:
 	void SaveGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName , FName SaveName,
 		FName LevelName , FVector Location , TArray<UItemBase*> ItemBases , bool UseThread , bool UseLocation );
 
+	void SaveGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName , FName SaveName ,
+		FName LevelName , FVector Location , TArray<UItemBase*> ItemBases , bool UseLocation , 
+		FString QuickSlot1, FString QuickSlot2 , FString QuickSlot3 , FString QuickSlot4 );
+
 	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation = false , bool UseThread = false, bool OpenLevel = false);
 
 private:

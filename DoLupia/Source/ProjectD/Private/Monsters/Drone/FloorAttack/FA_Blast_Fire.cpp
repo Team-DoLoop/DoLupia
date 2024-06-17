@@ -19,15 +19,18 @@ void AFA_Blast_Fire::BeginPlay()
 
 	FTimerHandle Handle;
 
-	GetWorld()->GetTimerManager().SetTimer
-	(
-		Handle,
-		FTimerDelegate::CreateLambda( [this]() 
-		{ 
-				CollisionStart();
-		}),
-		0.5f, false 
-	);
+	TWeakObjectPtr<AFA_Blast_Fire> WeakThis = this;
+
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda( [WeakThis]()
+	{
+	if (WeakThis.IsValid())
+	{
+		WeakThis->CollisionStart();
+	}
+	} );
+
+	GetWorld()->GetTimerManager().SetTimer(Handle, TimerDel, 0.5f, false );
 
 }
 
@@ -44,24 +47,28 @@ void AFA_Blast_Fire::Trigger()
 
 void AFA_Blast_Fire::CollisionEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AFA_Blast_Fire::CollisionEnd()"));
-	AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::NoCollision );
-
-	IgnoreActorsClear();
-
-	FTimerHandle Handle;
 
 	if (!IsPendingKillPending())
 	{
-		GetWorld()->GetTimerManager().SetTimer
-		(
-			Handle ,
-			FTimerDelegate::CreateLambda( [this]()
-				{
-					CollisionStart();
-				} ) ,
-			0.05f , false
-		);
+		FTimerHandle Handle;
+
+		TWeakObjectPtr<AFA_Blast_Fire> WeakThis = this;
+
+		if(AttackSphere)
+			AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::NoCollision );
+
+		IgnoreActorsClear();
+
+		FTimerDelegate TimerDel;
+		TimerDel.BindLambda( [WeakThis]()
+		{
+			if (WeakThis.IsValid())
+			{
+				WeakThis->CollisionStart();
+			}
+		} );
+
+		GetWorld()->GetTimerManager().SetTimer(Handle , TimerDel, 0.05f , false);
 	}
 }
 
@@ -70,18 +77,28 @@ void AFA_Blast_Fire::CollisionStart()
 	UE_LOG( LogTemp , Warning , TEXT( "AFA_Blast_Fire::CollisionStart()" ) );
 	AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
 
-	FTimerHandle Handle;
 
 	if (!IsPendingKillPending())
 	{
-		GetWorld()->GetTimerManager().SetTimer
-		(
-			Handle ,
-			FTimerDelegate::CreateLambda( [this]()
-				{
-					CollisionEnd();
-				} ) ,
-			0.05f , false
-		);
+
+		FTimerHandle Handle;
+
+		TWeakObjectPtr<AFA_Blast_Fire> WeakThis = this;
+
+		if (AttackSphere)
+			AttackSphere->SetCollisionEnabled( ECollisionEnabled::Type::QueryAndPhysics );
+
+		IgnoreActorsClear();
+
+		FTimerDelegate TimerDel;
+		TimerDel.BindLambda( [WeakThis]()
+		{
+			if (WeakThis.IsValid())
+			{
+				WeakThis->CollisionEnd();
+			}
+		} );
+
+		GetWorld()->GetTimerManager().SetTimer(Handle , TimerDel, 0.05f , false);
 	}
 }

@@ -49,17 +49,21 @@ void AFA_Blast_Base::PlayBlastSound()
 
 void AFA_Blast_Base::SpawnBlast()
 {
+
 	FTimerHandle Handle;
 
-	GetWorld()->GetTimerManager().SetTimer
-	(
-		Handle, 
-		FTimerDelegate::CreateLambda([this]()
-		{
-				Test_Destoty();//Destroy();
-		}),
-		DestroyTime , false
-	);
+	TWeakObjectPtr<AFA_Blast_Base> WeakThis = this;
+
+	FTimerDelegate TimerDel;
+	TimerDel.BindLambda( [WeakThis]()
+	{
+	if (WeakThis.IsValid())
+	{
+		WeakThis->Test_Destoty();
+	}
+	} );
+
+	GetWorld()->GetTimerManager().SetTimer( Handle , TimerDel , DestroyTime , false );
 
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SpawnEffect, GetActorLocation());
 	// 이벤트 추가
