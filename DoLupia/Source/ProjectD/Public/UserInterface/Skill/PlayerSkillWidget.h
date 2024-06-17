@@ -36,8 +36,8 @@ public:
 	void InitSkillSlot();
 	void UpdateSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkilInfo);
 	void UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime);
-
-	void UpgradeSkillLevelUI(int32 SlotIndex, int32 SkillLevel);
+	
+	void UpdateSkillLevelUI(int32 SkillKeyIndex, int32 SkillLevel);
 
 	void SetSkillComboUI(int32 SkillKeyIndex, bool IsCanCombo);
 

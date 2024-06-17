@@ -18,6 +18,7 @@ public:
 	APlayerSkillShield();
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void ActivateSkill() override;
 	
 

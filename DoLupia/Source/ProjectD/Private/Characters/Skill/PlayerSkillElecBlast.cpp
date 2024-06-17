@@ -34,7 +34,6 @@ void APlayerSkillElecBlast::ActivateSkill()
 	Super::ActivateSkill();
 
 	FVector SkillLocation = GetActorLocation();
-	SkillLocation.Z = 0;
 
 	TArray<AActor*> TargetActors;
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), SkillLocation, SkillRadius,
@@ -51,7 +50,6 @@ void APlayerSkillElecBlast::ActivateSkill()
 			}
 		}
 		
-				
 		else if (ABossMonster* BossMonster = Cast<ABossMonster>(TargetActor))
 		{
 			if (BossMonster)
@@ -61,5 +59,6 @@ void APlayerSkillElecBlast::ActivateSkill()
 			}
 		}
 	}
-	DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, SkillVolume);
+	
+	if(bIsShowDebugLine) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, SkillVolume);
 }

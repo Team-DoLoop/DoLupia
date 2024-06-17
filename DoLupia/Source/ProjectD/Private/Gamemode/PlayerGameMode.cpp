@@ -79,6 +79,7 @@ void APlayerGameMode::BeginPlay()
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	if (CurLevelName == LevelNames[0])
 	{
+
 		LevelIdx = 0;
 		PlayerCameraboom = 1000.0f;
 	}
