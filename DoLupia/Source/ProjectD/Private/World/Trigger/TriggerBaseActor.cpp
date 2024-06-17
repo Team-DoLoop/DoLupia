@@ -163,6 +163,10 @@ void ATriggerBaseActor::HideTrigger()
 
 void ATriggerBaseActor::ActiveTriggerCollision()
 {
-	triggerComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	if (triggerType == EPlayerTriggerType::CameraAngle)
+	{
+		triggerComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+	}
+	
 }
 

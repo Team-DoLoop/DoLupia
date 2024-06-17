@@ -28,13 +28,19 @@ UCLASS()
 class PROJECTD_API AGameSaveManager : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:	
 	// Sets default values for this actor's properties
 	AGameSaveManager();
 
-	void SaveGame( AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName , FName SaveName, FName LevelName, 
+	// [[deprecated]]
+	void SaveGame( AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName , FName SaveName, FName LevelName,
 		FVector Location , TArray<UItemBase*> ItemBases, bool UseLocation );
+
+	void SaveGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName , FName SaveName , FName LevelName ,
+		FVector Location , TArray<UItemBase*> ItemBases, bool UseLocation,
+		FString QuickSlot1 , FString QuickSlot2 , FString QuickSlot3, FString QuickSlot4);
+	
 	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation , bool UseThread , bool OpenLevel );
 
 	FORCEINLINE void InputSaveData(const FSaveGameDefault& SaveData) { SaveDataArray.Add( SaveData.SaveName, SaveData ); }
@@ -45,6 +51,10 @@ protected:
 private:
 	void SaveGameAsync( AProjectDCharacter* Character, FString SaveSlotName , FName SaveName , FName LevelName,
 		int32 SaveIndex , FVector Location , TArray<UItemBase*> ItemBases, bool UseLocation );
+
+	void SaveGameAsync( AProjectDCharacter* Character , FString SaveSlotName , FName SaveName , FName LevelName ,
+		int32 SaveIndex , FVector Location , TArray<UItemBase*> ItemBases , bool UseLocation ,
+		FString QuickSlot1 , FString QuickSlot2 , FString QuickSlot3 , FString QuickSlot4 );
 
 	void LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation , bool UseThread, bool OpenLevel );
 

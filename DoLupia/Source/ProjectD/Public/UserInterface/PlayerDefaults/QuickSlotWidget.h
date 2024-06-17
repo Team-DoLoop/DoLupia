@@ -45,6 +45,8 @@ public:
 
 	bool CheckHorveredQuickSlotUI( const FVector2D& MousePosition );
 
+	void SetItemIcon();
+
 	FItemDelegateQuantityCalled QuantityCalled;
 
 protected:

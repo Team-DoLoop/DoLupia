@@ -56,7 +56,7 @@ ANPCBase::ANPCBase()
 	MapIcon->SetIconTexture( QuestRewardsIcon.Object );
 	// The icon will rotate to represent the character's rotation
 	MapIcon->SetIconRotates( false );
-	//MapIcon->SetIconVisible( false );
+	MapIcon->SetIconVisible( false );
 
 	// Quest Tag
 	CurrentQuestTag = "";
@@ -257,6 +257,7 @@ void ANPCBase::ChangeNPCColor(int32 depth)
 	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
 	GetMesh()->SetCustomDepthStencilValue( depth );
+	MapIcon->SetIconVisible( true );
 	//GetMesh()->CustomDepthStencilValue = depth;
 }
 
@@ -270,10 +271,10 @@ void ANPCBase::ChangePlayerState()
 }
 
 void ANPCBase::HideNPC()
-{
+{	
+	this->MapIcon->SetIconVisible( false );
 	this->SetActorHiddenInGame( true );
 	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
-	this->MapIcon->SetIconVisible(false);
 }
 
 FString ANPCBase::GetNxtQuestID() const

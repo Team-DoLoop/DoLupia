@@ -104,11 +104,10 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
         gm->ActivateMarkers( 2 );
         gm->ActivateMarkers( 3 );
     }
-    else if (QuestID == "1003" || QuestID == "2004")
+    else if (QuestID == "2004")
     {
         gm->ActivateMarkers( 4 );
     }
-    
 
 }
 

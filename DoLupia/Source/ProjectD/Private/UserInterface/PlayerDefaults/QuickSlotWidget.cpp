@@ -80,7 +80,7 @@ bool UQuickSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 			ItemQuantity->SetText( QuantityText );
 			ItemReference = Dest->ItemReference;
 
-			Dest->ItemIcon->SetBrushFromTexture( nullptr );
+			Dest->ItemIcon->SetBrushFromTexture( BackBoardTexture );
 			Dest->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 			Dest->ItemQuantity->SetText( QuantityText );
 			Dest->ItemReference = nullptr;
@@ -197,7 +197,7 @@ bool UQuickSlotWidget::HandleQuickSlot( UQuickSlotWidget* OtherQuickSlot )
 
 void UQuickSlotWidget::ReleaseQuickSlot(UQuickSlotWidget* ReleasedQuickSlot ) const
 {
-	ReleasedQuickSlot->ItemIcon->SetBrushFromTexture( nullptr );
+	ReleasedQuickSlot->ItemIcon->SetBrushFromTexture( BackBoardTexture );
 	ReleasedQuickSlot->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 	ReleasedQuickSlot->ItemQuantity->SetText( FText::FromString(""));
 	ReleasedQuickSlot->ItemReference = nullptr;
@@ -247,6 +247,12 @@ bool UQuickSlotWidget::CheckHorveredQuickSlotUI(const FVector2D& MousePosition)
 
 }
 
+void UQuickSlotWidget::SetItemIcon()
+{
+	if(ItemReference)
+		ItemIcon->SetBrushFromTexture( ItemReference->GetAssetData().Icon );
+}
+
 
 void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity)
 {
@@ -281,7 +287,7 @@ bool UQuickSlotWidget::SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot )
 		ItemQuantity->SetText( QuantityText );
 		ItemReference = ItemBase;
 
-		OtherQuickSlot->ItemIcon->SetBrushFromTexture( nullptr );
+		OtherQuickSlot->ItemIcon->SetBrushFromTexture( BackBoardTexture );
 		OtherQuickSlot->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 		OtherQuickSlot->ItemQuantity->SetText( QuantityText );
 		OtherQuickSlot->ItemReference = nullptr;

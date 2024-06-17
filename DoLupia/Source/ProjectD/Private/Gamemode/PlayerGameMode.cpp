@@ -25,6 +25,9 @@
 #include <Quest/LocationMarker.h>
 
 #include "Monsters/MonsterSpawnManager.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -66,7 +69,6 @@ void APlayerGameMode::StartPlay()
 
 	ASoundManager::GetInstance(GetWorld());
 	ALevelManager::GetInstance(GetWorld());
-
 }
 
 void APlayerGameMode::BeginPlay()
@@ -79,7 +81,8 @@ void APlayerGameMode::BeginPlay()
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	if (CurLevelName == LevelNames[0])
 	{
-
+		//SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave", "", false, false );
+		LOAD( ESaveType::SAVE_1, "TutorialSave", false, false, false );
 		LevelIdx = 0;
 		PlayerCameraboom = 1000.0f;
 	}
@@ -166,10 +169,29 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 
 void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType)
 {
-	SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false, false);
+	//SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false);
+
+	FString String = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ?
+		Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "";
+
 
 	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
 	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
+
+	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , 
+	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" , 
+	
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" , 
+	
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" , 
+	
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
+
 
 	UGameplayStatics::OpenLevel( this , LevelName );
 }
