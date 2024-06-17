@@ -527,7 +527,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
 
 
-		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
+		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_GameTraceChannel10 , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			AActor* HitActor = TraceHit.GetActor();
 
