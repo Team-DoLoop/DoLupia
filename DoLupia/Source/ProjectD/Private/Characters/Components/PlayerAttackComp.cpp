@@ -213,7 +213,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
 
-		SetSkillLockUI(i, (CurrentMP >= PlayerMaxMP));
+		SetSkillLockUI(i, (PlayerStat->GetMP() >= PlayerMaxMP));
 	}
 }
 
@@ -265,13 +265,10 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
 	
 	// MP 소모
-	CurrentMP = PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost;
-	PlayerStat->SetMP(CurrentMP);
+	PlayerStat->SetMP(PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost);
 	CurrentMP = PlayerStat->GetMP();
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
-
-	UE_LOG(LogTemp, Log, TEXT("CurrentMP : %d"), CurrentMP);
-	UE_LOG(LogTemp, Log, TEXT("PlayerStat->SetMP(CurrentMP) : %d"), PlayerStat->GetMP());
+	
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
 }
@@ -761,7 +758,7 @@ void UPlayerAttackComp::SetSkillCoolDownUI()
 bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 {
 	// 게이지가 100이라면
-	if(_TempSkill != AutoSkill && CurrentMP >= PlayerMaxMP) return false;
+	if(_TempSkill != AutoSkill && PlayerStat->GetMP() >= PlayerMaxMP) return false;
 
 	// E 스킬인데 잠금 해제가 안되었다면
 	if(_TempSkill == SwapSkill && !IsUnLockSwap) return false;
@@ -807,7 +804,7 @@ void UPlayerAttackComp::AttackEndState()
 	if(CurrentSkillInfo)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	// MP가 꽉 찼다면
-	if(CurrentMP >= PlayerMaxMP)
+	if(PlayerStat->GetMP() >= PlayerMaxMP)
 	{
 		// MP가 꽉 찼다면 열 게이지 관련 설명
 		if(GI) GI->ExecuteTutorial(EExplainType::FULL_HIT_GAUGE);
