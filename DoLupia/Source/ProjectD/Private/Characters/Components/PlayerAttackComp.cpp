@@ -135,7 +135,7 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 
 	// MP Regen
 	if (!PlayerStat) return;
-	CurrentMP = PlayerStat->GetMP();
+	// CurrentMP = PlayerStat->GetMP();
 	/*
 	if (CurrentMP < PlayerMaxMP)
 	{
@@ -267,8 +267,11 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	// MP 소모
 	CurrentMP = PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost;
 	PlayerStat->SetMP(CurrentMP);
+	CurrentMP = PlayerStat->GetMP();
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
 
+	UE_LOG(LogTemp, Log, TEXT("CurrentMP : %d"), CurrentMP);
+	UE_LOG(LogTemp, Log, TEXT("PlayerStat->SetMP(CurrentMP) : %d"), PlayerStat->GetMP());
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
 }
