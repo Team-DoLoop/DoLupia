@@ -54,6 +54,16 @@ void AStrangeObject::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
+	
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle ,
+		[this]() {
+			NPCInteractGWidget->RemoveFromParent();
+		} ,
+		2.0f , // 지연 시간(초)
+		false
+		);
+
 }
 
 void AStrangeObject::NotifyActorEndOverlap(AActor* OtherActor)
