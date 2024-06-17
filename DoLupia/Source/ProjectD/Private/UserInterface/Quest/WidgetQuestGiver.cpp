@@ -149,7 +149,7 @@ void UWidgetQuestGiver::OnAcceptClicked()
     int32 tmpNum = FCString::Atoi( *tmpString );
 
     //AI 서버에 보내기(망토 색깔)
-    if( QuestID == "1003" || QuestID == "2003" || QuestID == "2004")
+    if( QuestID == "1002" || QuestID == "2002" || QuestID == "2004")
     {
         UE_LOG( LogTemp , Error , TEXT( "tmpNum : %d" ) , tmpNum );
         AIlib->SendPImgToSrv( tmpNum );

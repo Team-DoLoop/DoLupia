@@ -187,12 +187,11 @@ void UProjectDGameInstance::InitCompletedQuests()
 
 	if (!GetCompletedQuest().IsEmpty())
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is not empty in InitCompletedQuests" ) );
-		QuestComp->CompletedQuests = GetCompletedQuest();
-	}
-	else
-	{
-		UE_LOG( LogTemp , Warning , TEXT( "CompletedQuests is empty in InitCompletedQuests" ) );
+		for (const auto& CompletedQuestID : CompletedQuests)
+		{
+			QuestComp->CompletedQuests.Add(CompletedQuestID);
+			UE_LOG( LogTemp , Error , TEXT( "QuestComp->CompletedQuests.Add(CompletedQuestID);" ) );
+		}
 	}
 }
 

@@ -39,6 +39,16 @@ void UQuestLogComponent::BeginPlay()
     
     GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     Player = Cast<AProjectDCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+    if(GI)
+    {
+	   if(!GI->GetCompletedQuest().IsEmpty())
+	   {
+           CompletedQuests = GI->GetCompletedQuest();
+           UE_LOG( LogTemp , Error , TEXT( "CompletedQuests = GI->GetCompletedQuest();" ) );
+	   }
+    }
+    
 }
 
 
@@ -83,6 +93,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
         UpdateCurrentActiveQuest.Broadcast();
     }
 
+    //로케이션 마커 활성화
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     if (QuestID == "0001" || QuestID == "1001" || QuestID == "2001")
     {
@@ -314,6 +325,7 @@ void UQuestLogComponent::InitCompletedQuests( FName InitQuestID )
     if (GI)
     {
         GI->SetCompletedQuest( InitQuestID );
+        UE_LOG( LogTemp , Error , TEXT( "GI->SetCompletedQuest( InitQuestID );" ) );
     }
    
 }
