@@ -26,7 +26,7 @@ AMonster::AMonster()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
+	MonsterType = EMonsterType::Strike;
 	MonsterFSM = CreateDefaultSubobject<UMonsterFSM>( TEXT( "MonsterFSM" ) );
 
 }
@@ -44,10 +44,12 @@ void AMonster::BeginPlay()
 
 	IsAlive = true;
 
-	float RandomSpeed = FMath::RandRange( 100.0f , 600.0f );
+	float RandomSpeed = FMath::RandRange( 100.0f , 400.0f );
 
 	// MaxWalkSpeed 설정
 	GetCharacterMovement()->MaxWalkSpeed = RandomSpeed;
+
+	target = GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	if (!ItemSpawner)
 	{

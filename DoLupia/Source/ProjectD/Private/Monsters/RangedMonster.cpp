@@ -133,7 +133,7 @@ bool ARangedMonster::HasObstacle()
 	CollisionParams.AddIgnoredActor( this ); // 현재 액터는 충돌 검사에서 무시
 
 	// 레이캐스트를 수행하고 충돌 정보를 outHit에 저장.
-	bool bIsHit = GetWorld()->LineTraceSingleByChannel( outHit , Start , End , ECC_Visibility , CollisionParams );
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel( outHit , Start , End , ECC_GameTraceChannel9 , CollisionParams );
 
 	/*if (bIsHit)
 	{

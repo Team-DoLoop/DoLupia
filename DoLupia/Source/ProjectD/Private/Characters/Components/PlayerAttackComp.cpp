@@ -404,7 +404,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(BossMonster)))
 			{
 				IgnoreAttackActors.AddUnique(BossMonster);
-				BossMonster->TakeDamage(SkillDamage * SkillLevel);
+				BossMonster->OnMyTakeDamage(SkillDamage * SkillLevel);
 				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *BossMonster->GetName(), SkillDamage * SkillLevel);
 			}
 		}

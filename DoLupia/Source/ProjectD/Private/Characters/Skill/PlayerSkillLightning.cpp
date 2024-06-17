@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Skill/PlayerSkillLightning.h"
@@ -51,7 +51,7 @@ void APlayerSkillLightning::ActivateSkill()
 		{
 			if (BossMonster)
 			{
-				BossMonster->TakeDamage(SkillDamage);
+				BossMonster->OnMyTakeDamage(SkillDamage);
 				UE_LOG(LogTemp, Log, TEXT("Lightning Attack %s Monster : %d"), *BossMonster->GetName(), SkillDamage);
 			}
 		}

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Skill/PlayerSkillUlt.h"
@@ -92,7 +92,7 @@ void APlayerSkillUlt::ApplyDamage(float SkillRadius, int32 _Damage)
 		{
 			if (BossMonster)
 			{
-				BossMonster->TakeDamage(_Damage);
+				BossMonster->OnMyTakeDamage(_Damage);
 				UE_LOG(LogTemp, Log, TEXT("Ult Attack %s Monster : %d"), *BossMonster->GetName(), _Damage);
 			}
 		}

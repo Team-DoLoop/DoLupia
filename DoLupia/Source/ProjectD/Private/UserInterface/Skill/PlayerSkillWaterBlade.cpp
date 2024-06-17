@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Skill/PlayerSkillWaterBlade.h"
@@ -54,7 +54,7 @@ void APlayerSkillWaterBlade::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	else if(ABossMonster* BossMonster = Cast<ABossMonster>(OtherActor))
 	{
-		BossMonster->TakeDamage(SkillDamage);
+		BossMonster->OnMyTakeDamage(SkillDamage);
 	}
 	
 }

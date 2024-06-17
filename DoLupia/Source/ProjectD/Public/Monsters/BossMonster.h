@@ -87,7 +87,7 @@ public:
 	EBossDelay delayState;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
-	int32 BossMaxHP = 100;
+	int32 BossMaxHP = 200;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
 	int32 BossCurrentHP = BossMaxHP;
@@ -137,7 +137,7 @@ public:
 	bool IsLaunching = false;
 
 	//--------------Damage-----------------
-	void TakeDamage( int damage );
+	void OnMyTakeDamage( int damage );
 
 	UPROPERTY( EditAnywhere )
 	TSubclassOf<ASpawnMonsterDamage> monsterDamageWidget;

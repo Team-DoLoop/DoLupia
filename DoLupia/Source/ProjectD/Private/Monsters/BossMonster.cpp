@@ -327,7 +327,7 @@ void ABossMonster::InitializeDelayStack()
 	}
 }
 
-void ABossMonster::TakeDamage( int damage )
+void ABossMonster::OnMyTakeDamage( int damage )
 {
 	BossCurrentHP -= damage;
 

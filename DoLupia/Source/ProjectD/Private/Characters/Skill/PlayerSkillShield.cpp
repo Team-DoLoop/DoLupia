@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Skill/PlayerSkillShield.h"
@@ -39,6 +39,6 @@ void APlayerSkillShield::NotifyActorBeginOverlap(AActor* OtherActor)
 
 	else if(ABossMonster* BossMonster = Cast<ABossMonster>(OtherActor))
 	{
-		BossMonster->TakeDamage(RandNum);
+		BossMonster->OnMyTakeDamage(RandNum);
 	}
 }
