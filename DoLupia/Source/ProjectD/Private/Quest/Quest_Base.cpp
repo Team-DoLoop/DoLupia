@@ -272,7 +272,7 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 
 			//Lv2 위치 도달
 			auto ValueString = gm->GetStringQuestID();
-			if (ValueString == "2003") 
+			if (ValueString == "1003" || ValueString == "2003")
 			{
 				if (ObjectiveID == "Monster") 
 				{
