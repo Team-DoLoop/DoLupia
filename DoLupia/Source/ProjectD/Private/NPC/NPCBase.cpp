@@ -57,6 +57,10 @@ ANPCBase::ANPCBase()
 	// The icon will rotate to represent the character's rotation
 	MapIcon->SetIconRotates( false );
 	//MapIcon->SetIconVisible( false );
+
+	// Quest Tag
+	CurrentQuestTag = "";
+	OwnQuestTag = NAME_None;
 }
 
 // Called when the game starts or when spawned
@@ -66,6 +70,12 @@ void ANPCBase::BeginPlay()
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
+
+	if (gm)
+	{
+		// 델리게이트 구독
+		gm->OnNextNPCQuestTagReceived.AddDynamic( this , &ANPCBase::OnNextNPCQuestTagReceived );
+	}
 
 	if (DialogNum == 501)
 	{
@@ -149,35 +159,39 @@ void ANPCBase::CallNPCMessageDelegate( FString Message )
 
 void ANPCBase::DialogWith()
 {
-	DialogComp->StartDialog( this , *NPCID , DialogNum );
-
-	// Dialog 503 일 때, AI서버 요청
-	if(DialogNum == 501)
+	if(bCanTalk)
 	{
-		AIlib = gm->GetAIConnectionLibrary();
-		AIlib->SendPImgToSrv( 2004 );
+		DialogComp->StartDialog( this , *NPCID , DialogNum );
+
+		// Dialog 503 일 때, AI서버 요청
+		if (DialogNum == 501)
+		{
+			AIlib = gm->GetAIConnectionLibrary();
+			AIlib->SendPImgToSrv( 2004 );
+		}
+
+
+		anim->bTalking = true;
+
+		ChangePlayerState();
+
+		if (!TimelineTrigger)
+		{
+			TimelineComp->PlayFromStart();
+			TimelineTrigger = true;
+		}
+
+		if (FadeInOutWidgetFactory)
+		{
+			FadeInOutWidget = CreateWidget<UFadeInOutWidget>( GetWorld() , FadeInOutWidgetFactory );
+			FadeInOutWidget->AddToViewport( static_cast<int32>(ViewPortPriority::Quest) );
+			FadeInOutWidget->SetVisibility( ESlateVisibility::HitTestInvisible );
+			FadeInOutWidget->FadeInOut();
+			Target->GetPlayerBattleWidget()->SetVisibility( ESlateVisibility::Hidden );
+			Target->GetPlayerDefaultsWidget()->GetMainQuickSlot()->SetVisibility( ESlateVisibility::Hidden );
+		}
 	}
 	
-
-	anim->bTalking = true;
-
-	ChangePlayerState();
-
-	if(!TimelineTrigger)
-	{
-		TimelineComp->PlayFromStart();
-		TimelineTrigger = true;
-	}
-
-	if (FadeInOutWidgetFactory)
-	{
-		FadeInOutWidget = CreateWidget<UFadeInOutWidget>( GetWorld() , FadeInOutWidgetFactory );
-		FadeInOutWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Quest));
-		FadeInOutWidget->SetVisibility( ESlateVisibility::HitTestInvisible );
-		FadeInOutWidget->FadeInOut();
-		Target->GetPlayerBattleWidget()->SetVisibility(ESlateVisibility::Hidden);
-		Target->GetPlayerDefaultsWidget()->GetMainQuickSlot()->SetVisibility( ESlateVisibility::Hidden );
-	}
 }
 
 FString ANPCBase::InteractWith()
@@ -213,6 +227,29 @@ FString ANPCBase::InteractWith()
 
 void ANPCBase::LookAt()
 {
+}
+
+void ANPCBase::OnNextNPCQuestTagReceived( FString NextQuestTag )
+{
+	if (OwnQuestTag.ToString() == NextQuestTag)
+	{
+		UpdateNPCStatus();
+		bCanTalk = true;
+	}
+}
+
+void ANPCBase::UpdateNPCStatus()
+{
+	if( gm && gm->GetNxtQuestTag() != "")
+	{
+		if (OwnQuestTag == FName( gm->GetNxtQuestTag() ))
+		{
+			// 태그 값이 일치하면 상태 변경 로직 추가
+			UE_LOG( LogTemp , Log , TEXT( "NPC with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
+			
+			ChangeNPCColor( 4 );
+		}
+	}
 }
 
 void ANPCBase::ChangeNPCColor(int32 depth)

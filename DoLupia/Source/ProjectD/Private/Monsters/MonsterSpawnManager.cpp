@@ -3,6 +3,8 @@
 
 #include "Monsters/MonsterSpawnManager.h"
 #include "Components/CapsuleComponent.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -12,6 +14,7 @@ AMonsterSpawnManager::AMonsterSpawnManager()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpawnInterval = 5.0f;
+	gm = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -20,8 +23,15 @@ void AMonsterSpawnManager::BeginPlay()
 	Super::BeginPlay();
 	StartSpawnMonster = false;
 
-	// 스포너에 태그 네임 지정
-	Tags.Add( FName( SpawnerQuestID ) );
+	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	if (gm)
+	{
+		gm->OnNextSpawnerQuestTagReceived.AddDynamic( this , &AMonsterSpawnManager::OnNextSpawnerQuestTagReceived );
+		gm->OnNextSpawnerQuestTagCompleted.AddDynamic( this , &AMonsterSpawnManager::OnNextSpawnerQuestTagCompleted );
+	}
+
+	UE_LOG( LogTemp , Log , TEXT( "MonsterSpawnManager initialized with OwnQuestTag: %s" ) , *OwnQuestTag.ToString() );
 }
 
 // Called every frame
@@ -46,6 +56,19 @@ void AMonsterSpawnManager::DeactiveMonsterSpawner()
 	currentTime = 0;
 }
 
+void AMonsterSpawnManager::OnNextSpawnerQuestTagReceived(FString NextQuestTag)
+{
+	if (OwnQuestTag.ToString() == NextQuestTag)
+	{
+		UpdateSpawnerStatus();
+	}
+}
+
+void AMonsterSpawnManager::OnNextSpawnerQuestTagCompleted()
+{
+	DeactiveMonsterSpawner();
+}
+
 void AMonsterSpawnManager::ActiveMonsterSpawner()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ActiveMonsterSpawner"))
@@ -59,6 +82,19 @@ void AMonsterSpawnManager::SpawnMonster()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AStrikeMonster* monster = Cast<AStrikeMonster>(GetWorld()->SpawnActor<AActor>( MonsterClass , GetActorLocation() , GetActorRotation() , SpawnParams ));
+	}
+}
+
+void AMonsterSpawnManager::UpdateSpawnerStatus()
+{
+	if (gm && gm->GetNxtQuestTag() != "")
+	{
+		if (OwnQuestTag == FName( gm->GetNxtQuestTag() ))
+		{
+			// 태그 값이 일치하면 활성화 로직 추가
+			ActiveMonsterSpawner();
+		}
+
 	}
 }
 

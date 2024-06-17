@@ -2,7 +2,6 @@
 
 
 #include "Quest/Dialogsystem/DialogComponent.h"
-
 #include "Blueprint/UserWidget.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
@@ -11,8 +10,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "NPC/NPCBase.h"
 #include "Pooling/SoundManager.h"
-#include "Quest/QuestGiver.h"
-#include "Quest/TestNPCCharacter.h"
 #include "UserInterface/NPC/DialogWidget.h"
 
 // Sets default values for this component's properties
@@ -100,6 +97,8 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 		{
 			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 			DialogueWidget->RemoveFromParent();
+			ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+			npc->bCanTalk = false;
 		}
 
 		// PlaeyerCamera 원상복귀
