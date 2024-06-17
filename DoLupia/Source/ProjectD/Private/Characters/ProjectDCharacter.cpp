@@ -406,7 +406,7 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType Effec
 	// 일반 공격인지 눕는 공격인지 확인
 	if(AttackType == EAttackType::BASIC)
 	{
-		if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
+		if(!(PlayerFSM->CanChangeState(EPlayerState::DAMAGE))) return;
 		
 	}
 
