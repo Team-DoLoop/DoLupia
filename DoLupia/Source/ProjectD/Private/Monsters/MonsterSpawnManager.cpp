@@ -14,7 +14,6 @@ AMonsterSpawnManager::AMonsterSpawnManager()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpawnInterval = 5.0f;
-
 	gm = nullptr;
 }
 
@@ -23,9 +22,6 @@ void AMonsterSpawnManager::BeginPlay()
 {
 	Super::BeginPlay();
 	StartSpawnMonster = false;
-
-	// 스포너에 태그 네임 지정
-	//Tags.Add( FName( SpawnerQuestID ) );
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
