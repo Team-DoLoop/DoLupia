@@ -7,6 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Library/MySaveGame.h"
 #include "Pooling/ItemPool.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 #include "World/SaveLoad/SaveLoadObject.h"
 
 // Sets default values
@@ -42,6 +45,46 @@ void AGameSaveManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveTyp
 		break;
 	case ESaveType::SAVE_5:
 		SaveGameAsync( Character, SaveSlotName , SaveName , LevelName, static_cast<int32>(ESaveType::SAVE_5) , Location , ItemBases, UseLocation );
+		break;
+	case ESaveType::SAVE_END:
+		break;
+	}
+
+}
+
+void AGameSaveManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName, FName SaveName,
+	FName LevelName, FVector Location, TArray<UItemBase*> ItemBases, bool UseLocation, 
+	FString QuickSlot1, FString QuickSlot2, FString QuickSlot3, FString QuickSlot4)
+{
+	switch (SaveType)
+	{
+	case ESaveType::SAVE_AUTO:
+		SaveGameAsync( Character , "PlayerAutoSave" , "PlayerAutoSave" , LevelName , static_cast<int32>(ESaveType::SAVE_AUTO) , 
+			Location , ItemBases , UseLocation, QuickSlot1 , QuickSlot2 , QuickSlot3 , QuickSlot4 );
+		break;
+	case ESaveType::SAVE_MAIN:
+		SaveGameAsync( Character , "PlayerMainSave" , "PlayerMainSave" , LevelName , static_cast<int32>(ESaveType::SAVE_MAIN) , 
+			Location, ItemBases , UseLocation, QuickSlot1 , QuickSlot2 , QuickSlot3 , QuickSlot4 );
+		break;
+	case ESaveType::SAVE_1:
+		SaveGameAsync( Character , SaveSlotName, SaveName , LevelName , static_cast<int32>(ESaveType::SAVE_1) , 
+			Location , ItemBases , UseLocation, QuickSlot1, QuickSlot2, QuickSlot3, QuickSlot4);
+		break;
+	case ESaveType::SAVE_2:
+		SaveGameAsync( Character , SaveSlotName , SaveName , LevelName , static_cast<int32>(ESaveType::SAVE_2) , 
+			Location , ItemBases , UseLocation, QuickSlot1 , QuickSlot2 , QuickSlot3 , QuickSlot4 );
+		break;
+	case ESaveType::SAVE_3:
+		SaveGameAsync( Character , SaveSlotName , SaveName , LevelName , static_cast<int32>(ESaveType::SAVE_3) ,
+			Location , ItemBases , UseLocation , QuickSlot1 , QuickSlot2 , QuickSlot3 , QuickSlot4 );
+		break;
+	case ESaveType::SAVE_4:
+		SaveGameAsync( Character , SaveSlotName , SaveName , LevelName , static_cast<int32>(ESaveType::SAVE_4) ,
+			Location , ItemBases , UseLocation , QuickSlot1 , QuickSlot2 , QuickSlot3 , QuickSlot4 );
+		break;
+	case ESaveType::SAVE_5:
+		SaveGameAsync( Character , SaveSlotName , SaveName , LevelName , static_cast<int32>(ESaveType::SAVE_5) ,
+			Location , ItemBases , UseLocation , QuickSlot1 , QuickSlot2 , QuickSlot3 , QuickSlot4 );
 		break;
 	case ESaveType::SAVE_END:
 		break;
@@ -161,6 +204,108 @@ void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character , FString Sa
 
 }
 
+void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString SaveSlotName, FName SaveName,
+	FName LevelName, int32 SaveIndex, FVector Location, TArray<UItemBase*> ItemBases, bool UseLocation,
+	FString QuickSlot1, FString QuickSlot2, FString QuickSlot3, FString QuickSlot4)
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>( UGameplayStatics::CreateSaveGameObject( UMySaveGame::StaticClass() ) );
+
+	if (SaveGameInstance)
+	{
+		/** Save file data **/
+		SaveGameInstance->SaveSlotName = SaveSlotName;
+		SaveGameInstance->SaveIndex = SaveIndex;
+
+		TMap<FString , int32> ItemMap;
+
+		for (int32 i = 0; i < ItemBases.Num(); ++i)
+		{
+			if (ItemBases[i])
+			{
+				FString ItemName = ItemBases[i]->GetTextData().Name.ToString();
+				int32 Quantity = ItemBases[i]->GetQuantity();
+
+				if (!Quantity)
+					++Quantity;
+
+				if (int32* ElemValue = ItemMap.Find( ItemName ))
+					*ElemValue += Quantity;
+				else
+					ItemMap.Add( ItemBases[i]->GetTextData().Name.ToString() , Quantity );
+			}
+		}
+
+		SaveGameInstance->SaveStruct.SaveName = SaveName;
+		SaveGameInstance->SaveStruct.LevelName = LevelName;
+
+		SaveGameInstance->SaveStruct.QuickSlotKey1 = QuickSlot1;
+		SaveGameInstance->SaveStruct.QuickSlotKey2 = QuickSlot2;
+		SaveGameInstance->SaveStruct.QuickSlotKey3 = QuickSlot3;
+		SaveGameInstance->SaveStruct.QuickSlotKey4 = QuickSlot4;
+
+		if (UseLocation)
+			SaveGameInstance->SaveStruct.Location = Location;
+		else
+			if (AActor* PlayerStart = UGameplayStatics::GetActorOfClass( GetWorld() , APlayerStart::StaticClass() ))
+				SaveGameInstance->SaveStruct.Location = PlayerStart->GetActorLocation();
+
+
+		SaveGameInstance->SaveStruct.ItemBases = ItemMap;
+
+		UGadgetComponent* GadgetComponent = Character->GetGadgetComp();
+
+		if (UItemBase* Head = GadgetComponent->GetEquippedItem( EItemType::Head ))
+		{
+			SaveGameInstance->SaveStruct.EquippedItems.Add( EItemType::Head , Head->GetTextData().Name.ToString() );
+		}
+
+		if (UItemBase* Top = GadgetComponent->GetEquippedItem( EItemType::Top ))
+		{
+			SaveGameInstance->SaveStruct.EquippedItems.Add( EItemType::Top , Top->GetTextData().Name.ToString() );
+		}
+
+		if (UItemBase* Pants = GadgetComponent->GetEquippedItem( EItemType::Pants ))
+		{
+			SaveGameInstance->SaveStruct.EquippedItems.Add( EItemType::Pants , Pants->GetTextData().Name.ToString() );
+		}
+
+		if (UItemBase* Shoes = GadgetComponent->GetEquippedItem( EItemType::Shoes ))
+		{
+			SaveGameInstance->SaveStruct.EquippedItems.Add( EItemType::Shoes , Shoes->GetTextData().Name.ToString() );
+		}
+
+		if (UItemBase* Weapon = GadgetComponent->GetEquippedItem( EItemType::Weapon ))
+		{
+			SaveGameInstance->SaveStruct.EquippedItems.Add( EItemType::Weapon , Weapon->GetTextData().Name.ToString() );
+		}
+
+		//AsyncTask( ENamedThreads::AnyBackgroundThreadNormalTask , [SaveGameInstance]()
+		{
+			bool bSuccess = UGameplayStatics::SaveGameToSlot( SaveGameInstance , SaveGameInstance->SaveSlotName , SaveGameInstance->SaveIndex );
+
+			//AsyncTask( ENamedThreads::GameThread , [bSuccess]()
+			{
+				if (bSuccess)
+				{
+					UE_LOG( LogTemp , Log , TEXT( "Game saved successfully." ) );
+				}
+				else
+				{
+					UE_LOG( LogTemp , Error , TEXT( "Failed to save game." ) );
+				}
+			} //);
+		} //);
+
+		//UGameplayStatics::SaveGameToSlot( SaveGameInstance , SaveGameInstance->SaveSlotName , SaveGameInstance->SaveIndex );
+	}
+	else
+	{
+		UE_LOG( LogTemp , Error , TEXT( "SaveGameInstance is nullptr" ) );
+	}
+
+}
+
+
 void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
 	if(Character)
@@ -183,8 +328,10 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 					UE_LOG( LogTemp , Log , TEXT( "Game loaded successfully. SaveName: %s, Location: %s" ) ,
 						*LoadedGameInstance->SaveStruct.SaveName.ToString() , *LoadedGameInstance->SaveStruct.Location.ToString() );
 
+
 					if(UseLocation)
 						Character->SetActorLocation( LoadedGameInstance->SaveStruct.Location );
+
 
 					for(auto& ItemData : LoadedGameInstance->SaveStruct.ItemBases)
 					{
@@ -223,10 +370,64 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 								UE_LOG( LogTemp , Error , TEXT( "AGameSaveManager::LoadGameAsync Load Failed -> ItemPool" ) );
 							}
 						}
-
-
 					}
-						
+
+					GetWorld()->GetTimerManager().SetTimerForNextTick([this, Character, LoadedGameInstance]()
+					{
+						UQuickSlotWidget* Widget1 = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1();
+						UQuickSlotWidget* Widget2 = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2();
+						UQuickSlotWidget* Widget3 = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3();
+						UQuickSlotWidget* Widget4 = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4();
+
+						if(LoadedGameInstance->SaveStruct.QuickSlotKey1.IsEmpty() || !Widget1->GetItemBase())
+						{
+							Widget1->ReleaseQuickSlot( Widget1 );
+						}
+						else
+						{
+							Widget1->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey1 ,
+							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey1 ) );
+
+							Widget1->SetItemIcon();
+						}
+
+						if (LoadedGameInstance->SaveStruct.QuickSlotKey2.IsEmpty() || !Widget2->GetItemBase())
+						{
+							Widget2->ReleaseQuickSlot( Widget2 );
+						}
+						else
+						{
+							Widget2->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey2 ,
+							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey2 ) );
+
+							Widget2->SetItemIcon();
+						}
+
+						if (LoadedGameInstance->SaveStruct.QuickSlotKey3.IsEmpty() || !Widget3->GetItemBase())
+						{
+							Widget3->ReleaseQuickSlot( Widget3 );
+						}
+						else
+						{
+							Widget3->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey3 ,
+							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey3 ) );
+
+							Widget3->SetItemIcon();
+						}
+
+						if (LoadedGameInstance->SaveStruct.QuickSlotKey4.IsEmpty() || !Widget4->GetItemBase())
+						{
+							Widget4->ReleaseQuickSlot( Widget4 );
+						}
+						else
+						{
+							Widget4->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey4 ,
+							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey4 ) );
+
+							Widget4->SetItemIcon();
+						}
+					});
+
 
 					for(const auto& EquippedItem : LoadedGameInstance->SaveStruct.EquippedItems)
 					{

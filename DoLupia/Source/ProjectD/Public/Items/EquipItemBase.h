@@ -19,7 +19,7 @@ public:
 	AEquipItemBase();
 
 	void ReceiveItemData(UItemBase* NewItemBase, bool UsedSubMesh = false);
-	UItemBase* GetItemBase() { return ItemBase; }
+	FORCEINLINE UItemBase* GetItemBase() { return ItemBase; }
 
 	void ChangeAvatar( UStaticMesh* ItemMesh );
 	void UnUsedAvatar();

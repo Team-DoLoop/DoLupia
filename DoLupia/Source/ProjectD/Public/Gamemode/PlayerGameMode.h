@@ -8,9 +8,26 @@
 #include "PlayerGameMode.generated.h"
 
 
-#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseThread, UseLocation)					\
-    ALevelManager::GetInstance(GetWorld())->SaveGame(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName,	\
-    Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), UseThread, UseLocation);
+//#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseThread, UseLocation)					\
+//    ALevelManager::GetInstance(GetWorld())->SaveGame(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName,	\
+//    Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), UseThread, UseLocation);
+
+
+#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseLocation) \
+ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , \
+Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "", \
+\
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "", \
+\
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "", \
+\
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "");\
+
 
 #define LOAD(SaveType, SaveSlotName, UseThread, UseLocation, OpenLevel )						\
 		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
