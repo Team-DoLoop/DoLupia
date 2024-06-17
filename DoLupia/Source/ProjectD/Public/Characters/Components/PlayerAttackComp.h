@@ -260,6 +260,7 @@ private:
 	// <---------------------- Skill Upgrade ---------------------->
 public:
 	void GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex);
+	void UpdateSkillLevel(int32 SkillKeyIndex, FSkillInfo* _TempSkill);
 
 
 	

@@ -122,11 +122,13 @@ void UPlayerSkillSlotWidget::SetCoolTimeBar(float CoolTime)
 
 // <--------------------- Upgrade Skill Level --------------------->
 
-void UPlayerSkillSlotWidget::UpgradeSkillSlotLevelUI(int32 _SkillLevel)
+void UPlayerSkillSlotWidget::UpdateSkillLevelSlotUI(int32 _SkillLevel)
 {
 	UE_LOG(LogTemp, Log, TEXT("UpgradeSkillSlotLevelUI : %d"), _SkillLevel);
 	for(int i = 0; i < _SkillLevel; i++)
 		SkillLevelSlot[i]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+	for(int i = _SkillLevel; i < 5; i++)
+		SkillLevelSlot[i]->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 0.0f, 0.0f));
 }
 
 void UPlayerSkillSlotWidget::SetSkillLockImage(bool IsSkillLock)

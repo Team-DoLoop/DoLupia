@@ -29,7 +29,7 @@ public:
 	
 	// <---------------------- HP ---------------------->
 private:
-	UPROPERTY( VisibleAnywhere )
+	UPROPERTY( EditAnywhere )
 	int32 MaxHP;
 
 	UPROPERTY( VisibleAnywhere )

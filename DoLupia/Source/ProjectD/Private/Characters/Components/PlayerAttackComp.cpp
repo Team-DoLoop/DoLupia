@@ -521,6 +521,7 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	{
 		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
 		SetSkillUI(i, _TempSkill);
+		UpdateSkillLevel(i+1, _TempSkill);
 	}
 
 	if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
@@ -536,6 +537,7 @@ void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)
 	if (!Player) return;
 	
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillInfo);
+	UpdateSkillLevel(SlotIndex + 1, PlayerSkillInfo);
 }
 
 EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
@@ -710,11 +712,16 @@ void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyInd
 	{
 		if(_TempSkill->SkillLevel < 5)
 			_TempSkill->SkillLevel = _TempSkill->SkillLevel + 1;
-		
-		// UI 업데이트
-		Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillKeyIndex-1, _TempSkill->SkillLevel);
+
+		if(_Color == CurrentSkillColor) UpdateSkillLevel(SkillKeyIndex, _TempSkill);
 		UE_LOG(LogTemp,Log,TEXT("Get GetSkillUpgradePoint"));
 	}
+}
+
+void UPlayerAttackComp::UpdateSkillLevel(int32 SkillKeyIndex, FSkillInfo* _TempSkill)
+{
+	// 스킬 레벨 UI 업데이트
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillLevelUI(SkillKeyIndex, _TempSkill->SkillLevel);
 }
 
 
