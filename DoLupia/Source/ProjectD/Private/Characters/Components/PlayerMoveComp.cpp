@@ -63,7 +63,8 @@ void UPlayerMoveComp::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 float UPlayerMoveComp::GetCooldownPercent(float RemainingTime, float _SkillCoolTime)
 {
-	if (_SkillCoolTime > 0)
+	
+	if (_SkillCoolTime > 0.f)
 	{
 		return  (RemainingTime / _SkillCoolTime);
 	}
