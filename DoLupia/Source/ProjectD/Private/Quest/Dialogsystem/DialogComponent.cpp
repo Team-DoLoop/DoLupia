@@ -2,7 +2,6 @@
 
 
 #include "Quest/Dialogsystem/DialogComponent.h"
-
 #include "Blueprint/UserWidget.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Data/DialogData.h"
@@ -11,8 +10,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "NPC/NPCBase.h"
 #include "Pooling/SoundManager.h"
-#include "Quest/QuestGiver.h"
-#include "Quest/TestNPCCharacter.h"
 #include "UserInterface/NPC/DialogWidget.h"
 
 // Sets default values for this component's properties
@@ -100,6 +97,8 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 		{
 			DialogueWidget->SetVisibility(ESlateVisibility::HitTestInvisible);
 			DialogueWidget->RemoveFromParent();
+			ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
+			npc->bCanTalk = false;
 		}
 
 		// PlaeyerCamera 원상복귀
@@ -122,7 +121,7 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 
 			ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
 
-			// 특정 DialogID에서 NPC Color 변경
+			// 특정 DialogID에서 NPC Color 변경, 혹은 쓰러지는 연출
 			switch (DialogueID)
 			{
 			case 201:
@@ -131,6 +130,9 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			case 401:
 				npc->ChangeNPCColor( 3 );
 				break;
+			//case 502:
+			//	npc->FallDownNPC();
+			//	break;
 			case 503:
 				npc->ChangeNPCColor( 2 );
 				break;

@@ -28,7 +28,7 @@ void UPlayerDefaultsWidget::NativeOnInitialized()
 	if(TutorialWidgetFactory)
 	{
 		TutorialUI = CreateWidget<UTutorialWidget>(GetWorld(), TutorialWidgetFactory);
-		TutorialUI->AddToViewport(static_cast<uint32>(ViewPortPriority::Main));
+		TutorialUI->AddToViewport(static_cast<uint32>(ViewPortPriority::Default));
 	}
 }
 

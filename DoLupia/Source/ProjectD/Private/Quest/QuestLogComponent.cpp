@@ -104,11 +104,10 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
         gm->ActivateMarkers( 2 );
         gm->ActivateMarkers( 3 );
     }
-    else if (QuestID == "1003" || QuestID == "2004")
+    else if (QuestID == "2004")
     {
         gm->ActivateMarkers( 4 );
     }
-    
 
 }
 
@@ -154,6 +153,9 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     if (QuestID == "3001" || QuestID == "1003") {
         gm->ActiveLvTrigger();
     }
+
+    //UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( QuestID : %s )" ), *QuestID.ToString() );
+    //gm->SetNxtQuestTag( QuestID.ToString() );
 
     // 튜토리얼 퀘스트 완료 관련
     if(GI)

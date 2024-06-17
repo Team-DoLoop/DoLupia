@@ -146,4 +146,7 @@ public:
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	FString NextQuestID;
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite )
+	FVector PlayerLocation;
 };

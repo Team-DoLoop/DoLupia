@@ -116,24 +116,6 @@ void AQuest_Base::BeginPlay()
 void AQuest_Base::Tick(float DeltaSeconds)
 {
 	Super::Tick( DeltaSeconds );
-
-	/*if (!bQuestIDValid)
-	{
-		if (QuestID.IsValid())
-		{
-			UE_LOG( LogTemp , Error , TEXT( "QuestBase (FName QuestID): %s" ) , *QuestID.ToString() );
-
-			// QuestID가 유효해졌으므로 이후 작업 수행
-			GetQuestDetails();
-			CheckItem();
-			ReadyAddTracker.Broadcast();
-
-			IsCompleted = AreObjectivesComplete();
-
-			bQuestIDValid = true;
-		}
-	}*/
-	
 	
 }
 
@@ -202,7 +184,7 @@ void AQuest_Base::GetQuestDetails()
 	QuestDetails = *Row;
 
 	// Gamemode에 다음 진행할 퀘스트ID 보냄
-	gm->SetNxtQuestID( *QuestDetails.NextQuestID );
+	gm->SetNxtReceiveQuestTag( *QuestDetails.NextQuestID );
 
 	if (CurrentStage >= QuestDetails.Stages.Num())
 	{
@@ -288,6 +270,20 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 			//if (IsCompleted)
 				//UE_LOG( LogTemp , Error , TEXT( "IsCompleted = true;" ) );
 
+			//Lv2 위치 도달
+			auto ValueString = gm->GetStringQuestID();
+			if (ValueString == "1003" || ValueString == "2003")
+			{
+				if (ObjectiveID == "Monster") 
+				{
+					if (gm)
+					{
+						gm->ActivateMarkers( 5 );
+					}
+				}
+			}
+			
+
 			//남은 stage가 있는지 모두 다 완료했는지 확인
 			if (AreObjectivesComplete())
 			{
@@ -298,7 +294,8 @@ void AQuest_Base::IsObjectiveComplete(FString ObjectiveID)
 					GetQuestDetails();
 					CheckItem();
 				}
-				else {
+				else 
+				{
 					IsCompleted = true;
 					if (QuestDetails.AutoComplete) {
 						UE_LOG( LogTemp , Error , TEXT( "IsObjectiveComplete(FString ObjectiveID) QuestDetails.AutoComplete." ) );
@@ -328,6 +325,7 @@ bool AQuest_Base::AreObjectivesComplete()
 			if (*CurrentProgress >= ObjectiveData.Quantity)
 			{
 				Local_AllComplete = true;
+				gm->SetNxtCompleteQuestTag( *QuestDetails.NextQuestID );
 			}
 			else
 			{
@@ -341,6 +339,8 @@ bool AQuest_Base::AreObjectivesComplete()
 			break; // 목표 데이터나 현재 진행 상황이 유효하지 않으면 반복문 종료
 		}
 	}
+
+	
 
 	return Local_AllComplete;
 }

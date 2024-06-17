@@ -17,16 +17,16 @@ class PROJECTD_API UMainQuickSlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget1() const { return QuickSlot1; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget2() const { return QuickSlot2; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget3() const { return QuickSlot3; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget4() const { return QuickSlot4; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget5() const { return QuickSlot5; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget6() const { return QuickSlot6; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget7() const { return QuickSlot7; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget8() const { return QuickSlot8; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget9() const { return QuickSlot9; }
-	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget0() const { return QuickSlot0; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget1() { return QuickSlot1; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget2() { return QuickSlot2; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget3() { return QuickSlot3; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget4() { return QuickSlot4; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget5() { return QuickSlot5; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget6() { return QuickSlot6; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget7() { return QuickSlot7; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget8() { return QuickSlot8; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget9() { return QuickSlot9; }
+	FORCEINLINE UQuickSlotWidget* GetQuickSlotWidget0() { return QuickSlot0; }
 
 	void SwapQuickSlot(UQuickSlotWidget* OnClickedQuickSlot);
 	bool IsDraggingWidget();

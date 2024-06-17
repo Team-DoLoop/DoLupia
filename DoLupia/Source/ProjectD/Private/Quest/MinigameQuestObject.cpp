@@ -2,7 +2,6 @@
 
 
 #include "Quest/MinigameQuestObject.h"
-
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,6 +12,19 @@ AMinigameQuestObject::AMinigameQuestObject()
 	{
         MiniGameClass = minigame.Class;
 	}
+    gm = nullptr;
+}
+
+void AMinigameQuestObject::BeginPlay()
+{
+	Super::BeginPlay();
+
+    gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+    if(gm)
+    {
+        gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
+    }
 }
 
 FString AMinigameQuestObject::InteractWith()
@@ -20,7 +32,6 @@ FString AMinigameQuestObject::InteractWith()
     FString test = "";
     if(!isAvailable)
     {
-        auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
         int32 questid = gm->GetQuestID();
 
         if (questid == 2002)
@@ -34,15 +45,25 @@ FString AMinigameQuestObject::InteractWith()
     return ObjectID;
 }
 
+/*
 FString AMinigameQuestObject::GetOwnQuestID() const
 {
     return OwnQuestID;
 }
+*/
 
 void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
 {
     MeshComponent->SetRenderCustomDepth( true );
-    MeshComponent->SetCustomDepthStencilValue( 3 );
+    MeshComponent->SetCustomDepthStencilValue( depth );
+}
+
+void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
+{
+    if (OwnQuestTag.ToString() == NextQuestTag)
+    {
+        UpdateMiniGameStatus();
+    }
 }
 
 void AMinigameQuestObject::SpawnMiniGame()
@@ -61,5 +82,20 @@ void AMinigameQuestObject::SpawnMiniGame()
         AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>( MiniGameClass , SpawnLocation , SpawnRotation , SpawnParams );
         if (!SpawnedActor) return;
         
+    }
+}
+
+void AMinigameQuestObject::UpdateMiniGameStatus()
+{
+    if (gm && gm->GetNxtQuestTag() != "")
+    {
+        if (OwnQuestTag == FName( gm->GetNxtQuestTag() ))
+        {
+            // 태그 값이 일치하면 상태 변경 로직 추가
+            UE_LOG( LogTemp , Log , TEXT( "MiniGame with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
+
+            ChangeMinigameColor( 4 );
+        }
+    	
     }
 }

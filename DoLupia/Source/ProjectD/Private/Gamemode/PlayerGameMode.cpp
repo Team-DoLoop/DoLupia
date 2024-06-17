@@ -25,6 +25,9 @@
 #include <Quest/LocationMarker.h>
 
 #include "Monsters/MonsterSpawnManager.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -66,7 +69,6 @@ void APlayerGameMode::StartPlay()
 
 	ASoundManager::GetInstance(GetWorld());
 	ALevelManager::GetInstance(GetWorld());
-
 }
 
 void APlayerGameMode::BeginPlay()
@@ -79,6 +81,8 @@ void APlayerGameMode::BeginPlay()
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	if (CurLevelName == LevelNames[0])
 	{
+		//SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave", "", false, false );
+		LOAD( ESaveType::SAVE_1, "TutorialSave", false, false, false );
 		LevelIdx = 0;
 		PlayerCameraboom = 1000.0f;
 	}
@@ -110,7 +114,6 @@ void APlayerGameMode::BeginPlay()
 
 	PlayBGMForLevel( LevelIdx );
 	SetPlayerCameraboom( PlayerCameraboom );
-	InitializeSpawnerActors();
 
 	// Camera lerp settings
 	if(PlayerCamCurve)
@@ -166,10 +169,29 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 
 void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType)
 {
-	SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false, false);
+	//SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false);
+
+	FString String = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ?
+		Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "";
+
 
 	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
 	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
+
+	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , 
+	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" , 
+	
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" , 
+	
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" , 
+	
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ? 
+	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
+
 
 	UGameplayStatics::OpenLevel( this , LevelName );
 }
@@ -190,7 +212,6 @@ int32 APlayerGameMode::GetQuestID() const
 void APlayerGameMode::SetQuestID( int32 NewQuestID )
 {
 	questID = NewQuestID;
-
 }
 
 FString APlayerGameMode::GetStringQuestID()
@@ -203,31 +224,41 @@ void APlayerGameMode::SetStringQuestID(FString QuestID)
 	FStringQuestID = QuestID;
 }
 
-FString APlayerGameMode::GetNxtQuestID() const
+FString APlayerGameMode::GetNxtQuestTag() const
 {
-	return NextquestID;
+	return NextquestTag;
 }
 
-void APlayerGameMode::SetNxtQuestID(FString nextquestID)
+void APlayerGameMode::SetNxtCompleteQuestTag(FString nextquesttag)
 {
-	UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest ID: %s" ) , *nextquestID );
-	NextquestID = nextquestID;
+	UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest Tag: %s" ) , *nextquesttag );
+	NextquestTag = nextquesttag;
 
-	FindNextNPC();
-	FindMiniGame();
-	if(NextquestID == "2001" || NextquestID == "2004" || NextquestID == "4001")
+	OnNextNPCQuestTagReceived.Broadcast( NextquestTag );
+	OnNextSpawnerQuestTagCompleted.Broadcast();
+
+	/*
+	if(NextquestTag == "2001" || NextquestTag == "2004" || NextquestTag == "4001")
 	{
 		UE_LOG( LogTemp , Error , TEXT( "gm - FindMonsterSpawner" ) );
-		FindMonsterSpawner( FName( *NextquestID ) , true );
+		FindMonsterSpawner( FName( *NextquestTag ) , true );
 	} else
 	{
-		FindMonsterSpawner( FName( *NextquestID ) , false );
+		FindMonsterSpawner( FName( *NextquestTag ) , false );
 	}
 	/*else if(NextquestID == "3001" || NextquestID == "4001")
 	{
 		FindMonsterSpawner( FName( *NextquestID ) , false );
 	}
 	*/
+}
+
+void APlayerGameMode::SetNxtReceiveQuestTag(FString nextquesttag)
+{
+	UE_LOG( LogTemp , Error , TEXT( "gm - Next Receive Quest Tag: %s" ) , *nextquesttag );
+
+	OnNextMiniGameQuestTagReceived.Broadcast( NextquestTag );
+	OnNextSpawnerQuestTagReceived.Broadcast( NextquestTag );
 }
 
 void APlayerGameMode::HandleIntrusionEvent()
@@ -344,67 +375,6 @@ void APlayerGameMode::HandleTimelineProgress(float Value)
 
 void APlayerGameMode::OnTimelineFinished()
 {
-}
-
-void APlayerGameMode::InitializeSpawnerActors()
-{
-	SpawnerActors.Empty(); // 배열 비우기 (선택적)
-
-	// 세계에서 스포너를 찾아서 배열에 추가
-	for (TActorIterator<AMonsterSpawnManager> It( GetWorld() ); It; ++It)
-	{
-		SpawnerActors.Add( *It );
-	}
-}
-
-void APlayerGameMode::FindNextNPC()
-{
-	for (TActorIterator<ANPCBase> It( GetWorld() ); It; ++It)
-	{
-		ANPCBase* NPC = *It;
-
-		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
-		if (NPC && NPC->GetNxtQuestID() == NextquestID)
-		{
-			NPC->ChangeNPCColor( 4 ); 
-			//return NPC;
-		}
-	}
-	//return nullptr; // 해당 퀘스트 ID를 가진 NPC를 찾지 못한 경우
-}
-
-void APlayerGameMode::FindMiniGame()
-{
-	for (TActorIterator<AMinigameQuestObject> It( GetWorld() ); It; ++It)
-	{
-		AMinigameQuestObject* Minigame = *It;
-
-		// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
-		if (Minigame && Minigame->GetOwnQuestID() == NextquestID)
-		{
-			Minigame->ChangeMinigameColor( 3 );
-			//return NPC;
-		}
-	}
-}
-
-void APlayerGameMode::FindMonsterSpawner( FName Tag , bool bActivate )
-{
-	for (AMonsterSpawnManager* Spawner : SpawnerActors)
-	{
-		// Check if the spawner's tag matches the specified Tag
-		if (Spawner->Tags.Contains( Tag ))
-		{
-			// Activate or deactivate the spawner based on bActivate flag
-			if (bActivate)
-			{
-				Spawner->ActiveMonsterSpawner();
-			}
-		} else
-		{
-			Spawner->DeactiveMonsterSpawner();
-		}
-	}
 }
 
 void APlayerGameMode::ActivateMarkers( int32 MarkerID )

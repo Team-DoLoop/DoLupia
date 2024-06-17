@@ -56,5 +56,5 @@ void APlayerSkillLightning::ActivateSkill()
 			}
 		}
 	}
-	DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
+	if(bIsShowDebugLine) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
 }

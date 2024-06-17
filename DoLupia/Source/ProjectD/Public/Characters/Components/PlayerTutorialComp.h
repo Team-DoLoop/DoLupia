@@ -98,7 +98,7 @@ private:
 	// <----------------------------- Quest ----------------------------->
 public:
 	void StartQuest(int32 _QuestID);
-	
+	bool IsCantMoveToToSaying(FTutorialData* _TutoData);
 	
 	
 	// <----------------------------- Item ----------------------------->

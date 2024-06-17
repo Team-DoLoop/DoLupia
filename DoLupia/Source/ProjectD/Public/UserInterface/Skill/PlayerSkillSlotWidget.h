@@ -59,7 +59,7 @@ public:
 	void SetUI(FPlayerSkillData* _SkillData);
 	void SetCoolTimeBar(float CoolTime);
 
-	void UpgradeSkillSlotLevelUI(int32 SkillLevel);
+	void UpdateSkillLevelSlotUI(int32 SkillLevel);
 	
 	FORCEINLINE void SetSkillIndex(int32 _SlotIndex){SlotIndex = _SlotIndex;}
 

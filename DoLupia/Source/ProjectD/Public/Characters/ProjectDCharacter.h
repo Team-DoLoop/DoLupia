@@ -108,6 +108,11 @@ private:
 
 	int32 PlayerMaxHP;
 
+	// 디버그 라인 보이게할지
+	UPROPERTY(EditAnywhere)
+	bool bIsShowDebugLine = false;
+
+	
 protected:
 	
 public:
@@ -117,6 +122,7 @@ public:
 	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
 	FORCEINLINE class UNiagaraComponent* GetNiagaraComp()const {return NiagaraComp;}
 	FORCEINLINE class AProjectDPlayerController* GetProjectDPlayerController()const {return PlayerController;}
+	FORCEINLINE bool GetbIsShowDebugLine()const {return bIsShowDebugLine;}
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 

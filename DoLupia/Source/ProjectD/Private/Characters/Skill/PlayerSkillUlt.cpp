@@ -26,6 +26,8 @@ APlayerSkillUlt::APlayerSkillUlt()
 
 void APlayerSkillUlt::BeginPlay()
 {
+	Super::BeginPlay();
+	
 	ApplyDamage(CenterRadius, CenterDamage);
 	
 	FTimerHandle TimerHandle1;
@@ -72,7 +74,7 @@ void APlayerSkillUlt::NotifyActorBeginOverlap(AActor* OtherActor)
 void APlayerSkillUlt::ApplyDamage(float SkillRadius, int32 _Damage)
 {
 	FVector SkillLocation = GetActorLocation();
-	SkillLocation.Z = 0;
+	// SkillLocation.Z = 0;
 
 	TArray<AActor*> TargetActors;
 	UKismetSystemLibrary::SphereOverlapActors(GetWorld(), SkillLocation, SkillRadius,
@@ -97,7 +99,11 @@ void APlayerSkillUlt::ApplyDamage(float SkillRadius, int32 _Damage)
 			}
 		}
 	}
-	if(CenterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
-	if(MidRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Yellow, false, 0.1f);
-	if(OuterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Blue, false, 0.1f);
+
+	if(bIsShowDebugLine)
+	{
+		if(CenterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
+		if(MidRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Yellow, false, 0.1f);
+		if(OuterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Blue, false, 0.1f);	
+	}
 }

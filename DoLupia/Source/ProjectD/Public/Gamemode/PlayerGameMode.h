@@ -7,17 +7,34 @@
 #include "Library/GameSaveManager.h"
 #include "PlayerGameMode.generated.h"
 
+//#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseThread, UseLocation)					\
+//    ALevelManager::GetInstance(GetWorld())->SaveGame(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName,	\
+//    Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), UseThread, UseLocation);
 
-#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseThread, UseLocation)					\
-    ALevelManager::GetInstance(GetWorld())->SaveGame(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName,	\
-    Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), UseThread, UseLocation);
+#define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseLocation) \
+ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , \
+Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "", \
+\
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "", \
+\
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "", \
+\
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ? \
+Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "");\
 
 #define LOAD(SaveType, SaveSlotName, UseThread, UseLocation, OpenLevel )						\
 		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
 		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
 		SaveType , SaveSlotName , UseThread , UseLocation, OpenLevel );							\
 																								
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextNPCQuestTagReceived , FString , NextQuestTag );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextMiniGameQuestTagReceived , FString , NextQuestTag );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextSpawnerQuestTagReceived , FString , NextQuestTag );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnNextSpawnerQuestTagCompleted );
 
 class UAIConnectionLibrary;
 class UNPCConvWidget; 
@@ -104,10 +121,9 @@ public:
 	void SetStringQuestID( FString QuestID );
 
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
-	FString GetNxtQuestID() const;
+	FString GetNxtQuestTag() const;
 
-	UFUNCTION( BlueprintCallable , Category = "Quest" )
-	void SetNxtQuestID( FString nextquestID );
+	
 
 	FString FStringQuestID = "";
 
@@ -119,7 +135,7 @@ public:
 
 private:
 	int32 questID = -1;
-	FString NextquestID ;
+	FString NextquestTag ;
 
 	/*---------- Level Location Title Widget --------*/
 
@@ -158,16 +174,32 @@ private:
 	UCurveFloat* PlayerCamCurve;
 
 	/*---------- Quest, Dialog <> NPC, Minigame, Monster Spawner --------*/
+public:
+	// NPC Quest Tag Delegate
+	UPROPERTY( BlueprintAssignable , Category = "Quest" )
+	FOnNextNPCQuestTagReceived OnNextNPCQuestTagReceived;
+
+	// Minigame Quest Tag Delegate
+	UPROPERTY( BlueprintAssignable , Category = "Quest" )
+	FOnNextMiniGameQuestTagReceived OnNextMiniGameQuestTagReceived;
+
+	// Monster Spawner Quest Tag Delegate
+	UPROPERTY( BlueprintAssignable , Category = "Quest" )
+	FOnNextSpawnerQuestTagReceived OnNextSpawnerQuestTagReceived;
+
+	// Monster Spawner Quest Complete Delegate
+	UPROPERTY( BlueprintAssignable , Category = "Quest" )
+	FOnNextSpawnerQuestTagCompleted OnNextSpawnerQuestTagCompleted;
+
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetNxtCompleteQuestTag( FString nextquesttag );
+
+	UFUNCTION( BlueprintCallable , Category = "Quest" )
+	void SetNxtReceiveQuestTag( FString nextquesttag );
+
 private:
 	UPROPERTY()
 	TArray<AMonsterSpawnManager*> SpawnerActors; // AMonsterSpawnManager 타입으로 배열을 선언합니다.
-
-	void InitializeSpawnerActors();
-
-	void FindNextNPC();
-	void FindMiniGame();
-	void FindMonsterSpawner( FName Tag , bool bActivate );
-
 
 	/*---------- Quest Location actor  --------*/
 public:

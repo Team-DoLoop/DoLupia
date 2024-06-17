@@ -56,6 +56,7 @@
 
 #include "MapIconComponent.h"
 #include "MapViewComponent.h"
+#include "UserInterface/Tutorial/TutorialWidget.h"
 
 AProjectDCharacter::AProjectDCharacter()
 {
@@ -321,10 +322,13 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
-
 	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;
+	
+	// 토토 창이 켜지면
+	if(PlayerDefaultsWidget->GetTutorialWidget()->GetVisibility() == ESlateVisibility::Visible)
+		return true;
 
 	if(SpecificActor)
 	{
@@ -402,7 +406,7 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType Effec
 	// 일반 공격인지 눕는 공격인지 확인
 	if(AttackType == EAttackType::BASIC)
 	{
-		if(!(PlayerFSM->CanDamageState(EPlayerState::DAMAGE))) return;
+		if(!(PlayerFSM->CanChangeState(EPlayerState::DAMAGE))) return;
 		
 	}
 
@@ -517,7 +521,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 
 	if(LookDirection > 0.0)
 	{
-		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f, 0, 2.0f);
+		if(bIsShowDebugLine) DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f, 0, 2.0f);
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
@@ -527,7 +531,7 @@ void AProjectDCharacter::PerformInteractionCheck()
 		FVector BoxHalfSize = FVector( 50 , 50 , 50 );
 
 
-		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_Visibility , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
+		if(GetWorld()->SweepSingleByChannel( TraceHit , TraceStart , TraceEnd , FQuat( BoxRotation ) , ECC_GameTraceChannel10 , FCollisionShape::MakeBox( BoxHalfSize ) , QueryParams ))
 		{
 			AActor* HitActor = TraceHit.GetActor();
 

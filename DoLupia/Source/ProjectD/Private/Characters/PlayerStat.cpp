@@ -95,8 +95,11 @@ void APlayerStat::SetMP(int32 _MP)
 {
 	if (CurrentMP != _MP)
 	{
-		if (_MP > MaxHP)
-			_MP = MaxHP;
+		if (_MP > MaxMP)
+			_MP = MaxMP;
+
+		if(_MP < 0)
+			_MP = 0;
 
 		CurrentMP = _MP;
 

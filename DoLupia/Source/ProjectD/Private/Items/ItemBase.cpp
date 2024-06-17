@@ -90,19 +90,20 @@ void UItemBase::Use(AProjectDCharacter* Character)
 
 			if(ItemStatistics.HealthValue)
 			{
+				PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+				
 				int32 CurrentHP = PlayerStat->GetHP();
 				int32 MaxHP = PlayerStat->GetMaxHP();
-
-				PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );
+				
 				Character->GetPlayerBattleWidget()->GetPlayerHPBar()->SetHPBar( CurrentHP, MaxHP );
 			}
 
 			if(ItemStatistics.ManaValue)
 			{
+				PlayerStat->SetMP( PlayerStat->GetMP() - ItemStatistics.ManaValue );
+				
 				int32 CurrentMP = PlayerStat->GetMP();
 				int32 MaxMP = PlayerStat->GetMaxMP();
-
-				PlayerStat->SetMP( PlayerStat->GetMP() - ItemStatistics.ManaValue );
 				Character->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar( CurrentMP , MaxMP );
 			}
 		}

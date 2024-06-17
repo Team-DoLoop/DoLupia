@@ -35,6 +35,33 @@ struct FSaveGameDefault
 	// 망토
 	UPROPERTY()
 	FName PlayerCape;
+
+
+	// 퀵 슬롯 데이터
+	UPROPERTY()
+	FString QuickSlotKey1;
+
+	UPROPERTY()
+	FString QuickSlotKey2;
+
+	UPROPERTY()
+	FString QuickSlotKey3;
+
+	UPROPERTY()
+	FString QuickSlotKey4;
+
+	UPROPERTY()
+	int32 QuickSlotValue1;
+
+	UPROPERTY()
+	int32 QuickSlotValue2;
+
+	UPROPERTY()
+	int32 QuickSlotValue3;
+
+	UPROPERTY()
+	int32 QuickSlotValue4;
+
 };
 
 

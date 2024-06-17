@@ -23,6 +23,8 @@
 #include "UserInterface/MainMenu.h"
 #include "UserInterface/Quest/WidgetQuestLog.h"
 #include "Data/WidgetData.h"
+#include "Framework/Application/NavigationConfig.h"
+#include "Framework/Application/SlateApplication.h"
 #include "Library/AIConnectionLibrary.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -43,6 +45,9 @@ void AProjectDPlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	// UMG에서 Tab을 통한 navigation 이동 막기
+	FSlateApplication::Get().GetNavigationConfig()->bTabNavigation = false;
+	
 	ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
 }
 

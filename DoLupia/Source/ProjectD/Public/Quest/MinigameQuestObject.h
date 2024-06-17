@@ -6,6 +6,7 @@
 #include "Quest/StrangeObject.h"
 #include "MinigameQuestObject.generated.h"
 
+class APlayerGameMode;
 /**
  * 
  */
@@ -17,21 +18,31 @@ class PROJECTD_API AMinigameQuestObject : public AStrangeObject
 public:
 	AMinigameQuestObject();
 
+	virtual void BeginPlay() override;
+
 	virtual FString InteractWith() override;
 
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "MiniGame" )
 	TSubclassOf<AActor> MiniGameClass;
 
 	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
-	FString OwnQuestID = "";
+	FName OwnQuestTag;
 
-	FString GetOwnQuestID() const;
+	//FString GetOwnQuestID() const;
 	void ChangeMinigameColor( int32 depth );
 
+	UFUNCTION()
+	void OnNextMiniGameQuestTagReceived( FString NextQuestTag );
+
 private:
+	UPROPERTY()
+	APlayerGameMode* gm;
+
 	void SpawnMiniGame();
 
 	bool isAvailable = false;
+	FString CurrentQuestTag;
+	void UpdateMiniGameStatus();
 
 	
 };

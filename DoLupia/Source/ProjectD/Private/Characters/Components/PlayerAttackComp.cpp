@@ -112,6 +112,8 @@ void UPlayerAttackComp::BeginPlay()
 	InitCanUseColor();
 	
 	IgnoreAttackActors.AddUnique(Player);
+
+	bIsShowDebugLine = Player->GetbIsShowDebugLine();
 }
 
 void UPlayerAttackComp::InitSkillUI()
@@ -133,7 +135,7 @@ void UPlayerAttackComp::TickComponent(float DeltaTime , ELevelTick TickType ,
 
 	// MP Regen
 	if (!PlayerStat) return;
-	CurrentMP = PlayerStat->GetMP();
+	// CurrentMP = PlayerStat->GetMP();
 	/*
 	if (CurrentMP < PlayerMaxMP)
 	{
@@ -211,7 +213,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
 
-		SetSkillLockUI(i, (CurrentMP >= PlayerMaxMP));
+		SetSkillLockUI(i, (PlayerStat->GetMP() >= PlayerMaxMP));
 	}
 }
 
@@ -263,10 +265,10 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
 	
 	// MP 소모
-	CurrentMP = PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost;
-	PlayerStat->SetMP(CurrentMP);
+	PlayerStat->SetMP(PlayerStat->GetMP() + _TempInfo->SkillData->SkillCost);
+	CurrentMP = PlayerStat->GetMP();
 	Player->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar(CurrentMP , PlayerMaxMP);
-
+	
 	IgnoreAttackActors.Empty();
 	IgnoreAttackActors.AddUnique(Player);
 }
@@ -379,7 +381,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 	auto BoxRot = PlayerVec.Rotation().Quaternion();
 	
 	// 확인용 박스
-	DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
+	if(bIsShowDebugLine) DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
 
 	// 공격 판정
 	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, SkillRange,
@@ -521,6 +523,7 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	{
 		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
 		SetSkillUI(i, _TempSkill);
+		UpdateSkillLevel(i+1, _TempSkill);
 	}
 
 	if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
@@ -536,6 +539,7 @@ void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)
 	if (!Player) return;
 	
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillUI(SlotIndex, PlayerSkillInfo);
+	UpdateSkillLevel(SlotIndex + 1, PlayerSkillInfo);
 }
 
 EUseColor UPlayerAttackComp::FindSkillColor(EUseColor _CurrentColor)
@@ -710,11 +714,16 @@ void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyInd
 	{
 		if(_TempSkill->SkillLevel < 5)
 			_TempSkill->SkillLevel = _TempSkill->SkillLevel + 1;
-		
-		// UI 업데이트
-		Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpgradeSkillLevelUI(SkillKeyIndex-1, _TempSkill->SkillLevel);
+
+		if(_Color == CurrentSkillColor) UpdateSkillLevel(SkillKeyIndex, _TempSkill);
 		UE_LOG(LogTemp,Log,TEXT("Get GetSkillUpgradePoint"));
 	}
+}
+
+void UPlayerAttackComp::UpdateSkillLevel(int32 SkillKeyIndex, FSkillInfo* _TempSkill)
+{
+	// 스킬 레벨 UI 업데이트
+	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillLevelUI(SkillKeyIndex, _TempSkill->SkillLevel);
 }
 
 
@@ -749,7 +758,7 @@ void UPlayerAttackComp::SetSkillCoolDownUI()
 bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
 {
 	// 게이지가 100이라면
-	if(_TempSkill != AutoSkill && CurrentMP >= PlayerMaxMP) return false;
+	if(_TempSkill != AutoSkill && PlayerStat->GetMP() >= PlayerMaxMP) return false;
 
 	// E 스킬인데 잠금 해제가 안되었다면
 	if(_TempSkill == SwapSkill && !IsUnLockSwap) return false;
@@ -795,7 +804,7 @@ void UPlayerAttackComp::AttackEndState()
 	if(CurrentSkillInfo)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	// MP가 꽉 찼다면
-	if(CurrentMP >= PlayerMaxMP)
+	if(PlayerStat->GetMP() >= PlayerMaxMP)
 	{
 		// MP가 꽉 찼다면 열 게이지 관련 설명
 		if(GI) GI->ExecuteTutorial(EExplainType::FULL_HIT_GAUGE);

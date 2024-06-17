@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "MonsterSpawnManager.generated.h"
 
+class APlayerGameMode;
+
 UCLASS()
 class PROJECTD_API AMonsterSpawnManager : public AActor
 {
@@ -24,9 +26,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// 태그 값
-	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Spawn" )
-	FName SpawnerQuestID;
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
+	FName OwnQuestTag;
+
+	UFUNCTION()
+	void OnNextSpawnerQuestTagReceived( FString NextQuestTag );
+
+	UFUNCTION()
+	void OnNextSpawnerQuestTagCompleted();
 
 	void ActiveMonsterSpawner();
 	void DeactiveMonsterSpawner();
@@ -46,6 +53,14 @@ private:
 	bool StartSpawnMonster = false;
 
 	float currentTime = 5;
+
+	UPROPERTY()
+	APlayerGameMode* gm;
+
+	FString CurrentQuestTag;
+	void UpdateSpawnerStatus();
+
+
 
 	
 };
