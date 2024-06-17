@@ -77,9 +77,21 @@ public:
 	virtual FString InteractWith() override;
 	virtual void LookAt() override;
 
+	UFUNCTION()
+	void OnNextNPCQuestTagReceived( FString NextQuestTag );
+
+	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Quest" )
+	FName OwnQuestTag;
+
+	bool bCanTalk = false;
+
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
 	UQuestGiver* QuestGiverComp;
+
+	FString CurrentQuestTag;
+
+	void UpdateNPCStatus();
 
 	/*---------------------- Post Process Depth ------------------*/
 public:

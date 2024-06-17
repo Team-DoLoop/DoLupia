@@ -202,7 +202,7 @@ void AQuest_Base::GetQuestDetails()
 	QuestDetails = *Row;
 
 	// Gamemode에 다음 진행할 퀘스트ID 보냄
-	gm->SetNxtQuestID( *QuestDetails.NextQuestID );
+	gm->SetNxtReceiveQuestTag( *QuestDetails.NextQuestID );
 
 	if (CurrentStage >= QuestDetails.Stages.Num())
 	{
@@ -328,6 +328,7 @@ bool AQuest_Base::AreObjectivesComplete()
 			if (*CurrentProgress >= ObjectiveData.Quantity)
 			{
 				Local_AllComplete = true;
+				gm->SetNxtCompleteQuestTag( *QuestDetails.NextQuestID );
 			}
 			else
 			{
@@ -341,6 +342,8 @@ bool AQuest_Base::AreObjectivesComplete()
 			break; // 목표 데이터나 현재 진행 상황이 유효하지 않으면 반복문 종료
 		}
 	}
+
+	
 
 	return Local_AllComplete;
 }

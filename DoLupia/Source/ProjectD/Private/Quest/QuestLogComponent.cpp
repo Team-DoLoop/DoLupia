@@ -155,6 +155,9 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         gm->ActiveLvTrigger();
     }
 
+    //UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( QuestID : %s )" ), *QuestID.ToString() );
+    //gm->SetNxtQuestTag( QuestID.ToString() );
+
     // 튜토리얼 퀘스트 완료 관련
     if(GI)
     {
