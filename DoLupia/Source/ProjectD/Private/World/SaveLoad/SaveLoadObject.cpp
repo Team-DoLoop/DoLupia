@@ -5,6 +5,7 @@
 
 #include "Characters/ProjectDCharacter.h"
 #include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Library/GameSaveManager.h"
 #include "Library/LevelManager.h"
 
@@ -29,7 +30,12 @@ void ASaveLoadObject::Tick(float DeltaTime)
 
 	if(Trigger)
 	{
-		LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , false , false , false );
+		FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
+
+		// 레벨 이름이 "Tutorial"인지 확인
+		//if(!(CurrentLevelName.Equals( TEXT( "Tutorial" ) , ESearchCase::IgnoreCase )))
+			LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , false , false , false );
+
 		Destroy();
 		return;
 	}

@@ -54,6 +54,16 @@ void ALevelManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, 
 	}
 }
 
+void ALevelManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveType, FString SaveSlotName, FName SaveName,
+	FName LevelName, FVector Location, TArray<UItemBase*> ItemBases, bool UseLocation, 
+	FString QuickSlot1, FString QuickSlot2, FString QuickSlot3, FString QuickSlot4)
+{
+	if (GameSaveManager)
+	{
+		GameSaveManager->SaveGame( Character , SaveType , SaveSlotName , SaveName , LevelName , Location , ItemBases , UseLocation, QuickSlot1, QuickSlot2, QuickSlot3, QuickSlot4 );
+	}
+}
+
 void ALevelManager::LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
 	if (GameSaveManager)

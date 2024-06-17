@@ -105,7 +105,6 @@ void UItemBase::Use(AProjectDCharacter* Character)
 				int32 CurrentMP = PlayerStat->GetMP();
 				int32 MaxMP = PlayerStat->GetMaxMP();
 				Character->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar( CurrentMP , MaxMP );
-				UE_LOG(LogTemp, Log, TEXT("Cool Water CurrentMP : %d"), CurrentMP);
 			}
 		}
 	}

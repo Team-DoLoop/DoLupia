@@ -60,6 +60,7 @@ void AMonsterSpawnManager::OnNextSpawnerQuestTagReceived(FString NextQuestTag)
 {
 	if (OwnQuestTag.ToString() == NextQuestTag)
 	{
+		UE_LOG( LogTemp , Warning , TEXT( "OnNextSpawnerQuestTagReceived - QuestTag : %s" ),*NextQuestTag )
 		UpdateSpawnerStatus();
 	}
 }

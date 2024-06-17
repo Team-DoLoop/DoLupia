@@ -78,13 +78,7 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 		
 		// 처음 들어왔다면
 		if(ExplainIndex == 0)
-		{			
-			// DefaultUI->ChangeNextBtn(NextString);
-			if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
-			{
-				PlayerFSMComp->ChangePlayerState(EPlayerState::TALK_NPC);
-			}
-			
+		{
 			TutoData = _TutoData;
 
 			// 사운드 시작
@@ -159,6 +153,18 @@ void UPlayerTutorialComp::StartQuest(int32 _QuestID)
 	if(!GI) return;
 	
 	GI->GiveQuest(_QuestID);
+}
+
+bool UPlayerTutorialComp::IsCantMoveToToSaying(FTutorialData* _TutoData)
+{
+	if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
+	{
+		// 이미 Talk_NPC 상태가 아니면
+		if(PlayerFSMComp->GetCurrentState() != EPlayerState::TALK_NPC)
+			PlayerFSMComp->ChangePlayerState(EPlayerState::TALK_NPC);
+		return true;
+	}
+	return false;
 }
 
 
