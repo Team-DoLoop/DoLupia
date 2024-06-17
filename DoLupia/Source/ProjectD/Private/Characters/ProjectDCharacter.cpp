@@ -322,13 +322,13 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
-	if(PlayerDefaultsWidget->GetTutorialWidget()->GetVisibility() == ESlateVisibility::Visible)
-		return true;
-
-
 	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;
+	
+	// 토토 창이 켜지면
+	if(PlayerDefaultsWidget->GetTutorialWidget()->GetVisibility() == ESlateVisibility::Visible)
+		return true;
 
 	if(SpecificActor)
 	{

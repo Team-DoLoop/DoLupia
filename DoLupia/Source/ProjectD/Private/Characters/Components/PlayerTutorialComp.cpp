@@ -45,9 +45,14 @@ void UPlayerTutorialComp::BeginPlay()
 	}
 
 	
-	// ItemIdData.Add(0, "Consumeable_001"); // 베터리
 	ItemIdData.Add(ETutoItemType::COOL_WATER, TEXT("Consumeable_002")); // 냉각수
 	ItemIdData.Add(ETutoItemType::OIL, TEXT("Consumeable_003")); // 오일
+	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
+	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
+	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
+	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
+	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
+	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
 }
 
 
@@ -73,11 +78,7 @@ void UPlayerTutorialComp::SetTutorialUI(FTutorialData* _TutoData)
 		
 		// 처음 들어왔다면
 		if(ExplainIndex == 0)
-		{
-			FInputModeGameOnly InputMode;
-			InputMode.SetConsumeCaptureMouseDown(false);
-			Player->GetProjectDPlayerController()->SetInputMode( InputMode );
-			
+		{			
 			// DefaultUI->ChangeNextBtn(NextString);
 			if(_TutoData->bCantActing && PlayerFSMComp->CanChangeState(EPlayerState::TALK_NPC))
 			{
