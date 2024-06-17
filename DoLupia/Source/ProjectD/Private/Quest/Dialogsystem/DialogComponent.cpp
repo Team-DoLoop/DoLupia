@@ -130,9 +130,9 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			case 401:
 				npc->ChangeNPCColor( 3 );
 				break;
-			case 502:
-				npc->FallDownNPC();
-				break;
+			//case 502:
+			//	npc->FallDownNPC();
+			//	break;
 			case 503:
 				npc->ChangeNPCColor( 2 );
 				break;
