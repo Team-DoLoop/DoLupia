@@ -112,6 +112,8 @@ void UPlayerAttackComp::BeginPlay()
 	InitCanUseColor();
 	
 	IgnoreAttackActors.AddUnique(Player);
+
+	bIsShowDebugLine = Player->GetbIsShowDebugLine();
 }
 
 void UPlayerAttackComp::InitSkillUI()
@@ -379,7 +381,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 	auto BoxRot = PlayerVec.Rotation().Quaternion();
 	
 	// 확인용 박스
-	DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
+	if(bIsShowDebugLine) DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
 
 	// 공격 판정
 	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, SkillRange,

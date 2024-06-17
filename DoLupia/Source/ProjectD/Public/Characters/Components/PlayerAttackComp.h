@@ -97,6 +97,8 @@ private:
 	UPROPERTY()
 	class APlayerStat* PlayerStat;
 
+	bool bIsShowDebugLine;
+
 	
 public:
 	

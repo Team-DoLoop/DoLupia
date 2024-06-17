@@ -43,7 +43,7 @@ public:
 	
 	// <---------------------- MP ---------------------->
 private:
-	UPROPERTY( VisibleAnywhere )
+	UPROPERTY( EditAnywhere )
 	int32 MaxMP;
 
 	UPROPERTY( VisibleAnywhere )

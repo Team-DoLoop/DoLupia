@@ -22,6 +22,7 @@ void APlayerSkillBase::BeginPlay()
 	auto Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
 	if(Player)
 	{
+		bIsShowDebugLine = Player->GetbIsShowDebugLine();
 		if(auto attackComp =  Player->GetAttackComp())
 		{
 			SkillVolume = attackComp->GetSkillVolume();

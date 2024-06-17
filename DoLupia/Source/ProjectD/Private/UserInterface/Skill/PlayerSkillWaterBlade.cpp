@@ -26,6 +26,8 @@ void APlayerSkillWaterBlade::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorRotation(Rot);
+
+	BoxComp->SetHiddenInGame(!bIsShowDebugLine);
 }
 
 void APlayerSkillWaterBlade::Tick(float DeltaSeconds)

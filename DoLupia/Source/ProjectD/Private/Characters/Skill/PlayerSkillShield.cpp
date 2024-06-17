@@ -21,6 +21,13 @@ APlayerSkillShield::APlayerSkillShield()
 	SphereComp->SetSphereRadius(180.0f);
 }
 
+void APlayerSkillShield::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SphereComp->SetHiddenInGame(!bIsShowDebugLine);
+}
+
 void APlayerSkillShield::ActivateSkill()
 {
 	Super::ActivateSkill();

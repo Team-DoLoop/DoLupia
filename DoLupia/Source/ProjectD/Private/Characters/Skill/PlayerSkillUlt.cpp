@@ -99,7 +99,11 @@ void APlayerSkillUlt::ApplyDamage(float SkillRadius, int32 _Damage)
 			}
 		}
 	}
-	if(CenterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
-	if(MidRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Yellow, false, 0.1f);
-	if(OuterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Blue, false, 0.1f);
+
+	if(bIsShowDebugLine)
+	{
+		if(CenterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Red, false, 0.1f);
+		if(MidRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Yellow, false, 0.1f);
+		if(OuterRadius == SkillRadius) DrawDebugSphere(GetWorld(), SkillLocation, SkillRadius, 10, FColor::Blue, false, 0.1f);	
+	}
 }
