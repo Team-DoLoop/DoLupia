@@ -151,8 +151,14 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 			// 자동 저장하는 튜토리얼이고 Map에 있는 인덱스라면
 			if(TutoData->bIsAutoSave && ToToAutoSaveData.Contains(TutorialID))
 			{
-				if(ToToAutoSaveData[TutorialID]) return;
-				else ToToAutoSaveData[TutorialID] = true;
+				// 재시작 시에는 토토가 나오지 않게
+				if(ToToAutoSaveData[TutorialID])
+				{
+					if(TutoData->TutorialQuest.IsQuest) GiveQuest(TutoData->TutorialQuest.QuestID);
+					return;
+				}
+
+				ToToAutoSaveData[TutorialID] = true;
 			}
 			
 			// 지금 요청한 튜토리얼이 메인 퀘스트 관련이 아닌데, 이미 말하는 중이라면
