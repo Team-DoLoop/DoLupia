@@ -23,6 +23,7 @@ enum class EPlayerState : uint8
 	ATTACK_WITH UMETA(DisplayName = "AttackWith"),				// 동작 가능
 	DAMAGE UMETA(DisplayName = "Damage"),						// 피격
 	LYING UMETA(DisplayName = "Lying"),							// 눕는 공격 피격
+	GRAB UMETA(DisplayName = "'Grab'"),							// 보스 몬스터에게 잡기당한 상태
 
 	TALK_NPC UMETA(DisplayName = "TalkNPC"),					// NPC 대화
 	
