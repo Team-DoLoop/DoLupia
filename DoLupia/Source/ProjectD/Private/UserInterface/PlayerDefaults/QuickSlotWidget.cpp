@@ -22,6 +22,8 @@ void UQuickSlotWidget::NativeConstruct()
 
 	QuantityCalled.BindUObject(this, &UQuickSlotWidget::SetQuantity);
 	PlayerController = GetWorld()->GetFirstPlayerController();
+
+	//ItemIcon->SetBrushFromTexture( BackBoardTexture );
 }
 
 FReply UQuickSlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -79,11 +81,13 @@ bool UQuickSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 			ItemQuantity->SetVisibility(ESlateVisibility::Visible);
 			ItemQuantity->SetText( QuantityText );
 			ItemReference = Dest->ItemReference;
+			PreItemName = Dest->PreItemName;
 
 			Dest->ItemIcon->SetBrushFromTexture( BackBoardTexture );
 			Dest->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 			Dest->ItemQuantity->SetText( QuantityText );
 			Dest->ItemReference = nullptr;
+			Dest->PreItemName = "";
 
 			return true;
 		}
@@ -105,6 +109,7 @@ bool UQuickSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 			ItemQuantity->SetVisibility( ESlateVisibility::Visible );
 			ItemQuantity->SetText(QuantityText);
 			ItemReference = ItemBase;
+			PreItemName = ItemBase->GetTextData().Name.ToString();
 
 			return true;
 		}
@@ -178,11 +183,16 @@ void UQuickSlotWidget::UseItem()
 					{
 						const FString& ItemID = ItemReference->GetID().ToString();
 
+						PreItemName = ItemReference->GetTextData().Name.ToString();
+
 						ItemBase->Use(Cast<AProjectDCharacter>(InventoryComponent->GetOwner()));
-						InventoryComponent->HandelRemoveItem( ItemReference->GetTextData().Name.ToString(), 1, true);
+						InventoryComponent->HandelRemoveItem( PreItemName , 1, true);
 
 						if(!ItemReference->GetQuantity())
+						{
 							ItemReference = InventoryComponent->FindMatchItem( ItemID );
+						}
+							
 					}
 				}
 			}
@@ -258,9 +268,12 @@ void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity)
 {
 	if(!ItemReference) 
 	{
+		if(PreItemName == "")
+			return;
+
 		if (UInventoryComponent* InventoryComponent = Cast<AProjectDCharacter>( PlayerController->GetCharacter() )->GetInventory())
 		{
-			ItemReference = InventoryComponent->FindMatchItem( ItemID );
+			ItemReference = InventoryComponent->FindMatchItem( PreItemName );
 
 			if(!ItemReference)
 				return;
@@ -270,6 +283,11 @@ void UQuickSlotWidget::SetQuantity(FString ItemID, int32 NewQuantity)
 	if(ItemReference->GetTextData().Name.ToString() != ItemID) return;
 
 	ItemQuantity->SetText(FText::FromString(FString::FromInt(NewQuantity)));
+}
+
+void UQuickSlotWidget::SetPreItem(FString ItemID)
+{
+
 }
 
 bool UQuickSlotWidget::SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot )

@@ -33,6 +33,9 @@ public:
 		MainQuickSlotWidget = NewMainQuickSlotWidget;
 	}
 
+	FORCEINLINE void SetPreItemName( FString ItemName ) { PreItemName = ItemName;}
+
+
 	FORCEINLINE UItemBase* GetItemBase() const { return ItemReference; }
 
 	bool IsHoveredButton() const;
@@ -46,8 +49,10 @@ public:
 	bool CheckHorveredQuickSlotUI( const FVector2D& MousePosition );
 
 	void SetItemIcon();
+	
 
 	FItemDelegateQuantityCalled QuantityCalled;
+
 
 protected:
 	virtual void NativeConstruct() override;
@@ -63,6 +68,9 @@ private:
 
 	UFUNCTION()
 	void SetQuantity(FString ItemID , int32 NewQuantity);
+
+	UFUNCTION()
+	void SetPreItem( FString ItemID );
 
 	bool SwapQuickSlot( UQuickSlotWidget* OtherQuickSlot );
 
@@ -95,6 +103,8 @@ private:
 	APlayerController* PlayerController;
 
 	int32 Index;
+
+	FString PreItemName;
 
 	bool Clicked = false;
 	bool Hovered = false;

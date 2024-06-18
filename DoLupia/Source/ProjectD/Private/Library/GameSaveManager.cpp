@@ -379,48 +379,56 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 						UQuickSlotWidget* Widget3 = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3();
 						UQuickSlotWidget* Widget4 = Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4();
 
-						if(LoadedGameInstance->SaveStruct.QuickSlotKey1.IsEmpty() || !Widget1->GetItemBase())
+						if(LoadedGameInstance->SaveStruct.QuickSlotKey1.IsEmpty())
 						{
 							Widget1->ReleaseQuickSlot( Widget1 );
 						}
 						else
 						{
+							Widget1->SetPreItemName( LoadedGameInstance->SaveStruct.QuickSlotKey1 );
+
 							Widget1->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey1 ,
 							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey1 ) );
 
 							Widget1->SetItemIcon();
 						}
 
-						if (LoadedGameInstance->SaveStruct.QuickSlotKey2.IsEmpty() || !Widget2->GetItemBase())
+						if (LoadedGameInstance->SaveStruct.QuickSlotKey2.IsEmpty())
 						{
 							Widget2->ReleaseQuickSlot( Widget2 );
 						}
 						else
 						{
+							Widget2->SetPreItemName( LoadedGameInstance->SaveStruct.QuickSlotKey2 );
+
 							Widget2->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey2 ,
 							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey2 ) );
 
 							Widget2->SetItemIcon();
 						}
 
-						if (LoadedGameInstance->SaveStruct.QuickSlotKey3.IsEmpty() || !Widget3->GetItemBase())
+						if (LoadedGameInstance->SaveStruct.QuickSlotKey3.IsEmpty())
 						{
 							Widget3->ReleaseQuickSlot( Widget3 );
 						}
 						else
 						{
+							Widget3->SetPreItemName( LoadedGameInstance->SaveStruct.QuickSlotKey3 );
+
 							Widget3->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey3 ,
 							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey3 ) );
 
 							Widget3->SetItemIcon();
 						}
 
-						if (LoadedGameInstance->SaveStruct.QuickSlotKey4.IsEmpty() || !Widget4->GetItemBase())
+						if (LoadedGameInstance->SaveStruct.QuickSlotKey4.IsEmpty())
 						{
 							Widget4->ReleaseQuickSlot( Widget4 );
 						}
 						else
 						{
+							Widget4->SetPreItemName( LoadedGameInstance->SaveStruct.QuickSlotKey4 );
+
 							Widget4->QuantityCalled.Execute( LoadedGameInstance->SaveStruct.QuickSlotKey4 ,
 							Character->GetInventory()->FindItemQuantity( LoadedGameInstance->SaveStruct.QuickSlotKey4 ) );
 
