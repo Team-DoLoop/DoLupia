@@ -20,8 +20,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void ActivateSkill() override;
-	
-	FORCEINLINE void SetSkillDamage(int32 _SkillDamage){SkillDamage = _SkillDamage;}
+
 	FORCEINLINE void SetSkillDirection(FVector _Direction){Direction = _Direction;}
 	FORCEINLINE void SetSkillRot(FRotator _Rot){Rot = _Rot;}
 
@@ -35,8 +34,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComp;
 	
-	UPROPERTY(EditAnywhere, Category = "Damage")
-	int32 SkillDamage;
 
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float Speed = 1500.0f;

@@ -38,7 +38,7 @@ void APlayerSkillShield::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 	
-	int32 RandNum = FMath::RandRange(1,6); // 1~5까지
+	int32 RandNum = FMath::RandRange(SkillDamage / 2,SkillDamage); // 1~5까지
 	if(AMonster* MonsterActor = Cast<AMonster>(OtherActor))
 	{
 		MonsterActor->OnMyTakeDamage(RandNum);

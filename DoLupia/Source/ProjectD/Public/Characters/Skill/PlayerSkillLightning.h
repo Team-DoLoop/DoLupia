@@ -21,13 +21,10 @@ public:
 
 	virtual void ActivateSkill() override;
 
-	FORCEINLINE void SetSkillDamage(int32 _SkillDamage){SkillDamage = _SkillDamage;}
 
 private:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraComponent* NiagaraComp;
-
-	int32 SkillDamage;
 	
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float SkillRadius = 300.0f;
