@@ -54,4 +54,7 @@ public:
 
 	void ActiveMapIcon( bool onoff );
 
+	bool bVisibleInteractUI = true;
+	bool bCheckIcon = false;
+
 };

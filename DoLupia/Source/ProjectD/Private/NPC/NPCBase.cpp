@@ -82,11 +82,6 @@ void ANPCBase::BeginPlay()
 		MapIcon->OnIconDestroyed.AddDynamic( this , &ANPCBase::OnDestroyNPCIcon );
 	}
 
-	if (DialogNum == 501)
-	{
-		anim->bDie = true;
-	}
-
 	if (PlayerCamCurve)
 	{
 		FOnTimelineFloat ProgressFunction;
@@ -117,6 +112,7 @@ void ANPCBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 {
+	if (bVisibleInteractUI == false) return;
 	if (NPCInteractWidget)
 	{
 		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
@@ -267,13 +263,14 @@ void ANPCBase::UpdateNPCStatus()
 
 void ANPCBase::ChangeNPCColor(int32 depth)
 {
-	if(bCheckIcon) return;
-
 	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
 	GetMesh()->SetCustomDepthStencilValue( depth );
-	MapIcon->SetIconVisible( true ); 
-	bCheckIcon = true;
+
+	if(bCheckIcon)
+	{
+		MapIcon->SetIconVisible( true );
+	}
 }
 
 void ANPCBase::ChangePlayerState()
@@ -294,6 +291,7 @@ void ANPCBase::HideNPC()
 	{
 		MapIcon->DestroyComponent( true );
 		MapIcon = nullptr;
+		bCheckIcon = false;
 	}
 	
 
