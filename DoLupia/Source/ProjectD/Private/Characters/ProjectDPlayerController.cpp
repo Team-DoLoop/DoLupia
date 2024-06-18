@@ -364,4 +364,4 @@ void AProjectDPlayerController::QuestLogMenu()
 void AProjectDPlayerController::StartToToStory()
 {
 	ControlledCharacter->GetTutorialComp()->PressNextTutorial();
-}
+}	

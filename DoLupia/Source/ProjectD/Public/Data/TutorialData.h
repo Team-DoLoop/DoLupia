@@ -118,6 +118,10 @@ struct FTutorialData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsTypeEnd;
 
+	// 자동 저장인지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsAutoSave;
+
 	// 아이템 지급 데이터
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTutorialItem TutorialItem;
