@@ -21,14 +21,15 @@ protected:
 	virtual void ActivateSkill();
 
 	float SkillVolume;
+	int32 SkillDamage;
 	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	bool bIsShowDebugLine;
-
+	FORCEINLINE void SetSkillDamage(int32 _SkillDamage){SkillDamage = _SkillDamage;}
 	
 private:
-
+	
 };

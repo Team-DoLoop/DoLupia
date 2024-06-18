@@ -350,6 +350,7 @@ private:
 
 	int32 SkillLevel; //
 	int32 SkillDamage; //
+	int32 RandDamage;	//
 	FVector SkillRange; //
 	int32 SkillMaxCombo; //
 	float SkillMaxRange; //

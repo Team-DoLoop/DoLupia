@@ -31,4 +31,5 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* SphereComp;
+
 };
