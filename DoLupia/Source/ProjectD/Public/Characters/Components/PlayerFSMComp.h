@@ -58,7 +58,11 @@ private:
 public:
 	FORCEINLINE EPlayerState GetCurrentState() const { return CurrentState; }
 	void CheckState(EPlayerState _state);
+	
+	UFUNCTION(BlueprintCallable)
 	void ChangePlayerState(EPlayerState _state);
+
+	UFUNCTION(BlueprintCallable)
 	bool CanChangeState(EPlayerState _changeState);
 
 
