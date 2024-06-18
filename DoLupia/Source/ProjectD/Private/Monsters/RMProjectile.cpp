@@ -47,7 +47,7 @@ void ARMProjectile::OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedCompone
 		if (OverlapPlayer->GetController())
 		{
 			//GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green , TEXT( "ARMProjectile::플레이어 공격 성공!!" ) );
-			OverlapPlayer->TakeDamage(30);
+			OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 30 );
 			UGameplayStatics::SpawnEmitterAtLocation( GetWorld() , expVFX , this->GetActorLocation() );
 			this->Destroy();
 			return;

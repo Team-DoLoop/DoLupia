@@ -329,49 +329,49 @@ void ABossMonster::InitializeDelayStack()
 
 void ABossMonster::OnMyTakeDamage( int damage )
 {
-	BossCurrentHP -= damage;
-
-	if (BossHPWidget)
+	if(!IsShieldActive)
 	{
-		BossHPWidget->SetHP( BossCurrentHP , BossMaxHP );
+		
+		BossCurrentHP -= damage;
 
-	}
-	//Damage UI 생성
-	UWorld* world = GetWorld();
-	if (world)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		FRotator rotator;
-		FVector  SpawnLocation = GetActorLocation();
-
-		ASpawnMonsterDamage* SpawnedActor = world->SpawnActor<ASpawnMonsterDamage>( monsterDamageWidget , SpawnLocation , rotator , SpawnParams );;
-		if (SpawnedActor)
+		if (BossHPWidget)
 		{
-			UMonsterDamageWidget* DamageWidget = Cast<UMonsterDamageWidget>( SpawnedActor->monsterDamageWidget );
-			if (DamageWidget)
+			BossHPWidget->SetHP( BossCurrentHP , BossMaxHP );
+
+		}
+		//Damage UI 생성
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			FRotator rotator;
+			FVector  SpawnLocation = GetActorLocation();
+
+			ASpawnMonsterDamage* SpawnedActor = world->SpawnActor<ASpawnMonsterDamage>( monsterDamageWidget , SpawnLocation , rotator , SpawnParams );;
+			if (SpawnedActor)
 			{
-				DamageWidget->SetDamage( damage );
+				UMonsterDamageWidget* DamageWidget = Cast<UMonsterDamageWidget>( SpawnedActor->monsterDamageWidget );
+				if (DamageWidget)
+				{
+					DamageWidget->SetDamage( damage );
+				}
 			}
+
+		}
+
+		if (BossCurrentHP < 0)
+		{
+			BossCurrentHP = 0;
+		}
+
+
+		if (BossCurrentHP == 0)
+		{
+			state = EBossState::Die;
 		}
 
 	}
-
-	if (BossCurrentHP < 0)
-	{
-		BossCurrentHP = 0;
-	}
-
-
-	if (BossCurrentHP == 0)
-	{
-		state = EBossState::Die;
-	}
-
-	//monsterHPWidget->SetHP( currentHP , maxHP );
-
-
-
 
 }
 

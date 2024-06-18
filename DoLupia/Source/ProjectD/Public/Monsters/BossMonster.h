@@ -122,6 +122,11 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	bool bGrab = false;
 
+	bool IsShieldActive = false;
+
+	UPROPERTY( EditAnywhere, BlueprintReadWrite )
+	bool IsPlayerAttackEnabled = true;
+
 	//-----------DELAY-------------
 	void LookAround();
 	void Launch();

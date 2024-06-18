@@ -70,6 +70,10 @@ public:
 	void OnEndFireAttackAnimation();
 
 	//===============Grab Attack=======================
+
+	UFUNCTION( BlueprintCallable )
+	void OnDoGrabAttackAnimation();
+
 	UFUNCTION( BlueprintCallable )
 	void OnEndGrabAttackAnimation();
 
