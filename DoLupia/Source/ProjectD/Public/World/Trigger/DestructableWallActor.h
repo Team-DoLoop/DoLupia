@@ -6,8 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "DestructableWallActor.generated.h"
 
+class ULevelSequence;
 class UGeometryCollectionComponent;
 class UBoxComponent;
+class UParticleSystemComponent;
+class ULevelSequencePlayer;
+
 
 UCLASS()
 class PROJECTD_API ADestructableWallActor : public AActor
@@ -37,6 +41,17 @@ private:
 
 	UPROPERTY( EditAnywhere )
 	USoundWave* ExplosionSFX;
-	
+
+	UPROPERTY( EditAnywhere )
+	UParticleSystemComponent* ExplosionVFX;
+
+
+	UPROPERTY()
+	ULevelSequence* ExplosionSeq;
+
+	UPROPERTY()
+	ULevelSequencePlayer* SequencePlayer;
+
 
 };
+

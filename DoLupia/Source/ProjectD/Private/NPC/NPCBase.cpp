@@ -162,17 +162,16 @@ void ANPCBase::DialogWith()
 {
 	if(bCanTalk)
 	{
+		anim->bTalking = true;
+
 		DialogComp->StartDialog( this , *NPCID , DialogNum );
 
-		// Dialog 503 일 때, AI서버 요청
+		// Dialog 501 일 때, AI서버 요청
 		if (DialogNum == 501)
 		{
 			AIlib = gm->GetAIConnectionLibrary();
 			AIlib->SendPImgToSrv( 2004 );
 		}
-
-
-		anim->bTalking = true;
 
 		ChangePlayerState();
 
@@ -193,6 +192,11 @@ void ANPCBase::DialogWith()
 		}
 	}
 	
+}
+
+void ANPCBase::FallDownNPC()
+{
+	anim->bDie = true;
 }
 
 FString ANPCBase::InteractWith()

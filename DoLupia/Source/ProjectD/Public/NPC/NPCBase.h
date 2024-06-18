@@ -67,6 +67,8 @@ public:
 	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
 	FString NPCID;
 
+	void FallDownNPC();
+
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Dialog" )
 	UDialogComponent* DialogComp;

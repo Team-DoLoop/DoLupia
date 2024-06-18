@@ -125,15 +125,15 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			// 특정 DialogID에서 NPC Color 변경, 혹은 쓰러지는 연출
 			switch (DialogueID)
 			{
-			case 201:
+			case 202:
 				npc->ChangeNPCColor( 1 );
 				break;
-			case 401:
+			case 402:
 				npc->ChangeNPCColor( 3 );
 				break;
-			//case 502:
-			//	npc->FallDownNPC();
-			//	break;
+			case 502:
+				npc->FallDownNPC();
+				break;
 			case 503:
 				npc->ChangeNPCColor( 2 );
 				break;
