@@ -15,6 +15,14 @@ void ULocationTitleWidget::NativePreConstruct()
 			FText OT_Text = FText::FromString( LocationTitleText );
 			txt_LocationName->SetText( OT_Text );
 		}
+		else
+		{
+			UE_LOG( LogTemp , Warning , TEXT( "LocationTitleText is empty in NativePreConstruct" ) );
+		}
+	}
+	else
+	{
+		UE_LOG( LogTemp , Warning , TEXT( "txt_LocationName is null in NativePreConstruct" ) );
 	}
 }
 
@@ -22,21 +30,32 @@ void ULocationTitleWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (ani_Title) // 애니메이션이 유효한지 확인
-	{
-		// 애니메이션을 재생
-		PlayAnimation( ani_Title , 0.0f , 1 , EUMGSequencePlayMode::Forward , 1.0f ); // 속도, 반복 횟수 등 설정 가능
-	}
+    if (ani_Title)
+    {
+        PlayAnimation( ani_Title , 0.0f , 1 , EUMGSequencePlayMode::Forward , 1.0f );
+    }
+    else
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "ani_Title is null in NativeConstruct" ) );
+    }
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(
-		TimerHandle ,
-		[this]() {
-			// UI 작업은 게임 스레드에서 실행
-			// UI 업데이트 또는 Slate 관련 작업
-			RemoveFromParent();
-		} ,
-		2.5f , // 지연 시간(초)
-		false
-	);
+	UWorld* World = GetWorld();
+    if (World)
+    {
+
+        FTimerHandle TimerHandle;
+
+        World->GetTimerManager().SetTimer(
+            TimerHandle ,
+            [this]() {
+            	RemoveFromParent();
+            } ,
+            1.5f ,
+            false
+        );
+    }
+    else
+    {
+        UE_LOG( LogTemp , Warning , TEXT( "World is null in NativeConstruct" ) );
+    }
 }

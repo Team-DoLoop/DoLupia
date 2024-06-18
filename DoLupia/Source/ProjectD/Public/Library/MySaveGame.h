@@ -21,6 +21,13 @@ struct FSaveGameDefault
 	UPROPERTY()
 	FVector Location;
 
+	UPROPERTY()
+	bool IsUseLocation;
+
+	// 저장된 위치
+	UPROPERTY()
+	FRotator Rotation;
+
 	// 세이브 이름
 	UPROPERTY()
 	FName SaveName;
