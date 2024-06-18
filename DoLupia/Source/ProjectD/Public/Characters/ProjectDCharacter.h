@@ -116,7 +116,9 @@ private:
 protected:
 	
 public:
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
+
 	FORCEINLINE APlayerStat* GetPlayerStat() const { return PlayerStat; }
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
