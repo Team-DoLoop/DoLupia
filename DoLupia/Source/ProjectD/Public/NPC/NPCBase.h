@@ -80,6 +80,9 @@ public:
 	UFUNCTION()
 	void OnNextNPCQuestTagReceived( FString NextQuestTag );
 
+	UFUNCTION()
+	void OnDestroyNPCIcon( UMapIconComponent* icon );
+
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "Quest" )
 	FName OwnQuestTag;
 
@@ -92,6 +95,8 @@ private:
 	FString CurrentQuestTag;
 
 	void UpdateNPCStatus();
+
+	bool bCheckIcon = false;
 
 	/*---------------------- Post Process Depth ------------------*/
 public:

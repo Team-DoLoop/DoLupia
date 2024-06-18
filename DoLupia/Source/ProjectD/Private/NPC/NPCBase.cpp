@@ -77,6 +77,11 @@ void ANPCBase::BeginPlay()
 		gm->OnNextNPCQuestTagReceived.AddDynamic( this , &ANPCBase::OnNextNPCQuestTagReceived );
 	}
 
+	if (MapIcon)
+	{
+		MapIcon->OnIconDestroyed.AddDynamic( this , &ANPCBase::OnDestroyNPCIcon );
+	}
+
 	if (DialogNum == 501)
 	{
 		anim->bDie = true;
@@ -238,6 +243,11 @@ void ANPCBase::OnNextNPCQuestTagReceived( FString NextQuestTag )
 	}
 }
 
+void ANPCBase::OnDestroyNPCIcon( UMapIconComponent* icon )
+{
+	icon->DestroyComponent(true);
+}
+
 void ANPCBase::UpdateNPCStatus()
 {
 	if( gm && gm->GetNxtQuestTag() != "")
@@ -248,17 +258,22 @@ void ANPCBase::UpdateNPCStatus()
 			UE_LOG( LogTemp , Log , TEXT( "NPC with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
 			
 			ChangeNPCColor( 4 );
+		} else
+		{
+			
 		}
 	}
 }
 
 void ANPCBase::ChangeNPCColor(int32 depth)
 {
+	if(bCheckIcon) return;
+
 	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
 	GetMesh()->SetCustomDepthStencilValue( depth );
-	MapIcon->SetIconVisible( true );
-	//GetMesh()->CustomDepthStencilValue = depth;
+	MapIcon->SetIconVisible( true ); 
+	bCheckIcon = true;
 }
 
 void ANPCBase::ChangePlayerState()
@@ -272,7 +287,16 @@ void ANPCBase::ChangePlayerState()
 
 void ANPCBase::HideNPC()
 {	
-	this->MapIcon->SetIconVisible( false );
+	//this->MapIcon->SetIconVisible( false );
+	MapIcon->OnIconDestroyed.RemoveDynamic( this , &ANPCBase::OnDestroyNPCIcon );
+
+	if(MapIcon)
+	{
+		MapIcon->DestroyComponent( true );
+		MapIcon = nullptr;
+	}
+	
+
 	this->SetActorHiddenInGame( true );
 	this->SetActorEnableCollision( ECollisionEnabled::NoCollision );
 }
@@ -334,7 +358,6 @@ void ANPCBase::OnTimelineFinished()
 {
 	Target->GetCharacterMovement()->Velocity = FVector(0.0, 0.0, 0.0);
 	TimelineComp->Stop();
-
 }
 
 

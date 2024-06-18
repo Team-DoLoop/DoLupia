@@ -279,6 +279,9 @@ void AGrid2048::GameClear()
     player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
     ExplainWidget->RemoveFromParent();
     isSucess = true;
+
+    // 완료 시, 델리게이트 구독
+    OnMiniGameCompleted.Broadcast();
 }
 
 bool AGrid2048::GameOver()
