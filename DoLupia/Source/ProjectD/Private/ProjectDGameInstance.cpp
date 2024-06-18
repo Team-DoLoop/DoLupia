@@ -148,6 +148,19 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
+			// 자동 저장하는 튜토리얼이고 Map에 있는 인덱스라면
+			if(TutoData->bIsAutoSave && ToToAutoSaveData.Contains(TutorialID))
+			{
+				// 재시작 시에는 토토가 나오지 않게
+				if(ToToAutoSaveData[TutorialID])
+				{
+					if(TutoData->TutorialQuest.IsQuest) GiveQuest(TutoData->TutorialQuest.QuestID);
+					return;
+				}
+
+				ToToAutoSaveData[TutorialID] = true;
+			}
+			
 			// 지금 요청한 튜토리얼이 메인 퀘스트 관련이 아닌데, 이미 말하는 중이라면
 			if(!PlayerTuto->IsCantMoveToToSaying(TutoData) && PlayerTuto->GetToToSaying())
 			{
@@ -157,12 +170,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
 
 			PlayerTuto->SetExplainIndex(0);
-			// 자동 저장하는 튜토리얼이고 Map에 있는 인덱스라면
-			if(TutoData->bIsAutoSave && ToToAutoSaveData.Contains(TutorialID))
-			{
-				if(ToToAutoSaveData[TutorialID]) PlayerTuto->SetExplainIndex(TutoData->TutorialWidgetData.StoryExplainText.Num()-1);
-				else ToToAutoSaveData[TutorialID] = true;
-			}
+
 			PlayerTuto->SetTotoSaying(true);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}

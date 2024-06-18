@@ -24,18 +24,18 @@ void UPlayerDefaultsWidget::NativeOnInitialized()
 		PlayerBattleUI = CreateWidget<UPlayerBattleWidget>(GetWorld(), PlayerBattleUIFactory);
 		PlayerBattleUI->AddToViewport( static_cast<uint32>(ViewPortPriority::Main) );
 	}
-
-	if(TutorialWidgetFactory)
-	{
-		TutorialUI = CreateWidget<UTutorialWidget>(GetWorld(), TutorialWidgetFactory);
-		TutorialUI->AddToViewport(static_cast<uint32>(ViewPortPriority::Default));
-	}
 }
 
 void UPlayerDefaultsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	if(TutorialWidgetFactory)
+	{
+		TutorialUI = CreateWidget<UTutorialWidget>(GetWorld(), TutorialWidgetFactory);
+		TutorialUI->AddToViewport(static_cast<uint32>(ViewPortPriority::Default));
+	}
+	
 	if(QuickSlotFactory)
 	{
 		QuickSlot = CreateWidget<UMainQuickSlotWidget>(GetWorld(), QuickSlotFactory );
