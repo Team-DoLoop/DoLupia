@@ -107,6 +107,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
     {
         gm->ActivateMarkers( 4 );
     }
+    
 
 }
 
