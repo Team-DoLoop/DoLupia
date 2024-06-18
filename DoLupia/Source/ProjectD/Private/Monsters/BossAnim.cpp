@@ -127,6 +127,11 @@ void UBossAnim::OnEndFireAttackAnimation()
 }
 
 //===============Grab Attack=======================
+void UBossAnim::OnDoGrabAttackAnimation()
+{
+	Boss->IsShieldActive = true;
+}
+
 
 void UBossAnim::OnEndGrabAttackAnimation()
 {
@@ -139,6 +144,7 @@ void UBossAnim::OnEndThrowAttackAnimation()
 	bAttackDelay = false;
 	bIsAttackComplete = true;
 	Boss->IsDelaying = true;
+	Boss->IsShieldActive = false;
 	OnEndAttack.Broadcast();
 	UE_LOG( LogTemp , Warning , TEXT( "UBossAnim:: Grab애니메이션 끝, 브로드캐스트 호츌" ) );
 

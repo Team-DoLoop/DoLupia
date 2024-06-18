@@ -5,6 +5,8 @@
 #include "Quest/Quest_Base.h"
 #include "Components/TextBlock.h"
 #include <UserInterface/Quest/WidgetQuestLog_Objective.h>
+
+#include "Characters/ProjectDCharacter.h"
 #include "Components/VerticalBox.h"
 #include "Quest/QuestLogComponent.h"
 
@@ -96,7 +98,13 @@ void UQuestTracker::WidgetUpdate()
                 QuestLogComp->QuestCompleted.AddDynamic( this , &UQuestTracker::QuestCompleted );
             }
             else {
-                txt_Complete->SetVisibility(ESlateVisibility::Visible);
+                if(QuestActor->QuestID.ToString() == "1003" || QuestActor->QuestID.ToString() == "3001")
+                {
+                    txt_ToPotal->SetVisibility( ESlateVisibility::Visible );
+                }else
+                {
+                    txt_ToRobot->SetVisibility( ESlateVisibility::Visible );
+                }
             }
         }
     }
