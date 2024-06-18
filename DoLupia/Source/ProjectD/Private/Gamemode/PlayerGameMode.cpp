@@ -314,7 +314,21 @@ void APlayerGameMode::StartGameStory()
 	}
 
 	if(!IsToToNotInMapStart)
-		GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+	{
+		int32 SaveDataIndex = GI->FindLastToToSaveData(LevelIdx);
+
+		// 저장된 데이터가 있다면	
+		if(SaveDataIndex != -1)
+		{
+			int32 ThousandNum = SaveDataIndex / 1000;
+			if(ThousandNum == 3) GI->ExecuteTutorial(EExplainType::ATTACK, -1, SaveDataIndex);
+			else if(ThousandNum == 4) GI->ExecuteTutorial(EExplainType::SKILL, -1, SaveDataIndex);
+			else if(ThousandNum == 9) GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, SaveDataIndex);
+		}
+		
+		// 저장된 데이터가 없다면 처음부터 시작
+		else GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+	}
 }
 
 

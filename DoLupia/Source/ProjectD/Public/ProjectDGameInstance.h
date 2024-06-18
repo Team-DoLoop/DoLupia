@@ -47,6 +47,8 @@ private:
 	// <------------------ Tutorial ------------------>
 public:
 	void InitTutorialIndex();
+	void InitToToAutoSaveData();
+	int32 FindLastToToSaveData(int32 _MapIndex);
 	FTutorialData* GetTutorialData(int32 _TutorialID);
 	void ExecuteTutorial(EExplainType _ExplainType, int32 _Index = -1, int32 _TutorialID = -1);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
@@ -54,6 +56,8 @@ public:
 	FORCEINLINE int32 GetTutorialID() const { return TutorialID; }
 
 private:
+	TMap<int32, bool> ToToAutoSaveData;
+	
 	UPROPERTY()
 	class UDataTable* TutorialTable;
 	
