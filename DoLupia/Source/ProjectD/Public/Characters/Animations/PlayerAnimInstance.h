@@ -92,6 +92,8 @@ public:
 	// <---------------------- Hit ---------------------->
 public:
 	void PlayerLyingAnimation();
+
+	UFUNCTION()
 	void AnimNotify_GrabEnd();
 
 	

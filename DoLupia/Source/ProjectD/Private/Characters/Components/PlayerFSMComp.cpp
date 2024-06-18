@@ -272,10 +272,9 @@ bool UPlayerFSMComp::CanDamageState(EPlayerState _CurrentState)
 
 bool UPlayerFSMComp::CanGrabState(EPlayerState _CurrentState)
 {
-	// 안되는 상태 : 회피, 죽음
+	// 안되는 상태 : 죽음
 	switch (_CurrentState)
 	{
-	case EPlayerState::EVASION : return false;
 		
 	case EPlayerState::GRAB : return false;
 		
