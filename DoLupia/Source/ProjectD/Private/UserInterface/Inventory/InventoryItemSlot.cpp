@@ -27,6 +27,8 @@ void UInventoryItemSlot::NativeOnInitialized()
 void UInventoryItemSlot::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	ItemIcon->SetBrushFromTexture( BackGroundTexture );
 }
 
 FReply UInventoryItemSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -260,7 +262,7 @@ void UInventoryItemSlot::RefreshItemSlot()
 
 void UInventoryItemSlot::ResetItemSlot()
 {
-	ItemIcon->SetBrushFromTexture( nullptr );
+	ItemIcon->SetBrushFromTexture( BackGroundTexture );
 	ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
 
 	bIsEmpty = true;
