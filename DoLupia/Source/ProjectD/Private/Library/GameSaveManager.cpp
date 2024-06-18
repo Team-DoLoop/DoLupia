@@ -93,7 +93,7 @@ void AGameSaveManager::SaveGame(AProjectDCharacter* Character, ESaveType SaveTyp
 
 void AGameSaveManager::LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
-	LoadGameAsync( Character, SaveType, SaveSlotName, UseLocation, OpenLevel, UseThread );
+	LoadGameAsync( Character, SaveType, SaveSlotName, UseLocation, UseThread , OpenLevel );
 }
 
 void AGameSaveManager::BeginPlay()
@@ -102,7 +102,7 @@ void AGameSaveManager::BeginPlay()
 
 	ItemPool->CreateItem( 110 );
 
-	GetWorld()->SpawnActor<ASaveLoadObject>(ASaveLoadObject::StaticClass());
+	SaveLoadObject = GetWorld()->SpawnActor<ASaveLoadObject>(ASaveLoadObject::StaticClass());
 }
 
 void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character , FString SaveSlotName , FName SaveName , FName LevelName ,
@@ -237,14 +237,21 @@ void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString Save
 
 		SaveGameInstance->SaveStruct.SaveName = SaveName;
 		SaveGameInstance->SaveStruct.LevelName = LevelName;
+		SaveGameInstance->SaveStruct.IsUseLocation = UseLocation;
 
 		SaveGameInstance->SaveStruct.QuickSlotKey1 = QuickSlot1;
 		SaveGameInstance->SaveStruct.QuickSlotKey2 = QuickSlot2;
 		SaveGameInstance->SaveStruct.QuickSlotKey3 = QuickSlot3;
 		SaveGameInstance->SaveStruct.QuickSlotKey4 = QuickSlot4;
 
+		
+
 		if (UseLocation)
+		{
 			SaveGameInstance->SaveStruct.Location = Location;
+			SaveGameInstance->SaveStruct.Rotation = Character->GetCameraBoom()->GetComponentRotation();
+
+		}
 		else
 			if (AActor* PlayerStart = UGameplayStatics::GetActorOfClass( GetWorld() , APlayerStart::StaticClass() ))
 				SaveGameInstance->SaveStruct.Location = PlayerStart->GetActorLocation();
@@ -329,8 +336,17 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 						*LoadedGameInstance->SaveStruct.SaveName.ToString() , *LoadedGameInstance->SaveStruct.Location.ToString() );
 
 
-					if(UseLocation)
+					if(UseLocation && !LoadedGameInstance->SaveStruct.Location.IsNearlyZero() && LoadedGameInstance->SaveStruct.IsUseLocation)
+					{
 						Character->SetActorLocation( LoadedGameInstance->SaveStruct.Location );
+						Character->GetCameraBoom()->SetRelativeRotation( LoadedGameInstance->SaveStruct.Rotation );
+					}
+					else
+					{
+						if (AActor* PlayerStart = UGameplayStatics::GetActorOfClass( GetWorld() , APlayerStart::StaticClass() ))
+							LoadedGameInstance->SaveStruct.Location = PlayerStart->GetActorLocation();
+
+					}
 
 
 					for(auto& ItemData : LoadedGameInstance->SaveStruct.ItemBases)

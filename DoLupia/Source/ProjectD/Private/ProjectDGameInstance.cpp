@@ -206,3 +206,18 @@ FItemData* UProjectDGameInstance::GetItemData(FString ItemID)
 {
 	return ItemTable->FindRow<FItemData>(FName(*ItemID), TEXT(""));
 }
+
+
+/*//<-----------------------------  Player location  ----------------------------->
+void UProjectDGameInstance::LoadPlayerLocation()
+{
+	AProjectDCharacter* Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	//겜모에 저장된 현재 아이디를 가져와서 그 위치 값을 가져와서 play
+	FString CurrnetQuestID = gm->GetStringQuestID();
+	PlayerRestartLocation = GetQuestData( CurrnetQuestID )->PlayerLocation;
+	Player->SetActorLocation( PlayerRestartLocation );
+}
+*/

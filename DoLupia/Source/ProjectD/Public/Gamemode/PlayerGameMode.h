@@ -13,7 +13,7 @@
 
 #define SAVE(Character, SaveType, SaveSlotName, InterfaceSaveName, LevelName, UseLocation) \
 ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , \
-Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , \
+Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , UseLocation , \
 Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? \
 Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "", \
 \
@@ -26,10 +26,10 @@ Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()-
 Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ? \
 Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "");\
 
-#define LOAD(SaveType, SaveSlotName, UseThread, UseLocation, OpenLevel )						\
+#define LOAD(SaveType, SaveSlotName, UseLocation, UseThread, OpenLevel )						\
 		ALevelManager::GetInstance(GetWorld())->LoadGame (										\
 		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
-		SaveType , SaveSlotName , UseThread , UseLocation, OpenLevel );							\
+		SaveType , SaveSlotName , UseLocation , UseThread, OpenLevel );							\
 																								
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextNPCQuestTagReceived , FString , NextQuestTag );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextMiniGameQuestTagReceived , FString , NextQuestTag );
@@ -96,7 +96,7 @@ protected:
 
 	/*---------- Level Open ----------*/
 public:
-	void ChangeNextLv( FName LevelName, AProjectDCharacter* Character, ESaveType SaveType = ESaveType::SAVE_MAIN);
+	void ChangeNextLv( FName LevelName , AProjectDCharacter* Character , ESaveType SaveType = ESaveType::SAVE_MAIN , bool OpenLevel = true );
 
 	/*---------- CameraBoom Setting ----------*/
 public:
