@@ -299,7 +299,7 @@ void APlayerGameMode::StartGameStory()
 	case 0 : index = 0; break;
 	case 1: index = 2; break;
 	case 2: index = 4; break;
-	case 3: index = 7; break; 
+	case 3: index = 8; break; 
 		default: break;
 	}
 
