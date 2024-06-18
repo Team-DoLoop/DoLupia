@@ -25,6 +25,7 @@ AStrangeObject::AStrangeObject()
 	MapIcon->SetIconTexture( LocationIcon.Object );
 	// The icon will rotate to represent the character's rotation
 	MapIcon->SetIconRotates( false );
+	MapIcon->SetVisibility( false );
 	
 }
 
@@ -79,5 +80,10 @@ FString AStrangeObject::InteractWith()
 {
 	//QuestData 에 있는 Objective ID와 같아야함.
 	return ObjectID;
+}
+
+void AStrangeObject::ActiveMapIcon(bool onoff)
+{
+	MapIcon->SetVisibility( onoff );
 }
 
