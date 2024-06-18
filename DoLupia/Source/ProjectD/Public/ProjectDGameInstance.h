@@ -29,11 +29,15 @@ public:
 
 	virtual void Init() override;
 	void InitCanUseColor();
+	void InitPlayerSkillLevel();
 	
 	FPlayerSkillData* GetPlayerSkillData(int32 SkillID);
 	
 	FORCEINLINE TMap<EUseColor, bool> GetCanUseColor(){return CanUseColor;}
 	FORCEINLINE void SetCanUseColor(EUseColor _Color, bool bCanUse) {CanUseColor[_Color] = bCanUse;}
+
+	void SetPlayerSkillLevel(EUseColor _Color, int32 _SkillKeyIndex, int32 SkillLevel);
+	FORCEINLINE TArray<int32> GetPlayerSkillLevel(){return PlayerSkillLevel;}
 
 private:
 	UPROPERTY()
@@ -41,6 +45,8 @@ private:
 
 	UPROPERTY()
 	TMap<EUseColor, bool> CanUseColor;
+
+	TArray<int32> PlayerSkillLevel;
 
 
 
