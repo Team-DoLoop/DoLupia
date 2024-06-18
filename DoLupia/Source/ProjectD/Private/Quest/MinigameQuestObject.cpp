@@ -28,7 +28,7 @@ void AMinigameQuestObject::BeginPlay()
     {
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
     }
-    this->MapIcon->SetVisibility( false );
+    MapIcon->SetVisibility( false );
 }
 
 FString AMinigameQuestObject::InteractWith()

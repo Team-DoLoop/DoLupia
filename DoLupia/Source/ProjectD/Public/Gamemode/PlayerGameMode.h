@@ -205,5 +205,5 @@ private:
 public:
 	void ActivateMarkers(int32 MarkerID);
 
-	void ActivateInterationObject();
+	void ActivateInterationObject( bool onoff );
 };

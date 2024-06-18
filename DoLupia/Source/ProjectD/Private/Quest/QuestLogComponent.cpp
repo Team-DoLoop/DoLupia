@@ -107,7 +107,10 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
     {
         gm->ActivateMarkers( 4 );
     }
-    
+    if(QuestID == "0002")
+    {
+        gm->ActivateInterationObject(true);
+    }
 
 }
 
@@ -152,6 +155,9 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
     //포털 열기
     if (QuestID == "3001" || QuestID == "1003") {
         gm->ActiveLvTrigger();
+    }else if(QuestID == "0002")
+    {
+        gm->ActivateInterationObject(false);
     }
 
     //UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( QuestID : %s )" ), *QuestID.ToString() );
