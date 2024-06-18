@@ -99,6 +99,7 @@ void UDialogComponent::LoadDialogue(int32 DialogueID)
 			DialogueWidget->RemoveFromParent();
 			ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
 			npc->bCanTalk = false;
+			npc->bVisibleInteractUI = false;
 		}
 
 		// PlaeyerCamera 원상복귀

@@ -46,6 +46,8 @@ void AStrangeObject::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
+	if (!bVisibleInteractUI) return;
+
 	if(NPCInteractWidget)
 	{
 		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
@@ -70,6 +72,8 @@ void AStrangeObject::NotifyActorEndOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
 
+	if (!bVisibleInteractUI) return;
+
 	if (NPCInteractGWidget)
 	{
 		NPCInteractGWidget->RemoveFromParent();
@@ -78,6 +82,10 @@ void AStrangeObject::NotifyActorEndOverlap(AActor* OtherActor)
 
 FString AStrangeObject::InteractWith()
 {
+	bVisibleInteractUI = false;
+	bCheckIcon = true;
+	MeshComponent->SetRenderCustomDepth( false );
+
 	//QuestData 에 있는 Objective ID와 같아야함.
 	return ObjectID;
 }

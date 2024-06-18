@@ -34,7 +34,8 @@ void AMinigameQuestObject::BeginPlay()
 
 FString AMinigameQuestObject::InteractWith()
 {
-    FString test = "";
+    Super::InteractWith();
+
     if(!isAvailable)
     {
         int32 questid = gm->GetQuestID();
@@ -59,6 +60,7 @@ FString AMinigameQuestObject::GetOwnQuestID() const
 
 void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
 {
+    if (!bVisibleInteractUI) return;
     MeshComponent->SetRenderCustomDepth( true );
     MeshComponent->SetCustomDepthStencilValue( depth );
     MapIcon->SetVisibility( true );
@@ -74,8 +76,10 @@ void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
 
 void AMinigameQuestObject::OnNextSpawnerQuestTagCompleted()
 {
-    MeshComponent->SetRenderCustomDepth( false );
+    //MeshComponent->SetRenderCustomDepth( false );
+    // ICON 삭제
     MapIcon->DestroyComponent( true );
+    bCheckIcon = false;
 }
 
 void AMinigameQuestObject::SpawnMiniGame()
