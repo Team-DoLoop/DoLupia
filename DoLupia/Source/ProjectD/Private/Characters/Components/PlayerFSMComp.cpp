@@ -97,7 +97,7 @@ bool UPlayerFSMComp::CanChangeState(EPlayerState _changeState)
 	// if(CurrentState == _changeState) return false;
 	switch (_changeState)
 	{
-	case EPlayerState::IDLE : return  true;
+	case EPlayerState::IDLE : return  CanIdleState(CurrentState);
 	case EPlayerState::MOVE : return CanMoveState(CurrentState);
 
 	case EPlayerState::ATTACK_ONLY : return CanAttackState(CurrentState, CurrentWeaponState);
@@ -139,6 +139,19 @@ void UPlayerFSMComp::ChangePlayerShieldState(EPlayerShieldState _shieldState)
 	UE_LOG(LogTemplatePlayerFSM, Log, TEXT("CurrentShieldState : %s"), *UEnum::GetValueAsName(CurrentShieldState).ToString());
 }
 
+
+// <--------------------- Idle --------------------->
+
+bool UPlayerFSMComp::CanIdleState(EPlayerState _CurrentState)
+{
+	// 안되는 상태 : 죽음
+	switch (_CurrentState)
+	{
+		case EPlayerState::DIE : return false;
+	}
+
+	return true;
+}
 
 
 // <--------------------- Move --------------------->
@@ -259,10 +272,9 @@ bool UPlayerFSMComp::CanDamageState(EPlayerState _CurrentState)
 
 bool UPlayerFSMComp::CanGrabState(EPlayerState _CurrentState)
 {
-	// 안되는 상태 : 회피, 죽음
+	// 안되는 상태 : 죽음
 	switch (_CurrentState)
 	{
-	case EPlayerState::EVASION : return false;
 		
 	case EPlayerState::GRAB : return false;
 		

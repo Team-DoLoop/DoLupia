@@ -125,6 +125,7 @@ void APlayerGameMode::BeginPlay()
 		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
 
+	//GI->LoadPlayerLocation();
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -165,15 +166,15 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 	}
 }
 
-void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType)
+void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType, bool OpenLevel)
 {
 	//SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false);
 
 	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
 	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
 
-	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , 
-	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , 
+	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName ,
+	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false ,
 	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? 
 	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" , 
 	
@@ -201,8 +202,8 @@ void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Characte
 	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ?
 	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
 
-
-	UGameplayStatics::OpenLevel( this , LevelName );
+	if(OpenLevel)
+		UGameplayStatics::OpenLevel( this , LevelName );
 }
 
 void APlayerGameMode::SetPlayerCameraboom(float camboom)

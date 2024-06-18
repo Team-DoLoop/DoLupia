@@ -22,6 +22,8 @@ void UPlayerAnimInstance::NativeInitializeAnimation()
 	
 	if(!Player) return;
 	Gadget = Player->GetGadgetComp();
+	PlayerAttack = Player->GetAttackComp();
+	PlayerFSM = Player->GetPlayerFSMComp();
 	
 	SkillAnimationName = {"Default", "SkillSwing", "SkillSpell", "SkillCastingHitDown", "SkillUlt"};
 	OnMontageEnded.AddDynamic(this, &UPlayerAnimInstance::MontageEnd);
@@ -32,10 +34,10 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if(!Player) return;
+	if(!Player || !PlayerFSM) return;
 
-	State =  Player->GetPlayerFSMComp()->GetCurrentState();
-	WeaponState = Player->GetPlayerFSMComp()->GetCurrentWeaponState();
+	State =  PlayerFSM->GetCurrentState();
+	WeaponState = PlayerFSM->GetCurrentWeaponState();
 	Velocity = Player->GetVelocity();
 	Speed = UKismetMathLibrary::VSizeXY(Velocity);
 }
@@ -55,18 +57,19 @@ void UPlayerAnimInstance::StopMontage()
 void UPlayerAnimInstance::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	UE_LOG(LogTemp, Log, TEXT("Player Animation Montage End"));
-	if(!Player) return;
+	if(!Player || !PlayerAttack) return;
 
 	FName MontageName = Montage->GetFName();
 	// End Attack Montage
 	if(AttackMontage && MontageName == AttackMontage->GetFName())
-		Player->GetAttackComp()->CompleteSkill();
+		PlayerAttack->CompleteSkill();
 	else if(LyingMontage && MontageName == LyingMontage->GetName())
 		Player->LyingEnd();
 }
 
 
 // <---------------------- Move ---------------------->
+
 void UPlayerAnimInstance::AnimNotify_PlayerEvasionEnd()
 {
 	if(!Player) return;
@@ -86,6 +89,23 @@ void UPlayerAnimInstance::PlayerDieAnimation()
 }
 
 
+// <---------------------- Hit ---------------------->
+
+void UPlayerAnimInstance::PlayerLyingAnimation()
+{
+	if(!LyingMontage) return;
+
+	PlayMontage(LyingMontage);
+}
+
+void UPlayerAnimInstance::AnimNotify_GrabEnd()
+{
+	if(!PlayerFSM) return;
+
+	Player->LyingEnd();
+}
+
+
 // <---------------------- Attack ---------------------->
 
 void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
@@ -96,32 +116,28 @@ void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
 	PlayMontage(_Montage);
 }
 
-void UPlayerAnimInstance::PlayerLyingAnimation()
-{
-	if(!LyingMontage) return;
-
-	PlayMontage(LyingMontage);
-}
 
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 {
 	// 공격 판정 시작
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment Start"));
-	if(!Player || !Gadget) return;
+	if(!Player || !Gadget || !PlayerAttack) return;
 
 	//ASwordBase* Sword = Gadget->GetSword();
 	//if(!Sword) return;
 	//Sword->CollisionOn();
 	
-	Player->GetAttackComp()->MeleeSkillAttackJudgementStart();
+	PlayerAttack->MeleeSkillAttackJudgementStart();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 {
+	if(!PlayerAttack) return;
+	
 	// 공격 판정 끝
 	UE_LOG(LogTemp, Log, TEXT("Attack Judgment End"));
-	Player->GetAttackComp()->MeleeSkillAttackJudgementEnd();
+	PlayerAttack->MeleeSkillAttackJudgementEnd();
 	
 	//ASwordBase* Sword = Gadget->GetSword();
 	//if(!Sword) return;
@@ -130,32 +146,40 @@ void UPlayerAnimInstance::AnimNotify_AttackJudgmentEnd()
 
 void UPlayerAnimInstance::AnimNotify_AttackRangedStart()
 {
-	Player->GetAttackComp()->RangedSkillAttackJudgementStart();
+	if(!PlayerAttack) return;
+	
+	PlayerAttack->RangedSkillAttackJudgementStart();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackRangedEnd()
 {
-	Player->GetAttackComp()->RangedSkillAttackJudgmentEnd();
+	if(!PlayerAttack) return;
+	
+	PlayerAttack->RangedSkillAttackJudgmentEnd();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackShieldStart()
 {
-	Player->GetAttackComp()->ShieldSkillStart();
+	if(!PlayerAttack) return;
+	PlayerAttack->ShieldSkillStart();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackUltStart()
 {
-	Player->GetAttackComp()->ExecuteUltSkill();
+	if(!PlayerAttack) return;
+	PlayerAttack->ExecuteUltSkill();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackWith()
 {
-	Player->GetAttackComp()->CompleteSkill();
+	if(!PlayerAttack) return;
+	PlayerAttack->CompleteSkill();
 }
 
 void UPlayerAnimInstance::AnimNotify_AttackWaterBlade()
 {
-	Player->GetAttackComp()->PlayerWaterBladeSkill();
+	if(!PlayerAttack) return;
+	PlayerAttack->PlayerWaterBladeSkill();
 }
 
 
@@ -185,5 +209,6 @@ void UPlayerAnimInstance::AnimNotify_NextAttackCheck()
 
 void UPlayerAnimInstance::AnimNotify_NextChargingCheck()
 {
-	Player->GetAttackComp()->NextChargingCheck();
+	if(!PlayerAttack) return;
+	PlayerAttack->NextChargingCheck();
 }

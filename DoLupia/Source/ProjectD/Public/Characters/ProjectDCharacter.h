@@ -116,7 +116,6 @@ private:
 protected:
 	
 public:
-	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
 
 	FORCEINLINE APlayerStat* GetPlayerStat() const { return PlayerStat; }
@@ -216,6 +215,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void TakeHit(EAttackType AttackType, EEffectAttackType EffectAttackType, float Damage);
 	virtual void TakeDamage( float Damage ) override;
+
+	UFUNCTION(BlueprintCallable)
+	bool PlayerGrabEnd();
 	void LyingEnd();
 
 	

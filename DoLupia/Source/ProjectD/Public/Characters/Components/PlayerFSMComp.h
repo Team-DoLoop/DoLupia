@@ -59,10 +59,10 @@ public:
 	FORCEINLINE EPlayerState GetCurrentState() const { return CurrentState; }
 	void CheckState(EPlayerState _state);
 	
-	UFUNCTION(BlueprintCallable)
+	// UFUNCTION(BlueprintCallable)
 	void ChangePlayerState(EPlayerState _state);
 
-	UFUNCTION(BlueprintCallable)
+	// UFUNCTION(BlueprintCallable)
 	bool CanChangeState(EPlayerState _changeState);
 
 
@@ -90,7 +90,7 @@ public:
 private:
 
 public:
-	
+	bool CanIdleState(EPlayerState _CurrentState);
 
 	
 	// <--------------------- Move --------------------->
