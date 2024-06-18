@@ -90,5 +90,14 @@ public:
 private:
 	UPROPERTY()
 	class UDataTable* ItemTable;
-	
+
+
+	// <------------------ PlayerLocation ------------------>
+public:
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Save" )
+	FVector PlayerRestartLocation;
+
+	//UFUNCTION( BlueprintCallable , Category = "Save" )
+	//void LoadPlayerLocation();
+	//
 };

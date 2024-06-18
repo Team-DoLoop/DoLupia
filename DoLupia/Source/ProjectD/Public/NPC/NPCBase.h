@@ -113,7 +113,7 @@ public:
 	void HideNPC();
 
 	/*---------------------- Minimap ------------------*/
-	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
 
 	/*-------------------- NPC State ---------------------*/
