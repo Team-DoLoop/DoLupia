@@ -43,7 +43,7 @@ void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh)
 		* 2.5 / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
 
 	ItemMesh->SetRenderCustomDepth( true );
-	ItemMesh->CustomDepthStencilValue = 1;
+	ItemMesh->CustomDepthStencilValue = 4;
 }
 
 // Called when the game starts or when spawned

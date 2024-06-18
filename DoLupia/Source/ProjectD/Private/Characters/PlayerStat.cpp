@@ -34,7 +34,7 @@ void APlayerStat::initPlayerData()
 	MPRegenRate = 5.0f;
 	MPRegenTime = 1.0f;
 
-	ATK = 10.0f;
+	ATK = 1.0f;
 	DEF = 5.0f;
 
 	SkillLevelMelee = 0;

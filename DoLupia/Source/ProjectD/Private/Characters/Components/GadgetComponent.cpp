@@ -5,6 +5,7 @@
 
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "ProjectDGameInstance.h"
 #include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
@@ -96,6 +97,11 @@ void UGadgetComponent::InitEquip()
 	{
 		SwordBase->AttachToComponent( Character->GetMesh() ,
 		FAttachmentTransformRules::SnapToTargetIncludingScale , SwordSocket );
+
+		const FItemData* ItemData = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) )->GetItemData("test_003");
+		UItemBase* ItemBase = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+		ItemBase->CreateItemCopy( ItemData, 1 );
+		ChangeItem( ItemBase );
 	}
 }
 
@@ -110,7 +116,6 @@ void UGadgetComponent::TickComponent( float DeltaTime , ELevelTick TickType , FA
 UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 {
 	TObjectPtr<UItemBase> EquippedItem = nullptr;
-
 
 
 	if (ItemBase)
@@ -192,12 +197,11 @@ UItemBase* UGadgetComponent::ChangeItem(UItemBase* ItemBase) const
 		}
 
 		Character->GetDoLupiaHUD()->UpdateEquipmentWidget( ItemBase );
-
+		Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
 
 		if(EquippedItem)
 		{
 			EquippedItem->SetOwningInventory( ItemBase->GetOwningInventory() );
-			Character->GetPlayerStat()->ChangeStatsItem( EquippedItem , ItemBase );
 		}
 			
 	}

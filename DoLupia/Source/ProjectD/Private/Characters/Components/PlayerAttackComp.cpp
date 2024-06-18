@@ -383,7 +383,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 	// 확인용 박스
 	if(bIsShowDebugLine) DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
 
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	
 	// 공격 판정
 	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, SkillRange,
@@ -428,7 +428,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 
 void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 {
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	if(SkillKeyIndex_Combo == 1)
 	{
 		if(!PlayerElecBlastFactory) return;
@@ -477,7 +477,7 @@ void UPlayerAttackComp::ShieldSkillStart()
 	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
 	GetWorld()->GetTimerManager().SetTimer(ShieldTimerHandle, this, &UPlayerAttackComp::ShieldSkillEnd, ShieldTime, false);
 
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	PlayerShield->SetSkillDamage(SkillLevel * RandDamage);
 	
 	PlayerFSMComp->ChangePlayerShieldState(EPlayerShieldState::SHIELD);
@@ -500,7 +500,7 @@ void UPlayerAttackComp::PlayerWaterBladeSkill()
 {
 	if(!PlayerWaterBladeFactory) return;
 
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	
 	PlayerWaterBlade = GetWorld()->SpawnActor<APlayerSkillWaterBlade>(PlayerWaterBladeFactory, Player->GetActorLocation(), FRotator(0));
 	PlayerWaterBlade->SetSkillDirection(Player->GetActorForwardVector());
