@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Grid2048.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnMiniGameCompleted );
+
 class UMiniGameTile2048Widget;
 
 UCLASS()
@@ -16,10 +18,11 @@ class PROJECTD_API AGrid2048 : public AActor
 public:
     AGrid2048();
 
+    UPROPERTY( BlueprintAssignable , Category = "Quest" )
+    FOnMiniGameCompleted OnMiniGameCompleted;
+
 protected:
     virtual void BeginPlay() override;
-
-
 
 public:
     virtual void Tick( float DeltaTime ) override;
