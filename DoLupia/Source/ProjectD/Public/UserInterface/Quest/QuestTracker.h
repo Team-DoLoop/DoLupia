@@ -41,7 +41,10 @@ protected:
 	class UTextBlock* txt_QuestName;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
-	class UTextBlock* txt_Complete;
+	class UTextBlock* txt_ToPotal;
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
+	class UTextBlock* txt_ToRobot;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
 	class UVerticalBox* box_Objectives;

@@ -2,6 +2,8 @@
 
 
 #include "Quest/MinigameQuestObject.h"
+
+#include "MapIconComponent.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,6 +15,7 @@ AMinigameQuestObject::AMinigameQuestObject()
         MiniGameClass = minigame.Class;
 	}
     gm = nullptr;
+
 }
 
 void AMinigameQuestObject::BeginPlay()
@@ -25,6 +28,7 @@ void AMinigameQuestObject::BeginPlay()
     {
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
     }
+    this->MapIcon->SetVisibility( false );
 }
 
 FString AMinigameQuestObject::InteractWith()
@@ -56,6 +60,7 @@ void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
 {
     MeshComponent->SetRenderCustomDepth( true );
     MeshComponent->SetCustomDepthStencilValue( depth );
+    MapIcon->SetVisibility( true );
 }
 
 void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)

@@ -10,7 +10,6 @@
 #include "Quest/Quest_Base.h"  // AQuest_Base 사용
 #include "UserInterface/Quest/QuestTracker.h"
 
-
 // Sets default values for this component's properties
 UQuestLogComponent::UQuestLogComponent()
 {
@@ -108,6 +107,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
     {
         gm->ActivateMarkers( 4 );
     }
+    
 
 }
 

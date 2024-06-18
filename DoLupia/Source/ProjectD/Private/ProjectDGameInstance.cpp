@@ -97,12 +97,11 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap1 : %d "), TutorialIndexMap[_ExplainType]);
 
 	if(_TutorialID != -1) TutorialID = _TutorialID;
-	
 	else TutorialID = FindTutorialID(_ExplainType, TutorialIndexMap[_ExplainType]);
 	FTutorialData* TutoData = GetTutorialData(TutorialID);
 	UE_LOG(LogTemp, Log, TEXT("TutorialID : %d"), TutorialID);
 	
-	// 데이터가 있다면
+	// 데이터가 없다면
 	if(!TutoData) return;
 	
 	// 튜토리얼 관리하는 플레이어 컴포넌트 소환해서 UI 세팅해주기
@@ -110,9 +109,10 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
-			// 토토가 말하는 중이고 그게 메인 스토리 관련이라면 return
-			if(PlayerTuto->IsCantMoveToToSaying(TutoData) && PlayerTuto->GetToToSaying())
+			// 지금 요청한 튜토리얼이 메인 퀘스트 관련이 아닌데, 이미 말하는 중이라면
+			if(!PlayerTuto->IsCantMoveToToSaying(TutoData) && PlayerTuto->GetToToSaying())
 			{
+				// 원래 말하던거 실행하게
 				return;
 			}
 			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
@@ -123,7 +123,8 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 		}
 	}
 	
-	// 확인한 튜토리얼임을 저장
+	// 반복 튜토리얼의 마지막이 아니라면 확인한 튜토리얼임을 저장
+	if(!TutoData->bIsTypeEnd)
 	TutorialIndexMap[TutoData->ExplainType] = TutoData->ExplainIndex + 1;
 
 	UE_LOG(LogTemp, Log, TEXT("TutorialIndexMap2 : %d "), TutorialIndexMap[_ExplainType]);

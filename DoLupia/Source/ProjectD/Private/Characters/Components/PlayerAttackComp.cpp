@@ -383,6 +383,8 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 	// 확인용 박스
 	if(bIsShowDebugLine) DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
 
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	
 	// 공격 판정
 	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, SkillRange,
 		TArray<TEnumAsByte<EObjectTypeQuery>>(), nullptr, TArray<AActor*>(),
@@ -394,9 +396,10 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 			// IgnoreAttackActors에 없다면
 			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(Monster)))
 			{
+
 				IgnoreAttackActors.AddUnique(Monster);
-				Monster->OnMyTakeDamage(SkillDamage * SkillLevel);
-				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *Monster->GetName(), SkillDamage * SkillLevel);
+				Monster->OnMyTakeDamage(RandDamage * SkillLevel);
+				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *Monster->GetName(), RandDamage * SkillLevel);
 			}
 		}
 		
@@ -406,8 +409,8 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 			if(!IgnoreAttackActors.IsValidIndex(IgnoreAttackActors.Find(BossMonster)))
 			{
 				IgnoreAttackActors.AddUnique(BossMonster);
-				BossMonster->OnMyTakeDamage(SkillDamage * SkillLevel);
-				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *BossMonster->GetName(), SkillDamage * SkillLevel);
+				BossMonster->OnMyTakeDamage(RandDamage * SkillLevel);
+				UE_LOG(LogTemp, Log, TEXT("Melee Attack %s Monster : %d"), *BossMonster->GetName(), RandDamage * SkillLevel);
 			}
 		}
 	}
@@ -425,12 +428,15 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 
 void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 {
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
 	if(SkillKeyIndex_Combo == 1)
 	{
 		if(!PlayerElecBlastFactory) return;
 
 		PlayerElecBlast = GetWorld()->SpawnActor<APlayerSkillElecBlast>(PlayerElecBlastFactory, SpawnLocation, FRotator(0));
-		PlayerElecBlast->SetSkillDamage(SkillLevel * SkillDamage);
+		PlayerElecBlast->SetSkillDamage(SkillLevel * RandDamage);
+
+		GetWorld()->GetTimerManager().SetTimer(ElecBlastTimerHandle, this, &UPlayerAttackComp::BlastAttackEnd, ElecBlastTime, false);
 	}
 	
 	else if(SkillKeyIndex_Combo == 2)
@@ -438,21 +444,22 @@ void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 		if(!PlayerLightningFactory) return;
 
 		PlayerLightning = GetWorld()->SpawnActor<APlayerSkillLightning>(PlayerLightningFactory, SpawnLocation, FRotator(0));
-		PlayerLightning->SetSkillDamage(SkillLevel * SkillDamage);
+		PlayerLightning->SetSkillDamage(SkillLevel * RandDamage);
 	}
 }
 
 void UPlayerAttackComp::RangedSkillAttackJudgmentEnd()
 {
-	if(SkillKeyIndex_Combo == 1)
-	{
-		if(PlayerElecBlast) PlayerElecBlast->Destroy();
-	}
-
-	else if(SkillKeyIndex_Combo == 2)
+	if(SkillKeyIndex_Combo == 2)
 	{
 		if(PlayerLightning) PlayerLightning->Destroy();
 	}
+}
+
+void UPlayerAttackComp::BlastAttackEnd()
+{
+	GetWorld()->GetTimerManager().ClearTimer(ElecBlastTimerHandle);
+	if(PlayerElecBlast) PlayerElecBlast->Destroy();
 }
 
 
@@ -470,6 +477,9 @@ void UPlayerAttackComp::ShieldSkillStart()
 	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
 	GetWorld()->GetTimerManager().SetTimer(ShieldTimerHandle, this, &UPlayerAttackComp::ShieldSkillEnd, ShieldTime, false);
 
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	PlayerShield->SetSkillDamage(SkillLevel * RandDamage);
+	
 	PlayerFSMComp->ChangePlayerShieldState(EPlayerShieldState::SHIELD);
 }
 
@@ -490,10 +500,12 @@ void UPlayerAttackComp::PlayerWaterBladeSkill()
 {
 	if(!PlayerWaterBladeFactory) return;
 
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	
 	PlayerWaterBlade = GetWorld()->SpawnActor<APlayerSkillWaterBlade>(PlayerWaterBladeFactory, Player->GetActorLocation(), FRotator(0));
 	PlayerWaterBlade->SetSkillDirection(Player->GetActorForwardVector());
 	PlayerWaterBlade->SetSkillRot(Player->GetActorRotation());
-	PlayerWaterBlade->SetSkillDamage(SkillLevel * SkillDamage);
+	PlayerWaterBlade->SetSkillDamage(SkillLevel * RandDamage);
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
@@ -812,6 +824,9 @@ void UPlayerAttackComp::AttackEndState()
 		for(int i = 1; i <= SkillCount; i++)
 			SetSkillLockUI(i, true);
 	}
+
+	// Reset Damage
+	RandDamage = 0;
 
 	// Combo
 	IsComboInputOn = false;

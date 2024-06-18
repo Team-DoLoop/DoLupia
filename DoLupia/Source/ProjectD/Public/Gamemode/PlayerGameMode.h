@@ -204,4 +204,6 @@ private:
 	/*---------- Quest Location actor  --------*/
 public:
 	void ActivateMarkers(int32 MarkerID);
+
+	void ActivateInterationObject();
 };
