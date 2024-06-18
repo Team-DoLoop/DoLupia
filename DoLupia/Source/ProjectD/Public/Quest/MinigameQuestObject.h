@@ -6,6 +6,7 @@
 #include "Quest/StrangeObject.h"
 #include "MinigameQuestObject.generated.h"
 
+class AGrid2048;
 class APlayerGameMode;
 /**
  * 
@@ -34,9 +35,15 @@ public:
 	UFUNCTION()
 	void OnNextMiniGameQuestTagReceived( FString NextQuestTag );
 
+	UFUNCTION()
+	void OnNextSpawnerQuestTagCompleted();
+
 private:
 	UPROPERTY()
 	APlayerGameMode* gm;
+
+	UPROPERTY()
+	AGrid2048* Ownminigame;
 
 	void SpawnMiniGame();
 
