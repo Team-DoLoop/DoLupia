@@ -52,6 +52,7 @@ void UProjectDGameInstance::Init()
 	InitTutorialIndex();
 	InitCompletedQuests();
 	InitToToAutoSaveData();
+	InitPlayerSkillLevel();
 }
 
 // <----------------------------- Player Skill ----------------------------->
@@ -67,9 +68,33 @@ void UProjectDGameInstance::InitCanUseColor()
 	}
 }
 
+void UProjectDGameInstance::InitPlayerSkillLevel()
+{
+	PlayerSkillLevel.SetNum(6);
+	for(int i = 0; i < 6; i++)
+	{
+		PlayerSkillLevel[i] = 1;
+	}
+}
+
 FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)
 {
 	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(SkillID), TEXT(""));
+}
+
+void UProjectDGameInstance::SetPlayerSkillLevel(EUseColor _Color, int32 _SkillKeyIndex, int32 SkillLevel)
+{
+	int32 index = 0;
+	switch (_Color)
+	{
+	case EUseColor::RED : index = 0; break;
+	case EUseColor::YELLOW : index = 2; break;
+	case EUseColor::BLUE : index = 4; break;
+	default: index = 0;
+	}
+	index = index + _SkillKeyIndex - 1;
+
+	PlayerSkillLevel[index] = SkillLevel;
 }
 
 
