@@ -197,10 +197,6 @@ public:
 	UFUNCTION( BlueprintCallable , Category = "Quest" )
 	void SetNxtReceiveQuestTag( FString nextquesttag );
 
-private:
-	UPROPERTY()
-	TArray<AMonsterSpawnManager*> SpawnerActors; // AMonsterSpawnManager 타입으로 배열을 선언합니다.
-
 	/*---------- Quest Location actor  --------*/
 public:
 	void ActivateMarkers(int32 MarkerID);
