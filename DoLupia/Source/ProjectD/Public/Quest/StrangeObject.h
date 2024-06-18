@@ -52,4 +52,6 @@ public:
 	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
 
+	void ActiveMapIcon( bool onoff );
+
 };
