@@ -118,6 +118,7 @@ private:
 public:
 	bool CanLyingState(EPlayerState _CurrentState);
 	bool CanDamageState(EPlayerState _CurrentState);
+	bool CanGrabState(EPlayerState _CurrentState);
 
 
 	// <--------------------- TalkNPC --------------------->
