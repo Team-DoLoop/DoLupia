@@ -263,7 +263,9 @@ bool UPlayerFSMComp::CanGrabState(EPlayerState _CurrentState)
 	switch (_CurrentState)
 	{
 	case EPlayerState::EVASION : return false;
-	
+		
+	case EPlayerState::GRAB : return false;
+		
 	case EPlayerState::DIE : return false;
 	}
 	return true;
