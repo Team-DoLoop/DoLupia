@@ -400,4 +400,19 @@ void APlayerGameMode::ActivateMarkers( int32 MarkerID )
 	}
 }
 
+void APlayerGameMode::ActivateInterationObject( bool onoff )
+{
+	for (TActorIterator<AStrangeObject> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		AStrangeObject* InteractionObject = *ActorItr;
+
+		if (InteractionObject)
+		{
+			UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateInterationObject( bool onoff )" ) );
+			//켜고 끄는 코드
+			InteractionObject->ActiveMapIcon(onoff);
+		}
+	}
+}
+
 

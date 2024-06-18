@@ -30,6 +30,12 @@ private:
 	UPROPERTY()
 	class UGadgetComponent* Gadget;
 
+	UPROPERTY()
+	class UPlayerAttackComp* PlayerAttack;
+
+	UPROPERTY()
+	class UPlayerFSMComp* PlayerFSM;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerState State;
@@ -81,8 +87,14 @@ public:
 
 	void PlayAttackAnimation(class UAnimMontage* _Montage);
 
-	void PlayerLyingAnimation();
 
+		
+	// <---------------------- Hit ---------------------->
+public:
+	void PlayerLyingAnimation();
+	void AnimNotify_GrabEnd();
+
+	
 
 	// <---------------------- Skill ---------------------->
 	UFUNCTION()

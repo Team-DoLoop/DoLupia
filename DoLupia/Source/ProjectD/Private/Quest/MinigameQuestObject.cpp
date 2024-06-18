@@ -6,6 +6,7 @@
 #include "MapIconComponent.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "MiniGame/Grid2048.h"
 
 AMinigameQuestObject::AMinigameQuestObject()
 {
@@ -28,7 +29,7 @@ void AMinigameQuestObject::BeginPlay()
     {
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
     }
-    this->MapIcon->SetVisibility( false );
+    MapIcon->SetVisibility( false );
 }
 
 FString AMinigameQuestObject::InteractWith()
@@ -71,6 +72,12 @@ void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
     }
 }
 
+void AMinigameQuestObject::OnNextSpawnerQuestTagCompleted()
+{
+    MeshComponent->SetRenderCustomDepth( false );
+    MapIcon->DestroyComponent( true );
+}
+
 void AMinigameQuestObject::SpawnMiniGame()
 {
     if (MiniGameClass != nullptr)
@@ -86,7 +93,14 @@ void AMinigameQuestObject::SpawnMiniGame()
         // 액터 스폰
         AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>( MiniGameClass , SpawnLocation , SpawnRotation , SpawnParams );
         if (!SpawnedActor) return;
-        
+
+        Ownminigame = Cast<AGrid2048>( SpawnedActor );
+
+        if (Ownminigame)
+        {
+            Ownminigame->OnMiniGameCompleted.AddDynamic( this , &AMinigameQuestObject::OnNextSpawnerQuestTagCompleted );
+        }
+
     }
 }
 
