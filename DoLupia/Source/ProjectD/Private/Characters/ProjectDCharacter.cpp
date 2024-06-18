@@ -455,6 +455,25 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
 
+bool AProjectDCharacter::PlayerGrabEnd()
+{
+	auto _state = EPlayerState::GRAB;
+	if(!PlayerFSM->CanChangeState(_state)) return false;
+
+	PlayerFSM->ChangePlayerState(_state);
+	PlayerAnim->PlayerLyingAnimation();
+	return true;
+}
+
+void AProjectDCharacter::LyingEnd()
+{
+	if(!PlayerFSM) return;
+	if(!PlayerFSM->CanChangeState(EPlayerState::IDLE)) return;
+
+	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
+}
+
+
 void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 {
 	// 이펙트 적용
@@ -500,11 +519,6 @@ void AProjectDCharacter::TakeEffectAttackHitEnd()
 	UE_LOG(LogTemp, Log, TEXT("TakeEffectAttackHitEnd"));
 }
 
-void AProjectDCharacter::LyingEnd()
-{
-	if(!PlayerFSM) return;
-	PlayerFSM->ChangePlayerState(EPlayerState::IDLE);
-}
 
 
 // <---------------------- Interaction ---------------------->
