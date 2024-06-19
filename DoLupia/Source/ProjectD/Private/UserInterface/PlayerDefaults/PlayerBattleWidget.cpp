@@ -21,13 +21,13 @@ void UPlayerBattleWidget::NativeOnInitialized()
 void UPlayerBattleWidget::StartChargingSkill()
 {
 	ChargingSkillBar->SetVisibility(ESlateVisibility::Visible);
-	ChargingSkillBar->SetFillColorAndOpacity(FLinearColor( 0.38f, 0.52f, 1.0f, 1.0f));
+	ChargingSkillBar->SetFillColorAndOpacity(FLinearColor(167.0f / 255, 230.0f / 255, 255.0f / 255, 1.0f));
 	// PlayAnimation(ChargingAnim);
 }
 
 void UPlayerBattleWidget::UpdateChargingSkill(float ChargingTime, bool CanNextAttack)
 {
-	if(CanNextAttack) ChargingSkillBar->SetFillColorAndOpacity(FLinearColor::Blue);
+	if(CanNextAttack) ChargingSkillBar->SetFillColorAndOpacity(FLinearColor(53.0f/255, 114.0f/255, 239.0f/255, 1.0f));
 	ChargingSkillBar->SetPercent(ChargingTime);
 }
 
