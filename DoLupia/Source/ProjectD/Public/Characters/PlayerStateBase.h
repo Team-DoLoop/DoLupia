@@ -26,6 +26,7 @@ enum class EPlayerState : uint8
 	GRAB UMETA(DisplayName = "Grab"),							// 보스 몬스터에게 잡기당한 상태
 
 	TALK_NPC UMETA(DisplayName = "TalkNPC"),					// NPC 대화
+	MICA UMETA(DisplayName = "Mica"),							// 기타 (컷씬, 미니게임)
 	
 	DIE UMETA(DisplayName = "Die"),								// 죽기
 };

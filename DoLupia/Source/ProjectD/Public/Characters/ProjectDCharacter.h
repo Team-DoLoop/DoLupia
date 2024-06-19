@@ -119,6 +119,7 @@ public:
 	FORCEINLINE class UPlayerFSMComp* GetPlayerFSMComp() const {return PlayerFSM;}
 
 	FORCEINLINE APlayerStat* GetPlayerStat() const { return PlayerStat; }
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class UGadgetComponent* GetGadgetComp() const {return Gadget;}
 	FORCEINLINE UPlayerAnimInstance* GetPlayerAnim() const { return PlayerAnim; }
 	FORCEINLINE class UNiagaraComponent* GetNiagaraComp()const {return NiagaraComp;}
@@ -344,16 +345,8 @@ public:
 	FOnQuestIDCalled OnQuestIDCalled;
 	*/
 
-
-	/* Quest Decline 기능 삭제
-	// <---------------------- Dialog ---------------------->
-	void EnableDialogue();
-	void DisableDialogue();
-	bool IsDialogueEnabled() const;
-
-private:
-	bool bIsDialogueEnabled;
-	*/
+	// 컷씬, 미니게임 상태
+	void PlayerDoSomeThing(bool bIsStart);
 
 
 	
@@ -363,7 +356,7 @@ private:
 	UPlayerTutorialComp* TutorialComp;
 	
 public:
-	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; };
+	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; }
 
 
 	// <---------------------- MiniMap ---------------------->

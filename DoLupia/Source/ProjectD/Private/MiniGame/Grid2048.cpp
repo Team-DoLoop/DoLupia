@@ -39,6 +39,8 @@ void AGrid2048::BeginPlay()
     ExplainWidget = CreateWidget<UUserWidget>( GetWorld() , Explain2048 );
     ExplainWidget->AddToViewport(0);
 
+    Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+
     NewNumber();
     NewNumber();
     Draw();
@@ -279,6 +281,9 @@ void AGrid2048::GameClear()
     player->OnObjectiveIDCalled.Broadcast( "MiniGame" , 1 );
     ExplainWidget->RemoveFromParent();
     isSucess = true;
+
+    // 플레이어 움직임 가능하게
+    Player->PlayerDoSomeThing(false);
 
     // 완료 시, 델리게이트 구독
     OnMiniGameCompleted.Broadcast();

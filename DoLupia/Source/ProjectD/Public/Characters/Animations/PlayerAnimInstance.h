@@ -93,9 +93,6 @@ public:
 public:
 	void PlayerLyingAnimation();
 
-	UFUNCTION()
-	void AnimNotify_GrabEnd();
-
 	
 
 	// <---------------------- Skill ---------------------->

@@ -6,7 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Grid2048.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnMiniGameCompleted );
+class AProjectDCharacter;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMiniGameCompleted);
 
 class UMiniGameTile2048Widget;
 
@@ -26,6 +27,11 @@ protected:
 
 public:
     virtual void Tick( float DeltaTime ) override;
+
+private:
+    UPROPERTY()
+    AProjectDCharacter* Player;
+    
 
 public:
     UFUNCTION( BlueprintCallable , Category = "Grid" )
@@ -84,6 +90,7 @@ public:
 
 private:
     bool GameOver();
+    
 
 
 private:

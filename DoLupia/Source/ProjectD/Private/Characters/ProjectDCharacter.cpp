@@ -879,6 +879,24 @@ void AProjectDCharacter::PerformTrace()
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
 }
 
+void AProjectDCharacter::PlayerDoSomeThing(bool bIsStart)
+{
+	if(!PlayerFSM) return;
+
+	EPlayerState _state = _state = EPlayerState::IDLE;
+	
+	// 미니게임, 컨씬 시작
+	if(bIsStart)
+	{
+		_state = EPlayerState::MICA;
+		
+		if(!PlayerFSM->CanChangeState(_state)) return;
+	}
+
+	PlayerFSM->ChangePlayerState(_state);
+
+}
+
 /* Quest Decline 기능 삭제
 void AProjectDCharacter::EnableDialogue()
 {
