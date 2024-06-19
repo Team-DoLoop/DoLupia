@@ -118,7 +118,7 @@ void UProjectDGameInstance::InitTutorialIndex()
 
 void UProjectDGameInstance::InitToToAutoSaveData()
 {
-	ToToAutoSaveData.Add(3000, false);	// Map Tutorial - 공격 튜토리얼 끝나고 저장
+	// ToToAutoSaveData.Add(3000, false);	// Map Tutorial - 공격 튜토리얼 끝나고 저장
 	
 	ToToAutoSaveData.Add(4000, false);	// Map1 - Red 얻고 나서 저장
 	
@@ -134,7 +134,7 @@ int32 UProjectDGameInstance::FindLastToToSaveData(int32 _MapIndex)
 	
 	switch (_MapIndex)
 	{
-	case 0 : if(ToToAutoSaveData[3000]) return 3000;
+	//case 0 : if(ToToAutoSaveData[3000]) return 3000;
 	case 1:
 		{
 			if(ToToAutoSaveData[4000]) return 4000;
@@ -260,7 +260,7 @@ void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 		FName _QuestIdName = FName(*FString::Printf(TEXT("%04d"), _QuestID));
 		UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
 
-		bool CompleteQuest = QuestComp->QueryCompleteQuests( _QuestIdName );
+		bool CompleteQuest = CompletedQuests.Contains( _QuestIdName );
 		bool ActiveQuest = QuestComp->QueryActiveQuest(_QuestIdName);
 		if (!ActiveQuest&&!CompleteQuest) {
 			auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
