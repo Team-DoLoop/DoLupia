@@ -202,4 +202,8 @@ public:
 	void ActivateMarkers(int32 MarkerID);
 
 	void ActivateInterationObject( bool onoff );
+
+	/*---------- Ending Sequencer  --------*/
+public:
+	void PlayOutroSequencer();
 };

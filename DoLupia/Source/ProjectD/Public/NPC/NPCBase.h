@@ -89,7 +89,7 @@ public:
 	FName OwnQuestTag;
 
 	bool bCanTalk = false;
-	bool bVisibleInteractUI = true;
+	bool bVisibleInteractUI = false;
 
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )

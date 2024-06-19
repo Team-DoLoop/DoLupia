@@ -95,6 +95,8 @@ void ANPCBase::BeginPlay()
 
 	Target = Cast<AProjectDCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
+
+	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
 }
 
 // Called every frame
@@ -115,11 +117,6 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 	if (bVisibleInteractUI == false) return;
 	if (NPCInteractWidget)
 	{
-		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
-		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
-	}
-	else
-	{
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
 }
@@ -127,6 +124,8 @@ void ANPCBase::NotifyActorBeginOverlap( AActor* OtherActor )
 void ANPCBase::NotifyActorEndOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
+
+	if (bVisibleInteractUI == false) return;
 
 	if (NPCInteractGWidget)
 	{
@@ -240,6 +239,7 @@ void ANPCBase::OnNextNPCQuestTagReceived( FString NextQuestTag )
 	{
 		UpdateNPCStatus();
 		bCanTalk = true;
+		bVisibleInteractUI = true;
 	}
 }
 

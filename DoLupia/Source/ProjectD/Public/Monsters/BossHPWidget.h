@@ -24,4 +24,11 @@ public:
 
 	UPROPERTY()
 	class ABossMonster* Boss;
+
+	float CurrentHP;
+	float TargetHP;
+	float MaxHP;
+
+	FTimerHandle InterpolationTimerHandle;
+	void UpdateHPBar();
 };
