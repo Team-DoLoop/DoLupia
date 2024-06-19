@@ -202,6 +202,8 @@ private:
 
 	bool bIsAiming;
 
+	bool bIsGrab;
+
 protected:
 	void Aim();
 	void StopAiming();
@@ -220,6 +222,10 @@ public:
 	bool PlayerGrabEnd();
 	void LyingEnd();
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetbIsGrab(bool _bIsGrab) {bIsGrab = _bIsGrab;}
+	
+	FORCEINLINE bool GetbIsGrab() {return bIsGrab;}
 	
 
 	// <---------------------- Effect Attack Hit ---------------------->
