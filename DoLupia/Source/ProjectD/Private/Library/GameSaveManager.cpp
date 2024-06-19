@@ -381,9 +381,13 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 							{
 								if(!ItemBase->GetNumericData().bIsStackable)
 								{
-									--ItemData.Value;
+									ItemBase->SetQuantity( 1 , false );
+									Character->GetInventory()->HandelAddItem( ItemBase );
+									break;
 								}
-								else if (ItemData.Value > StackSize)
+
+
+								if (ItemData.Value > StackSize)
 								{
 									ItemBase->SetQuantity( StackSize , false );
 									ItemData.Value -= StackSize;

@@ -426,7 +426,7 @@ void AProjectDCharacter::TakeHit(EAttackType AttackType, EEffectAttackType Effec
 	// 상태 이상 맞았을 때 플레이어 효과 및 AI 적용
 	if(EffectAttackType != EEffectAttackType::NONE) TakeEffectAttackHit(EffectAttackType);
 
-	TakeDamage(Damage - PlayerStat->GetDEF() - 0.01f);
+	TakeDamage( FMath::Max( 0.1f , Damage - PlayerStat->GetDEF() * 0.01f ) );
 }
 
 void AProjectDCharacter::TakeDamage(float Damage)

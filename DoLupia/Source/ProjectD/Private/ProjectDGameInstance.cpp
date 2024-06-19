@@ -192,19 +192,8 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 				}
 
 				//토토 대화 시작할 때 세이브
-				ALevelManager::GetInstance( GetWorld() )->SaveGame( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , FName( UGameplayStatics::GetCurrentLevelName( GetWorld() ) ) ,
-	Player->GetActorLocation() , Player->GetInventory()->GetInventoryContents() , true ,
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ?
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ?
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ?
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ?
-	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
+				if (!UGameplayStatics::GetCurrentLevelName( GetWorld() ).Equals(TEXT( "GameLv3" )))
+					SAVE(Player, ESaveType::SAVE_MAIN, "PlayerMainSave" , "PlayerMainSave", FName( UGameplayStatics::GetCurrentLevelName( GetWorld() )), false);
 
 				ToToAutoSaveData[TutorialID] = true;
 			}

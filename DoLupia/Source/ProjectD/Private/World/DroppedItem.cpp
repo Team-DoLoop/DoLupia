@@ -40,7 +40,7 @@ void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh)
 	GravityScale = Statistics.GravityScale;
 
 	SphereComponent->SetSphereRadius( FMath::Max3( ItemMesh->Bounds.BoxExtent.X , ItemMesh->Bounds.BoxExtent.Y , ItemMesh->Bounds.BoxExtent.Z ) 
-		* 2.5 / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
+		* 5.0f / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
 
 	ItemMesh->SetRenderCustomDepth( true );
 	ItemMesh->CustomDepthStencilValue = 4;
