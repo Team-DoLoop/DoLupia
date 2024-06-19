@@ -99,7 +99,7 @@ private:
 
 	void UpdateNPCStatus();
 
-	bool bCheckIcon = false;
+	bool bCheckIcon = true;
 
 	/*---------------------- Post Process Depth ------------------*/
 public:
