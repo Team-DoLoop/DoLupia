@@ -4,6 +4,7 @@
 #include "ProjectDGameInstance.h"
 
 #include "Characters/ProjectDCharacter.h"
+#include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerTutorialComp.h"
 #include "Data/ItemDataStructs.h"
 #include "Data/PlayerSkillDataStructs.h"
@@ -12,6 +13,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Quest/Struct_QuestSystem.h"
 #include "Quest/QuestLogComponent.h"
+#include "Library/LevelManager.h"
+#include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
+#include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 
 UProjectDGameInstance::UProjectDGameInstance()
 {
@@ -180,8 +185,24 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 				if(ToToAutoSaveData[TutorialID])
 				{
 					if(TutoData->TutorialQuest.IsQuest) GiveQuest(TutoData->TutorialQuest.QuestID);
+
 					return;
 				}
+
+				//토토 대화 시작할 때 세이브
+				ALevelManager::GetInstance( GetWorld() )->SaveGame( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , FName( UGameplayStatics::GetCurrentLevelName( GetWorld() ) ) ,
+	Player->GetActorLocation() , Player->GetInventory()->GetInventoryContents() , true ,
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ?
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" ,
+
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ?
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" ,
+
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ?
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" ,
+
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ?
+	Player->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
 
 				ToToAutoSaveData[TutorialID] = true;
 			}
@@ -239,8 +260,9 @@ void UProjectDGameInstance::GiveQuest(int32 _QuestID)
 		FName _QuestIdName = FName(*FString::Printf(TEXT("%04d"), _QuestID));
 		UQuestLogComponent* QuestComp = Player->GetQuestLogComponent();
 
+		bool CompleteQuest = QuestComp->QueryCompleteQuests( _QuestIdName );
 		bool ActiveQuest = QuestComp->QueryActiveQuest(_QuestIdName);
-		if (!ActiveQuest) {
+		if (!ActiveQuest&&!CompleteQuest) {
 			auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 			//겜모에 퀘스트 아이디 string 로 넘김.
