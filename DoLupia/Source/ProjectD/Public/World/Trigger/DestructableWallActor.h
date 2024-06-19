@@ -36,6 +36,9 @@ public:
 	void ExplosionWalls();
 
 private:
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
+	
 	UPROPERTY( EditAnywhere )
 	UGeometryCollectionComponent* DestructableWallComp;
 

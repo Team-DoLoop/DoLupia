@@ -146,6 +146,7 @@ private:
 	UPROPERTY()
 	class UPlayerBattleWidget* PlayerBattleWidget;
 
+
 public:
 	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget; }
 	void UseQuickSlot( int32 SlotNumber );
@@ -346,6 +347,7 @@ public:
 	*/
 
 	// 컷씬, 미니게임 상태
+	UFUNCTION(BlueprintCallable)
 	void PlayerDoSomeThing(bool bIsStart);
 
 

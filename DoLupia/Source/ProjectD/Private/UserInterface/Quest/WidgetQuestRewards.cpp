@@ -248,21 +248,7 @@ void UWidgetQuestRewards::OnAcceptClicked()
         GI->ExecuteTutorial(QuestDetails.AutoStory.QuestStoryType, -1, QuestDetails.AutoStory.QuestStoryID);
     }
 
-    
-
-    ALevelManager::GetInstance( GetWorld() )->SaveGame( PlayerCharacterD , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave", FName(UGameplayStatics::GetCurrentLevelName( GetWorld() )) ,
-        PlayerCharacterD->GetActorLocation() , PlayerCharacterD->GetInventory()->GetInventoryContents() , true,
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ?
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ?
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ?
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ?
-        PlayerCharacterD->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
+    SAVE( PlayerCharacterD, ESaveType::SAVE_MAIN, "PlayerMainSave" , "PlayerMainSave", FName( UGameplayStatics::GetCurrentLevelName( GetWorld() )), true);
 }
 
 void UWidgetQuestRewards::ChangePlayerStateIdle()
