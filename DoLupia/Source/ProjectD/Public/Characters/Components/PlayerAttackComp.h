@@ -360,7 +360,7 @@ private:
 	bool IsSkillCharging; //
 
 
-	float SkillVolume = 0.2f;
+	float SkillVolume = 0.3f;
 
 	
 };

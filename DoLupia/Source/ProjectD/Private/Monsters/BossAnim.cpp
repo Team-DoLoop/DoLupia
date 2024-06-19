@@ -13,6 +13,10 @@ void UBossAnim::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	bIsAttackComplete = true;
+
+	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	Boss = Cast<ABossMonster>( UGameplayStatics::GetActorOfClass( GetWorld() , ABossMonster::StaticClass() ) );
 }
 
 
@@ -154,7 +158,6 @@ void UBossAnim::OnEndThrowAttackAnimation()
 //===============BlastFireAttack=======================
 void UBossAnim::OnDoBlastFireAttackAnimation()
 {
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	auto AIlib = gm->GetAIConnectionLibrary();
 	AIlib->SendBImgToSrv( 1 ); //상태이상 : 화염
 }
@@ -172,7 +175,6 @@ void UBossAnim::OnEndBlastFireAttackAnimation()
 //===============BlastLighteningAttack=================
 void UBossAnim::OnDoBlastLighteningAttackAnimation()
 {
-	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	auto AIlib = gm->GetAIConnectionLibrary();
 	AIlib->SendBImgToSrv( 2 ); //상태이상  : 독
 }
@@ -189,4 +191,5 @@ void UBossAnim::OnEndBlastLighteningAttackAnimation()
 void UBossAnim::OnEndDieAnimation()
 {
 	Boss->DestroyMonster();
+	gm->PlayOutroSequencer();
 }
