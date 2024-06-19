@@ -465,7 +465,9 @@ bool AProjectDCharacter::PlayerGrabEnd()
 	if(!PlayerFSM->CanChangeState(_state)) return false;
 
 	PlayerFSM->ChangePlayerState(_state);
-	PlayerAnim->PlayerLyingAnimation();
+
+	// Boss BP에서 호출 중
+	// PlayerAnim->PlayerLyingAnimation();
 	return true;
 }
 
@@ -879,6 +881,24 @@ void AProjectDCharacter::PerformTrace()
 
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
+}
+
+void AProjectDCharacter::PlayerDoSomeThing(bool bIsStart)
+{
+	if(!PlayerFSM) return;
+
+	EPlayerState _state = _state = EPlayerState::IDLE;
+	
+	// 미니게임, 컨씬 시작
+	if(bIsStart)
+	{
+		_state = EPlayerState::MICA;
+		
+		if(!PlayerFSM->CanChangeState(_state)) return;
+	}
+
+	PlayerFSM->ChangePlayerState(_state);
+
 }
 
 /* Quest Decline 기능 삭제

@@ -130,6 +130,7 @@ private:
 
 public:
 	bool CanTalkNPCState(EPlayerState _CurrentState);
+	bool CanInteractionState(EPlayerState _CurrentState);
 	
 
 	// <--------------------- Die --------------------->

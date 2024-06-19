@@ -66,6 +66,7 @@ void UPlayerFSMComp::CheckState(EPlayerState _state)
 	case EPlayerState::LYING:				return;
 	case EPlayerState::DAMAGE:				return;
 	case EPlayerState::GRAB:				return;
+	case EPlayerState::MICA:				return;
 
 	case EPlayerState::TALK_NPC:			return;
 		
@@ -109,6 +110,7 @@ bool UPlayerFSMComp::CanChangeState(EPlayerState _changeState)
 	case EPlayerState::EVASION : return CanEvasionState(CurrentState);
 		
 	case EPlayerState::TALK_NPC : return CanTalkNPCState(CurrentState);
+	case EPlayerState::MICA : return CanInteractionState(CurrentState);
 
 	case EPlayerState::DIE : return CanDieState(CurrentState);
 	}
@@ -166,7 +168,7 @@ void UPlayerFSMComp::TickMove()
 
 bool UPlayerFSMComp::CanMoveState(EPlayerState _CurrentState)
 {
-	// 안되는 상태 : 공격, 회피, 대화, 잡기, 눕기, 죽음
+	// 안되는 상태 : 공격, 회피, 대화, 잡기, 눕기, 대화, 상호작용, 죽음
 	switch (_CurrentState)
 	{
 	case EPlayerState::ATTACK_ONLY : return false;
@@ -176,6 +178,7 @@ bool UPlayerFSMComp::CanMoveState(EPlayerState _CurrentState)
 	case EPlayerState::GRAB : return false;
 
 	case EPlayerState::TALK_NPC : return false;
+	case EPlayerState::MICA : return false;
 		
 	case EPlayerState::DIE : return false;
 	}
@@ -192,10 +195,12 @@ bool UPlayerFSMComp::CanEvasionState(EPlayerState _CurrentState)
 	switch (_CurrentState)
 	{
 	case EPlayerState::EVASION : return false;
-	case EPlayerState::TALK_NPC : return false;
 
 	case EPlayerState::LYING : return false;
 	case EPlayerState::GRAB : return false;
+
+	case EPlayerState::TALK_NPC : return false;
+	case EPlayerState::MICA : return false;
 		
 	case EPlayerState::DIE : return false;
 	}
@@ -217,6 +222,7 @@ bool UPlayerFSMComp::CanAttackState(EPlayerState _CurrentState, EPlayerWeaponSta
 	case EPlayerState::GRAB : return false;
 		
 	case EPlayerState::TALK_NPC : return false;
+	case EPlayerState::MICA : return false;
 		
 	case EPlayerState::DIE : return false;
 	}
@@ -251,6 +257,7 @@ bool UPlayerFSMComp::CanLyingState(EPlayerState _CurrentState)
 	case EPlayerState::EVASION : return false;
 
 	case EPlayerState::TALK_NPC : return false;
+	case EPlayerState::MICA : return false;
 		
 	case EPlayerState::DIE : return false;
 	}
@@ -265,6 +272,8 @@ bool UPlayerFSMComp::CanDamageState(EPlayerState _CurrentState)
 	case EPlayerState::EVASION : return false;
 
 	case EPlayerState::TALK_NPC : return false;
+	case EPlayerState::MICA : return false;
+		
 	case EPlayerState::DIE : return false;
 	}
 	return true;
@@ -287,6 +296,20 @@ bool UPlayerFSMComp::CanGrabState(EPlayerState _CurrentState)
 // <--------------------- TalkNPC --------------------->
 
 bool UPlayerFSMComp::CanTalkNPCState(EPlayerState _CurrentState)
+{
+	// 안되는 상태 : 회피, 눕기, 죽음
+	switch (_CurrentState)
+	{
+	case EPlayerState::EVASION : return false;
+		
+	case EPlayerState::LYING : return false;
+		
+	case EPlayerState::DIE : return false;
+	}
+	return true;
+}
+
+bool UPlayerFSMComp::CanInteractionState(EPlayerState _CurrentState)
 {
 	// 안되는 상태 : 회피, 눕기, 죽음
 	switch (_CurrentState)

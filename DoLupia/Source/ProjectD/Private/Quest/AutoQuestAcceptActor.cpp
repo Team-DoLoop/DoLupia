@@ -75,8 +75,8 @@ void AAutoQuestAcceptActor::GiveQuest()
 	UQuestLogComponent* Questcomponent = MyPlayerCharacter->FindComponentByClass<UQuestLogComponent>();
 
 	bool ActiveQuest = Questcomponent->QueryActiveQuest( QuestData.RowName );
-
-	if (!ActiveQuest) {
+	bool CompleteQuest = Questcomponent->QueryCompleteQuests( QuestData.RowName );
+	if (!ActiveQuest&&!CompleteQuest) {
 
 		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 		FString tmpString = QuestData.RowName.ToString();
