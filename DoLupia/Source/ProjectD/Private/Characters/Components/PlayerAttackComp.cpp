@@ -832,7 +832,7 @@ void UPlayerAttackComp::AttackEndState()
 	if(CurrentSkillInfo)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	// MP가 꽉 찼다면
-	if(PlayerStat->GetMP() >= PlayerMaxMP)
+	if(PlayerStat->GetMP() >= PlayerMaxMP && CurrentSkillInfo != AutoSkill)
 	{
 		// MP가 꽉 찼다면 열 게이지 관련 설명
 		if(GI) GI->ExecuteTutorial(EExplainType::FULL_HIT_GAUGE);
