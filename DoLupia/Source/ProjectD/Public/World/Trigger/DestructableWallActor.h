@@ -30,6 +30,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY( BlueprintReadWrite , EditAnywhere )
+	ULevelSequencePlayer* SequencePlayer;
+
 	void ExplosionWalls();
 
 private:
@@ -45,13 +48,13 @@ private:
 	UPROPERTY( EditAnywhere )
 	UParticleSystemComponent* ExplosionVFX;
 
+	UPROPERTY()
+	class AProjectDCharacter* Target;
 
 	UPROPERTY()
-	ULevelSequence* ExplosionSeq;
+	AActor* OriginalViewTarget;
 
-	UPROPERTY()
-	ULevelSequencePlayer* SequencePlayer;
-
+	void TriggerLvSequencer();
 
 };
 

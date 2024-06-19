@@ -6,6 +6,11 @@
 #include "LevelSequenceActor.h"
 #include "MovieSceneSequencePlaybackSettings.h"
 #include "Components/BoxComponent.h"
+#include "MovieSceneSequencePlayer.h"              
+#include "MovieSceneSequencePlaybackSettings.h"     
+#include "MovieSceneCommonHelpers.h"     
+#include "Animation/AnimTrace.h"
+#include "Characters/ProjectDCharacter.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Pooling/SoundManager.h"
@@ -30,25 +35,16 @@ ADestructableWallActor::ADestructableWallActor()
 
 	ExplosionVFX->bAutoActivate = false;
 
-	/*
-	static ConstructorHelpers::FObjectFinder<ULevelSequence> ExplosionSeqAsset( TEXT( "LevelSequence'/Game/Sequencer/Lv2ExplosionSeq.Lv2ExplosionSeq'" ) );
-	if (ExplosionSeqAsset.Succeeded())
-	{
-		ExplosionSeq = ExplosionSeqAsset.Object;
-	}
-	else
-	{
-		return;
-	}
-	*/
-
-	//ExplosionSeq = LoadObject<ULevelSequence>( nullptr , TEXT( "/Game/Sequencer/Lv2ExplosionSeq.Lv2ExplosionSeq" ) );
+	SequencePlayer = CreateDefaultSubobject<ULevelSequencePlayer>( TEXT( "SequencePlayer" ) );
 }
 
 // Called when the game starts or when spawned
 void ADestructableWallActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Target = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
 }
 
 // Called every frame
@@ -62,21 +58,8 @@ void ADestructableWallActor::ExplosionWalls()
 {
 	if (!ExplosionSFX || !ExplosionVFX) return;
 
-	// Load the Level Sequence
-	//ULevelSequence* ExplosionSequence = LoadObject<ULevelSequence>( nullptr , TEXT( "/Game/Sequencer/Lv2ExplosionSeq.Lv2ExplosionSeq" ) );
-	/*
-	if (!ExplosionSeq) return;
-
-	// Create a Level Sequence Player
-	FMovieSceneSequencePlaybackSettings PlaybackSettings;
-	ALevelSequenceActor* LevelSequenceActor = nullptr;
-	SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer( GetWorld() , ExplosionSeq , PlaybackSettings, LevelSequenceActor );
-
-	if (SequencePlayer)
-	{
-		SequencePlayer->Play();
-	}
-	*/
+	UE_LOG( LogTemp , Error , TEXT( "ADestructableWallActor::ExplosionWalls" ) );
+	TriggerLvSequencer();
 
 	// 벽폭발음
 	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
@@ -84,10 +67,38 @@ void ADestructableWallActor::ExplosionWalls()
 	// 폭발 효과
 	ExplosionVFX->ActivateSystem();
 
-	UE_LOG( LogTemp , Warning , TEXT( "Destroy Walls" )  )
+	UE_LOG( LogTemp , Log , TEXT( "Destroy Walls" )  )
 
 	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );
 	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+}
+
+void ADestructableWallActor::TriggerLvSequencer()
+{
+	if (!SequencePlayer) return;
+
+	if (SequencePlayer && OriginalViewTarget)
+	{
+		UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
+		SequencePlayer->Play();
+	}
+	else
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Failed to create Level Sequence Player." ) );
+	}
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle ,
+		[this]() {
+			SequencePlayer->Stop();  // 시퀀스 정지
+			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( Target , 1.0f );
+		} ,
+		5.0f , // 지연 시간(초)
+		false
+		);
 }
 
