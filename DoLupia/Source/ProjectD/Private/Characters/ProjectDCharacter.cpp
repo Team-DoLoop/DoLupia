@@ -461,7 +461,9 @@ bool AProjectDCharacter::PlayerGrabEnd()
 	if(!PlayerFSM->CanChangeState(_state)) return false;
 
 	PlayerFSM->ChangePlayerState(_state);
-	PlayerAnim->PlayerLyingAnimation();
+
+	// Boss BP에서 호출 중
+	// PlayerAnim->PlayerLyingAnimation();
 	return true;
 }
 
