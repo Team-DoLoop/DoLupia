@@ -346,6 +346,7 @@ public:
 	*/
 
 	// 컷씬, 미니게임 상태
+	UFUNCTION(BlueprintCallable)
 	void PlayerDoSomeThing(bool bIsStart);
 
 
