@@ -24,6 +24,8 @@
 #include "World/Trigger/TriggerBaseActor.h"
 #include <Quest/LocationMarker.h>
 
+#include "LevelSequencePlayer.h"
+#include "MovieSceneSequencePlayer.h" 
 #include "Monsters/MonsterSpawnManager.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
@@ -56,6 +58,8 @@ APlayerGameMode::APlayerGameMode()
 	LevelNames.Add( TEXT( "GameLv3" ) );
 
 	TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComp" ) );
+	Lv3SequencePlayer = CreateDefaultSubobject<ULevelSequencePlayer>( TEXT( "Lv3SequencePlayer" ) );
+	bossComp = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "bossComp" ) );
 
 }
 
@@ -137,7 +141,9 @@ void APlayerGameMode::BeginPlay()
 		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
 
-	//GI->LoadPlayerLocation();
+	// Camera Sequencer
+	Target = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -422,6 +428,36 @@ void APlayerGameMode::ActivateInterationObject( bool onoff )
 void APlayerGameMode::PlayOutroSequencer()
 {
 	UE_LOG( LogTemp , Log , TEXT( "APlayerGameMode::PlayOutroSequencer - Outro Sequencer Play" ) );
+
+	if (!Lv3SequencePlayer && !bossComp) return;
+
+	if (Lv3SequencePlayer && OriginalViewTarget)
+	{
+		UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
+		//bossComp->SetVisibility( true );
+		bossComp->SetHiddenInGame( false );
+
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
+		Lv3SequencePlayer->Play();
+	}
+	else
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Failed to create Level Sequence Player." ) );
+	}
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle ,
+		[this]() {
+			bossComp->DestroyComponent( true );
+			Lv3SequencePlayer->Stop();  // 시퀀스 정지
+			UGameplayStatics::OpenLevel( this , TEXT("Opening") );
+		} ,
+		5.0f , // 지연 시간(초)
+		false
+	);
+
 }
 
 

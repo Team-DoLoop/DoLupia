@@ -46,6 +46,8 @@ class UCurveFloat;
 class AProjectDCharacter;
 enum class ESaveType;
 class AMonsterSpawnManager;
+class ULevelSequencePlayer;
+class USkeletalMeshComponent;
 
 /**
  * 
@@ -206,4 +208,17 @@ public:
 	/*---------- Ending Sequencer  --------*/
 public:
 	void PlayOutroSequencer();
+
+	UPROPERTY( BlueprintReadWrite , EditAnywhere )
+	ULevelSequencePlayer* Lv3SequencePlayer;
+
+	UPROPERTY( BlueprintReadWrite , EditAnywhere )
+	USkeletalMeshComponent* bossComp;
+
+private:
+	UPROPERTY()
+	class AProjectDCharacter* Target;
+
+	UPROPERTY()
+	AActor* OriginalViewTarget;
 };
