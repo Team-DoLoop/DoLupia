@@ -33,7 +33,7 @@ void ASaveLoadObject::Tick(float DeltaTime)
 		FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 
 		// 레벨 이름이 "Tutorial"인지 확인
-		if (!CurrentLevelName.Equals( TEXT( "Tutorial" ) , ESearchCase::IgnoreCase ))
+		if (!CurrentLevelName.Equals( TEXT( "Tutorial" ) , ESearchCase::IgnoreCase ) && !CurrentLevelName.Equals( TEXT( "Opening" ) , ESearchCase::IgnoreCase ))
 			LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , true , false , false )
 		else
 			LOAD( ESaveType::SAVE_1 , "TutorialSave" , false , false , false );

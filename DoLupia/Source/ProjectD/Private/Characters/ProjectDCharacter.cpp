@@ -322,6 +322,10 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
+	// 오프닝 맵이면
+	if(UGameplayStatics::GetCurrentLevelName(GetWorld()) == FName("Opening"))
+		return false;
+
 	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;

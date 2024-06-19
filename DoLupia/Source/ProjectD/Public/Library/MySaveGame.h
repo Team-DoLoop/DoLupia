@@ -6,8 +6,9 @@
 #include "GameFramework/SaveGame.h"
 #include "MySaveGame.generated.h"
 
-class UItemBase;
+enum class EUseColor : uint8;
 enum class EItemType : uint8;
+class UItemBase;
 
 USTRUCT()
 struct FSaveGameDefault
@@ -68,7 +69,16 @@ struct FSaveGameDefault
 
 	UPROPERTY()
 	int32 QuickSlotValue4;
+	
+	// 튜토리얼
+	UPROPERTY()
+	TMap<int32, bool> ToToAutoSaveData;
 
+	UPROPERTY()
+	TMap<EUseColor , bool> CanUseColor;
+
+	UPROPERTY()
+	TArray<int32> PlayerSkillLevel;
 };
 
 

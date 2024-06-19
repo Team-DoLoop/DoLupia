@@ -84,11 +84,12 @@ void APlayerGameMode::BeginPlay()
 	if (CurLevelName == LevelNames[0])
 	{
 		LevelIdx = 999;
-		if (Player)
-		{
-			Player->Destroy();
-			Player = nullptr;
-		}
+		IsToToNotInMapStart = true;
+		//if (Player)
+		//{
+		//	Player->Destroy();
+		//	Player = nullptr;
+		//}
 	}
 	else if (CurLevelName == LevelNames[1])
 	{
@@ -184,20 +185,7 @@ void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Characte
 	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
 	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
 
-	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName ,
-	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false ,
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? 
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" , 
-	
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ? 
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" , 
-	
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ? 
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" , 
-	
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ? 
-	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
-
+	SAVE( Character , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , LevelName , false );
 
 	//ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , ESaveType::SAVE_1 , "TutorialSave" , "TutorialSave" , LevelName ,
 	//	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false ,
@@ -265,7 +253,7 @@ void APlayerGameMode::SetNxtCompleteQuestTag(FString nextquesttag)
 void APlayerGameMode::SetNxtReceiveQuestTag(FString nextquesttag)
 {
 	UE_LOG( LogTemp , Error , TEXT( "gm - Next Receive Quest Tag: %s" ) , *nextquesttag );
-	// NextquestTag = nextquesttag;
+	NextquestTag = nextquesttag;
 
 	// Quest Receive -> MiniGame Active, Spawner Deactive
 	OnNextMiniGameQuestTagReceived.Broadcast( NextquestTag );

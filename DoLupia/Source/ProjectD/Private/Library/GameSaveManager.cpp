@@ -1,8 +1,10 @@
 ﻿#include "Library/GameSaveManager.h"
 
+#include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Common/UseColor.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/MySaveGame.h"
@@ -286,6 +288,12 @@ void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString Save
 			SaveGameInstance->SaveStruct.EquippedItems.Add( EItemType::Weapon , Weapon->GetTextData().Name.ToString() );
 		}
 
+		UProjectDGameInstance* GameInstance = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
+
+		SaveGameInstance->SaveStruct.CanUseColor = GameInstance->GetCanUseColor();
+		SaveGameInstance->SaveStruct.ToToAutoSaveData = GameInstance->GetToToAutoSaveData();
+		SaveGameInstance->SaveStruct.PlayerSkillLevel = GameInstance->GetPlayerSkillLevel();
+
 		//AsyncTask( ENamedThreads::AnyBackgroundThreadNormalTask , [SaveGameInstance]()
 		{
 			bool bSuccess = UGameplayStatics::SaveGameToSlot( SaveGameInstance , SaveGameInstance->SaveSlotName , SaveGameInstance->SaveIndex );
@@ -315,6 +323,8 @@ void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString Save
 
 void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
+
+
 	if(Character)
 	{
 		//if(UseThread)
@@ -335,6 +345,12 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 					UE_LOG( LogTemp , Log , TEXT( "Game loaded successfully. SaveName: %s, Location: %s" ) ,
 						*LoadedGameInstance->SaveStruct.SaveName.ToString() , *LoadedGameInstance->SaveStruct.Location.ToString() );
 
+					if (LoadedGameInstance->SaveStruct.LevelName != FName( "None" ) && OpenLevel)
+					{
+						UGameplayStatics::OpenLevel( GetWorld() , LoadedGameInstance->SaveStruct.LevelName );
+						return;
+					}
+						
 
 					if(UseLocation && !LoadedGameInstance->SaveStruct.Location.IsNearlyZero() && LoadedGameInstance->SaveStruct.IsUseLocation)
 					{
@@ -452,6 +468,29 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 						}
 					});
 
+					UProjectDGameInstance* GameInstance = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
+
+					for(auto& iter : LoadedGameInstance->SaveStruct.CanUseColor)
+						GameInstance->SetCanUseColor( iter.Key, iter.Value);
+
+					GameInstance->SetToToAutoSaveData( LoadedGameInstance->SaveStruct.ToToAutoSaveData );
+
+					for(int32 i = 0; i < LoadedGameInstance->SaveStruct.PlayerSkillLevel.Num(); ++i)
+					{
+
+						int32 SkillIndex = (i % 2) + 1;
+
+						EUseColor Color = EUseColor::BLUE;
+
+						if(i < 2)
+							Color = EUseColor::RED;
+
+						else if(i < 4)
+							Color = EUseColor::YELLOW;
+
+						GameInstance->SetPlayerSkillLevel( Color , SkillIndex, LoadedGameInstance->SaveStruct.PlayerSkillLevel[i] );
+					}
+
 
 					for(const auto& EquippedItem : LoadedGameInstance->SaveStruct.EquippedItems)
 					{
@@ -473,9 +512,6 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 						}
 
 					}
-
-					if(LoadedGameInstance->SaveStruct.LevelName != FName("None") && OpenLevel)
-						UGameplayStatics::OpenLevel( GetWorld() , LoadedGameInstance->SaveStruct.LevelName );
 				}
 			}
 			else

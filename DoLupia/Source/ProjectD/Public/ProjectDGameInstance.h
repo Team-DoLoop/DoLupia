@@ -61,6 +61,9 @@ public:
 	
 	FORCEINLINE int32 GetTutorialID() const { return TutorialID; }
 
+	FORCEINLINE TMap<int32 , bool> GetToToAutoSaveData() const { return ToToAutoSaveData; }
+	FORCEINLINE void SetToToAutoSaveData(const TMap<int32 , bool>& NewToToAutoSaveData ) { ToToAutoSaveData = NewToToAutoSaveData;}
+
 private:
 	TMap<int32, bool> ToToAutoSaveData;
 	

@@ -126,6 +126,8 @@ void UProjectDGameInstance::InitToToAutoSaveData()
 
 int32 UProjectDGameInstance::FindLastToToSaveData(int32 _MapIndex)
 {
+	if(ToToAutoSaveData.Num() == 0)
+		InitToToAutoSaveData();
 	
 	switch (_MapIndex)
 	{
