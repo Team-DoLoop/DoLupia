@@ -4,14 +4,17 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/GadgetComponent.h"
 #include "Characters/Components/InventoryComponent.h"
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Common/UseColor.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/MySaveGame.h"
 #include "Pooling/ItemPool.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
+#include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+#include "UserInterface/Skill/PlayerSkillWidget.h"
 #include "World/SaveLoad/SaveLoadObject.h"
 
 // Sets default values
@@ -471,7 +474,25 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 					UProjectDGameInstance* GameInstance = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
 
 					for(auto& iter : LoadedGameInstance->SaveStruct.CanUseColor)
-						GameInstance->SetCanUseColor( iter.Key, iter.Value);
+					{
+						if(iter.Value)
+						{
+							if (iter.Key == EUseColor::RED)
+							{
+								Character->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::NONE );
+							}
+							else if(iter.Key == EUseColor::YELLOW)
+							{
+								Character->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true);
+							}
+							else if (iter.Key == EUseColor::BLUE)
+							{
+								Character->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
+							}
+						}
+
+						
+					}
 
 					GameInstance->SetToToAutoSaveData( LoadedGameInstance->SaveStruct.ToToAutoSaveData );
 
@@ -489,8 +510,16 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 							Color = EUseColor::YELLOW;
 
 						GameInstance->SetPlayerSkillLevel( Color , SkillIndex, LoadedGameInstance->SaveStruct.PlayerSkillLevel[i] );
+						Character->GetAttackComp()->InitSkillLevel();
+						Character->GetAttackComp()->UpdateSkillLevel( SkillIndex , Character->GetAttackComp()->GetSkillInfo( Color , SkillIndex ) );
 					}
 
+					
+					
+
+					//Character->GetAttackComp()->InitCanUseColor();
+					//Character->GetAttackComp()->InitSkillLevel();
+					
 
 					for(const auto& EquippedItem : LoadedGameInstance->SaveStruct.EquippedItems)
 					{
