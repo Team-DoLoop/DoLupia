@@ -98,14 +98,6 @@ void UPlayerAnimInstance::PlayerLyingAnimation()
 	PlayMontage(LyingMontage);
 }
 
-void UPlayerAnimInstance::AnimNotify_GrabEnd()
-{
-	if(!PlayerFSM) return;
-
-	Player->LyingEnd();
-}
-
-
 // <---------------------- Attack ---------------------->
 
 void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)

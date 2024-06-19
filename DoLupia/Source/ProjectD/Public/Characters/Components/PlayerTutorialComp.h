@@ -113,7 +113,6 @@ private:
 	// <----------------------------- Trigger ----------------------------->
 public:
 	void StartTrigger(int32 _TriggerID);
-	void ExecuteTutorial();
 
 	
 };

@@ -4,6 +4,7 @@
 #include "Quest/MinigameQuestObject.h"
 
 #include "MapIconComponent.h"
+#include "Characters/ProjectDCharacter.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "MiniGame/Grid2048.h"
@@ -24,7 +25,8 @@ void AMinigameQuestObject::BeginPlay()
 	Super::BeginPlay();
 
     gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-
+    Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
+    
     if(gm)
     {
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
@@ -105,7 +107,7 @@ void AMinigameQuestObject::SpawnMiniGame()
             Ownminigame->OnMiniGameCompleted.AddDynamic( this , &AMinigameQuestObject::OnNextSpawnerQuestTagCompleted );
         }
 
-        
+        Player->PlayerDoSomeThing(true);
     }
 }
 

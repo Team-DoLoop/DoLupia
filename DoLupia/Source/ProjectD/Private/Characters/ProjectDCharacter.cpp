@@ -322,6 +322,10 @@ void AProjectDCharacter::HoveredQuickSlot()
 
 bool AProjectDCharacter::PossibleChangeGameMode()
 {
+	// 오프닝 맵이면
+	if(UGameplayStatics::GetCurrentLevelName(GetWorld()) == FName("Opening"))
+		return false;
+
 	// 인벤토리 창이 켜지면
 	if(HUD->IsMenuVisible())
 		return false;
@@ -877,6 +881,24 @@ void AProjectDCharacter::PerformTrace()
 
 	// 디버그용 선 그리기 (선택 사항)
 	// DrawDebugLine( GetWorld() , Start , End , FColor::Green , false , 1 , 0 , 1 );
+}
+
+void AProjectDCharacter::PlayerDoSomeThing(bool bIsStart)
+{
+	if(!PlayerFSM) return;
+
+	EPlayerState _state = _state = EPlayerState::IDLE;
+	
+	// 미니게임, 컨씬 시작
+	if(bIsStart)
+	{
+		_state = EPlayerState::MICA;
+		
+		if(!PlayerFSM->CanChangeState(_state)) return;
+	}
+
+	PlayerFSM->ChangePlayerState(_state);
+
 }
 
 /* Quest Decline 기능 삭제

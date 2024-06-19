@@ -6,6 +6,7 @@
 #include "Quest/StrangeObject.h"
 #include "MinigameQuestObject.generated.h"
 
+class AProjectDCharacter;
 class AGrid2048;
 class APlayerGameMode;
 /**
@@ -41,6 +42,9 @@ public:
 private:
 	UPROPERTY()
 	APlayerGameMode* gm;
+
+	UPROPERTY()
+	AProjectDCharacter* Player;
 
 	UPROPERTY()
 	AGrid2048* Ownminigame;
