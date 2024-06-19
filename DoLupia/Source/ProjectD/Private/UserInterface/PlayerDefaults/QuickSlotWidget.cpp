@@ -79,15 +79,39 @@ bool UQuickSlotWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 
 			ItemIcon->SetBrushFromTexture( ItemBase->GetAssetData().Icon );
 			ItemQuantity->SetVisibility(ESlateVisibility::Visible);
-			ItemQuantity->SetText( QuantityText );
-			ItemReference = Dest->ItemReference;
-			PreItemName = Dest->PreItemName;
 
-			Dest->ItemIcon->SetBrushFromTexture( BackBoardTexture );
-			Dest->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
-			Dest->ItemQuantity->SetText( QuantityText );
-			Dest->ItemReference = nullptr;
-			Dest->PreItemName = "";
+
+			if(!ItemReference && PreItemName == "")
+			{
+				ItemReference = Dest->ItemReference;
+				PreItemName = Dest->PreItemName;
+
+				Dest->ItemReference = nullptr;
+				Dest->PreItemName = "";
+				Dest->ItemIcon->SetBrushFromTexture( BackBoardTexture );
+				Dest->ItemQuantity->SetVisibility( ESlateVisibility::Collapsed );
+
+				ItemQuantity->SetText( QuantityText );
+				Dest->ItemQuantity->SetText( QuantityText );
+			}
+			else
+			{
+				Swap( ItemReference , Dest->ItemReference );
+				Swap( PreItemName , Dest->PreItemName );
+
+				FText SourText = ItemQuantity->GetText();
+				FText DestText =  Dest->ItemQuantity->GetText();
+
+				Dest->ItemQuantity->SetText(SourText);
+				ItemQuantity->SetText( DestText );
+
+				Dest->ItemIcon->SetBrushFromTexture( Dest->ItemReference->GetAssetData().Icon );
+			}
+
+
+
+			
+			
 
 			return true;
 		}
