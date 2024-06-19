@@ -9,9 +9,11 @@
 #include "MovieSceneSequencePlayer.h"              
 #include "MovieSceneSequencePlaybackSettings.h"     
 #include "MovieSceneCommonHelpers.h"     
+#include "ProjectDGameInstance.h"
 #include "Animation/AnimTrace.h"
 #include "Characters/ProjectDCharacter.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Pooling/SoundManager.h"
 
@@ -45,6 +47,7 @@ void ADestructableWallActor::BeginPlay()
 
 	Target = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
 	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
+	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 // Called every frame
@@ -58,6 +61,8 @@ void ADestructableWallActor::ExplosionWalls()
 {
 	if (!ExplosionSFX || !ExplosionVFX) return;
 
+	Target->PlayerDoSomeThing(true);
+	
 	UE_LOG( LogTemp , Error , TEXT( "ADestructableWallActor::ExplosionWalls" ) );
 	TriggerLvSequencer();
 
@@ -72,6 +77,9 @@ void ADestructableWallActor::ExplosionWalls()
 	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );
 	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
+
+
+	
 }
 
 void ADestructableWallActor::TriggerLvSequencer()
@@ -96,6 +104,9 @@ void ADestructableWallActor::TriggerLvSequencer()
 		[this]() {
 			SequencePlayer->Stop();  // 시퀀스 정지
 			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( Target , 1.0f );
+
+			// 토토 시작
+			GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, 9500);
 		} ,
 		5.0f , // 지연 시간(초)
 		false
