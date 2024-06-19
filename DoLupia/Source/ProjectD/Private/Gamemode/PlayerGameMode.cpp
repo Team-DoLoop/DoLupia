@@ -265,7 +265,7 @@ void APlayerGameMode::SetNxtCompleteQuestTag(FString nextquesttag)
 void APlayerGameMode::SetNxtReceiveQuestTag(FString nextquesttag)
 {
 	UE_LOG( LogTemp , Error , TEXT( "gm - Next Receive Quest Tag: %s" ) , *nextquesttag );
-	// NextquestTag = nextquesttag;
+	NextquestTag = nextquesttag;
 
 	// Quest Receive -> MiniGame Active, Spawner Deactive
 	OnNextMiniGameQuestTagReceived.Broadcast( NextquestTag );
