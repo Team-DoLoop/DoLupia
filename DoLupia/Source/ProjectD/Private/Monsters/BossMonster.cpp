@@ -280,10 +280,10 @@ void ABossMonster::BlastLightening()
 void ABossMonster::InitializeAttackStack()
 {
 	// 공격 함수 포인터 배열 초기화
-	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAttack,
+	/*AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAttack,
 						&ABossMonster::BlastFire,&ABossMonster::BlastLightening
-						};
-	//AttackFunctions = { &ABossMonster::GrabAttack};
+						};*/
+	AttackFunctions = { &ABossMonster::GrabAttack};
 
 	// 공격 함수들을 랜덤하게 스택에 추가
 	while (AttackFunctions.Num() > 0)

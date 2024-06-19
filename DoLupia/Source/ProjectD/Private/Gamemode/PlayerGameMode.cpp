@@ -419,4 +419,9 @@ void APlayerGameMode::ActivateInterationObject( bool onoff )
 	}
 }
 
+void APlayerGameMode::PlayOutroSequencer()
+{
+	UE_LOG( LogTemp , Log , TEXT( "APlayerGameMode::PlayOutroSequencer - Outro Sequencer Play" ) );
+}
+
 
