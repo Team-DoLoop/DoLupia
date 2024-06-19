@@ -69,6 +69,10 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UInventoryTooltip> Tooltip;
 
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* BackGroundTexture;
+
 private:
 	void Gradient( UMaterialInstanceDynamic* MaterialInstanceDynamic );
 	void BackGround( UMaterialInstanceDynamic* MaterialInstanceDynamic );

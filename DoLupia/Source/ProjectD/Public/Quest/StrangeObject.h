@@ -49,9 +49,12 @@ public:
 
 	virtual FString InteractWith() override;
 
-	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
 
 	void ActiveMapIcon( bool onoff );
+
+	bool bVisibleInteractUI = true;
+	bool bCheckIcon = false;
 
 };

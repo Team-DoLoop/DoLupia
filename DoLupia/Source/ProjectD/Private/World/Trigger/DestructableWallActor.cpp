@@ -2,9 +2,12 @@
 
 
 #include "World/Trigger/DestructableWallActor.h"
-
+#include "LevelSequencePlayer.h"
+#include "LevelSequenceActor.h"
+#include "MovieSceneSequencePlaybackSettings.h"
 #include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Pooling/SoundManager.h"
 
 // Sets default values
@@ -21,6 +24,25 @@ ADestructableWallActor::ADestructableWallActor()
 
 	DestructableWallComp->SetSimulatePhysics( false );
 	BoxComp->SetCollisionEnabled( ECollisionEnabled::QueryAndPhysics );
+
+	ExplosionVFX = CreateDefaultSubobject<UParticleSystemComponent>( TEXT( "ExplosionVFX" ) );
+	ExplosionVFX->SetupAttachment( RootComponent );
+
+	ExplosionVFX->bAutoActivate = false;
+
+	/*
+	static ConstructorHelpers::FObjectFinder<ULevelSequence> ExplosionSeqAsset( TEXT( "LevelSequence'/Game/Sequencer/Lv2ExplosionSeq.Lv2ExplosionSeq'" ) );
+	if (ExplosionSeqAsset.Succeeded())
+	{
+		ExplosionSeq = ExplosionSeqAsset.Object;
+	}
+	else
+	{
+		return;
+	}
+	*/
+
+	//ExplosionSeq = LoadObject<ULevelSequence>( nullptr , TEXT( "/Game/Sequencer/Lv2ExplosionSeq.Lv2ExplosionSeq" ) );
 }
 
 // Called when the game starts or when spawned
@@ -38,10 +60,31 @@ void ADestructableWallActor::Tick(float DeltaTime)
 
 void ADestructableWallActor::ExplosionWalls()
 {
+	if (!ExplosionSFX || !ExplosionVFX) return;
+
+	// Load the Level Sequence
+	//ULevelSequence* ExplosionSequence = LoadObject<ULevelSequence>( nullptr , TEXT( "/Game/Sequencer/Lv2ExplosionSeq.Lv2ExplosionSeq" ) );
+	/*
+	if (!ExplosionSeq) return;
+
+	// Create a Level Sequence Player
+	FMovieSceneSequencePlaybackSettings PlaybackSettings;
+	ALevelSequenceActor* LevelSequenceActor = nullptr;
+	SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer( GetWorld() , ExplosionSeq , PlaybackSettings, LevelSequenceActor );
+
+	if (SequencePlayer)
+	{
+		SequencePlayer->Play();
+	}
+	*/
+
 	// 벽폭발음
 	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
 
-	UE_LOG( LogTemp , Error , TEXT( "destroy Walls" )  );
+	// 폭발 효과
+	ExplosionVFX->ActivateSystem();
+
+	UE_LOG( LogTemp , Warning , TEXT( "Destroy Walls" )  )
 
 	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );

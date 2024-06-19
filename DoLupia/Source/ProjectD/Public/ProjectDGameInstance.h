@@ -29,11 +29,15 @@ public:
 
 	virtual void Init() override;
 	void InitCanUseColor();
+	void InitPlayerSkillLevel();
 	
 	FPlayerSkillData* GetPlayerSkillData(int32 SkillID);
 	
 	FORCEINLINE TMap<EUseColor, bool> GetCanUseColor(){return CanUseColor;}
 	FORCEINLINE void SetCanUseColor(EUseColor _Color, bool bCanUse) {CanUseColor[_Color] = bCanUse;}
+
+	void SetPlayerSkillLevel(EUseColor _Color, int32 _SkillKeyIndex, int32 SkillLevel);
+	FORCEINLINE TArray<int32> GetPlayerSkillLevel(){return PlayerSkillLevel;}
 
 private:
 	UPROPERTY()
@@ -42,11 +46,15 @@ private:
 	UPROPERTY()
 	TMap<EUseColor, bool> CanUseColor;
 
+	TArray<int32> PlayerSkillLevel;
+
 
 
 	// <------------------ Tutorial ------------------>
 public:
 	void InitTutorialIndex();
+	void InitToToAutoSaveData();
+	int32 FindLastToToSaveData(int32 _MapIndex);
 	FTutorialData* GetTutorialData(int32 _TutorialID);
 	void ExecuteTutorial(EExplainType _ExplainType, int32 _Index = -1, int32 _TutorialID = -1);
 	int32 FindTutorialID(EExplainType _ExplainType, int32 _ExplainIndex);
@@ -54,6 +62,8 @@ public:
 	FORCEINLINE int32 GetTutorialID() const { return TutorialID; }
 
 private:
+	TMap<int32, bool> ToToAutoSaveData;
+	
 	UPROPERTY()
 	class UDataTable* TutorialTable;
 	
@@ -90,5 +100,14 @@ public:
 private:
 	UPROPERTY()
 	class UDataTable* ItemTable;
-	
+
+
+	// <------------------ PlayerLocation ------------------>
+public:
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Save" )
+	FVector PlayerRestartLocation;
+
+	//UFUNCTION( BlueprintCallable , Category = "Save" )
+	//void LoadPlayerLocation();
+	//
 };

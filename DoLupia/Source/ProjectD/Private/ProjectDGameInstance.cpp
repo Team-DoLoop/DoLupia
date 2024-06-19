@@ -51,6 +51,8 @@ void UProjectDGameInstance::Init()
 	InitCanUseColor();
 	InitTutorialIndex();
 	InitCompletedQuests();
+	InitToToAutoSaveData();
+	InitPlayerSkillLevel();
 }
 
 // <----------------------------- Player Skill ----------------------------->
@@ -66,9 +68,33 @@ void UProjectDGameInstance::InitCanUseColor()
 	}
 }
 
+void UProjectDGameInstance::InitPlayerSkillLevel()
+{
+	PlayerSkillLevel.SetNum(6);
+	for(int i = 0; i < 6; i++)
+	{
+		PlayerSkillLevel[i] = 1;
+	}
+}
+
 FPlayerSkillData* UProjectDGameInstance::GetPlayerSkillData(int32 SkillID)
 {
 	return PlayerSkillTable->FindRow<FPlayerSkillData>(*FString::FromInt(SkillID), TEXT(""));
+}
+
+void UProjectDGameInstance::SetPlayerSkillLevel(EUseColor _Color, int32 _SkillKeyIndex, int32 SkillLevel)
+{
+	int32 index = 0;
+	switch (_Color)
+	{
+	case EUseColor::RED : index = 0; break;
+	case EUseColor::YELLOW : index = 2; break;
+	case EUseColor::BLUE : index = 4; break;
+	default: index = 0;
+	}
+	index = index + _SkillKeyIndex - 1;
+
+	PlayerSkillLevel[index] = SkillLevel;
 }
 
 
@@ -83,6 +109,44 @@ void UProjectDGameInstance::InitTutorialIndex()
 	{
 		TutorialIndexMap.Add(static_cast<EExplainType>(ExplainType->GetValueByIndex(i)), 0);
 	}
+}
+
+void UProjectDGameInstance::InitToToAutoSaveData()
+{
+	ToToAutoSaveData.Add(3000, false);	// Map Tutorial - 공격 튜토리얼 끝나고 저장
+	
+	ToToAutoSaveData.Add(4000, false);	// Map1 - Red 얻고 나서 저장
+	
+	ToToAutoSaveData.Add(9500, false);	// Map2 - 적군의 침입 시작 전 저장
+	ToToAutoSaveData.Add(4200, false);	// Map2 - 슬픔 얻고 저장
+	ToToAutoSaveData.Add(9700, false);	// Map2 - 마지막 포탈 가기 전 몬스터 다 잡으면 저장
+
+	ToToAutoSaveData.Add(9800, false);	// Map3 - 맵 들어오고 토토 말 다 끝나면 저장
+}
+
+int32 UProjectDGameInstance::FindLastToToSaveData(int32 _MapIndex)
+{
+	
+	switch (_MapIndex)
+	{
+	case 0 : if(ToToAutoSaveData[3000]) return 3000;
+	case 1:
+		{
+			if(ToToAutoSaveData[4000]) return 4000;
+		}
+	case 2:
+		{
+			if(ToToAutoSaveData[9700]) return 9700;
+			if(ToToAutoSaveData[4200]) return 4200;
+			if(ToToAutoSaveData[9500]) return 9500;
+		}
+	case 3:
+		{
+			if(ToToAutoSaveData[9800]) return 9800;
+		}
+	}
+
+	return -1;
 }
 
 FTutorialData* UProjectDGameInstance::GetTutorialData(int32 _TutorialID)
@@ -109,6 +173,19 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 	{
 		if(auto PlayerTuto = Player->GetTutorialComp())
 		{
+			// 자동 저장하는 튜토리얼이고 Map에 있는 인덱스라면
+			if(TutoData->bIsAutoSave && ToToAutoSaveData.Contains(TutorialID))
+			{
+				// 재시작 시에는 토토가 나오지 않게
+				if(ToToAutoSaveData[TutorialID])
+				{
+					if(TutoData->TutorialQuest.IsQuest) GiveQuest(TutoData->TutorialQuest.QuestID);
+					return;
+				}
+
+				ToToAutoSaveData[TutorialID] = true;
+			}
+			
 			// 지금 요청한 튜토리얼이 메인 퀘스트 관련이 아닌데, 이미 말하는 중이라면
 			if(!PlayerTuto->IsCantMoveToToSaying(TutoData) && PlayerTuto->GetToToSaying())
 			{
@@ -116,8 +193,9 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 				return;
 			}
 			UE_LOG(LogTemp, Log, TEXT("GetTutorialComp Success"));
-				
+
 			PlayerTuto->SetExplainIndex(0);
+
 			PlayerTuto->SetTotoSaying(true);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}
@@ -206,3 +284,18 @@ FItemData* UProjectDGameInstance::GetItemData(FString ItemID)
 {
 	return ItemTable->FindRow<FItemData>(FName(*ItemID), TEXT(""));
 }
+
+
+/*//<-----------------------------  Player location  ----------------------------->
+void UProjectDGameInstance::LoadPlayerLocation()
+{
+	AProjectDCharacter* Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+
+	auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	//겜모에 저장된 현재 아이디를 가져와서 그 위치 값을 가져와서 play
+	FString CurrnetQuestID = gm->GetStringQuestID();
+	PlayerRestartLocation = GetQuestData( CurrnetQuestID )->PlayerLocation;
+	Player->SetActorLocation( PlayerRestartLocation );
+}
+*/

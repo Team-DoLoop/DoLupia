@@ -110,6 +110,7 @@ void UPlayerAttackComp::BeginPlay()
 	}
 
 	InitCanUseColor();
+	InitSkillLevel();
 	
 	IgnoreAttackActors.AddUnique(Player);
 
@@ -383,7 +384,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementStart()
 	// 확인용 박스
 	if(bIsShowDebugLine) DrawDebugBox(GetWorld(), BoxPos, SkillRange, BoxRot, FColor::Red, false, 3.0f);
 
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	
 	// 공격 판정
 	UKismetSystemLibrary::BoxOverlapActors(GetWorld(), BoxPos, SkillRange,
@@ -428,7 +429,7 @@ void UPlayerAttackComp::MeleeSkillAttackJudgementEnd()
 
 void UPlayerAttackComp::RangedSkillAttackJudgementStart()
 {
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	if(SkillKeyIndex_Combo == 1)
 	{
 		if(!PlayerElecBlastFactory) return;
@@ -477,7 +478,7 @@ void UPlayerAttackComp::ShieldSkillStart()
 	PlayerShield->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
 	GetWorld()->GetTimerManager().SetTimer(ShieldTimerHandle, this, &UPlayerAttackComp::ShieldSkillEnd, ShieldTime, false);
 
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	PlayerShield->SetSkillDamage(SkillLevel * RandDamage);
 	
 	PlayerFSMComp->ChangePlayerShieldState(EPlayerShieldState::SHIELD);
@@ -500,7 +501,7 @@ void UPlayerAttackComp::PlayerWaterBladeSkill()
 {
 	if(!PlayerWaterBladeFactory) return;
 
-	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage);
+	RandDamage = FMath::RandRange(SkillDamage/2, SkillDamage) * PlayerStat->GetATK();
 	
 	PlayerWaterBlade = GetWorld()->SpawnActor<APlayerSkillWaterBlade>(PlayerWaterBladeFactory, Player->GetActorLocation(), FRotator(0));
 	PlayerWaterBlade->SetSkillDirection(Player->GetActorForwardVector());
@@ -535,7 +536,6 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	{
 		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
 		SetSkillUI(i, _TempSkill);
-		UpdateSkillLevel(i+1, _TempSkill);
 	}
 
 	if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
@@ -718,6 +718,19 @@ void UPlayerAttackComp::SetSpawnLocation()
 
 // <---------------------- Skill Upgrade ---------------------->
 
+void UPlayerAttackComp::InitSkillLevel()
+{
+	if(!GI) return;
+	auto _SkillLevel = GI->GetPlayerSkillLevel();
+
+	RedQSkill->SkillLevel = _SkillLevel[0];
+	RedWSkill->SkillLevel = _SkillLevel[1];
+	YellowQSkill->SkillLevel = _SkillLevel[2];
+	YellowWSkill->SkillLevel = _SkillLevel[3];
+	BlueQSkill->SkillLevel = _SkillLevel[4];
+	BlueWSkill->SkillLevel = _SkillLevel[5];
+}
+
 void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex)
 {
 	FSkillInfo* _TempSkill = GetSkillInfo(_Color, SkillKeyIndex);
@@ -725,8 +738,11 @@ void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyInd
 	if(_TempSkill)
 	{
 		if(_TempSkill->SkillLevel < 5)
+		{
 			_TempSkill->SkillLevel = _TempSkill->SkillLevel + 1;
-
+			GI->SetPlayerSkillLevel(_Color, SkillKeyIndex, _TempSkill->SkillLevel);
+		}
+		
 		if(_Color == CurrentSkillColor) UpdateSkillLevel(SkillKeyIndex, _TempSkill);
 		UE_LOG(LogTemp,Log,TEXT("Get GetSkillUpgradePoint"));
 	}

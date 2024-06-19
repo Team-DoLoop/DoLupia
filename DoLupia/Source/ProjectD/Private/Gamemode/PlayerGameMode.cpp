@@ -48,7 +48,8 @@ APlayerGameMode::APlayerGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
-	// Level
+	// Add Levels Name
+	LevelNames.Add( TEXT( "Opening" ) );
 	LevelNames.Add( TEXT( "Tutorial" ) );
 	LevelNames.Add( TEXT( "GameLv1" ) );
 	LevelNames.Add( TEXT( "GameLv2" ) );
@@ -79,25 +80,35 @@ void APlayerGameMode::BeginPlay()
 	Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
 
 	FString CurLevelName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
+
 	if (CurLevelName == LevelNames[0])
+	{
+		LevelIdx = 999;
+		if (Player)
+		{
+			Player->Destroy();
+			Player = nullptr;
+		}
+	}
+	else if (CurLevelName == LevelNames[1])
 	{
 		LevelIdx = 0;
 		PlayerCameraboom = 1000.0f;
 	}
-	else if (CurLevelName == LevelNames[1])
+	else if (CurLevelName == LevelNames[2])
 	{
 		LevelIdx = 1;
 		PlayerCameraboom = 1000.0f;
 		CreateLocationTitleWidget( LevelIdx );
 	}
-	else if (CurLevelName == LevelNames[2])
+	else if (CurLevelName == LevelNames[3])
 	{
 		LevelIdx = 2;
 		PlayerCameraboom = 700.0f;
 		CreateLocationTitleWidget( LevelIdx );
 		ApplyAITxtP();
 	}
-	else if (CurLevelName == LevelNames[3])
+	else if (CurLevelName == LevelNames[4])
 	{
 		LevelIdx = 3;
 		PlayerCameraboom = 1200.0f;
@@ -125,6 +136,7 @@ void APlayerGameMode::BeginPlay()
 		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
 
+	//GI->LoadPlayerLocation();
 }
 
 UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
@@ -165,15 +177,15 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 	}
 }
 
-void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType)
+void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType, bool OpenLevel)
 {
 	//SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false);
 
 	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
 	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
 
-	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName , 
-	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false , 
+	ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , SaveType , "PlayerMainSave" , "PlayerMainSave" , LevelName ,
+	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false ,
 	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ? 
 	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" , 
 	
@@ -201,16 +213,18 @@ void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Characte
 	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ?
 	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
 
-
-	UGameplayStatics::OpenLevel( this , LevelName );
+	if(OpenLevel)
+		UGameplayStatics::OpenLevel( this , LevelName );
 }
 
 void APlayerGameMode::SetPlayerCameraboom(float camboom)
 {
 	// Player Load
-	Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
-
-	Player->GetCameraBoom()->TargetArmLength = camboom ;
+	if(Player)
+	{
+		Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
+		Player->GetCameraBoom()->TargetArmLength = camboom;
+	}
 }
 
 int32 APlayerGameMode::GetQuestID() const
@@ -243,29 +257,17 @@ void APlayerGameMode::SetNxtCompleteQuestTag(FString nextquesttag)
 	UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest Tag: %s" ) , *nextquesttag );
 	NextquestTag = nextquesttag;
 
+	// Quest Complete -> NPC, Spawner Active
 	OnNextNPCQuestTagReceived.Broadcast( NextquestTag );
 	OnNextSpawnerQuestTagCompleted.Broadcast();
-
-	/*
-	if(NextquestTag == "2001" || NextquestTag == "2004" || NextquestTag == "4001")
-	{
-		UE_LOG( LogTemp , Error , TEXT( "gm - FindMonsterSpawner" ) );
-		FindMonsterSpawner( FName( *NextquestTag ) , true );
-	} else
-	{
-		FindMonsterSpawner( FName( *NextquestTag ) , false );
-	}
-	/*else if(NextquestID == "3001" || NextquestID == "4001")
-	{
-		FindMonsterSpawner( FName( *NextquestID ) , false );
-	}
-	*/
 }
 
 void APlayerGameMode::SetNxtReceiveQuestTag(FString nextquesttag)
 {
 	UE_LOG( LogTemp , Error , TEXT( "gm - Next Receive Quest Tag: %s" ) , *nextquesttag );
+	// NextquestTag = nextquesttag;
 
+	// Quest Receive -> MiniGame Active, Spawner Deactive
 	OnNextMiniGameQuestTagReceived.Broadcast( NextquestTag );
 	OnNextSpawnerQuestTagReceived.Broadcast( NextquestTag );
 }
@@ -313,7 +315,21 @@ void APlayerGameMode::StartGameStory()
 	}
 
 	if(!IsToToNotInMapStart)
-		GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+	{
+		int32 SaveDataIndex = GI->FindLastToToSaveData(LevelIdx);
+
+		// 저장된 데이터가 있다면	
+		if(SaveDataIndex != -1)
+		{
+			int32 ThousandNum = SaveDataIndex / 1000;
+			if(ThousandNum == 3) GI->ExecuteTutorial(EExplainType::ATTACK, -1, SaveDataIndex);
+			else if(ThousandNum == 4) GI->ExecuteTutorial(EExplainType::SKILL, -1, SaveDataIndex);
+			else if(ThousandNum == 9) GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, SaveDataIndex);
+		}
+		
+		// 저장된 데이터가 없다면 처음부터 시작
+		else GI->ExecuteTutorial(EExplainType::MAIN_STORY, index);
+	}
 }
 
 

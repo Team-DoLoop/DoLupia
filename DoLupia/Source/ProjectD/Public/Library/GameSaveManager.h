@@ -10,6 +10,7 @@
 struct FSaveGameDefault;
 class AProjectDCharacter;
 class UItemPool;
+class ASaveLoadObject;
 
 UENUM()
 enum class ESaveType
@@ -64,5 +65,8 @@ private:
 
 	UPROPERTY()
 	UItemPool* ItemPool;
+
+	UPROPERTY()
+	ASaveLoadObject* SaveLoadObject;
 
 };

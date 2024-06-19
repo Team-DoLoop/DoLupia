@@ -67,6 +67,8 @@ public:
 	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
 	FString NPCID;
 
+	void FallDownNPC();
+
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Dialog" )
 	UDialogComponent* DialogComp;
@@ -87,6 +89,7 @@ public:
 	FName OwnQuestTag;
 
 	bool bCanTalk = false;
+	bool bVisibleInteractUI = true;
 
 private:
 	UPROPERTY( VisibleAnywhere , Category = "Character | Quest" )
@@ -118,7 +121,7 @@ public:
 	void HideNPC();
 
 	/*---------------------- Minimap ------------------*/
-	UPROPERTY( VisibleAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
 
 	/*-------------------- NPC State ---------------------*/
