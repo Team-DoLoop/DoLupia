@@ -19,6 +19,9 @@ ADroppedItem::ADroppedItem()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>( "Item StaticMesh" );
 	SetRootComponent( ItemMesh );
 
+	ItemMesh->SetCollisionObjectType( ECollisionChannel::ECC_PhysicsBody );
+	ItemMesh->SetCollisionResponseToAllChannels( ECollisionResponse::ECR_Block );
+
 	SphereComponent = CreateDefaultSubobject<USphereComponent>( "Item Collision" );
 	SphereComponent->InitSphereRadius( 50.0f );
 	SphereComponent->SetCollisionProfileName( TEXT( "OverlapAllDynamic" ) );
@@ -40,7 +43,7 @@ void ADroppedItem::SetItemStaticMesh(UStaticMesh* StaticMesh)
 	GravityScale = Statistics.GravityScale;
 
 	SphereComponent->SetSphereRadius( FMath::Max3( ItemMesh->Bounds.BoxExtent.X , ItemMesh->Bounds.BoxExtent.Y , ItemMesh->Bounds.BoxExtent.Z ) 
-		* 5.0f / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
+		* 3.0f / FMath::Max3( Scale3D.X, Scale3D.Y, Scale3D.Z));
 
 	ItemMesh->SetRenderCustomDepth( true );
 	ItemMesh->CustomDepthStencilValue = 4;
@@ -124,8 +127,8 @@ void ADroppedItem::OnTouchesGroundBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 void ADroppedItem::PerformBoxTrace( float DeltaTime )
 {
-	const FVector& Start = GetActorLocation() + FVector(0.f, 0.f, ItemMesh->Bounds.BoxExtent.Z);
-	const FVector& End = Start - FVector( 0.f , 0.f , ItemMesh->Bounds.BoxExtent.Z);
+	const FVector& Start = GetActorLocation() + FVector(0.f, 0.f, ItemMesh->Bounds.BoxExtent.Z * 1.5f);
+	const FVector& End = Start - FVector( 0.f , 0.f , ItemMesh->Bounds.BoxExtent.Z * 1.5f );
 	const FVector& HalfSize = ItemMesh->Bounds.BoxExtent * 0.52f;
 	const FRotator& Orientation = GetActorRotation();
 
