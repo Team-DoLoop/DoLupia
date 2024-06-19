@@ -36,6 +36,8 @@ public:
 
 	FEndAttackDelegate OnEndAttack;
 
+	UPROPERTY()
+	class APlayerGameMode* gm;
 
 	UPROPERTY()
 	class ABossMonster* Boss;
