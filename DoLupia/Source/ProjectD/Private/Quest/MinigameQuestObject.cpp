@@ -105,6 +105,7 @@ void AMinigameQuestObject::SpawnMiniGame()
             Ownminigame->OnMiniGameCompleted.AddDynamic( this , &AMinigameQuestObject::OnNextSpawnerQuestTagCompleted );
         }
 
+        
     }
 }
 
