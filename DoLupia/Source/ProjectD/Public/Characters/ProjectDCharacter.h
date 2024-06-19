@@ -146,6 +146,7 @@ private:
 	UPROPERTY()
 	class UPlayerBattleWidget* PlayerBattleWidget;
 
+
 public:
 	UPlayerDefaultsWidget* GetPlayerDefaultsWidget() const { return PlayerDefaultsWidget; }
 	void UseQuickSlot( int32 SlotNumber );
