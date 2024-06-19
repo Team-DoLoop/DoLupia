@@ -51,14 +51,17 @@ private:
 	AClothes_ShoesBase* ShoesBase;
 	UPROPERTY( VisibleAnywhere , Category = "Equipment" )
 	AClothes_ShoesBase* Shoes_L;
-	UPROPERTY( VisibleAnywhere, Category = "Equipment" )
+	UPROPERTY(EditAnywhere, Category = "Equipment" )
 	ASwordBase* SwordBase;
 
 	
 
 public:
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE class ASwordBase* GetSword() const { return SwordBase; }
 
 	UItemBase* GetEquippedItem( EItemType ItemType );
+
+
 
 };

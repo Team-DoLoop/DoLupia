@@ -87,7 +87,7 @@ public:
 	EBossDelay delayState;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
-	int32 BossMaxHP = 1500;
+	int32 BossMaxHP = 50;
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly )
 	int32 BossCurrentHP = BossMaxHP;
