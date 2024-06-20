@@ -55,6 +55,7 @@ private:
 protected:
 	void TestAnyFunction();
 	void SetPosPlayer();
+	void SetPosBoss();
 	void GetInputModeString() const;
 
 public:
@@ -63,7 +64,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SetPosAction;
-	
+
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* SetBossPosAction;
 
 	// <---------------------- Player ---------------------->
 private:

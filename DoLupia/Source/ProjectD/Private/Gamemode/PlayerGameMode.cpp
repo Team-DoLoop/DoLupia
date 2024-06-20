@@ -450,6 +450,7 @@ void APlayerGameMode::PlayOutroSequencer()
 	
 
 	if (!Lv3SequencePlayer && !bossComp && !playerComp) return;
+	ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() );
 
 	if (Lv3SequencePlayer && OriginalViewTarget)
 	{
@@ -459,6 +460,7 @@ void APlayerGameMode::PlayOutroSequencer()
 		playerComp->SetHiddenInGame( false );
 
 		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
+		SoundManager->StopBGM();
 		Lv3SequencePlayer->Play();
 	}
 	else
@@ -477,7 +479,7 @@ void APlayerGameMode::PlayOutroSequencer()
 			SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , "Opening" , false );
 			UGameplayStatics::OpenLevel( this , TEXT("Opening") );
 		} ,
-		10.0f , // 지연 시간(초)
+		12.0f , // 지연 시간(초)
 		false
 	);
 
