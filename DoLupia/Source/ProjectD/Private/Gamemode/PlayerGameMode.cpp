@@ -26,6 +26,7 @@
 
 #include "LevelSequencePlayer.h"
 #include "MovieSceneSequencePlayer.h" 
+#include "Monsters/BossMonster.h"
 #include "Monsters/MonsterSpawnManager.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
@@ -60,6 +61,8 @@ APlayerGameMode::APlayerGameMode()
 	TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComp" ) );
 	Lv3SequencePlayer = CreateDefaultSubobject<ULevelSequencePlayer>( TEXT( "Lv3SequencePlayer" ) );
 	bossComp = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "bossComp" ) );
+	playerComp = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "playerComp" ) );
+
 
 }
 
@@ -429,13 +432,31 @@ void APlayerGameMode::PlayOutroSequencer()
 {
 	UE_LOG( LogTemp , Log , TEXT( "APlayerGameMode::PlayOutroSequencer - Outro Sequencer Play" ) );
 
-	if (!Lv3SequencePlayer && !bossComp) return;
+	// 레벨 내, 플레이어 보스 hidden
+	for (TActorIterator<ABossMonster> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		ABossMonster* boss = *ActorItr;
+		UE_LOG( LogTemp , Error , TEXT( "Boss hidden - false" ) );
+		if(boss)
+		{
+			boss->SetHidden( true );
+			UE_LOG( LogTemp , Error , TEXT( "Boss hidden - true" ) );
+		}
+	}
+	if(Player)
+	{
+		Player->SetHidden( true );
+	}
+	
+
+	if (!Lv3SequencePlayer && !bossComp && !playerComp) return;
 
 	if (Lv3SequencePlayer && OriginalViewTarget)
 	{
 		UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
 		//bossComp->SetVisibility( true );
 		bossComp->SetHiddenInGame( false );
+		playerComp->SetHiddenInGame( false );
 
 		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
 		Lv3SequencePlayer->Play();
@@ -447,14 +468,16 @@ void APlayerGameMode::PlayOutroSequencer()
 
 	FTimerHandle TimerHandle;
 
+
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle ,
 		[this]() {
 			bossComp->DestroyComponent( true );
 			Lv3SequencePlayer->Stop();  // 시퀀스 정지
+			SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , "Opening" , false );
 			UGameplayStatics::OpenLevel( this , TEXT("Opening") );
 		} ,
-		5.0f , // 지연 시간(초)
+		10.0f , // 지연 시간(초)
 		false
 	);
 

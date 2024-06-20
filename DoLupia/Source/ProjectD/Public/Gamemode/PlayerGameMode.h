@@ -215,6 +215,9 @@ public:
 	UPROPERTY( BlueprintReadWrite , EditAnywhere )
 	USkeletalMeshComponent* bossComp;
 
+	UPROPERTY( BlueprintReadWrite , EditAnywhere )
+	USkeletalMeshComponent* playerComp;
+
 private:
 	UPROPERTY()
 	class AProjectDCharacter* Target;
