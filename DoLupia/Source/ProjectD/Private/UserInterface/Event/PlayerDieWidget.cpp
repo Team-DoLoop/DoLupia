@@ -1,10 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UserInterface/Event/PlayerDieWidget.h"
 
+#include "Characters/ProjectDCharacter.h"
 #include "Components/Button.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Library/LevelManager.h"
 
 void UPlayerDieWidget::NativeConstruct()
 {
@@ -16,13 +19,15 @@ void UPlayerDieWidget::NativeConstruct()
 
 void UPlayerDieWidget::ReStart()
 {
-	FString mapName = UGameplayStatics::GetCurrentLevelName ( GetWorld ( ) );
-	UGameplayStatics::OpenLevel ( GetWorld ( ) , FName ( *mapName ) );
+	LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , true , false , true );
 
-	this->RemoveFromParent ( );
-	auto controller = GetWorld ( )->GetFirstPlayerController ( );
-	controller->SetShowMouseCursor ( false );
-	controller->SetInputMode ( FInputModeGameOnly ( ) );
+	//FString mapName = UGameplayStatics::GetCurrentLevelName ( GetWorld ( ) );
+	//UGameplayStatics::OpenLevel ( GetWorld ( ) , FName ( *mapName ) );
+
+	//this->RemoveFromParent ( );
+	//auto controller = GetWorld ( )->GetFirstPlayerController ( );
+	//controller->SetShowMouseCursor ( false );
+	//controller->SetInputMode ( FInputModeGameOnly ( ) );
 }
 
 void UPlayerDieWidget::Quit()
