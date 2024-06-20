@@ -7,6 +7,7 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Common/UseColor.h"
 #include "GameFramework/PlayerStart.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/MySaveGame.h"
 #include "Pooling/ItemPool.h"
@@ -348,6 +349,9 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 					UE_LOG( LogTemp , Log , TEXT( "Game loaded successfully. SaveName: %s, Location: %s" ) ,
 						*LoadedGameInstance->SaveStruct.SaveName.ToString() , *LoadedGameInstance->SaveStruct.Location.ToString() );
 
+					if(LoadedGameInstance->SaveStruct.LevelName == FName( "Openinig" ))
+						return;
+
 					if (LoadedGameInstance->SaveStruct.LevelName != FName( "None" ) && OpenLevel)
 					{
 						UGameplayStatics::OpenLevel( GetWorld() , LoadedGameInstance->SaveStruct.LevelName );
@@ -475,30 +479,39 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 						}
 					});
 
+					FTimerHandle Handle;
 					UProjectDGameInstance* GameInstance = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
 
-					for(auto& iter : LoadedGameInstance->SaveStruct.CanUseColor)
+					GetWorld()->GetTimerManager().SetTimer( Handle, FTimerDelegate::CreateLambda([GameInstance, LoadedGameInstance, Character]()
 					{
-						if(iter.Value)
+						for (auto& iter : LoadedGameInstance->SaveStruct.CanUseColor)
 						{
-							if (iter.Key == EUseColor::RED)
+							if (iter.Value)
 							{
-								Character->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::NONE );
+								if (iter.Key == EUseColor::RED)
+								{
+									Character->GetAttackComp()->SetSkillUseState( true , ESkillOpenType::NONE );
+								}
+								else if (iter.Key == EUseColor::YELLOW)
+								{
+									Character->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+								}
+								else if (iter.Key == EUseColor::BLUE)
+								{
+									Character->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
+								}
 							}
-							else if(iter.Key == EUseColor::YELLOW)
-							{
-								Character->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true);
-							}
-							else if (iter.Key == EUseColor::BLUE)
-							{
-								Character->GetAttackComp()->SetColorUseState( EUseColor::BLUE , true );
-							}
+
+
 						}
 
-						
-					}
+					}), 0.1f, false);
+
 
 					GameInstance->SetToToAutoSaveData( LoadedGameInstance->SaveStruct.ToToAutoSaveData );
+					//APlayerGameMode* PlayerGameMode = Cast<APlayerGameMode>(GetWorld()->GetAuthGameMode());
+					//PlayerGameMode->StartGameStory();
+
 
 					for(int32 i = 0; i < LoadedGameInstance->SaveStruct.PlayerSkillLevel.Num(); ++i)
 					{
