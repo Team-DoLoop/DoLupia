@@ -28,6 +28,7 @@
 #include "Library/AIConnectionLibrary.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Monsters/BossMonster.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -131,7 +132,8 @@ void AProjectDPlayerController::SetupInputComponent()
 		// Test
 		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
 		EnhancedInputComponent->BindAction(SetPosAction, ETriggerEvent::Started, this, &AProjectDPlayerController::SetPosPlayer);							// K
-		
+		EnhancedInputComponent->BindAction( SetBossPosAction , ETriggerEvent::Started , this , &AProjectDPlayerController::SetPosBoss );							// K
+
 		EnhancedInputComponent->BindAction(ToToAction, ETriggerEvent::Started, this, &AProjectDPlayerController::StartToToStory);							// ToTo
 	}
 	else
@@ -189,6 +191,21 @@ void AProjectDPlayerController::SetPosPlayer()
 	if(!ControlledCharacter) return;
 
 	if(GM->GetLevelIdx() == 3) ControlledCharacter->SetActorLocation(FVector(-2569.672361f, 830.339872f, 781.156282f));
+}
+
+void AProjectDPlayerController::SetPosBoss()
+{
+	if (!ControlledCharacter) return;
+
+	if (GM->GetLevelIdx() == 3)
+	{
+		auto Boss = Cast<ABossMonster>( UGameplayStatics::GetActorOfClass( GetWorld() , ABossMonster::StaticClass() ) );
+		if(Boss)
+		{
+			Boss->SetActorLocation( FVector(580.0f , 680.f , 800.7 ) );
+			
+		}
+	}
 }
 
 
