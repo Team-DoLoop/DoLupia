@@ -69,6 +69,8 @@ public:
 	void ApplyAITxtP();
 	void ApplyAITxtB();
 
+	FORCEINLINE int32 GetLevelIdx() const {return LevelIdx;}
+
 private:
 	UPROPERTY()
 	class UProjectDGameInstance* GI;
@@ -214,6 +216,9 @@ public:
 
 	UPROPERTY( BlueprintReadWrite , EditAnywhere )
 	USkeletalMeshComponent* bossComp;
+
+	UPROPERTY( BlueprintReadWrite , EditAnywhere )
+	USkeletalMeshComponent* playerComp;
 
 private:
 	UPROPERTY()

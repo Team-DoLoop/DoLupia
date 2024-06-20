@@ -30,22 +30,22 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	int32 CenterDamage = 100;
+	int32 CenterDamage = 500;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	int32 MidDamage = 50;
+	int32 MidDamage = 200;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	int32 OuterDamage = 30;
+	int32 OuterDamage = 100;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	float CenterRadius = 100.0f;
+	float CenterRadius = 200.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	float MidRadius = 200.0f;
+	float MidRadius = 300.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Damage")
-	float OuterRadius = 300.0f;
+	float OuterRadius = 400.0f;
 	
 	// int32 Damage = 0;
 	
