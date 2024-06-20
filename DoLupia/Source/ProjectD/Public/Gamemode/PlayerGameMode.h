@@ -69,6 +69,8 @@ public:
 	void ApplyAITxtP();
 	void ApplyAITxtB();
 
+	FORCEINLINE int32 GetLevelIdx() const {return LevelIdx;}
+
 private:
 	UPROPERTY()
 	class UProjectDGameInstance* GI;

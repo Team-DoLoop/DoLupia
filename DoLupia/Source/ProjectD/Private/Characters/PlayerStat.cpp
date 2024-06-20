@@ -54,7 +54,7 @@ void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextI
 
 		ATK -= ItemStatistics.DamageValue;
 		DEF -= ItemStatistics.ArmorRating;
-		MaxHP -= ItemStatistics.HealthValue;
+		//MaxHP -= ItemStatistics.HealthValue;
 	}
 
 	if(NextItemBase)
@@ -63,7 +63,7 @@ void APlayerStat::ChangeStatsItem( UItemBase* CurrentItemBase , UItemBase* NextI
 
 		ATK += ItemStatistics.DamageValue;
 		DEF += ItemStatistics.ArmorRating;
-		MaxHP += ItemStatistics.HealthValue;
+		//MaxHP += ItemStatistics.HealthValue;
 	}
 }
 

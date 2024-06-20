@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ProjectDPlayerController.generated.h"
 
+class APlayerGameMode;
 /** Forward declaration to improve compiling times */
 struct FInputActionValue;
 class UInputMappingContext;
@@ -26,6 +27,9 @@ protected:
 	
 public:
 	AProjectDPlayerController();
+
+	UPROPERTY()
+	APlayerGameMode* GM;
 
 	// <---------------------- Not Use ---------------------->
 	/*
@@ -50,11 +54,15 @@ private:
 
 protected:
 	void TestAnyFunction();
+	void SetPosPlayer();
 	void GetInputModeString() const;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* TestAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SetPosAction;
 	
 
 	// <---------------------- Player ---------------------->

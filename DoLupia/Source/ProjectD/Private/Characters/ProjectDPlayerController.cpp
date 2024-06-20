@@ -49,6 +49,7 @@ void AProjectDPlayerController::BeginPlay()
 	FSlateApplication::Get().GetNavigationConfig()->bTabNavigation = false;
 	
 	ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
+	GM = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 }
 
 
@@ -129,6 +130,7 @@ void AProjectDPlayerController::SetupInputComponent()
 
 		// Test
 		EnhancedInputComponent->BindAction(TestAction, ETriggerEvent::Started, this, &AProjectDPlayerController::TestAnyFunction);
+		EnhancedInputComponent->BindAction(SetPosAction, ETriggerEvent::Started, this, &AProjectDPlayerController::SetPosPlayer);							// K
 		
 		EnhancedInputComponent->BindAction(ToToAction, ETriggerEvent::Started, this, &AProjectDPlayerController::StartToToStory);							// ToTo
 	}
@@ -182,7 +184,14 @@ void AProjectDPlayerController::TestAnyFunction()
 	// ControlledCharacter->TakeEffectAttackHit(EEffectAttackType::ELECTRIC);
 }
 
-	
+void AProjectDPlayerController::SetPosPlayer()
+{
+	if(!ControlledCharacter) return;
+
+	if(GM->GetLevelIdx() == 3) ControlledCharacter->SetActorLocation(FVector(-2569.672361f, 830.339872f, 781.156282f));
+}
+
+
 // <---------------------- Move ---------------------->
 
 void AProjectDPlayerController::OnInputStarted()
