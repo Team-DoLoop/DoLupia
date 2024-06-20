@@ -38,6 +38,9 @@ void ASaveLoadObject::Tick(float DeltaTime)
 		else
 			LOAD( ESaveType::SAVE_1 , "TutorialSave" , false , false , false );
 
+		APlayerGameMode* gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+		gm->StartGameStory();
+
 		Destroy();
 		return;
 	}

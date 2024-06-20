@@ -49,9 +49,6 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	Player->GetTutorialComp()->SetDefaultUI(this);
 	
 	 HideTutorialWidget();
-	
-	APlayerGameMode* gm = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	gm->StartGameStory();
 }
 
 void UPlayerDefaultsWidget::UseQuickSlot(int32 SlotNumber)

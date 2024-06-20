@@ -3,11 +3,8 @@
 
 #include "UserInterface/Event/PlayerDieWidget.h"
 
-#include "Characters/ProjectDCharacter.h"
 #include "Components/Button.h"
-#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "Library/LevelManager.h"
 
 void UPlayerDieWidget::NativeConstruct()
 {
@@ -19,15 +16,13 @@ void UPlayerDieWidget::NativeConstruct()
 
 void UPlayerDieWidget::ReStart()
 {
-	LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , true , false , true );
+	FString mapName = UGameplayStatics::GetCurrentLevelName ( GetWorld ( ) );
+	UGameplayStatics::OpenLevel ( GetWorld ( ) , FName ( *mapName ) );
 
-	//FString mapName = UGameplayStatics::GetCurrentLevelName ( GetWorld ( ) );
-	//UGameplayStatics::OpenLevel ( GetWorld ( ) , FName ( *mapName ) );
-
-	//this->RemoveFromParent ( );
-	//auto controller = GetWorld ( )->GetFirstPlayerController ( );
-	//controller->SetShowMouseCursor ( false );
-	//controller->SetInputMode ( FInputModeGameOnly ( ) );
+	this->RemoveFromParent ( );
+	auto controller = GetWorld ( )->GetFirstPlayerController ( );
+	controller->SetShowMouseCursor ( false );
+	controller->SetInputMode ( FInputModeGameOnly ( ) );
 }
 
 void UPlayerDieWidget::Quit()

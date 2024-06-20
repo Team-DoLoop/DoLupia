@@ -319,7 +319,7 @@ void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString Save
 	}
 	else
 	{
-		UE_LOG( LogTemp , Error , TEXT( "SaveGameInstance is nullptr" ) );
+		UE_LOG( LogTemp , Error , TEXT( "SaveGameInstance is nullptr" ) );	
 	}
 
 }
@@ -509,9 +509,6 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 
 
 					GameInstance->SetToToAutoSaveData( LoadedGameInstance->SaveStruct.ToToAutoSaveData );
-					//APlayerGameMode* PlayerGameMode = Cast<APlayerGameMode>(GetWorld()->GetAuthGameMode());
-					//PlayerGameMode->StartGameStory();
-
 
 					for(int32 i = 0; i < LoadedGameInstance->SaveStruct.PlayerSkillLevel.Num(); ++i)
 					{
