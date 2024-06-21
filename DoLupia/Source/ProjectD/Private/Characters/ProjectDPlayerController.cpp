@@ -148,12 +148,6 @@ void AProjectDPlayerController::SetupInputComponent()
 void AProjectDPlayerController::TestAnyFunction()
 {
 	if(!ControlledCharacter) return;
-	
-	// Die Test
-	// ControlledCharacter->moveComp->Die();
-	
-	// TakeDamage Test
-	//ControlledCharacter->TakeHit(EAttackType::LYING,31.0f);
 
 	/*
 	// AI Test
@@ -169,7 +163,6 @@ void AProjectDPlayerController::TestAnyFunction()
 	else
 	{
 		TestCount = 0;
-
 		gm->ApplyAITxtP();
 	}
 	*/

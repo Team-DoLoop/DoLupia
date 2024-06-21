@@ -656,6 +656,14 @@ void AProjectDCharacter::NoInteractionableFound()
 void AProjectDCharacter::BeginInteract()
 {
 	// 占쏙옙호占쌜울옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙호占쌜울옙 占쏙옙占쏙옙 占쏙옙占승울옙 占싣뱄옙占싶듸옙 占쏙옙占쏙옙占쏙옙占?占십았댐옙占쏙옙 확占쏙옙占싹쇽옙占쏙옙.
+
+	// 만약 NPC 대화중이라면 상호작용하지 않게
+	if(PlayerFSM)
+	{
+		if(PlayerFSM->GetCurrentState() == EPlayerState::TALK_NPC || PlayerFSM->GetCurrentState() == EPlayerState::MICA)
+			return;
+	}
+	
 	PerformInteractionCheck();
 
 	if (InteractionData.CurrentInteractable)
