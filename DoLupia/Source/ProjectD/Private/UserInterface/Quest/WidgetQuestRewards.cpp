@@ -141,7 +141,18 @@ void UWidgetQuestRewards::OnAcceptClicked()
     //AI 망토 이미지 적용
     auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     auto AIlib = gm->GetAIConnectionLibrary();
-    gm->ApplyAITxtP();
+
+    int32 _LvIndex = gm->GetLevelIdx();
+
+    if(QuestDetails.NextQuestID == "3001")
+    {
+        gm->ApplyAITxtP( 3 );
+    }
+	else
+    {
+        gm->ApplyAITxtP( _LvIndex );
+    }
+    
 
     // 줌인
     gm->LerpPlayerCameraLength( 300.0f );

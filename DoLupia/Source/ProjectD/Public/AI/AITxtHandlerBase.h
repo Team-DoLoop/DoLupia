@@ -31,7 +31,7 @@ public:
 	virtual void BeginPlay() override;
 
 	// Update actor's material
-	void UpdateActorMaterial();
+	void UpdateActorMaterial( int32 _Lvindex );
 
 private:
 	UPROPERTY( EditDefaultsOnly )
@@ -54,9 +54,8 @@ private:
 	UFUNCTION()
 	void OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture );
 	
-
-	
-
+	UPROPERTY( EditAnywhere , Category = "Materials" )
+	UMaterialInterface* TxtMaterial;
 
 	/* ------------- TimeLine ---------------- */
 	UFUNCTION()
@@ -78,5 +77,9 @@ private:
 	class UCurveFloat* AlphaCurve;
 
 	UTexture2DDynamic* NewTexture;
+
+	int32 LvIndex = 0;
+
+	UTexture* LocalTexture;
 
 };

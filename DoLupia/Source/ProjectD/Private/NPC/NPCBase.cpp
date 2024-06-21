@@ -29,6 +29,8 @@ ANPCBase::ANPCBase()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	GetCapsuleComponent()->InitCapsuleSize( 125.0f , 88.0f );
+
 	QuestGiverComp = CreateDefaultSubobject<UQuestGiver>( TEXT( "QuestGiverComp" ) );
 	DialogComp = CreateDefaultSubobject<UDialogComponent>( TEXT( "DialogComp" ) );
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>( TEXT("Camera"));

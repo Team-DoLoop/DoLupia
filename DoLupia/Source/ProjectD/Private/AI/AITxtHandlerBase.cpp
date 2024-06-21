@@ -40,6 +40,7 @@ AAITxtHandlerBase::AAITxtHandlerBase()
 
     NewTexture = nullptr;
     DynamicMaterial = nullptr;
+    LocalTexture = nullptr;
 
 }
 
@@ -80,9 +81,11 @@ void AAITxtHandlerBase::Tick(float DeltaTime)
 
 }
 
-void AAITxtHandlerBase::UpdateActorMaterial()
+void AAITxtHandlerBase::UpdateActorMaterial(int32 _Lvindex)
 {
     LoadWebImage();
+
+    LvIndex = _Lvindex;
 }
 
 void AAITxtHandlerBase::UpdateDissolve(float dissolve )
@@ -148,6 +151,40 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
 
 void AAITxtHandlerBase::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture )
 {
-    UE_LOG( LogTemp , Error , TEXT( "Failed to download image" ) );
+    UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
+
+    if (!meshComp)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+        return;
+    }
+
+    if (meshComp && TxtMaterial)
+    {
+        DynamicMaterial = meshComp->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+    }
+
+    // 레벨 인덱스 별, 텍스처 로딩
+    // 레벨 이름이나 인덱스를 기반으로 텍스처 선택 로직
+    if (LvIndex == 1)
+    {
+        LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player001.T_Player001" ) );
+    }
+    else if (LvIndex == 2)
+    {
+        LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player002.T_Player002" ) );
+    }
+    else if(LvIndex == 3)
+    {
+        LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player003.T_Player003" ) );
+    }
+
+    if (DynamicMaterial)
+    {
+        DynamicMaterial->SetTextureParameterValue( FName( "A2-3456" ) , LocalTexture );
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
+
+        TimelineComp->PlayFromStart();
+    }
 }
 
