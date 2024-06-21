@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask( OwnerComp , NodeMemory );
 
-	auto Boss = Cast<ABossMonster>( OwnerComp.GetAIOwner()->GetPawn() );
+	 Boss = Cast<ABossMonster>( OwnerComp.GetAIOwner()->GetPawn() );
 	if (nullptr == Boss)
 		return EBTNodeResult::Failed;
 
@@ -41,6 +41,8 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp , NodeMemory , DeltaSeconds);
+
+	//Boss->state = EBossState::Attack;
 
 	if(!IsAttacking)
 	{

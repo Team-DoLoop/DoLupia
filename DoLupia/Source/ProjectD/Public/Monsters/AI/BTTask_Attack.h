@@ -17,6 +17,8 @@ class PROJECTD_API UBTTask_Attack : public UBTTaskNode
 public:
 	UBTTask_Attack();
 
+	class ABossMonster* Boss;
+
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	bool IsAttacking = false;
 

@@ -62,4 +62,13 @@ private:
 	void ShowDialogWidget();
 	void HideDialogWidget();
 
+
+	class APlayerController* Controller;
+
+	UPROPERTY()
+	class UInputComponent* InputComponent;
+
+	void SetupInput();
+	void OnNextDialog();
+
 };
