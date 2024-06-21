@@ -46,6 +46,7 @@ AAITxtBossAttack::AAITxtBossAttack()
     TimelineLength = 5.0f; // 재생 시간
 
     NewTexture = nullptr;
+    LocalTexture = nullptr;
     DynamicMaterial1 = nullptr;
     DynamicMaterial2 = nullptr;
     DynamicMaterial3 = nullptr;
@@ -92,9 +93,10 @@ void AAITxtBossAttack::Tick( float DeltaTime )
 
 }
 
-void AAITxtBossAttack::UpdateActorMaterial()
+void AAITxtBossAttack::UpdateActorMaterial( FString _Attacktype )
 {
     LoadWebImage();
+    Attacktype = _Attacktype;
 }
 
 void AAITxtBossAttack::UpdateDissolve( float dissolve )
@@ -170,6 +172,75 @@ void AAITxtBossAttack::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture )
 
 void AAITxtBossAttack::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture )
 {
-    UE_LOG( LogTemp , Error , TEXT( "Failed to download image" ) );
+    UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
+
+    if (!meshComp1 && !meshComp2 && !meshComp3 && !meshComp4)
+    {
+        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+        return;
+    }
+
+    if (meshComp1 && meshComp2 && meshComp3 && meshComp4 && TxtMaterial)
+    {
+        DynamicMaterial1 = meshComp1->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+        DynamicMaterial2 = meshComp2->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+        DynamicMaterial3 = meshComp3->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+        DynamicMaterial4 = meshComp4->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+    }
+
+    // 랜덤으로 텍스처 가져와서
+    int32 RandomIndex = FMath::RandRange( 0 , 2 );
+
+    if ( Attacktype == "Fire" )
+    {
+        switch (RandomIndex)
+        {
+        case 0:
+            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss101.T_Boss101" ) );
+            break;
+        case 1:
+            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss102.T_Boss102" ) );
+            break;
+        case 2:
+            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss103.T_Boss103" ) );
+            break;
+        default:
+            UE_LOG( LogTemp , Warning , TEXT( "Invalid texture index" ) );
+            break;
+        }
+
+        //LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player001.T_Player001" ) );
+    }
+    else if (Attacktype == "Electric")
+    {
+        switch (RandomIndex)
+        {
+        case 0:
+            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss201.T_Boss201" ) );
+            break;
+        case 1:
+            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss202.T_Boss202" ) );
+            break;
+        case 2:
+            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss203.T_Boss203" ) );
+            break;
+        default:
+            UE_LOG( LogTemp , Warning , TEXT( "Invalid texture index" ) );
+            break;
+        }
+
+        //LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player002.T_Player002" ) );
+    }
+
+    if (DynamicMaterial1 && DynamicMaterial2 && DynamicMaterial3 && DynamicMaterial4)
+    {
+        DynamicMaterial1->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        DynamicMaterial2->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        DynamicMaterial3->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        DynamicMaterial4->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
+
+        TimelineComp->PlayFromStart();
+    }
 }
 

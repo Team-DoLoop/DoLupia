@@ -484,17 +484,24 @@ void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 {
 	// 이펙트 적용
 	float EffectTime = 0.0f;
+
+	// 보스 공격 속성 변수
+	FString BossAttackType ;
 	
 	if(EffectAttackType == EEffectAttackType::FIRE)
 	{
 		EffectTime = FireEffectTime;
 		if(FireNS) EffectNS = FireNS;
+
+		BossAttackType = "Fire";
 	}
 
 	else if(EffectAttackType == EEffectAttackType::ELECTRIC)
 	{
 		EffectTime = ElecEffectTime;
 		if(ElecNS) EffectNS = ElecNS;
+
+		BossAttackType = "Electric";
 	}
 
 	// 상태이상이 걸린 이미 상태면 타이머 갱신
@@ -503,7 +510,7 @@ void AProjectDCharacter::TakeEffectAttackHit(EEffectAttackType EffectAttackType)
 	{
 		// 안걸렸다면 AI 적용
 		auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-		if(gm) gm->ApplyAITxtB();
+		if(gm) gm->ApplyAITxtB( BossAttackType );
 	}
 	
 	GetWorld()->GetTimerManager().SetTimer(EffectTimerHandle, this, &AProjectDCharacter::TakeEffectAttackHitEnd, EffectTime, false);

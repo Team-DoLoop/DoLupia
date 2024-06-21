@@ -22,7 +22,7 @@ public:
 	virtual void Tick( float DeltaTime ) override;
 
 	// Update actor's material
-	void UpdateActorMaterial();
+	void UpdateActorMaterial( FString _Attacktype );
 
 	UFUNCTION()
 	void UpdateDissolve( float dissolve );
@@ -44,6 +44,9 @@ public:
 
 	UPROPERTY( EditDefaultsOnly )
 	class UStaticMeshComponent* meshComp4;
+
+	UPROPERTY( EditAnywhere , Category = "Materials" )
+	UMaterialInterface* TxtMaterial;
 
 protected:
 	// Called when the game starts or when spawned
@@ -80,6 +83,10 @@ public:
 	class UCurveFloat* AlphaCurve;
 
 	UTexture2DDynamic* NewTexture;
+
+	FString Attacktype = "";
+
+	UTexture* LocalTexture;
 
 	
 };

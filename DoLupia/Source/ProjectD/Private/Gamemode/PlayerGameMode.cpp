@@ -108,20 +108,43 @@ void APlayerGameMode::BeginPlay()
 		LevelIdx = 1;
 		PlayerCameraboom = 1000.0f;
 		CreateLocationTitleWidget( LevelIdx );
+
+		// 재시작 시, 인스턴스에 저장된 퀘스트ID별로 분기
+		// 처음 맵1 시작이면 변경 X, 재시작으로 맵1 시작이면 빨간색
+		if (GI->CompletedQuests.Contains( "1002" ))
+		{
+			ApplyAITxtP( 1 );
+		}
+		
 	}
 	else if (CurLevelName == LevelNames[3])
 	{
 		LevelIdx = 2;
 		PlayerCameraboom = 700.0f;
 		CreateLocationTitleWidget( LevelIdx );
-		ApplyAITxtP();
+
+		// 재시작하는 걸 알 수 있는 인자값 필요
+		// 처음 맵2 시작이면 빨간색, 재시작으로 맵2 시작이면 노란색
+		if(GI->CompletedQuests.Contains("2004"))
+		{
+			ApplyAITxtP( 3 );
+		} else if(GI->CompletedQuests.Contains( "2002" ))
+		{
+			ApplyAITxtP( 2 );
+		}
+		else
+		{
+			ApplyAITxtP( 1 );
+		}
+		
 	}
 	else if (CurLevelName == LevelNames[4])
 	{
 		LevelIdx = 3;
 		PlayerCameraboom = 1200.0f;
 		CreateLocationTitleWidget( LevelIdx );
-		ApplyAITxtP();
+
+		ApplyAITxtP( LevelIdx );
 	}
 	else
 	{
@@ -154,21 +177,21 @@ UAIConnectionLibrary* APlayerGameMode::GetAIConnectionLibrary() const
 	return AIlib;
 }
 
-void APlayerGameMode::ApplyAITxtP()
+void APlayerGameMode::ApplyAITxtP( int32 Lvindex )
 {
 	for (TActorIterator<APlayerCape> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		// Call the function on the actor
-		ActorItr->UpdateActorMaterial();
+		ActorItr->UpdateActorMaterial( Lvindex );
 	}
 }
 
-void APlayerGameMode::ApplyAITxtB()
+void APlayerGameMode::ApplyAITxtB( FString _Attacktype )
 {
 	for (TActorIterator<AAITxtBossAttack> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		// Call the function on the actor
-		ActorItr->UpdateActorMaterial();
+		ActorItr->UpdateActorMaterial( _Attacktype );
 	}
 }
 

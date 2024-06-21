@@ -66,8 +66,8 @@ public:
 	UAIConnectionLibrary* GetAIConnectionLibrary() const;
 
 	// 2024.05.26 Player / Boss 텍스처 변경 분기처리
-	void ApplyAITxtP();
-	void ApplyAITxtB();
+	void ApplyAITxtP(int32 Lvindex);
+	void ApplyAITxtB( FString _Attacktype );
 
 	FORCEINLINE int32 GetLevelIdx() const {return LevelIdx;}
 
@@ -78,10 +78,10 @@ private:
 	UPROPERTY()
 	class AProjectDCharacter* Player;
 
+	int32 LevelIdx;
+	
 	UPROPERTY()
 	TArray<FName> LevelNames;
-
-	int32 LevelIdx;
 
 	UPROPERTY( EditDefaultsOnly )
 	UAIConnectionLibrary* AIlib;
