@@ -36,10 +36,15 @@ void ASaveLoadObject::Tick(float DeltaTime)
 		if (!CurrentLevelName.Equals( TEXT( "Tutorial" ) , ESearchCase::IgnoreCase ) && !CurrentLevelName.Equals( TEXT( "Opening" ) , ESearchCase::IgnoreCase ))
 			LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , true , false , false )
 		else
+		{
 			LOAD( ESaveType::SAVE_1 , "TutorialSave" , false , false , false );
+			APlayerGameMode* gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+			gm->StartGameStory();
+		}
+			
 
-		APlayerGameMode* gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
-		gm->StartGameStory();
+
+
 
 		Destroy();
 		return;

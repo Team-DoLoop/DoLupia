@@ -1,5 +1,6 @@
 ﻿#include "Library/GameSaveManager.h"
 
+#include "OctopusBackpackActor.h"
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/GadgetComponent.h"
@@ -17,6 +18,8 @@
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
 #include "UserInterface/Skill/PlayerSkillWidget.h"
 #include "World/SaveLoad/SaveLoadObject.h"
+#include "World/Trigger/DestructableWallActor.h"
+#include "World/Trigger/TriggerBaseActor.h"
 
 // Sets default values
 AGameSaveManager::AGameSaveManager()
@@ -294,7 +297,12 @@ void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString Save
 
 		UProjectDGameInstance* GameInstance = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
 
-		SaveGameInstance->SaveStruct.CanUseColor = GameInstance->GetCanUseColor();
+		TMap<int32, bool> AutoSaveData = GameInstance->GetToToAutoSaveData();
+
+		SaveGameInstance->SaveStruct.CanUseColor.Add( EUseColor::RED , AutoSaveData[4000] );
+		SaveGameInstance->SaveStruct.CanUseColor.Add( EUseColor::YELLOW , AutoSaveData[9500] );
+		SaveGameInstance->SaveStruct.CanUseColor.Add( EUseColor::BLUE , AutoSaveData[4200] );
+
 		SaveGameInstance->SaveStruct.ToToAutoSaveData = GameInstance->GetToToAutoSaveData();
 		SaveGameInstance->SaveStruct.PlayerSkillLevel = GameInstance->GetPlayerSkillLevel();
 
@@ -482,7 +490,7 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 					FTimerHandle Handle;
 					UProjectDGameInstance* GameInstance = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
 
-					GetWorld()->GetTimerManager().SetTimer( Handle, FTimerDelegate::CreateLambda([GameInstance, LoadedGameInstance, Character]()
+					GetWorld()->GetTimerManager().SetTimer( Handle, FTimerDelegate::CreateLambda([this, GameInstance, LoadedGameInstance, Character]()
 					{
 						for (auto& iter : LoadedGameInstance->SaveStruct.CanUseColor)
 						{
@@ -495,6 +503,25 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 								else if (iter.Key == EUseColor::YELLOW)
 								{
 									Character->GetAttackComp()->SetColorUseState( EUseColor::YELLOW , true );
+
+
+									// 옆 통로로 갈 때, 카메라 각도 변경 트리거 활성화
+									for (TActorIterator<ATriggerBaseActor> It( GetWorld() ); It; ++It)
+									{
+										ATriggerBaseActor* trigger = *It;
+
+										// 다음 실행될 퀘스트랑 npc 퀘스트 같은지 확인
+										if (trigger)
+										{
+											trigger->ActiveTriggerCollision();
+										}
+									}
+
+									// 벽 부숴지는 효과
+									for (TActorIterator<ADestructableWallActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+									{
+										ActorItr->ExplosionWalls(false);
+									}
 								}
 								else if (iter.Key == EUseColor::BLUE)
 								{
@@ -504,6 +531,10 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 
 
 						}
+
+						APlayerGameMode* gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+						gm->StartGameStory();
+
 
 					}), 0.1f, false);
 

@@ -33,7 +33,7 @@ public:
 	UPROPERTY( BlueprintReadWrite , EditAnywhere )
 	ULevelSequencePlayer* SequencePlayer;
 
-	void ExplosionWalls();
+	void ExplosionWalls( bool UseSequencer = true);
 
 private:
 	UPROPERTY()

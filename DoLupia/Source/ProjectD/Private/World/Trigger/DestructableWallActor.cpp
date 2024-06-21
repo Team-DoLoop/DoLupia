@@ -57,29 +57,25 @@ void ADestructableWallActor::Tick(float DeltaTime)
 
 }
 
-void ADestructableWallActor::ExplosionWalls()
+void ADestructableWallActor::ExplosionWalls( bool UseSequencer )
 {
 	if (!ExplosionSFX || !ExplosionVFX) return;
 
-	Target->PlayerDoSomeThing(true);
-	
-	UE_LOG( LogTemp , Error , TEXT( "ADestructableWallActor::ExplosionWalls" ) );
-	TriggerLvSequencer();
+	if (UseSequencer)
+	{
+		Target->PlayerDoSomeThing( true );
+		TriggerLvSequencer();
 
-	// 벽폭발음
-	ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
+		// 벽폭발음
+		ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( ExplosionSFX , ENPCSound::NPCSound2 , 0.1f );
 
-	// 폭발 효과
-	ExplosionVFX->ActivateSystem();
-
-	UE_LOG( LogTemp , Log , TEXT( "Destroy Walls" )  )
+		// 폭발 효과
+		ExplosionVFX->ActivateSystem();
+	}
 
 	// 부숴지는 효과
 	DestructableWallComp->SetSimulatePhysics( true );
 	BoxComp->SetCollisionEnabled( ECollisionEnabled::NoCollision );
-
-
-	
 }
 
 void ADestructableWallActor::TriggerLvSequencer()

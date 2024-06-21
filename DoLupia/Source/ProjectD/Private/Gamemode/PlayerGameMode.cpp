@@ -212,26 +212,7 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 
 void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType, bool OpenLevel)
 {
-	//SAVE( Character, SaveType, "PlayerMainSave" , "PlayerMainSave", LevelName, false);
-
-	//ALevelManager::GetInstance(GetWorld())->SaveGame( Character, SaveType, "PlayerMainSave", "PlayerMainSave", LevelName, 
-	//	Character->GetActorLocation(), Character->GetInventory()->GetInventoryContents(), false, false);
-
 	SAVE( Character , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , LevelName , false );
-
-	//ALevelManager::GetInstance( GetWorld() )->SaveGame( Character , ESaveType::SAVE_1 , "TutorialSave" , "TutorialSave" , LevelName ,
-	//	Character->GetActorLocation() , Character->GetInventory()->GetInventoryContents() , false ,
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase() ?
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget1()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase() ?
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget2()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase() ?
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget3()->GetItemBase()->GetTextData().Name.ToString() : "" ,
-
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase() ?
-	//	Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()->GetItemBase()->GetTextData().Name.ToString() : "" );
 
 	if(OpenLevel)
 		UGameplayStatics::OpenLevel( this , LevelName );

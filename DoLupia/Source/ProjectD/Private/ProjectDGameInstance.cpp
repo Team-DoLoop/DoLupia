@@ -191,11 +191,11 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 					return;
 				}
 
-				//토토 대화 시작할 때 세이브
-				if (!UGameplayStatics::GetCurrentLevelName( GetWorld() ).Equals(TEXT( "GameLv3" )))
-					SAVE(Player, ESaveType::SAVE_MAIN, "PlayerMainSave" , "PlayerMainSave", FName( UGameplayStatics::GetCurrentLevelName( GetWorld() )), false);
-
 				ToToAutoSaveData[TutorialID] = true;
+
+				//토토 대화 시작할 때 세이브
+				if (!UGameplayStatics::GetCurrentLevelName( GetWorld() ).Equals( TEXT( "GameLv3" ) ))
+					SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , FName( UGameplayStatics::GetCurrentLevelName( GetWorld() ) ) , true );
 			}
 			
 			// 지금 요청한 튜토리얼이 메인 퀘스트 관련이 아닌데, 이미 말하는 중이라면
@@ -211,6 +211,7 @@ void UProjectDGameInstance::ExecuteTutorial(EExplainType _ExplainType, int32 _In
 			PlayerTuto->SetTotoSaying(true);
 			PlayerTuto->SetTutorialUI(TutoData);
 		}
+
 	}
 	
 	// 반복 튜토리얼의 마지막이 아니라면 확인한 튜토리얼임을 저장
