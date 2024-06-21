@@ -105,7 +105,7 @@ void UItemBase::Use(AProjectDCharacter* Character)
 				int32 CurrentMP = PlayerStat->GetMP();
 				int32 MaxMP = PlayerStat->GetMaxMP();
 				Character->GetPlayerBattleWidget()->GetPlayerMPBar()->SetMPBar( CurrentMP , MaxMP );
-
+				Character->OnObjectiveIDCalled.Broadcast( "Mana",1 );
 				for(int i = 1; i <= 4; i++)
 				{
 					Character->GetAttackComp()->SetSkillLockUI(i, false);
