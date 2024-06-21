@@ -5,6 +5,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Monsters/MonsterFSM.h"
 #include "Monsters/MonsterHPWidget.h"
 
@@ -51,8 +52,17 @@ void AStrikeMonster::BeginPlay()
 
 
 	//근거리 몬스터 체력 설정
-	maxHP = 30;
-	currentHP = maxHP;
+	if (GM->GetLevelIdx() == 1)
+	{
+		maxHP = 15;
+		currentHP = maxHP;
+	}
+	if (GM->GetLevelIdx() == 2)
+	{
+		maxHP = 30;
+		currentHP = maxHP;
+	}
+
 	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
 }
 

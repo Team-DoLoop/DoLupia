@@ -45,6 +45,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FSMComponent)
 	class UMonsterFSM* MonsterFSM;
 
+	UPROPERTY()
+	APlayerGameMode* GM;
+
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	int32 maxHP = 100;
 

@@ -283,7 +283,7 @@ void ABossMonster::InitializeAttackStack()
 	AttackFunctions = { &ABossMonster::HitAttack, &ABossMonster::FireAttack, &ABossMonster::GrabAttack,
 						&ABossMonster::BlastFire,&ABossMonster::BlastLightening
 						};
-	//AttackFunctions = { &ABossMonster::GrabAttack};
+	//AttackFunctions = { &ABossMonster::FireAttack,&ABossMonster::GrabAttack};
 
 	// 공격 함수들을 랜덤하게 스택에 추가
 	while (AttackFunctions.Num() > 0)

@@ -12,6 +12,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Items/Sword/SwordBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monsters/MonsterAnim.h"
@@ -41,6 +42,8 @@ void AMonster::BeginPlay()
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
 
 	ai = Cast<AAIController>( this->GetController() );
+
+	GM = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 	IsAlive = true;
 
