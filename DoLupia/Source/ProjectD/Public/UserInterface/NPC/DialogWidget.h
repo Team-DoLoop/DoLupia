@@ -20,6 +20,7 @@ class PROJECTD_API UDialogWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	void UpdateDialogText( FText NewText );
@@ -29,6 +30,8 @@ public:
 
 	UFUNCTION( BlueprintCallable , Category = "Dialog" )
 	void SetCurrentNPC(AActor* InCurrentNPC);
+
+	void OnNextDialog();
 
 private:
 	UPROPERTY( EditDefaultsOnly , meta = (BindWidget) )
@@ -62,5 +65,6 @@ private:
 	void TypeNextCharacter();
 	void SkipTypingAnimation();
 	bool IsTyping() const;
+
 	
 };

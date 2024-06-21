@@ -50,6 +50,13 @@ void UDialogComponent::StartDialog(AActor* InCurrentNPC, const FString& NPCID , 
 	CurrentNPC = InCurrentNPC;
 	CurrentNPCName = NPCID;
 
+	Controller = UGameplayStatics::GetPlayerController( GetWorld() , 0 );
+	if (Controller)
+	{
+		SetupInput();
+	}
+
+
 	if (DialogueWidget)
 	{
 		UFunction* SetCurrentNPCFunction = DialogueWidget->FindFunction( FName( "SetCurrentNPC" ) );
@@ -220,6 +227,26 @@ void UDialogComponent::HideDialogWidget()
 
 		ANPCBase* npc = Cast<ANPCBase>( CurrentNPC );
 		npc->SwitchToPlayerCamera();
+	}
+}
+
+void UDialogComponent::SetupInput()
+{
+	if (Controller)
+	{
+		InputComponent = NewObject<UInputComponent>( this );
+		InputComponent->RegisterComponent();
+		InputComponent->BindKey( EKeys::G , IE_Pressed , this , &UDialogComponent::OnNextDialog );
+		Controller->PushInputComponent( InputComponent );
+	}
+}
+
+void UDialogComponent::OnNextDialog()
+{
+	if (DialogueWidget && DialogueWidget->IsInViewport())
+	{
+		UDialogWidget* dialogwidget = Cast<UDialogWidget>( DialogueWidget );
+		dialogwidget->OnNextDialog();
 	}
 }
 

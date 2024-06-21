@@ -5,6 +5,7 @@
 
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "Pooling/SoundManager.h"
 #include "Quest/Dialogsystem/DialogComponent.h"
 
@@ -17,6 +18,11 @@ void UDialogWidget::NativeConstruct()
 
     TypingSpeed = 0.05f; 
     CurrentIndex = 0;
+}
+
+void UDialogWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
 }
 
 void UDialogWidget::UpdateDialogText(FText NewText)
@@ -46,6 +52,27 @@ void UDialogWidget::UpdateSpeakerText(FText NewSpeaker)
 void UDialogWidget::SetCurrentNPC(AActor* InCurrentNPC)
 {
     CurrentNPC = InCurrentNPC;
+}
+
+void UDialogWidget::OnNextDialog()
+{
+    if (CurrentNPC)
+    {
+        UDialogComponent* DialogueComponent = CurrentNPC->FindComponentByClass<UDialogComponent>();
+        if (DialogueComponent)
+        {
+            if (IsTyping())
+            {
+                SkipTypingAnimation();
+            }
+            else
+            {
+                DialogueComponent->AdvanceDialog();
+                ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( clickSFX , ENPCSound::NPCSound1 , 0.25f );
+            }
+
+        }
+    }
 }
 
 void UDialogWidget::OnNxtBtnClicked()
