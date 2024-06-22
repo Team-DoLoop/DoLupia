@@ -15,14 +15,16 @@ void UInventoryTooltip::SetupTooltip()
 	switch (const EItemType& MyItemType = ItemBeingHovered->GetItemType())
 	{
 	case EItemType::Head:
-		ItemType->SetText( FText::FromString( L"머리" ) );
+		ItemType->SetText( FText::FromString( L"메모리 칩" ) );
+		break;
 	case EItemType::Top:
-		ItemType->SetText( FText::FromString( L"상의" ) );
+		ItemType->SetText( FText::FromString( L"보닛" ) );
+		break;
 	case EItemType::Pants:
-		ItemType->SetText( FText::FromString( L"하의" ) );
+		ItemType->SetText( FText::FromString( L"엔진" ) );
+		break;
 	case EItemType::Shoes:
-		ItemType->SetText( FText::FromString( L"신발" ) );
-		
+		ItemType->SetText( FText::FromString( L"냉각장치" ) );
 		break;
 	case EItemType::Weapon:
 		ItemType->SetText(FText::FromString(L"무기"));

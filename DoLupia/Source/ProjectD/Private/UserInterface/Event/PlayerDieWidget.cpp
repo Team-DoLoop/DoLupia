@@ -23,13 +23,13 @@ void UPlayerDieWidget::ReStart()
 	FString mapName = UGameplayStatics::GetCurrentLevelName( GetWorld() );
 	UGameplayStatics::OpenLevel( GetWorld() , FName( *mapName ) );
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer( TimerHandle, FTimerDelegate::CreateLambda([this]()
-	{
-		LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , true , false , false );
-	}), 0.05f, false);
+	//FTimerHandle TimerHandle;
+	//GetWorld()->GetTimerManager().SetTimer( TimerHandle, FTimerDelegate::CreateLambda([this]()
+	//{
+	//	LOAD( ESaveType::SAVE_MAIN , "PlayerMainSave" , true , false , false );
+	//}), 0.05f, false);
 
-	
+	//
 }
 
 void UPlayerDieWidget::Quit()

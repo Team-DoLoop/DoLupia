@@ -30,6 +30,15 @@ private:
 	UFUNCTION()
 	void MoveSaveMap();
 
+	UFUNCTION()
+	void MoveChapter1();
+
+	UFUNCTION()
+	void MoveChapter2();
+
+	UFUNCTION()
+	void MoveChapter3();
+
 private:
 	UPROPERTY( meta = (BindWidget) )
 	UButton* Start;
@@ -39,5 +48,14 @@ private:
 
 	UPROPERTY( meta = (BindWidget) )
 	UButton* End;
+
+	UPROPERTY( meta = (BindWidget) )
+	UButton* Chapter1;
+
+	UPROPERTY( meta = (BindWidget) )
+	UButton* Chapter2;
+
+	UPROPERTY( meta = (BindWidget) )
+	UButton* Chapter3;
 
 };
