@@ -91,4 +91,7 @@ DoLupia/Content/UndergroundQuarry
 DoLupia/Content/SpaceGUI
 
 # Include necessary files for lighting build
+!DoLupia/Content/Maps/Alpha/GameLv1_BuiltData.uasset
 !DoLupia/Content/Maps/Alpha/GameLv2_BuiltData.uasset
+!DoLupia/Content/Maps/Alpha/GameLv3_BuiltData.uasset
+!DoLupia/Content/Maps/Alpha/Tutorial_BuiltData.uasset
