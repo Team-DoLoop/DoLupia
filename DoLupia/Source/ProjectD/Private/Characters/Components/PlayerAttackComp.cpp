@@ -177,16 +177,16 @@ void UPlayerAttackComp::SetColorUseState(EUseColor _Color, bool bCanUse)
 	{
 	case EUseColor::YELLOW :
 		{
-			// E 스킬 잠금 해제
-			IsUnLockSwap = true;
-			SetSkillLockUI(3, false);
+			// E 스킬 잠금 해제 or 잠그기
+			IsUnLockSwap = bCanUse;
+			SetSkillLockUI(3, !bCanUse);
 			break;
 		}
 	case EUseColor::BLUE :
 		{
-			// 궁 잠금 해제
-			IsUnLockUlt = true;
-			SetSkillLockUI(4, false);
+			// 궁 잠금 해제 or 잠그기
+			IsUnLockUlt = bCanUse;
+			SetSkillLockUI(4, !bCanUse);
 			break;
 		}
 	default: break;
@@ -208,6 +208,7 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 		CurrentSkillData[3] = SwapSkill;
 		CurrentSkillData[4] = UltSkill;
 	}
+	else CurrentSkillColor = EUseColor::NONE;
 
 	for(int i = 1; i <=SkillCount; i++)
 	{

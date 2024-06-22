@@ -160,6 +160,28 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         gm->ActivateInterationObject(false);
     }
 
+    // 튜토리얼 스킬 열기
+    if(QuestID == "0002")
+    {
+        Player->GetAttackComp()->SetSkillUseState(true, QUEST);
+
+        // 각 색깔 열리게
+        Player->GetAttackComp()->SetColorUseState(EUseColor::RED, true);
+        Player->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, true);
+        Player->GetAttackComp()->SetColorUseState(EUseColor::BLUE, true);
+    }
+
+    else if(QuestID == "0004")
+    {
+        Player->GetAttackComp()->SetSkillUseState(false, QUEST);
+
+        // 각 색깔 잠구기
+        Player->GetAttackComp()->SetColorUseState(EUseColor::RED, false);
+        Player->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, false);
+        Player->GetAttackComp()->SetColorUseState(EUseColor::BLUE, false);
+    }
+    
+
     //UE_LOG( LogTemp , Error , TEXT( "CompleteQuest( QuestID : %s )" ), *QuestID.ToString() );
     //gm->SetNxtQuestTag( QuestID.ToString() );
 
