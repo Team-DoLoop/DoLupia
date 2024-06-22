@@ -208,8 +208,13 @@ void UPlayerAttackComp::SetSkillUseState(bool bCanUse, ESkillOpenType OpenType)
 		CurrentSkillData[3] = SwapSkill;
 		CurrentSkillData[4] = UltSkill;
 	}
-	else CurrentSkillColor = EUseColor::NONE;
-
+	else
+	{
+		CurrentSkillColor = EUseColor::NONE;
+	}
+	
+	ChangePlayerColor(CurrentSkillColor);
+	
 	for(int i = 1; i <=SkillCount; i++)
 	{
 		SetSkillUI(i-1, CurrentSkillData[i]);
@@ -542,8 +547,36 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	{
 		if(SwapSoundWave) SoundManager->PlaySoundWave( SwapSoundWave, EEffectSound::EffectSound1, Player->GetActorLocation(), SkillVolume );
 	}
-	
+
+	ChangePlayerColor(CurrentSkillColor);
 	SetSkillCoolDownUI();
+}
+
+void UPlayerAttackComp::ChangePlayerColor(EUseColor _CurrentColor)
+{
+	// 스킬의 색깔에 따라 플레이어 몸 색상 변경
+
+	int32 depth = 0;
+	bool IsColor = false;
+	switch (_CurrentColor)
+	{
+		case EUseColor::RED : depth = 1; IsColor = true; break;
+		case EUseColor::YELLOW : depth = 3; IsColor = true; break;
+		case EUseColor::BLUE : depth = 2; IsColor = true; break;
+		default: depth = 0; IsColor = false; break;
+	}
+
+	if(Player)
+	{
+		if(auto _Gadet = Player->GetGadgetComp())
+		{
+			if(auto _Sword = _Gadet->GetSword())
+			{
+				_Sword->GetItemStaticMesh()->SetCustomDepthStencilValue( depth );
+				_Sword->GetItemStaticMesh()->SetRenderCustomDepth( IsColor );
+			}
+		}
+	}
 }
 
 void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)

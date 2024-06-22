@@ -20,6 +20,7 @@ public:
 
 	void ReceiveItemData(UItemBase* NewItemBase, bool UsedSubMesh = false);
 	FORCEINLINE UItemBase* GetItemBase() { return ItemBase; }
+	FORCEINLINE class UStaticMeshComponent* GetItemStaticMesh() const { return ItemStaticMesh; }
 
 	void ChangeAvatar( UStaticMesh* ItemMesh );
 	void UnUsedAvatar();

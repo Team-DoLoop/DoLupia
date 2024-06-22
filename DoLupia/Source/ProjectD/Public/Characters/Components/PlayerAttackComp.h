@@ -209,6 +209,7 @@ private :
 	// <---------------------- Swap Skill ---------------------->
 public:
 	void ExecuteSwapSkill();
+	void ChangePlayerColor(EUseColor _CurrentColor);
 
 private:
 	UPROPERTY(EditAnywhere)
