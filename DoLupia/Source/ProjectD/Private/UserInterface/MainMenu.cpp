@@ -32,7 +32,7 @@ void UMainMenu::NativeConstruct()
 
 FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
-    if (InKeyEvent.GetKey() == EKeys::I)
+    if (InKeyEvent.GetKey() == EKeys::I || InKeyEvent.GetKey() == EKeys::Escape)
     {
 		APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController());
 
