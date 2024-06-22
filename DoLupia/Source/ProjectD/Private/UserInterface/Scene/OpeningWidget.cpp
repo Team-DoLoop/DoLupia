@@ -16,6 +16,10 @@ void UOpeningWidget::NativeConstruct()
 	Start->OnClicked.AddDynamic( this , &UOpeningWidget::MoveTutorialMap );
 	ReStart->OnClicked.AddDynamic( this , &UOpeningWidget::MoveSaveMap );
 	End->OnClicked.AddDynamic(this, &UOpeningWidget::GameEnd );
+
+	Chapter1->OnClicked.AddDynamic( this , &UOpeningWidget::MoveChapter1 );
+	Chapter2->OnClicked.AddDynamic( this , &UOpeningWidget::MoveChapter2 );
+	Chapter3->OnClicked.AddDynamic( this , &UOpeningWidget::MoveChapter3 );
 }
 
 void UOpeningWidget::MoveTutorialMap()
@@ -32,3 +36,19 @@ void UOpeningWidget::MoveSaveMap()
 {
 	LOAD(ESaveType::SAVE_MAIN, "PlayerMainSave", true, false, true);
 }
+
+void UOpeningWidget::MoveChapter1()
+{
+	ALevelManager::GetInstance(GetWorld())->LoadChpater(1);
+}
+
+void UOpeningWidget::MoveChapter2()
+{
+	ALevelManager::GetInstance( GetWorld() )->LoadChpater(2);
+}
+
+void UOpeningWidget::MoveChapter3()
+{
+	ALevelManager::GetInstance( GetWorld() )->LoadChpater(3);
+}
+

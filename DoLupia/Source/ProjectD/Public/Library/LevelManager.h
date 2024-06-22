@@ -39,8 +39,14 @@ public:
 
 	void LoadGame( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation = false , bool UseThread = false, bool OpenLevel = false);
 
+	void LoadChpater(int32 LevelIndex );
+
 private:
 	void InitializeGameSaveManager();
+
+	void LoadChapter1();
+	void LoadChapter2();
+	void LoadChapter3();
 
 private:
 	// 싱글톤 인스턴스
