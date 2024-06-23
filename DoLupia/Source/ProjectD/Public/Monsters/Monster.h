@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
+class APlayerGameMode;
 struct FItemSpawnerInfo;
 
 UENUM( BlueprintType )
