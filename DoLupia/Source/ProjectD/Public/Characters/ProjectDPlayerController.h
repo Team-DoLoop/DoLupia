@@ -220,8 +220,12 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
 	UInputAction* ToToAction;
 
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* ToToSkipAction;
+
 private:
 	void StartToToStory();
+	void ToToSkip();
 
 };
 

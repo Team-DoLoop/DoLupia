@@ -134,7 +134,9 @@ void AProjectDPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetPosAction, ETriggerEvent::Started, this, &AProjectDPlayerController::SetPosPlayer);							// K
 		EnhancedInputComponent->BindAction( SetBossPosAction , ETriggerEvent::Started , this , &AProjectDPlayerController::SetPosBoss );							// K
 
+		// Tutorial
 		EnhancedInputComponent->BindAction(ToToAction, ETriggerEvent::Started, this, &AProjectDPlayerController::StartToToStory);							// ToTo
+		EnhancedInputComponent->BindAction(ToToSkipAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToToSkip);							// ToTo
 	}
 	else
 	{
@@ -383,4 +385,9 @@ void AProjectDPlayerController::QuestLogMenu()
 void AProjectDPlayerController::StartToToStory()
 {
 	ControlledCharacter->GetTutorialComp()->PressNextTutorial();
+}
+
+void AProjectDPlayerController::ToToSkip()
+{
+	ControlledCharacter->GetTutorialComp()->TutorialSkip();
 }	
