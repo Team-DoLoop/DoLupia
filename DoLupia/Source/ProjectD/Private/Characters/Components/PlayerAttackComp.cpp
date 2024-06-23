@@ -868,7 +868,7 @@ void UPlayerAttackComp::AttackEndState()
 	if(PlayerStat->GetMP() >= PlayerMaxMP && CurrentSkillInfo != AutoSkill)
 	{
 		// MP가 꽉 찼다면 열 게이지 관련 설명
-		if(GI) GI->ExecuteTutorial(EExplainType::FULL_HIT_GAUGE);
+		// if(GI) GI->ExecuteTutorial(EExplainType::FULL_HIT_GAUGE);
 		
 		for(int i = 1; i <= SkillCount; i++)
 			SetSkillLockUI(i, true);
