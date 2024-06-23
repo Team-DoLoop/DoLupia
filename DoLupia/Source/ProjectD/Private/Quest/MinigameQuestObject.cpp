@@ -11,7 +11,7 @@
 
 AMinigameQuestObject::AMinigameQuestObject()
 {
-	static ConstructorHelpers::FClassFinder<AActor> minigame( TEXT( "/Game/UserInterface/MiniGame/BP_MiniGame2048.BP_MiniGame2048" ) );
+	static ConstructorHelpers::FClassFinder<AActor> minigame( TEXT( "/Game/UserInterface/MiniGame/BP_MiniGame2048" ) );
 	if (minigame.Succeeded())
 	{
         MiniGameClass = minigame.Class;

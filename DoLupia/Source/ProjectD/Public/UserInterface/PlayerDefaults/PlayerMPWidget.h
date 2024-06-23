@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,4 +22,15 @@ private:
 
 public:
 	void SetMPBar(int32 _MP, int32 _MaxMP);
+	virtual void NativeConstruct() override;
+
+private:
+	float CurrentPercent;
+	float TargetPercent;
+	float LerpSpeed;
+	FTimerHandle UpdateTimerHandle;
+
+	void UpdateMPBar();
+	void StartUpdateTimer();
+	void StopUpdateTimer();
 };
