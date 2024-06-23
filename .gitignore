@@ -85,11 +85,6 @@ DoLupia/Content/ResearchMegaPack
 DoLupia/Content/Asset/sA_Megapack_v1
 DoLupia/Content/sA_Megapack_v1
 
-
-#이후에 지울 예정
-DoLupia/Content/UndergroundQuarry
-DoLupia/Content/SpaceGUI
-
 # Include necessary files for lighting build
 !DoLupia/Content/Maps/Alpha/GameLv1_BuiltData.uasset
 !DoLupia/Content/Maps/Alpha/GameLv2_BuiltData.uasset
