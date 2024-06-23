@@ -118,6 +118,10 @@ void AAITxtHandlerBase::LoadWebImage()
         DownloadTask->OnSuccess.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloadFailed );
     }
+	else
+    {
+        OnImageDownloadFailed( nullptr );
+    }
 }
 
 void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture )

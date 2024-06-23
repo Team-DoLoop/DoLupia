@@ -14,7 +14,7 @@
 
 FString UAIConnectionLibrary::LanIP = "192.168.75.108";
 //FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
-FString UAIConnectionLibrary::WifiIP = "172.16.216.55";
+FString UAIConnectionLibrary::WifiIP = "0.0.0.0";
 FString UAIConnectionLibrary::ServerPort = "8000";
 
 UAIConnectionLibrary* UAIConnectionLibrary::Instance = nullptr;
