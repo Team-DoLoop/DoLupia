@@ -65,6 +65,8 @@ public:
 	FORCEINLINE void SetExplainIndex(int32 _ExplainIndex) {ExplainIndex = _ExplainIndex;}
 	FORCEINLINE void SetTotoSaying(bool _IsTotoSaying) {IsTotoSaying = _IsTotoSaying;}
 	FORCEINLINE bool GetToToSaying() const {return IsTotoSaying;}
+
+	void TutorialSkip();
 	
 private:
 	FTutorialData* TutoData;
