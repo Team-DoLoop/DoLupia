@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,4 +23,16 @@ protected:
 
 public:
 	void SetHPBar(int32 _HP, int32 _MaxHP);
+
+	virtual void NativeConstruct() override;
+
+private:
+	float CurrentPercent;
+	float TargetPercent;
+	float LerpSpeed;
+	FTimerHandle UpdateTimerHandle;
+
+	void UpdateHPBar();
+	void StartUpdateTimer();
+	void StopUpdateTimer();
 };

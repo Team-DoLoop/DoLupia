@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Characters/ProjectDGameMode.h"
 #include "Characters/ProjectDPlayerController.h"
@@ -18,7 +18,7 @@ AProjectDGameMode::AProjectDGameMode()
 	}
 
 	// set default controller to our Blueprinted controller
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownPlayerController"));
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/Player/Input/BP_TopDownPlayerController"));
 	if(PlayerControllerBPClass.Class != NULL)
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
