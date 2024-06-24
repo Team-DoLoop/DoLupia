@@ -43,4 +43,8 @@ public:
 
 	UPROPERTY( EditAnywhere )
 	class UParticleSystem* expVFX;
+
+	FTimerHandle TimerHandle;
+
+	void DestroyProjectile();
 };

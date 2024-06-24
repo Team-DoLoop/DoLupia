@@ -11,6 +11,7 @@ class UNPCInteractionWidget;
 class UBoxComponent;
 class UMeshComponent;
 class UMapIconComponent;
+class APlayerGameMode;
 
 UCLASS()
 class PROJECTD_API AStrangeObject : public AActor, public IQuestInteractionInterface
@@ -53,7 +54,26 @@ public:
 
 	void ActiveMapIcon( bool onoff );
 
-	bool bVisibleInteractUI = true;
+	bool bVisibleInteractUI = false;
 	bool bCheckIcon = false;
+
+	UPROPERTY( BlueprintReadWrite , EditAnywhere , Category = "Dialog" )
+	FName TmpQuestTag;
+
+	UFUNCTION()
+	void OnNextQuestTagReceived( FString NextQuestTag );
+
+	UFUNCTION()
+	void OnNextQuestTagCompleted();
+
+	UPROPERTY()
+	APlayerGameMode* gm;
+
+private:
+	
+
+	void ChangeObjectColor( int32 depth );
+
+
 
 };
