@@ -84,6 +84,12 @@ protected:
     UPROPERTY( EditDefaultsOnly )
     FVector2D WidgetPosition;
 
+    UPROPERTY( EditAnywhere )
+    USoundWave* EffectSoundWave;
+
+    UPROPERTY( EditAnywhere )
+    USoundWave* ClearSoundWave;
+
 public:
     UFUNCTION( BlueprintCallable , Category = "Grid" )
     void GameClear();

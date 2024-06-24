@@ -5,7 +5,9 @@
 
 #include "Characters/ProjectDCharacter.h"
 #include "Components/TextBlock.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/MiniGame/MiniGameTile2048Widget.h"
 
 AGrid2048::AGrid2048()
@@ -212,6 +214,12 @@ void AGrid2048::Squash( int32 Key )
         FlipVertically();
     if (Key == KeyLeft || Key == KeyRight)
         FlipDiagonally();
+
+    //미니게임 effect 효과음
+    if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
+    {
+        if (EffectSoundWave) SoundManager->PlaySoundWave2D( EffectSoundWave, EEffectSound::EffectSound2 , 0.1f );
+    }
 }
 
 void AGrid2048::UpdateCell(int32 x, int32 y, int32 Value)
@@ -274,7 +282,7 @@ void AGrid2048::ClearGridWidgets()
 
 void AGrid2048::GameClear()
 {
-    GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
+    //GEngine->AddOnScreenDebugMessage( 0 , 10.f , FColor::Cyan , TEXT( "Game Clear!" ) );
     auto player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 
     // 게임 클리어 시, 퀘스트 완료
@@ -284,6 +292,16 @@ void AGrid2048::GameClear()
 
     // 플레이어 움직임 가능하게
     Player->PlayerDoSomeThing(false);
+
+    //미니게임 effect 효과음
+    if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
+    {
+        if (EffectSoundWave) SoundManager->PlaySoundWave2D( EffectSoundWave , EEffectSound::EffectSound2 , 0.4f );
+    }
+
+    //원래 level2 비지엠으로
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    gm->PlayBGMForLevel( 2 );
 
     // 완료 시, 델리게이트 구독
     OnMiniGameCompleted.Broadcast();

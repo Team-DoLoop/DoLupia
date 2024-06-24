@@ -480,7 +480,6 @@ void APlayerGameMode::PlayOutroSequencer()
 
 	FTimerHandle TimerHandle;
 
-
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle ,
 		[this]() {

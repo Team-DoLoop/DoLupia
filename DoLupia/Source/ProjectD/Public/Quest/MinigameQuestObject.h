@@ -43,6 +43,9 @@ private:
 	UPROPERTY()
 	APlayerGameMode* gm;
 
+	UPROPERTY( EditAnywhere )
+	USoundWave* BGMSoundWave;
+
 	UPROPERTY()
 	AProjectDCharacter* Player;
 
