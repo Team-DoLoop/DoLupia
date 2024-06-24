@@ -296,7 +296,7 @@ void AGrid2048::GameClear()
     //미니게임 effect 효과음
     if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
     {
-        if (EffectSoundWave) SoundManager->PlaySoundWave2D( EffectSoundWave , EEffectSound::EffectSound2 , 0.4f );
+        if (EffectSoundWave) SoundManager->PlaySoundWave2D( EffectSoundWave , EEffectSound::EffectSound3 , 0.4f );
     }
 
     //원래 level2 비지엠으로
