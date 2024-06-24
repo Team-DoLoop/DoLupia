@@ -8,10 +8,7 @@
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
-#include "Items/Sword/SwordBase.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/KismetSystemLibrary.h"
-#include "Monsters/Monster.h"
 
 
 void UPlayerAnimInstance::NativeInitializeAnimation()

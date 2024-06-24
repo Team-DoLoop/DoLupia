@@ -3,11 +3,6 @@
 
 #include "Items/Sword/SwordBase.h"
 
-#include "Characters/ProjectDCharacter.h"
-#include "Characters/Components/PlayerFSMComp.h"
-#include "Components/CapsuleComponent.h"
-#include "Items/ItemBase.h"
-#include "Monsters/Monster.h"
 
 // Sets default values
 ASwordBase::ASwordBase()

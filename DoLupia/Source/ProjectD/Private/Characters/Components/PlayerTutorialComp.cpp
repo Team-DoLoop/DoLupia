@@ -5,7 +5,6 @@
 
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
-#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"

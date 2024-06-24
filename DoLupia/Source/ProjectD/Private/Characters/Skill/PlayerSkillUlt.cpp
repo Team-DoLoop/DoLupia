@@ -4,7 +4,6 @@
 #include "Characters/Skill/PlayerSkillUlt.h"
 
 #include "NiagaraComponent.h"
-#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"

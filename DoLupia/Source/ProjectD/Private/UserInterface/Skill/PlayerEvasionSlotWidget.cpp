@@ -4,7 +4,6 @@
 #include "UserInterface/Skill/PlayerEvasionSlotWidget.h"
 
 #include "Components/Image.h"
-#include "Components/ProgressBar.h"
 
 void UPlayerEvasionSlotWidget::NativeConstruct()
 {
