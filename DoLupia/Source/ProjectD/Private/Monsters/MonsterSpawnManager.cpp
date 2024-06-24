@@ -2,10 +2,11 @@
 
 
 #include "Monsters/MonsterSpawnManager.h"
-#include "Components/CapsuleComponent.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "EngineUtils.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
 
 // Sets default values
 AMonsterSpawnManager::AMonsterSpawnManager()
@@ -22,6 +23,7 @@ void AMonsterSpawnManager::BeginPlay()
 {
 	Super::BeginPlay();
 	StartSpawnMonster = false;
+	GetWorld()->GetTimerManager().SetTimer( TimerHandle , this , &AMonsterSpawnManager::GetAllMonsters , 1.0f , true );
 
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
@@ -38,14 +40,24 @@ void AMonsterSpawnManager::BeginPlay()
 void AMonsterSpawnManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+
 	if(StartSpawnMonster)
 	{
-		currentTime += GetWorld()->GetDeltaSeconds();
-		if(currentTime>SpawnInterval)
+		if (MonsterNum < MonsterMaxNum)
 		{
-			SpawnMonster();
-			currentTime = 0;
+			currentTime += GetWorld()->GetDeltaSeconds();
+			if (currentTime > SpawnInterval)
+			{
+				SpawnMonster();
+				currentTime = 0;
+			}
 		}
+		else
+		{
+			
+		}
+		
 	}
 }
 
@@ -82,7 +94,7 @@ void AMonsterSpawnManager::SpawnMonster()
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AStrikeMonster* monster = Cast<AStrikeMonster>(GetWorld()->SpawnActor<AActor>( MonsterClass , GetActorLocation() , GetActorRotation() , SpawnParams ));
+		AActor* monster = Cast<AActor>(GetWorld()->SpawnActor<AActor>( MonsterClass , GetActorLocation() , GetActorRotation() , SpawnParams ));
 	}
 }
 
@@ -97,5 +109,36 @@ void AMonsterSpawnManager::UpdateSpawnerStatus()
 		}
 
 	}
+}
+
+void AMonsterSpawnManager::GetAllMonsters()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	TArray< AMonster*> MonsterArr;
+
+	for (TActorIterator<AMonster> ActorItr( World ); ActorItr; ++ActorItr)
+	{
+		// 현재 반복 중인 액터가 AMonster 클래스의 인스턴스인 경우
+		AMonster* Monster = *ActorItr;
+		if (Monster)
+		{
+			// 몬스터 배열에 추가
+			MonsterArr.Add( Monster );
+		}
+	}
+
+	MonsterNum = MonsterArr.Num();
+	UE_LOG( LogTemp , Warning , TEXT( "Monster Count : %d" ) , MonsterNum );
+
+	/*if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage( -1 , 5.f , FColor::Green ,  TEXT("%d") , MonsterNum );
+	}*/
+
 }
 

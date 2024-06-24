@@ -124,7 +124,5 @@ private:
 
 	float Amount = 40.f;
 
-	
-	
 
 };
