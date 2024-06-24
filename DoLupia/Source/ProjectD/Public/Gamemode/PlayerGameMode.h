@@ -31,7 +31,8 @@ Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()-
 		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
 		SaveType , SaveSlotName , UseLocation , UseThread, OpenLevel );							\
 																								
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextNPCQuestTagReceived , FString , NextQuestTag );
+class UEndingCreditsWidget;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNextNPCQuestTagReceived , FString , NextQuestTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextMiniGameQuestTagReceived , FString , NextQuestTag );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextSpawnerQuestTagReceived , FString , NextQuestTag );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnNextSpawnerQuestTagCompleted );
@@ -226,4 +227,10 @@ private:
 
 	UPROPERTY()
 	AActor* OriginalViewTarget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UEndingCreditsWidget> EndingCreditsFactory;
+
+	UPROPERTY()
+	UEndingCreditsWidget* EndingCreditsWidget;
 };
