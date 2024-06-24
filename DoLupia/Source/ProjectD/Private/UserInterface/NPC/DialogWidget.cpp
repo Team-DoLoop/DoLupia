@@ -18,6 +18,10 @@ void UDialogWidget::NativeConstruct()
 
     TypingSpeed = 0.05f; 
     CurrentIndex = 0;
+
+    
+    if(PressAnim)
+        PlayAnimation(PressAnim, 0, 0, EUMGSequencePlayMode::Forward, 1, true);
 }
 
 void UDialogWidget::NativeDestruct()

@@ -66,5 +66,11 @@ private:
 	void SkipTypingAnimation();
 	bool IsTyping() const;
 
+
+
+	/*---------------- Next Btn --------------------*/
+	UPROPERTY(EditDefaultsOnly, Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* PressAnim;
+
 	
 };
