@@ -18,7 +18,6 @@
 #include "Characters/Components/InventoryComponent.h"
 #include "Library/LevelManager.h"
 #include "Pooling/SoundManager.h"
-#include "Quest/AutoQuestAcceptActor.h"
 #include "Quest/MinigameQuestObject.h"
 #include "World/Trigger/DestructableWallActor.h"
 #include "World/Trigger/TriggerBaseActor.h"
@@ -102,6 +101,7 @@ void APlayerGameMode::BeginPlay()
 	{
 		LevelIdx = 0;
 		PlayerCameraboom = 1000.0f;
+
 	}
 	else if (CurLevelName == LevelNames[2])
 	{
@@ -114,6 +114,9 @@ void APlayerGameMode::BeginPlay()
 		if (GI->CompletedQuests.Contains( "1002" ))
 		{
 			ApplyAITxtP( 1 );
+		}
+		if (GI->CompletedQuests.Contains( "1003" )) {
+			ActiveLvTrigger();
 		}
 		
 	}
@@ -135,6 +138,9 @@ void APlayerGameMode::BeginPlay()
 		else
 		{
 			ApplyAITxtP( 1 );
+		}
+		if (GI->CompletedQuests.Contains( "3001" )) {
+			ActiveLvTrigger();
 		}
 		
 	}

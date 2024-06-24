@@ -53,5 +53,8 @@ private:
 	static ALevelManager* Instance;
 
 	UPROPERTY()
+	class UProjectDGameInstance* GI;
+
+	UPROPERTY()
 	AGameSaveManager* GameSaveManager;
 };

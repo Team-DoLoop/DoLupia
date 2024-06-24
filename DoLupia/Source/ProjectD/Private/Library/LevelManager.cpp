@@ -3,6 +3,7 @@
 
 #include "Library/LevelManager.h"
 
+#include "ProjectDGameInstance.h"
 #include "Library/GameSaveManager.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Common/UseColor.h"
@@ -87,12 +88,15 @@ void ALevelManager::LoadChpater(int32 LevelIndex)
 		
 	if (LevelIndex == 3)
 		LoadChapter3();
+
+	GI->ClearCompletedQuests();
 }
 
 
 void ALevelManager::InitializeGameSaveManager()
 {
 	GameSaveManager = GetWorld()->SpawnActor<AGameSaveManager>( AGameSaveManager::StaticClass() );
+	GI = Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) );
 }
 
 void ALevelManager::LoadChapter1()
@@ -145,6 +149,8 @@ void ALevelManager::LoadChapter1()
 
 		SaveGameInstance->SaveStruct.ToToAutoSaveData = ToToAutoSaveData;
 		SaveGameInstance->SaveStruct.PlayerSkillLevel = PlayerSkillLevel;
+
+		
 
 		bool bSuccess = UGameplayStatics::SaveGameToSlot( SaveGameInstance , SaveGameInstance->SaveSlotName , SaveGameInstance->SaveIndex );
 

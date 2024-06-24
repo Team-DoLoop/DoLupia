@@ -44,10 +44,6 @@ void UQuestTracker::NativeConstruct()
     WidgetUpdate();
 }
 
-void UQuestTracker::NativeDestruct()
-{
-}
-
 void UQuestTracker::WidgetUpdate()
 {
     if (!IsValid( QuestActor ))

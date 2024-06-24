@@ -20,8 +20,6 @@ public:
 
 	virtual void NativeConstruct() override;
 
-	virtual void NativeDestruct() override;
-
 
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , meta = (BindWidget) )
 	class UTextBlock* txt_ObjectiveText;
