@@ -91,10 +91,10 @@ public:
 	// 레벨에 대한 BGM을 재생하는 함수
 	void PlayBGMForLevel( int32 LevelIndex );
 
-protected:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "BGM" )
 	TMap<int32 , USoundWave*> LvBGMs;
 
+protected:
 	UPROPERTY( Transient )
 	USoundBase* CurrentBGM;
 
