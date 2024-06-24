@@ -382,7 +382,9 @@ void ABossMonster::DestroyMonster()
 	AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
 	player->OnObjectiveIDCalled.Broadcast( "Boss" , 1 );
 
-	this->Destroy();
+	this->SetActorLocation( (FVector( -3380.0f , 5400.0f , -530.0f )) );
+
+	//this->Destroy();
 }
 
 
