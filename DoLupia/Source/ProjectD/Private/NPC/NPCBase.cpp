@@ -295,7 +295,7 @@ void ANPCBase::HideNPC()
 
 	if(MapIcon)
 	{
-		MapIcon->DestroyComponent( true );
+		//MapIcon->DestroyComponent( true );
 		MapIcon = nullptr;
 		bCheckIcon = false;
 	}

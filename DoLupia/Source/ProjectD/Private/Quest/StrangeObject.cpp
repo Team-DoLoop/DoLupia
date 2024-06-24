@@ -128,7 +128,7 @@ void AStrangeObject::OnNextQuestTagReceived(FString NextQuestTag)
 
 void AStrangeObject::OnNextQuestTagCompleted()
 {
-	MapIcon->DestroyComponent( true );
+	//MapIcon->DestroyComponent( true );
 	bCheckIcon = false;
 	bVisibleInteractUI = false;
 	MeshComponent->SetRenderCustomDepth( false );

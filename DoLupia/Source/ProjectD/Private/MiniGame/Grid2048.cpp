@@ -219,6 +219,7 @@ void AGrid2048::Squash( int32 Key )
     if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
     {
         if (EffectSoundWave) SoundManager->PlaySoundWave2D( EffectSoundWave, EEffectSound::EffectSound2 , 0.1f );
+
     }
 }
 
@@ -293,14 +294,16 @@ void AGrid2048::GameClear()
     // 플레이어 움직임 가능하게
     Player->PlayerDoSomeThing(false);
 
+    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
     //미니게임 effect 효과음
     if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
     {
-        if (EffectSoundWave) SoundManager->PlaySoundWave2D( EffectSoundWave , EEffectSound::EffectSound3 , 0.4f );
+        if (ClearSoundWave) SoundManager->PlaySoundWave2D( ClearSoundWave , EEffectSound::EffectSound3 , 0.4f );
+        SoundManager->PlayBGM( gm->LvBGMs[2], 0.4f);
     }
 
     //원래 level2 비지엠으로
-    auto gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     gm->PlayBGMForLevel( 2 );
 
     // 완료 시, 델리게이트 구독
