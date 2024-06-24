@@ -380,5 +380,11 @@ void AProjectDPlayerController::StartToToStory()
 
 void AProjectDPlayerController::ToToSkip()
 {
-	ControlledCharacter->GetTutorialComp()->TutorialSkip();
+	if(ControlledCharacter)
+	{
+		if(auto toto = ControlledCharacter->GetTutorialComp())
+		{
+			toto->TutorialSkip();
+		}
+	}
 }	
