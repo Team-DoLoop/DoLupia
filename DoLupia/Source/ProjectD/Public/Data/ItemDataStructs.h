@@ -157,6 +157,9 @@ struct FItemAssetData
 
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* EquipeedItemEffect;
+	
+	UPROPERTY( EditAnywhere )
+	USoundWave* ItemUseSFX;
 };
 
 USTRUCT()

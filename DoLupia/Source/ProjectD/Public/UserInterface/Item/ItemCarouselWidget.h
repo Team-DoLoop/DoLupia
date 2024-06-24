@@ -66,4 +66,12 @@ private:
     const int32 MaxItemCount = 5;
 
     bool ItemCarouselTrigger = false;
+
+
+    
+    // <----------------------------- SFX ----------------------------->
+    
+private:
+    UPROPERTY( EditAnywhere )
+    USoundWave* GetItemSFX;
 };

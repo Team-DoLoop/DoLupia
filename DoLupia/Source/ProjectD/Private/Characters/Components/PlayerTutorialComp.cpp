@@ -69,6 +69,7 @@ void UPlayerTutorialComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UPlayerTutorialComp::TutorialSkip()
 {
+	if(!TutoData) return;
 	SetExplainIndex(TutoData->TutorialWidgetData.StoryExplainText.Num()-1);
 	NextTutorial();
 }

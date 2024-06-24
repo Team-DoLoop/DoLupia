@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include <Quest/Struct_QuestSystem.h>
 #include "Blueprint/UserWidget.h"
-#include "Quest/Quest_Base.h"
 #include "WidgetQuestLog_Objective.generated.h"
 
 
@@ -22,8 +21,6 @@ class PROJECTD_API UWidgetQuestLog_Objective : public UUserWidget
 
 public:
     virtual void NativePreConstruct() override; // 함수 시그니처 정리
-    virtual void NativeConstruct() override;
-    virtual void NativeDestruct() override;
 
 
     UPROPERTY( EditAnywhere , BlueprintReadWrite )

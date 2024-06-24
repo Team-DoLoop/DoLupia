@@ -37,17 +37,6 @@ void UWidgetQuestLog_QuestEntry::NativePreConstruct()
 	}
 }
 
-void UWidgetQuestLog_QuestEntry::NativeConstruct()
-{
-	Super::NativeConstruct();
-
-}
-
-void UWidgetQuestLog_QuestEntry::NativeDestruct()
-{
-	Super::NativeDestruct();
-}
-
 void UWidgetQuestLog_QuestEntry::OnButtonClicked()
 {
 	if (OnQuestSelected.IsBound())

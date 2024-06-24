@@ -5,6 +5,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "Components/ScrollBox.h"
 #include "Pooling/ItemWidgetPool.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/Item/LootingItemWidget.h"
 
 UItemCarouselWidget::UItemCarouselWidget(const FObjectInitializer& ObjectInitializer)
@@ -41,6 +42,10 @@ void UItemCarouselWidget::AddItemWidget( FText ItemName , int32 Quantity , UText
         ULootingItemWidget* Widget = ItemWidgetPool->GetWidget( ItemName , Quantity , Icon );
         WidgetBox->AddChild( Widget );
     }
+
+    // 사운드 추가
+    if(GetItemSFX)
+        ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( GetItemSFX , EPlayerSound::PlayerSound4 , 0.25f );
 }
 
 

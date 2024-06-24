@@ -42,8 +42,3 @@ void UWidgetQuestNotification::NativeConstruct()
 		);
 		
 }
-
-void UWidgetQuestNotification::NativeDestruct()
-{
-	Super::NativeDestruct();
-}
