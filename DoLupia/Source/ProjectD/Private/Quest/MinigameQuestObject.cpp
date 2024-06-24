@@ -17,7 +17,7 @@ AMinigameQuestObject::AMinigameQuestObject()
 	{
         MiniGameClass = minigame.Class;
 	}
-    gm = nullptr;
+    //gm = nullptr;
 
 }
 
@@ -25,7 +25,7 @@ void AMinigameQuestObject::BeginPlay()
 {
 	Super::BeginPlay();
 
-    gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    //gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
     
     if(gm)
@@ -34,6 +34,7 @@ void AMinigameQuestObject::BeginPlay()
     }
     MapIcon->SetVisibility( false );
 
+    bVisibleInteractUI = false;
 }
 
 FString AMinigameQuestObject::InteractWith()
@@ -74,7 +75,7 @@ void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
     if (!bVisibleInteractUI) return;
     MeshComponent->SetRenderCustomDepth( true );
     MeshComponent->SetCustomDepthStencilValue( depth );
-    MapIcon->SetVisibility( true );
+    MapIcon->SetIconVisible( true );
 }
 
 void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
@@ -89,8 +90,9 @@ void AMinigameQuestObject::OnNextSpawnerQuestTagCompleted()
 {
     //MeshComponent->SetRenderCustomDepth( false );
     // ICON 삭제
-    MapIcon->DestroyComponent( true );
-    bCheckIcon = false;
+    //MapIcon->DestroyComponent( true );
+    MapIcon->SetIconVisible( false );
+	bCheckIcon = false;
 }
 
 void AMinigameQuestObject::SpawnMiniGame()
@@ -129,7 +131,9 @@ void AMinigameQuestObject::UpdateMiniGameStatus()
             // 태그 값이 일치하면 상태 변경 로직 추가
             UE_LOG( LogTemp , Log , TEXT( "MiniGame with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
 
-            ChangeMinigameColor( 4 );
+            bVisibleInteractUI = true;
+            ChangeMinigameColor( 4 ); 
+            
         }
     	
     }

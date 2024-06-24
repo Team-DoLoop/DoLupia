@@ -8,7 +8,6 @@
 
 class AProjectDCharacter;
 class AGrid2048;
-class APlayerGameMode;
 /**
  * 
  */
@@ -40,8 +39,6 @@ public:
 	void OnNextSpawnerQuestTagCompleted();
 
 private:
-	UPROPERTY()
-	APlayerGameMode* gm;
 
 	UPROPERTY( EditAnywhere )
 	USoundWave* BGMSoundWave;
