@@ -61,13 +61,3 @@ void UWidgetQuestLog_Objective::NativePreConstruct()
             UE_LOG( LogTemp , Warning , TEXT( "txt_Description is not bound." ) );
         }
 }
-
-void UWidgetQuestLog_Objective::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-
-void UWidgetQuestLog_Objective::NativeDestruct()
-{
-	Super::NativeDestruct();
-}

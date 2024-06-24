@@ -17,7 +17,6 @@
 #include "Quest/Quest_Base.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Gamemode/PlayerGameMode.h"
-#include "World/Pickup.h"
 
 // Sets default values for this component's properties
 UQuestGiver::UQuestGiver()

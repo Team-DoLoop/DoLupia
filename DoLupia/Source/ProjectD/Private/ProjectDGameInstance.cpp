@@ -291,6 +291,14 @@ void UProjectDGameInstance::InitCompletedQuests()
 	}
 }
 
+void UProjectDGameInstance::ClearCompletedQuests()
+{
+	if(!CompletedQuests.IsEmpty())
+	{
+		CompletedQuests.Empty();
+	}
+}
+
 
 // <----------------------------- Item ----------------------------->
 

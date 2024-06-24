@@ -13,9 +13,7 @@
 #include <Components/Image.h>
 #include "Components/HorizontalBox.h"
 #include "Components/Spacer.h"
-#include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerFSMComp.h"
-#include <Components/SizeBoxSlot.h>
 #include <Components/SizeBox.h>
 
 #include "ProjectDGameInstance.h"

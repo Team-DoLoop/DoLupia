@@ -16,7 +16,6 @@ class PROJECTD_API UQuestTracker : public UUserWidget
 public:
 	virtual void NativePreConstruct() override; // 함수 시그니처 정리
 	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 
 	UPROPERTY( EditAnywhere )
 	class AQuest_Base* QuestActor;
