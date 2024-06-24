@@ -85,6 +85,9 @@ DoLupia/Content/ResearchMegaPack
 DoLupia/Content/Asset/sA_Megapack_v1
 DoLupia/Content/sA_Megapack_v1
 
+#Package
+DoLupia/Windows/*
+
 # Include necessary files for lighting build
 !DoLupia/Content/Maps/Alpha/GameLv1_BuiltData.uasset
 !DoLupia/Content/Maps/Alpha/GameLv2_BuiltData.uasset

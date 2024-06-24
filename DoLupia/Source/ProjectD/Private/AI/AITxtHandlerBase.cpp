@@ -2,14 +2,10 @@
 
 
 #include "AI/AITxtHandlerBase.h"
-#include "IImageWrapperModule.h"
-#include "Components/BoxComponent.h"
 #include "Engine/Texture2D.h"
 #include "UObject/Package.h"
-#include "ImageUtils.h"
 #include "Materials/MaterialInstance.h"
 #include "Library/AIConnectionLibrary.h"
-#include "Materials/MaterialExpressionTextureSample.h"
 #include "Engine/Texture2DDynamic.h" 
 #include "Blueprint/AsyncTaskDownloadImage.h"
 #include "Async/Async.h"
