@@ -35,5 +35,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FString ObjectiveText;
+
+	UPROPERTY( EditAnywhere )
+	USoundWave* SuccessSoundWave;
 	
 };
