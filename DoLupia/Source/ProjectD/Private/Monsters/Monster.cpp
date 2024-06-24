@@ -321,24 +321,6 @@ bool AMonster::GetRandomPositionInNavMesh( FVector centerLocation , float radius
 
 }
 
-//void AMonster::SetActive( bool IsActive )
-//{
-//	bActive = IsActive;
-//	SetActorHiddenInGame( !bActive );
-//
-//	FTimerHandle TimerHandle;
-//	GetWorld()->GetTimerManager().SetTimer( TimerHandle , this , &AMonster::ReturnSelf , 5.0f , false );
-//
-//}
-//
-//void AMonster::ReturnSelf()
-//{
-//	MonsterFSM->state = EMonsterState::Idle;
-//	anim->animState = MonsterFSM->state;
-//	if (ObjectPool == nullptr) return;
-//	ObjectPool->ReturnObject( this );
-//	SetActive( false );
-//}
 
 
 
