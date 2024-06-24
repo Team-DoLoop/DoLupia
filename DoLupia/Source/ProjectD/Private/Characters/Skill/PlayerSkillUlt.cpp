@@ -26,6 +26,9 @@ APlayerSkillUlt::APlayerSkillUlt()
 void APlayerSkillUlt::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 카메라 흔들기
+	if(CSSkill) SkillCameraShake(CSSkill);
 	
 	ApplyDamage(CenterRadius, CenterDamage);
 	

@@ -229,6 +229,13 @@ void UPlayerAttackComp::SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock)
 
 // <---------------------- Attack ---------------------->
 
+void UPlayerAttackComp::PlayCameraShake()
+{
+	// 카메라 쉐이크가 있다면
+	if(SkillCameraShake)
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(SkillCameraShake, 1.0f);
+}
+
 void UPlayerAttackComp::Attack(FSkillInfo* _TempInfo)
 {
 
@@ -715,6 +722,7 @@ void UPlayerAttackComp::SetSkillData(FSkillInfo* _TempInfo)
 	auto _SkillData = _TempInfo->SkillData;
 	
 	SkillMontage = _SkillData->SkillMontage;
+	SkillCameraShake = _SkillData->SkillCameraShake;
 	SkillDamage = _SkillData->SkillDamage;
 	SkillRange = _SkillData->SkillRange;
 	SkillMaxCombo = _SkillData->SkillMaxCombo;

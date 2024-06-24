@@ -34,6 +34,13 @@ void APlayerSkillBase::ActivateSkill()
 {
 }
 
+void APlayerSkillBase::SkillCameraShake(TSubclassOf<UCameraShakeBase> _CSSkill)
+{
+	if(!_CSSkill) return;
+	
+	GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(_CSSkill, 1.0f);
+}
+
 // Called every frame
 void APlayerSkillBase::Tick(float DeltaTime)
 {
