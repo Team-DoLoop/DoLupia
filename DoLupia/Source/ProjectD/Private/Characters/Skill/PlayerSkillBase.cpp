@@ -32,6 +32,8 @@ void APlayerSkillBase::BeginPlay()
 
 void APlayerSkillBase::ActivateSkill()
 {
+	// 카메라 흔들기
+	if(CSSkill) SkillCameraShake(CSSkill);
 }
 
 void APlayerSkillBase::SkillCameraShake(TSubclassOf<UCameraShakeBase> _CSSkill)
