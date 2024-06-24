@@ -455,7 +455,10 @@ void APlayerGameMode::PlayOutroSequencer()
 	}
 	if(Player)
 	{
-		Player->SetHidden( true );
+		Player->SetActorLocation( (FVector( -3380.0f ,5000.0f, -530.0f )));
+		Player->PlayerDoSomeThing( true );
+		FInputModeUIOnly InputModeUIOnly;
+		Player->GetProjectDPlayerController()->SetInputMode( InputModeUIOnly );
 	}
 	
 
@@ -488,7 +491,7 @@ void APlayerGameMode::PlayOutroSequencer()
 			SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , "Opening" , false );
 			UGameplayStatics::OpenLevel( this , TEXT("Opening") );
 		} ,
-		12.0f , // 지연 시간(초)
+		14.0f , // 지연 시간(초)
 		false
 	);
 
