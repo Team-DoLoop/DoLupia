@@ -5,7 +5,6 @@
 
 #include "ProjectDGameInstance.h"
 #include "Characters/ProjectDCharacter.h"
-#include "Characters/ProjectDPlayerController.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerFSMComp.h"
 #include "Data/ItemDataStructs.h"
@@ -70,6 +69,7 @@ void UPlayerTutorialComp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UPlayerTutorialComp::TutorialSkip()
 {
+	if(!TutoData) return;
 	SetExplainIndex(TutoData->TutorialWidgetData.StoryExplainText.Num()-1);
 	NextTutorial();
 }

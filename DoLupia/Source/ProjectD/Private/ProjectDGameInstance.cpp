@@ -64,13 +64,19 @@ void UProjectDGameInstance::Init()
 
 void UProjectDGameInstance::InitCanUseColor()
 {
-	UEnum* ColorEnum = FindObject<UEnum>(ANY_PACKAGE, TEXT("EUseColor"), true);
-	if(!ColorEnum) return;
+	// UEnum* ColorEnum = FindObject<UEnum>(nullptr, TEXT("/Script/ProjectD.EUseColor"), true);
+	// if(!ColorEnum) return;
 
-	for(int i = 0; i < ColorEnum->NumEnums(); i++)
-	{
-		CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), false);
-	}
+	CanUseColor.Add(EUseColor::NONE, false);
+	CanUseColor.Add(EUseColor::RED, false);
+	CanUseColor.Add(EUseColor::YELLOW, false);
+	CanUseColor.Add(EUseColor::BLUE, false);
+	CanUseColor.Add(EUseColor::COLOR, false);
+	
+	// for(int i = 0; i < ColorEnum->NumEnums(); i++)
+	// {
+	//	CanUseColor.Add(static_cast<EUseColor>(ColorEnum->GetValueByIndex(i)), false);
+	//	}
 }
 
 void UProjectDGameInstance::InitPlayerSkillLevel()
@@ -107,13 +113,24 @@ void UProjectDGameInstance::SetPlayerSkillLevel(EUseColor _Color, int32 _SkillKe
 
 void UProjectDGameInstance::InitTutorialIndex()
 {
-	UEnum* ExplainType = FindObject<UEnum>(ANY_PACKAGE, TEXT("EExplainType"), true);
+	// UEnum* ExplainType = FindObject<UEnum>(nullptr, TEXT("/Script/ProjectD.EExplainType"), true);
 
-	if(!ExplainType) return;
-	for(int i = 0; i < ExplainType->NumEnums(); i++)
-	{
-		TutorialIndexMap.Add(static_cast<EExplainType>(ExplainType->GetValueByIndex(i)), 0);
-	}
+	// if(!ExplainType) return;
+	// for(int i = 0; i < ExplainType->NumEnums(); i++)
+	// {
+	// 	TutorialIndexMap.Add(static_cast<EExplainType>(ExplainType->GetValueByIndex(i)), 0);
+	// }
+
+	TutorialIndexMap.Add(EExplainType::NONE, 0);
+	TutorialIndexMap.Add(EExplainType::MOVE, 0);
+	TutorialIndexMap.Add(EExplainType::INTERACTION, 0);
+	TutorialIndexMap.Add(EExplainType::ATTACK, 0);
+	TutorialIndexMap.Add(EExplainType::SKILL, 0);
+	TutorialIndexMap.Add(EExplainType::ITEM_OIL, 0);
+	TutorialIndexMap.Add(EExplainType::ITEM_COOL_WATER, 0);
+	TutorialIndexMap.Add(EExplainType::ITEM_SKILL_UPGRADE, 0);
+	TutorialIndexMap.Add(EExplainType::FULL_HIT_GAUGE, 0);
+	TutorialIndexMap.Add(EExplainType::MAIN_STORY, 0);
 }
 
 void UProjectDGameInstance::InitToToAutoSaveData()

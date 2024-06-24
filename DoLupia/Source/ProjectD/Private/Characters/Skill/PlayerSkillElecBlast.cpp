@@ -4,7 +4,6 @@
 #include "Characters/Skill/PlayerSkillElecBlast.h"
 
 #include "NiagaraComponent.h"
-#include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"

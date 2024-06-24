@@ -2,7 +2,6 @@
 
 #include "Characters/ProjectDGameMode.h"
 #include "Characters/ProjectDPlayerController.h"
-#include "Characters/ProjectDCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AProjectDGameMode::AProjectDGameMode()

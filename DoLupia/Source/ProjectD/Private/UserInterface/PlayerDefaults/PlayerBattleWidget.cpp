@@ -3,14 +3,8 @@
 
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 
-#include "ProjectDGameInstance.h"
-#include "Common/UseColor.h"
 #include "Components/ProgressBar.h"
-#include "Data/PlayerSkillDataStructs.h"
-#include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
-#include "UserInterface/Skill/PlayerSkillSlotWidget.h"
-#include "UserInterface/Skill/PlayerSkillWidget.h"
 
 void UPlayerBattleWidget::NativeOnInitialized()
 {

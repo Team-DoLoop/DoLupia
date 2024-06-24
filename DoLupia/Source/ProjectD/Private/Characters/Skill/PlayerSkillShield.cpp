@@ -4,7 +4,6 @@
 #include "Characters/Skill/PlayerSkillShield.h"
 
 #include "NiagaraComponent.h"
-#include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/Monster.h"

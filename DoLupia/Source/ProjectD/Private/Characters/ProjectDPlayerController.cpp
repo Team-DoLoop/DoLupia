@@ -2,20 +2,12 @@
 
 #include "Characters/ProjectDPlayerController.h"
 
-#include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraSystem.h"
-#include "NiagaraFunctionLibrary.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
-#include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
-#include "AI/AIMarterialTestActor.h"
-#include "Characters/PlayerStateBase.h"
 #include "Characters/Components/PlayerAttackComp.h"
-#include "Characters/Components/PlayerFSMComp.h"
 #include "Characters/Components/PlayerMoveComp.h"
 #include "Characters/Components/PlayerTutorialComp.h"
 #include "Engine/LocalPlayer.h"
@@ -25,7 +17,6 @@
 #include "Data/WidgetData.h"
 #include "Framework/Application/NavigationConfig.h"
 #include "Framework/Application/SlateApplication.h"
-#include "Library/AIConnectionLibrary.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Monsters/BossMonster.h"
@@ -389,5 +380,11 @@ void AProjectDPlayerController::StartToToStory()
 
 void AProjectDPlayerController::ToToSkip()
 {
-	ControlledCharacter->GetTutorialComp()->TutorialSkip();
+	if(ControlledCharacter)
+	{
+		if(auto toto = ControlledCharacter->GetTutorialComp())
+		{
+			toto->TutorialSkip();
+		}
+	}
 }	

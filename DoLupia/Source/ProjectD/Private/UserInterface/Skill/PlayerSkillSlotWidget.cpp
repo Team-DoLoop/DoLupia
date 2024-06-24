@@ -4,12 +4,9 @@
 #include "UserInterface/Skill/PlayerSkillSlotWidget.h"
 
 #include "Characters/ProjectDCharacter.h"
-#include "Characters/Components/PlayerAttackComp.h"
-#include "Components/Button.h"
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Image.h"
-#include "Components/ProgressBar.h"
 #include "Components/Spacer.h"
 #include "Data/PlayerSkillDataStructs.h"
 #include "Kismet/GameplayStatics.h"

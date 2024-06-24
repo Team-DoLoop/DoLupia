@@ -4,7 +4,6 @@
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 
 #include "Components/ProgressBar.h"
-#include "Kismet/KismetMathLibrary.h"
 
 void UPlayerHPWidget::SetHPBar(int32 _HP, int32 _MaxHP)
 {
