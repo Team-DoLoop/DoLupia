@@ -28,6 +28,8 @@ void ARMProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	CollisionComponent->OnComponentBeginOverlap.AddDynamic( this , &ARMProjectile::OnMyCompBeginOverlap );
+
+	GetWorldTimerManager().SetTimer( TimerHandle , this , &ARMProjectile::DestroyProjectile , 8.0f , false );
 }
 
 // Called every frame
@@ -64,6 +66,15 @@ void ARMProjectile::OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedCompone
 			this->Destroy();
 			return;
 		}
+	}
+}
+
+void ARMProjectile::DestroyProjectile()
+{
+	if(this)
+	{
+		this->Destroy();
+		
 	}
 }
 

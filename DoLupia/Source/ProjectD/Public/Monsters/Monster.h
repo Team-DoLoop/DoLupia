@@ -124,7 +124,16 @@ private:
 
 	float Amount = 40.f;
 
-	
-	
+////================Object Pooling====================
+//public:
+//		FORCEINLINE void SetObjectPool( class ATest_Spawner* InObjectPool ) { ObjectPool = InObjectPool; }
+//		void ReturnSelf();
+//		void SetActive( bool IsActive );
+//		FORCEINLINE bool IsActive() const { return bActive; }
+//
+//private:
+//	bool bActive;
+//	class ATest_Spawner* ObjectPool;
+//	
 
 };

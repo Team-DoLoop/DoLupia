@@ -60,7 +60,13 @@ private:
 	FString CurrentQuestTag;
 	void UpdateSpawnerStatus();
 
+	//TArray< AMonster*> MonsterArr;
 
+	void GetAllMonsters();
 
+	FTimerHandle TimerHandle;
 	
+	int MonsterNum = 0;
+
+	int MonsterMaxNum = 25;
 };
