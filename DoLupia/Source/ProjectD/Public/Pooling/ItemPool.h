@@ -29,11 +29,11 @@ public:
     void ReturnItem( UItemBase* Item );
 	
 private:
-    UPROPERTY(VisibleAnywhere)
-    TArray<TObjectPtr<UItemBase>> Pool;
+    UPROPERTY()
+    TArray<UItemBase*> Pool;
 
-    UPROPERTY( VisibleAnywhere )
-    TMap<FString, TObjectPtr<UItemBase>> ItemManager;
+    UPROPERTY()
+    TMap<FString, UItemBase*> ItemManager;
 
 
     UPROPERTY(EditDefaultsOnly, Category = "Item Initialization" )

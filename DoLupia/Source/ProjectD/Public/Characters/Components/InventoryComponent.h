@@ -150,7 +150,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory" )
 	TMap<FString, int32> InventoryCount;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UItemPool> ItemPool;
 
 	UPROPERTY(VisibleAnywhere)

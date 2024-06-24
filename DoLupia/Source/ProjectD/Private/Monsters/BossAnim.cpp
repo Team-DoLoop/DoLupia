@@ -191,5 +191,17 @@ void UBossAnim::OnEndBlastLighteningAttackAnimation()
 void UBossAnim::OnEndDieAnimation()
 {
 	Boss->DestroyMonster();
-	gm->PlayOutroSequencer();
+
+	FTimerHandle TimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TimerHandle ,
+		[this]() {
+			gm->PlayOutroSequencer();
+		} ,
+		0.5f , // 지연 시간(초)
+		false
+	);
+
+	//gm->PlayOutroSequencer();
 }

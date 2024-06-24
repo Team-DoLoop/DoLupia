@@ -85,6 +85,7 @@ public:
 	void GiveQuest(int32 _QuestID);
 
 	void InitCompletedQuests();
+	void ClearCompletedQuests();
 	FORCEINLINE TArray<FName> GetCompletedQuest() { return CompletedQuests; }
 	FORCEINLINE void SetCompletedQuest( FName CompletedQuestID ) { CompletedQuests.Add(CompletedQuestID); }
 

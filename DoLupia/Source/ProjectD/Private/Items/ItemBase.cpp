@@ -7,6 +7,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/InventoryComponent.h"
 #include "Characters/Components/PlayerAttackComp.h"
+#include "Pooling/SoundManager.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerHPWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerMPWidget.h"
@@ -79,6 +80,11 @@ void UItemBase::Use(AProjectDCharacter* Character)
 {
 	if (Character)
 	{
+		// 사운드 시작
+		if(AssetData.ItemUseSFX)
+			ASoundManager::GetInstance( GetWorld() )->PlaySoundWave2D( AssetData.ItemUseSFX , EPlayerSound::PlayerSound3 , 0.25f );
+
+		
 		if(ItemSkillColor != EUseColor::NONE)
 		{
 			Character->GetAttackComp()->GetSkillUpgradePoint(ItemSkillColor, ItemStatistics.ItemSkillID);
@@ -87,7 +93,6 @@ void UItemBase::Use(AProjectDCharacter* Character)
 		
 		if (APlayerStat* PlayerStat = Character->GetPlayerStat())
 		{
-
 			if(ItemStatistics.HealthValue)
 			{
 				PlayerStat->SetHP( PlayerStat->GetHP() + ItemStatistics.HealthValue );

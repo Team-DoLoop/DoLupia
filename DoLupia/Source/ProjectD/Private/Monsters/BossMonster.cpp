@@ -382,7 +382,7 @@ void ABossMonster::DestroyMonster()
 	AProjectDCharacter* player = Cast<AProjectDCharacter>( target );
 	player->OnObjectiveIDCalled.Broadcast( "Boss" , 1 );
 
-	//this->Destroy();
+	this->Destroy();
 }
 
 

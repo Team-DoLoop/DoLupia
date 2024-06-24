@@ -4,7 +4,6 @@
 #include "Quest/StrangeObject.h"
 #include <Components/BoxComponent.h>
 
-#include "Characters/ProjectDCharacter.h"
 #include "Data/WidgetData.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "MapIconComponent.h"

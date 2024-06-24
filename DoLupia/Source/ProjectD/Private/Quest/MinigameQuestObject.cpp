@@ -4,6 +4,7 @@
 #include "Quest/MinigameQuestObject.h"
 
 #include "MapIconComponent.h"
+#include "Pooling/SoundManager.h"
 #include "Characters/ProjectDCharacter.h"
 #include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -32,6 +33,7 @@ void AMinigameQuestObject::BeginPlay()
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
     }
     MapIcon->SetVisibility( false );
+
 }
 
 FString AMinigameQuestObject::InteractWith()
@@ -46,6 +48,13 @@ FString AMinigameQuestObject::InteractWith()
         {
             SpawnMiniGame();
             isAvailable = true;
+
+            //미니게임 비지엠 시작
+            if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
+            {
+                if (BGMSoundWave) SoundManager->PlayBGM( BGMSoundWave , 0.2f );
+            }
+
             return ObjectID;
         }
     }

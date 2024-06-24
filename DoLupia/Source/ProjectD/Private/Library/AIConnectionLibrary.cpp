@@ -4,13 +4,9 @@
 #include "Library/AIConnectionLibrary.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
-#include "ImageUtils.h"
 #include "Engine.h"
 #include "AI/AIMarterialTestActor.h"
-#include "UserInterface/NPC/NPCConvWidget.h"
-#include "Gamemode/PlayerGameMode.h"
 #include "Library/JsonLibrary.h"
-#include "NPC/NPCBase.h"
 
 FString UAIConnectionLibrary::LanIP = "192.168.75.108";
 FString UAIConnectionLibrary::WifiIP = "172.16.216.55";

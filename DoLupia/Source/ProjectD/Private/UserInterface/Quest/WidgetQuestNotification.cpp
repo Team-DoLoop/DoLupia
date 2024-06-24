@@ -4,6 +4,7 @@
 #include "UserInterface/Quest/WidgetQuestNotification.h"
 
 #include "Components/TextBlock.h"
+#include "Pooling/SoundManager.h"
 
 void UWidgetQuestNotification::NativePreConstruct()
 {
@@ -22,7 +23,13 @@ void UWidgetQuestNotification::NativePreConstruct()
 void UWidgetQuestNotification::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
+
+	//미니게임 effect 효과음
+	if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
+	{
+		if (SuccessSoundWave) SoundManager->PlaySoundWave2D( SuccessSoundWave , EEffectSound::EffectSound2 , 0.2f );
+	}
+
 	if (ani_Appear) // 애니메이션이 유효한지 확인
 	{
 		// 애니메이션을 재생
@@ -41,9 +48,4 @@ void UWidgetQuestNotification::NativeConstruct()
 		false
 		);
 		
-}
-
-void UWidgetQuestNotification::NativeDestruct()
-{
-	Super::NativeDestruct();
 }
