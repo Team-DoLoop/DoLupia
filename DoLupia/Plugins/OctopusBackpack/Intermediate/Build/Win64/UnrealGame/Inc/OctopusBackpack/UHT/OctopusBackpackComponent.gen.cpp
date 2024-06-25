@@ -694,9 +694,13 @@ struct Z_Construct_UClass_UOctopusBackpackComponent_Statics
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_objectDynamicTypesArr_MetaData[] = {
 		{ "Category", "Octopus Backpack | Parameters" },
+#if !UE_BUILD_SHIPPING
 		{ "Comment", "// Check trace block by this\n" },
+#endif
 		{ "ModuleRelativePath", "Public/OctopusBackpackComponent.h" },
+#if !UE_BUILD_SHIPPING
 		{ "ToolTip", "Check trace block by this" },
+#endif
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_walkMoveHandCurve_MetaData[] = {
 		{ "Category", "Octopus Backpack | Parameters" },
@@ -754,9 +758,13 @@ struct Z_Construct_UClass_UOctopusBackpackComponent_Statics
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_backPackOcto_MetaData[] = {
 		{ "Category", "Octopus Backpack | Parameters" },
+#if !UE_BUILD_SHIPPING
 		{ "Comment", "// UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = \"Octopus Backpack | Debug\")\n// bool bDebug = false;\n" },
+#endif
 		{ "ModuleRelativePath", "Public/OctopusBackpackComponent.h" },
+#if !UE_BUILD_SHIPPING
 		{ "ToolTip", "UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = \"Octopus Backpack | Debug\")\nbool bDebug = false;" },
+#endif
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_animateHandle_MetaData[] = {
 		{ "ModuleRelativePath", "Public/OctopusBackpackComponent.h" },
@@ -1076,14 +1084,14 @@ UOctopusBackpackComponent::~UOctopusBackpackComponent() {}
 // End Class UOctopusBackpackComponent
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_Statics
+struct Z_CompiledInDeferFile_FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UOctopusBackpackComponent, UOctopusBackpackComponent::StaticClass, TEXT("UOctopusBackpackComponent"), &Z_Registration_Info_UClass_UOctopusBackpackComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UOctopusBackpackComponent), 1442854574U) },
+		{ Z_Construct_UClass_UOctopusBackpackComponent, UOctopusBackpackComponent::StaticClass, TEXT("UOctopusBackpackComponent"), &Z_Registration_Info_UClass_UOctopusBackpackComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UOctopusBackpackComponent), 947575016U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_267823612(TEXT("/Script/OctopusBackpack"),
-	Z_CompiledInDeferFile_FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_2915630993(TEXT("/Script/OctopusBackpack"),
+	Z_CompiledInDeferFile_FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusBackpackComponent_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

@@ -58,6 +58,7 @@ void UProjectDGameInstance::Init()
 	InitCompletedQuests();
 	InitToToAutoSaveData();
 	InitPlayerSkillLevel();
+	InitItemManaging();
 }
 
 // <----------------------------- Player Skill ----------------------------->
@@ -324,6 +325,50 @@ FItemData* UProjectDGameInstance::GetItemData(FString ItemID)
 	return ItemTable->FindRow<FItemData>(FName(*ItemID), TEXT(""));
 }
 
+UItemBase* UProjectDGameInstance::GetItem(FString ItemID)
+{
+	if (ItemManager.Contains( ItemID ))
+	{
+		return ItemManager[ItemID];
+	}
+
+	return nullptr;
+}
+
+void UProjectDGameInstance::InitItemManaging()
+{
+	ItemManager.Empty();
+
+	if (ItemTable)
+	{
+		TArray<FItemData*> OutRowArray;
+		ItemTable->GetAllRows<FItemData>( TEXT( "Context String" ) , OutRowArray );
+
+		for (FItemData* ItemData : OutRowArray)
+		{
+			if (ItemData)
+			{
+				UItemBase* ItemReference = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+
+				ItemReference->SetID( ItemData->ID );
+				ItemReference->SetItemType( ItemData->ItemType );
+				ItemReference->SetItemQuality( ItemData->ItemQuality );
+				ItemReference->SetItemStatistics( ItemData->ItemStatistics );
+				ItemReference->SetTextData( ItemData->TextData );
+				ItemReference->SetNumericData( ItemData->NumericData );
+				ItemReference->SetAssetData( ItemData->AssetData );
+				ItemReference->SetItemSkillColorData( ItemData->ItemSkillColor );
+				ItemReference->SetItemMaterial( ItemData->ItemMaterial );
+
+				// 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
+				FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
+				ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
+
+				ItemManager.Emplace( ItemData->TextData.Name.ToString() , ItemReference );
+			}
+		}
+	}
+}
 
 /*//<-----------------------------  Player location  ----------------------------->
 void UProjectDGameInstance::LoadPlayerLocation()

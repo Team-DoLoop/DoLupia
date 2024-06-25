@@ -109,9 +109,17 @@ void AGameSaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AGameSaveManager::BeginPlay -> Start " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	ItemPool->CreateItem( 110 );
 
 	SaveLoadObject = GetWorld()->SpawnActor<ASaveLoadObject>(ASaveLoadObject::StaticClass());
+
+	FFileHelper::SaveStringToFile( L"AGameSaveManager::BeginPlay -> End " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void AGameSaveManager::SaveGameAsync( AProjectDCharacter* Character , FString SaveSlotName , FName SaveName , FName LevelName ,
@@ -336,6 +344,10 @@ void AGameSaveManager::SaveGameAsync(AProjectDCharacter* Character, FString Save
 void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType SaveType , FString SaveSlotName, bool UseLocation, bool UseThread, bool OpenLevel )
 {
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AGameSaveManager::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 
 	if(Character)
 	{
@@ -359,6 +371,7 @@ void AGameSaveManager::LoadGameAsync( AProjectDCharacter* Character , ESaveType 
 
 					if(LoadedGameInstance->SaveStruct.LevelName == FName( "Openinig" ))
 						return;
+
 
 					if (LoadedGameInstance->SaveStruct.LevelName != FName( "None" ) && OpenLevel)
 					{

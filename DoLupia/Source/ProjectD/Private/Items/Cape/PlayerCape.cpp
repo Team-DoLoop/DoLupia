@@ -15,6 +15,11 @@ APlayerCape::APlayerCape() : AAITxtHandlerBase()
 void APlayerCape::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APlayerCape::BeginPlay -> Start End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 	
 }
 

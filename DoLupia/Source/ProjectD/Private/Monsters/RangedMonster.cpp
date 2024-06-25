@@ -34,6 +34,11 @@ void ARangedMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"ARangedMonster::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	this->MonsterType = EMonsterType::Ranged;
 	MonsterFSM->state = EMonsterState::Idle;
 	//원거리 몬스터 기본 설정
@@ -42,6 +47,9 @@ void ARangedMonster::BeginPlay()
 	this->AttackRange = 1200;
 	this->attackDelayTime = 3;
 	anim = Cast<UMonsterAnim>( this->GetMesh()->GetAnimInstance() );
+
+	FFileHelper::SaveStringToFile( L"ARangedMonster::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 

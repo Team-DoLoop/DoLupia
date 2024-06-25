@@ -8,9 +8,11 @@
 #include "Pooling/ItemPool.h"
 
 //engine
+#include "ProjectDGameInstance.h"
 #include "Algo/Sort.h"
 #include "Characters/PlayerStat.h"
 #include "Characters/ProjectDCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "UserInterface/Item/ItemCarouselWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 
@@ -19,6 +21,7 @@ constexpr int32 NONFIND_INDEX = -1;
 
 
 UInventoryComponent::UInventoryComponent()
+	: InventorySlotsCapacity(20)
 {
 	PrimaryComponentTick.bCanEverTick = false; // 나중에 삭제
 
@@ -29,17 +32,32 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"UInventoryComponent::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	player = Cast<AProjectDCharacter>( GetOwner() );
 
-	InventorySlotsCapacity = 20;
-
-	ItemPool->CreateItem( InventorySlotsCapacity );
+	//ItemPool->CreateItem( InventorySlotsCapacity );
 
 	if(LootingItemWidgetFactory)
 	{
 		ItemCarouselWidget = CreateWidget<UItemCarouselWidget>( GetWorld() , LootingItemWidgetFactory );
 		ItemCarouselWidget->AddToViewport();
 	}
+	else
+	{
+		// FFileHelper 클래스를 이용하여 로그 파일 생성
+		FFileHelper::SaveStringToFile( L"UInventoryComponent::BeginPlay -> LootingItemWidgetFactory nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
+
+
+	Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ))->InitItemManaging();
+
+	FFileHelper::SaveStringToFile( L"UInventoryComponent::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 //

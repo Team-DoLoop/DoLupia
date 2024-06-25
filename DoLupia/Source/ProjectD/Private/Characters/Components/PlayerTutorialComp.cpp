@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Components/PlayerTutorialComp.h"
@@ -32,7 +32,10 @@ void UPlayerTutorialComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"UPlayerTutorialComp::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
@@ -41,6 +44,11 @@ void UPlayerTutorialComp::BeginPlay()
 	{
 		InventoryComp = Cast<UInventoryComponent>( Player->GetComponentByClass( UInventoryComponent::StaticClass() ) );
 		PlayerFSMComp = Player->GetPlayerFSMComp();
+	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"UPlayerTutorialComp::BeginPlay -> Player nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 
 	
@@ -52,6 +60,9 @@ void UPlayerTutorialComp::BeginPlay()
 	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
 	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
 	// ItemIdData.Add(0, "Consumeable_001"); // 배터리
+
+	FFileHelper::SaveStringToFile( L"UPlayerTutorialComp::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 

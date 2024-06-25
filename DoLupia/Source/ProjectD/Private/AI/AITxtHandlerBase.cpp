@@ -45,6 +45,11 @@ void AAITxtHandlerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"AAITxtHandlerBase::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
     gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	AIlib = NewObject<UAIConnectionLibrary>();
 
@@ -66,8 +71,14 @@ void AAITxtHandlerBase::BeginPlay()
 
     if (!meshComp )
     {
+        // FFileHelper 클래스를 이용하여 로그 파일 생성
+        FFileHelper::SaveStringToFile( L"AAITxtHandlerBase::BeginPlay -> !meshComp" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
         return;
     }
+
+    FFileHelper::SaveStringToFile( L"AAITxtHandlerBase::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+    &IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

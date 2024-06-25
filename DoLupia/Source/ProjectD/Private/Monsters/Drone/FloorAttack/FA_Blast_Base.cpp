@@ -21,6 +21,11 @@ void AFA_Blast_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AFA_Blast_Base::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	FTimerHandle Handle;
 
 	GetWorld()->GetTimerManager().SetTimer
@@ -29,6 +34,9 @@ void AFA_Blast_Base::BeginPlay()
 		FTimerDelegate::CreateLambda( [this]() { Trigger();}) ,
 		1.f , false
 	);
+
+	FFileHelper::SaveStringToFile( L"AFA_Blast_Base::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+	&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void AFA_Blast_Base::Trigger()

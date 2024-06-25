@@ -12,6 +12,11 @@ void AFA_Blast_Fire::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AFA_Blast_Fire::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	FloorAttackType = EFloorAttackType::BlastFire;
 
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation( GetWorld() , SpawnSecondEffect , GetActorLocation() );
@@ -31,6 +36,9 @@ void AFA_Blast_Fire::BeginPlay()
 	} );
 
 	GetWorld()->GetTimerManager().SetTimer(Handle, TimerDel, 0.5f, false );
+
+	FFileHelper::SaveStringToFile( L"AFA_Blast_Fire::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+	&IFileManager::Get() , ELogVerbosity::Log );
 
 }
 

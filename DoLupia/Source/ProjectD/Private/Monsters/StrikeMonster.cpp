@@ -47,6 +47,12 @@ AStrikeMonster::AStrikeMonster()
 void AStrikeMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AStrikeMonster::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	this->MonsterType= EMonsterType::Strike;
 	this->MonsterFSM->state = EMonsterState::Idle;
 
@@ -62,6 +68,9 @@ void AStrikeMonster::BeginPlay()
 		maxHP = 30;
 		currentHP = maxHP;
 	}
+
+	FFileHelper::SaveStringToFile( L"AStrikeMonster::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 
 	Weapon->OnComponentBeginOverlap.AddDynamic( this , &AStrikeMonster::OnMyCompBeginOverlap );
 }

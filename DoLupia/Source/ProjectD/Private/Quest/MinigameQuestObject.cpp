@@ -25,6 +25,11 @@ void AMinigameQuestObject::BeginPlay()
 {
 	Super::BeginPlay();
 
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"AMinigameQuestObject::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
     gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
     
@@ -32,8 +37,16 @@ void AMinigameQuestObject::BeginPlay()
     {
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
     }
+    else
+    {
+        FFileHelper::SaveStringToFile( L"AMinigameQuestObject::BeginPlay -> gm nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+    }
+
     MapIcon->SetVisibility( false );
 
+    FFileHelper::SaveStringToFile( L"AMinigameQuestObject::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 FString AMinigameQuestObject::InteractWith()

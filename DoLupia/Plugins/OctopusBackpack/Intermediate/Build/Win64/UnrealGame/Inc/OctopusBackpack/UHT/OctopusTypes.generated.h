@@ -14,14 +14,14 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define OCTOPUSBACKPACK_OctopusTypes_generated_h
 
-#define FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusTypes_h_57_GENERATED_BODY \
+#define FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusTypes_h_57_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FOctoHandStatus_Statics; \
 	OCTOPUSBACKPACK_API static class UScriptStruct* StaticStruct();
 
 
 template<> OCTOPUSBACKPACK_API UScriptStruct* StaticStruct<struct FOctoHandStatus>();
 
-#define FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusTypes_h_111_GENERATED_BODY \
+#define FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusTypes_h_111_GENERATED_BODY \
 	friend struct Z_Construct_UScriptStruct_FOctoTentaclesStruct_Statics; \
 	OCTOPUSBACKPACK_API static class UScriptStruct* StaticStruct();
 
@@ -29,7 +29,7 @@ template<> OCTOPUSBACKPACK_API UScriptStruct* StaticStruct<struct FOctoHandStatu
 template<> OCTOPUSBACKPACK_API UScriptStruct* StaticStruct<struct FOctoTentaclesStruct>();
 
 #undef CURRENT_FILE_ID
-#define CURRENT_FILE_ID FID_build_U5M_Marketplace_Sync_LocalBuilds_PluginTemp_HostProject_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusTypes_h
+#define CURRENT_FILE_ID FID_DoLupia_Plugins_OctopusBackpack_Source_OctopusBackpack_Public_OctopusTypes_h
 
 
 #define FOREACH_ENUM_EOCTO_MOVE(op) \

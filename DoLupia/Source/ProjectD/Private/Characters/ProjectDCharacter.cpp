@@ -169,6 +169,11 @@ void AProjectDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AProjectDCharacter::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	PlayerController = Cast<AProjectDPlayerController>(GetController());
 
 	PlayerController->SetIgnoreMoveInput( false );
@@ -183,6 +188,11 @@ void AProjectDCharacter::BeginPlay()
 		PlayerStat->initPlayerData();
 		PlayerMaxHP = PlayerStat->GetMaxHP();
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AProjectDCharacter::BeginPlay -> PlayerStat nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
 	
 	FOnTimelineFloat AimLerpAlphaValue;
 	FOnTimelineEvent TimelineFinishedEvent;
@@ -193,6 +203,11 @@ void AProjectDCharacter::BeginPlay()
 	{
 		AimingCameraTimeline->AddInterpFloat(AimingCameraCurve, AimLerpAlphaValue);
 		AimingCameraTimeline->SetTimelineFinishedFunc(TimelineFinishedEvent);
+	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AProjectDCharacter::BeginPlay -> AimingCameraTimeline && AimingCameraCurve nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 
 	if(!PlayerDefaultsWidget && PlayerDefaultsWidgetFactory)
@@ -207,11 +222,19 @@ void AProjectDCharacter::BeginPlay()
 			PlayerBattleWidget->GetPlayerMPBar()->SetMPBar(PlayerStat->GetMP(), PlayerStat->GetMaxMP());
 		}
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AProjectDCharacter::BeginPlay -> PlayerDefaultsWidget && PlayerDefaultsWidgetFactory nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
 
 	PlayerAnim = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	
 	// 초기 장비 착용
 	Gadget->InitEquip();
+
+	FFileHelper::SaveStringToFile( L"AProjectDCharacter::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void AProjectDCharacter::Tick(float DeltaSeconds)

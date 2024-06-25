@@ -15,6 +15,11 @@ AEquipItemBase::AEquipItemBase()
 void AEquipItemBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AEquipItemBase::BeginPlay -> Start End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void AEquipItemBase::ReceiveItemData( UItemBase* NewItemBase , bool UsedSubMesh )

@@ -37,11 +37,19 @@ void AProjectDPlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AProjectDPlayerController::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	// UMG에서 Tab을 통한 navigation 이동 막기
 	FSlateApplication::Get().GetNavigationConfig()->bTabNavigation = false;
 	
 	ControlledCharacter = Cast<AProjectDCharacter>(GetCharacter());
 	GM = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	FFileHelper::SaveStringToFile( L"AProjectDPlayerController::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 

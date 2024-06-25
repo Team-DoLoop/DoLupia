@@ -26,6 +26,11 @@ APlayerSkillUlt::APlayerSkillUlt()
 void APlayerSkillUlt::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APlayerSkillUlt::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 	
 	ApplyDamage(CenterRadius, CenterDamage);
 	
@@ -48,6 +53,10 @@ void APlayerSkillUlt::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle4, [this]() {
 		ApplyDamage(OuterRadius, OuterDamage); // OuterRangeDamage
 	}, 0.2f, false);
+
+	FFileHelper::SaveStringToFile( L"APlayerSkillUlt::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	
 }
 

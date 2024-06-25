@@ -57,6 +57,12 @@ ABossMonster::ABossMonster()
 void ABossMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"ABossMonster::BeginPlay -> Start " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	IsAlive = true;
 	state = EBossState::Idle;
 	skillState = EBossSkill::Hit;
@@ -81,7 +87,8 @@ void ABossMonster::BeginPlay()
 	InitializeAttackStack();
 
 
-
+	FFileHelper::SaveStringToFile( L"ABossMonster::BeginPlay -> End " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

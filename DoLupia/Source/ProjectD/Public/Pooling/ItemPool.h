@@ -35,7 +35,6 @@ private:
     UPROPERTY()
     TMap<FString, UItemBase*> ItemManager;
 
-
     UPROPERTY(EditDefaultsOnly, Category = "Item Initialization" )
     UDataTable* ItemDataTable;
 };
