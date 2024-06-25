@@ -92,6 +92,7 @@ void APlayerGameMode::BeginPlay()
 	{
 		LevelIdx = 999;
 		IsToToNotInMapStart = true;
+		GI->ClearCompletedQuests();
 		//if (Player)
 		//{
 		//	Player->Destroy();
