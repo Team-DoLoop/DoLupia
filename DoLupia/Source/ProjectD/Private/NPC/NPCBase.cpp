@@ -61,7 +61,7 @@ ANPCBase::ANPCBase()
 	MapIcon->SetIconVisible( false );
 
 	// Quest Tag
-	CurrentQuestTag = "";
+	CurrentQuestTag = ""; 
 	OwnQuestTag = NAME_None;
 }
 
@@ -77,11 +77,6 @@ void ANPCBase::BeginPlay()
 	{
 		// 델리게이트 구독
 		gm->OnNextNPCQuestTagReceived.AddDynamic( this , &ANPCBase::OnNextNPCQuestTagReceived );
-	}
-
-	if (MapIcon)
-	{
-		MapIcon->OnIconDestroyed.AddDynamic( this , &ANPCBase::OnDestroyNPCIcon );
 	}
 
 	if (PlayerCamCurve)
@@ -245,11 +240,6 @@ void ANPCBase::OnNextNPCQuestTagReceived( FString NextQuestTag )
 	}
 }
 
-void ANPCBase::OnDestroyNPCIcon( UMapIconComponent* icon )
-{
-	icon->DestroyComponent(true);
-}
-
 void ANPCBase::UpdateNPCStatus()
 {
 	if( gm && gm->GetNxtQuestTag() != "")
@@ -290,12 +280,11 @@ void ANPCBase::ChangePlayerState()
 
 void ANPCBase::HideNPC()
 {	
-	//this->MapIcon->SetIconVisible( false );
-	MapIcon->OnIconDestroyed.RemoveDynamic( this , &ANPCBase::OnDestroyNPCIcon );
+	MapIcon->SetIconVisible( false );
 
 	if(MapIcon)
 	{
-		//MapIcon->DestroyComponent( true );
+		MapIcon->DestroyComponent( true );
 		MapIcon = nullptr;
 		bCheckIcon = false;
 	}
@@ -308,13 +297,6 @@ void ANPCBase::HideNPC()
 FString ANPCBase::GetNxtQuestID() const
 {
 	return NxtQuestID;
-	/*
-	if (QuestGiverComp)
-	{
-		return QuestGiverComp->QuestData.RowName.ToString();
-	}
-	return LexToString(NAME_None); // 유효하지 않은 경우
-	*/
 }
 
 void ANPCBase::SwitchToPlayerCamera()

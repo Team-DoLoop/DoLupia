@@ -63,13 +63,6 @@ FString AMinigameQuestObject::InteractWith()
     return ObjectID;
 }
 
-/*
-FString AMinigameQuestObject::GetOwnQuestID() const
-{
-    return OwnQuestID;
-}
-*/
-
 void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
 {
     if (!bVisibleInteractUI) return;
@@ -88,9 +81,6 @@ void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
 
 void AMinigameQuestObject::OnNextSpawnerQuestTagCompleted()
 {
-    //MeshComponent->SetRenderCustomDepth( false );
-    // ICON 삭제
-    //MapIcon->DestroyComponent( true );
     MapIcon->SetIconVisible( false );
 	bCheckIcon = false;
 }

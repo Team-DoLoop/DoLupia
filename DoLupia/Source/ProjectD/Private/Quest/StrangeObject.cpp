@@ -95,9 +95,8 @@ FString AStrangeObject::InteractWith()
 
 	if (gm)
 	{
+		gm->OnNextSpawnerQuestTagCompleted.RemoveDynamic( this , &AStrangeObject::OnNextQuestTagCompleted );
 		gm->OnNextSpawnerQuestTagCompleted.AddDynamic( this, &AStrangeObject::OnNextQuestTagCompleted );
-		//MeshComponent->SetRenderCustomDepth( false );
-		ActiveMapIcon( false );
 	}
 
 	//QuestData 에 있는 Objective ID와 같아야함.
@@ -128,10 +127,10 @@ void AStrangeObject::OnNextQuestTagReceived(FString NextQuestTag)
 
 void AStrangeObject::OnNextQuestTagCompleted()
 {
-	//MapIcon->DestroyComponent( true );
 	bCheckIcon = false;
 	bVisibleInteractUI = false;
 	MeshComponent->SetRenderCustomDepth( false );
+	ActiveMapIcon( false );
 }
 
 void AStrangeObject::ChangeObjectColor(int32 depth)
