@@ -8,6 +8,7 @@
 #include "Characters/Components/PlayerTutorialComp.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "Data/WidgetData.h"
+#include "Gamemode/PlayerGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "UserInterface/PlayerDefaults/PlayerBattleWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
@@ -48,6 +49,9 @@ void UPlayerDefaultsWidget::NativeConstruct()
 	Player->GetTutorialComp()->SetDefaultUI(this);
 	
 	 HideTutorialWidget();
+
+	auto GM = Cast<APlayerGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GM->SetPlayerSkillOpen();
 }
 
 void UPlayerDefaultsWidget::UseQuickSlot(int32 SlotNumber)

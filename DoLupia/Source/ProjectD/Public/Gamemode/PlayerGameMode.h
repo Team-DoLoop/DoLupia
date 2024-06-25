@@ -235,4 +235,9 @@ private:
 
 	UPROPERTY()
 	UEndingCreditsWidget* EndingCreditsWidget;
+
+
+	/*---------- Player  --------*/
+public:
+	void SetPlayerSkillOpen();
 };

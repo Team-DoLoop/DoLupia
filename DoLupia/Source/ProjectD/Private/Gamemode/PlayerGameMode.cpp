@@ -25,6 +25,7 @@
 
 #include "LevelSequencePlayer.h"
 #include "MovieSceneSequencePlayer.h" 
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/MonsterSpawnManager.h"
 #include "UserInterface/Ending/EndingCreditsWidget.h"
@@ -507,6 +508,82 @@ void APlayerGameMode::PlayOutroSequencer()
 		false
 	);
 
+}
+
+void APlayerGameMode::SetPlayerSkillOpen()
+{
+	if(!GI) return;
+	
+	bool bSkillOpen = true;
+	bool bRedOpen = false;
+	bool bYellowOpen = false;
+	bool bBlueOpen = false;
+
+	auto ToToSaveData = GI->GetToToAutoSaveData();
+
+	if(ToToSaveData.IsEmpty())
+	{
+		bSkillOpen = false;
+	}
+	else
+	{
+		switch (LevelIdx)
+		{
+		case 0 :
+			{
+				bSkillOpen = false;
+				GI->InitPlayerSkillLevel();
+				break;
+			}
+		case 1 :
+			{
+				if (ToToSaveData[4000])
+				{
+					// 빨강 열기
+					bRedOpen = true;
+				}
+				else
+				{
+					bSkillOpen = false;
+				}
+				break;
+			}
+		case 2 :
+			{
+				bRedOpen = true;
+				if (ToToSaveData[9500])
+				{
+					// 빨강 + 노랑
+					bYellowOpen = true;
+				}
+			
+				if (ToToSaveData[4200])
+				{
+					// 빨강 + 노랑 + 파랑
+					bBlueOpen = true;
+				}
+
+				break;
+			}
+		case 3:
+			{
+				bRedOpen = true;
+				bYellowOpen = true;
+				bBlueOpen = true;
+				break;
+			}
+		default:
+			{
+				bSkillOpen = false;
+				break;
+			}
+		}
+	}
+
+	Player->GetAttackComp()->SetSkillUseState(bSkillOpen, QUEST);
+	Player->GetAttackComp()->SetColorUseState(EUseColor::RED, bRedOpen);
+	Player->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, bYellowOpen);
+	Player->GetAttackComp()->SetColorUseState(EUseColor::BLUE, bBlueOpen);
 }
 
 
