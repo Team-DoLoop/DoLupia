@@ -13,6 +13,7 @@ struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
 class UWidgetQuestLog;
+class UMenuWidget;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -226,6 +227,18 @@ public:
 private:
 	void StartToToStory();
 	void ToToSkip();
+
+
+	// <---------------------- Menu ---------------------->
+public:
+	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
+	UInputAction* Menu;
+
+	UPROPERTY( EditAnywhere )
+	TSubclassOf<UMenuWidget> Menu_Widget;
+	
+private:
+	void OpenMenu();
 
 };
 
