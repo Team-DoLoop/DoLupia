@@ -221,6 +221,8 @@ public:
 	UPROPERTY( BlueprintReadWrite , EditAnywhere )
 	USkeletalMeshComponent* playerComp;
 
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	USoundWave* OutroBGM;
 private:
 	UPROPERTY()
 	class AProjectDCharacter* Target;
