@@ -299,12 +299,12 @@ void AGrid2048::GameClear()
     //미니게임 effect 효과음
     if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
     {
-        if (ClearSoundWave) SoundManager->PlaySoundWave2D( ClearSoundWave , EEffectSound::EffectSound3 , 0.4f );
+        //if (ClearSoundWave) SoundManager->PlaySoundWave2D( ClearSoundWave , EEffectSound::EffectSound3 , 0.4f );
         SoundManager->PlayBGM( gm->LvBGMs[2], 0.4f);
     }
 
     //원래 level2 비지엠으로
-    gm->PlayBGMForLevel( 2 );
+    //gm->PlayBGMForLevel( 2 );
 
     // 완료 시, 델리게이트 구독
     OnMiniGameCompleted.Broadcast();
