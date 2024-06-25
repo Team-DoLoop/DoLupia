@@ -476,6 +476,9 @@ void APlayerGameMode::PlayOutroSequencer()
 		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
 		SoundManager->StopBGM();
 		Lv3SequencePlayer->Play();
+		
+		SoundManager->PlayBGM( OutroBGM , 0.3f );
+		
 	}
 	else
 	{
