@@ -265,7 +265,7 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	
 	Player->TurnPlayer();
 	
-	// 공격 애니메이션 실행
+	// 공격 애니메이션 실행`
 	PlayerAnim->PlayAttackAnimation(SkillMontage);
 	PlayerAnim->JumpToAttackMontageSection(CurrentCombo); // CurrentCombo = 1
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
@@ -651,11 +651,14 @@ void UPlayerAttackComp::PlayerChargingEndSkill()
 
 	else
 	{
-		// 콤보 공격 실행
+		// 차징 공격 실행
 		Player->TurnPlayer();
 		PlayerAnim->PlayAttackAnimation(SkillMontage);
 		PlayerAnim->JumpToAttackMontageSection(2);
 		CanChargingSkill = false;
+
+		// 스킬 쿨타임 돌게
+		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	}
 
 	// 차징 UI 끄기
@@ -863,7 +866,7 @@ void UPlayerAttackComp::AttackStartComboState()
 void UPlayerAttackComp::AttackEndState()
 {
 	// 쿨다운 시작
-	if(CurrentSkillInfo)
+	if(CurrentSkillInfo && !IsSkillCharging)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	// MP가 꽉 찼다면
 	if(PlayerStat->GetMP() >= PlayerMaxMP && CurrentSkillInfo != AutoSkill)
