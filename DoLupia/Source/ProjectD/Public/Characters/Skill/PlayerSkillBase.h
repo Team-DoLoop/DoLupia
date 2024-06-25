@@ -19,6 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void ActivateSkill();
+	virtual void SkillCameraShake(TSubclassOf<UCameraShakeBase> _CSSkill);
 
 	float SkillVolume;
 	int32 SkillDamage;
@@ -30,6 +31,10 @@ public:
 	bool bIsShowDebugLine;
 	FORCEINLINE void SetSkillDamage(int32 _SkillDamage){SkillDamage = _SkillDamage;}
 	
+	UPROPERTY(EditAnywhere, Category = Skill_Camera)
+	TSubclassOf<UCameraShakeBase> CSSkill;										// Camera Shake
+
 private:
+	
 	
 };

@@ -87,6 +87,9 @@ public:
 
 	void PlayAttackAnimation(class UAnimMontage* _Montage);
 
+	UFUNCTION()
+	void AnimNotify_PlayCS();
+
 
 		
 	// <---------------------- Hit ---------------------->

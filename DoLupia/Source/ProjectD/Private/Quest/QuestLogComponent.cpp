@@ -109,7 +109,7 @@ void UQuestLogComponent::AddNewQuest(FName QuestID)
     }
     if(QuestID == "0002")
     {
-        gm->ActivateInterationObject(true);
+        //gm->ActivateInterationObject(true);
     }
 
 }
@@ -157,7 +157,7 @@ void UQuestLogComponent::CompleteQuest( FName QuestID )
         gm->ActiveLvTrigger();
     }else if(QuestID == "0002")
     {
-        gm->ActivateInterationObject(false);
+        //gm->ActivateInterationObject(false);
     }
 
     // 튜토리얼 스킬 열기

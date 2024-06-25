@@ -101,7 +101,11 @@ private:
 
 	
 public:
-	
+
+
+	// <---------------------- Camera ---------------------->
+public:
+	void PlayCameraShake();
 	
 	
 	// <---------------------- Attack ---------------------->
@@ -351,6 +355,9 @@ private:
 	
 	UPROPERTY()
 	UAnimMontage* SkillMontage;
+
+	UPROPERTY()
+	TSubclassOf<UCameraShakeBase> SkillCameraShake; //
 
 	int32 SkillLevel; //
 	int32 SkillDamage; //

@@ -32,6 +32,15 @@ void APlayerSkillBase::BeginPlay()
 
 void APlayerSkillBase::ActivateSkill()
 {
+	// 카메라 흔들기
+	if(CSSkill) SkillCameraShake(CSSkill);
+}
+
+void APlayerSkillBase::SkillCameraShake(TSubclassOf<UCameraShakeBase> _CSSkill)
+{
+	if(!_CSSkill) return;
+	
+	GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(_CSSkill, 1.0f);
 }
 
 // Called every frame

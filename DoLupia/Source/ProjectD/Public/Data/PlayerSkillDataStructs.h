@@ -56,6 +56,9 @@ public:
 	UAnimMontage* SkillMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UCameraShakeBase> SkillCameraShake;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText SkillDescription;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

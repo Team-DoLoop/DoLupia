@@ -27,6 +27,7 @@
 #include "MovieSceneSequencePlayer.h" 
 #include "Monsters/BossMonster.h"
 #include "Monsters/MonsterSpawnManager.h"
+#include "UserInterface/Ending/EndingCreditsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
@@ -489,7 +490,14 @@ void APlayerGameMode::PlayOutroSequencer()
 			bossComp->DestroyComponent( true );
 			Lv3SequencePlayer->Stop();  // 시퀀스 정지
 			SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , "Opening" , false );
-			UGameplayStatics::OpenLevel( this , TEXT("Opening") );
+			// UGameplayStatics::OpenLevel( this , TEXT("Opening") ); // <- Ending Credits이 끝나면 호출되게 EndingCreditsWidget의 AnimationFinished에서 호출 중
+
+			// Ending Credits
+			if(!EndingCreditsWidget && EndingCreditsFactory)
+			{
+				EndingCreditsWidget = CreateWidget<UEndingCreditsWidget>(GetWorld(), EndingCreditsFactory );
+				EndingCreditsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
+			}
 		} ,
 		14.0f , // 지연 시간(초)
 		false

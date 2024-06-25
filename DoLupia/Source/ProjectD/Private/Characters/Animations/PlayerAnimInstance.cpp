@@ -105,7 +105,13 @@ void UPlayerAnimInstance::PlayAttackAnimation(UAnimMontage* _Montage)
 	PlayMontage(_Montage);
 }
 
+void UPlayerAnimInstance::AnimNotify_PlayCS()
+{
+	PlayerAttack->PlayCameraShake();
+}
 
+
+// <---------------------- Skill ---------------------->
 
 void UPlayerAnimInstance::AnimNotify_AttackJudgmentStart()
 {
