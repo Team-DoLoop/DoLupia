@@ -50,6 +50,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	FString ObjectiveID;
 
+	UPROPERTY()
+	bool bActiveOverlap = false;
+
 	/*---------------------- Minimap ------------------*/
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Camera , meta = (AllowPrivateAccess = "true") )
 	class UMapIconComponent* MapIcon;
