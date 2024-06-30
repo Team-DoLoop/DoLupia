@@ -6,6 +6,7 @@
 #include "Characters/ProjectDCharacter.h"
 #include "Characters/Components/PlayerAttackComp.h"
 #include "Characters/Components/PlayerTutorialComp.h"
+#include "Data/TutorialData.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "Data/WidgetData.h"
 #include "Gamemode/PlayerGameMode.h"
@@ -101,7 +102,17 @@ bool UPlayerDefaultsWidget::QuickSlotMouseHoveredWidget(FVector2D MousePosition)
 void UPlayerDefaultsWidget::ShowTutorialWidget(FTutorialData* _TutoData, int32 _Index)
 {
 	if(!_TutoData) return;
-	
+
+	if(_TutoData->TutorialTrigger.IsTrigger && _TutoData->TutorialTrigger.TriggerID == 3)
+	{
+		TutorialUI->RemoveFromParent();
+		
+		if(TutorialWidgetFactory)
+		{
+			TutorialUI = CreateWidget<UTutorialWidget>(GetWorld(), TutorialWidgetFactory);
+			TutorialUI->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
+		}
+	}
 	TutorialUI->SetVisibility(ESlateVisibility::Visible);
 	TutorialUI->ShowTutorialWidget(_TutoData, _Index);
 }

@@ -18,6 +18,9 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
+	class UProjectDGameInstance* GI;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* EndingCreditsAnim;

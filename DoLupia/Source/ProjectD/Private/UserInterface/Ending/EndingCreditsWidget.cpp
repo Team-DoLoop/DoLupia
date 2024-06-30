@@ -3,11 +3,14 @@
 
 #include "UserInterface/Ending/EndingCreditsWidget.h"
 
+#include "ProjectDGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void UEndingCreditsWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
+
+	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 }
 
 void UEndingCreditsWidget::NativeConstruct()
@@ -23,6 +26,8 @@ void UEndingCreditsWidget::NativeConstruct()
 void UEndingCreditsWidget::AnimationFinished()
 {
 	UE_LOG(LogTemp, Log, TEXT("Ending Credits End"));
-
-	UGameplayStatics::OpenLevel( this , TEXT("Opening") );
+	
+	GI->ExecuteTutorial(EExplainType::MAIN_STORY, -1, 9900);
+	
+	// UGameplayStatics::OpenLevel( this , TEXT("Opening") );
 }
