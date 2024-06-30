@@ -23,8 +23,8 @@ void UPlayerMPWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	CurrentPercent = 1.0f;
-	TargetPercent = 1.0f;
+	CurrentPercent = 0.0f;
+	TargetPercent = 0.0f;
 	LerpSpeed = 0.05f;
 }
 
@@ -37,7 +37,7 @@ void UPlayerMPWidget::UpdateMPBar()
 		MPBar->SetPercent( CurrentPercent );
 	}
 
-	if (FMath::IsNearlyEqual( CurrentPercent , TargetPercent , 0.01f ))
+	if (FMath::IsNearlyEqual( CurrentPercent , TargetPercent , 0.0001f ))
 	{
 		StopUpdateTimer();
 	}
