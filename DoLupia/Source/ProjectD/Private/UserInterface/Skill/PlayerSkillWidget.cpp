@@ -41,9 +41,9 @@ void UPlayerSkillWidget::InitSkillSlot()
 
 // <--------------------- Update Skill Level --------------------->
 
-void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)
+void UPlayerSkillWidget::UpdateSkillUI(int32 SlotIndex, TSharedPtr<FSkillInfo> _PlayerSkillInfo)
 {
-	PlayerSkillSlotArray[SlotIndex]->SetUI(PlayerSkillInfo->SkillData);
+	PlayerSkillSlotArray[SlotIndex]->SetUI(_PlayerSkillInfo->SkillData);
 }
 
 

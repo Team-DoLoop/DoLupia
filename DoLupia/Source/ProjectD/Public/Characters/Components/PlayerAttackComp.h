@@ -29,6 +29,15 @@ USTRUCT()
 struct FSkillInfo
 {
 	GENERATED_BODY()
+
+	FSkillInfo()
+		: SkillData(nullptr)
+		, SkillLevel(1)
+		, CooldownRemain(0.0f)
+		, bIsOnCooldown(false)
+	{
+	}
+
 	
 	FPlayerSkillData* SkillData;
 
@@ -38,16 +47,6 @@ struct FSkillInfo
 	float CooldownRemain;
 	bool bIsOnCooldown;
 	FTimerHandle CooldownTimerHandle;
-
-	FSkillInfo()
-	{
-		SkillData = nullptr;
-		
-		SkillLevel = 1;
-		
-		CooldownRemain = 0.0f;
-		bIsOnCooldown = false;
-	}
 };
 
 struct FPlayerSkillData;
@@ -78,6 +77,7 @@ public:
 
 	// <---------------------- Game ---------------------->
 private:
+	UPROPERTY()
 	UProjectDGameInstance* GI;
 
 	// <---------------------- Player ---------------------->
@@ -127,19 +127,19 @@ private:
 	USoundWave* CantAttackSoundWave;
 
 protected:
-	void Attack(FSkillInfo* _TempInfo);
-	void FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex);
+	void Attack(TSharedPtr<FSkillInfo> _TempInfo);
+	void FirstAttack(TSharedPtr<FSkillInfo> _TempInfo, int32 SkillKeyIndex);
 	
 public:
 	virtual void CompleteSkill() override;
 	void AttackEndState();
 	
-	void SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo);
+	void SetSkillUI(int32 SlotIndex, TSharedPtr<FSkillInfo> PlayerSkillInfo);
 	
 	void PlayerExecuteAttack(int32 SkillKeyIndex);
 	void PlayerQuitSkill(int32 AttackIndex);
 	
-	bool CanUseSkill(FSkillInfo* _TempSkill);
+	bool CanUseSkill(TSharedPtr<FSkillInfo> _TempSkill);
 	void TurnToAttackWithState();
 
 	
@@ -275,7 +275,7 @@ private:
 public:
 	void InitSkillLevel();
 	void GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex);
-	void UpdateSkillLevel(int32 SkillKeyIndex, FSkillInfo* _TempSkill);
+	void UpdateSkillLevel(int32 SkillKeyIndex, TSharedPtr<FSkillInfo> _TempSkill);
 
 private:
 
@@ -316,8 +316,8 @@ private:
 	
 	// <---------------------- Skill Data ---------------------->
 public:
-	FSkillInfo* GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
-	void SetSkillData(FSkillInfo* _TempInfo);
+	TSharedPtr<FSkillInfo> GetSkillInfo( EUseColor _Color, int32 SkillKeyIndex );
+	void SetSkillData(TSharedPtr<FSkillInfo> _TempInfo);
 	void SetSpawnLocation();
 	
 	FORCEINLINE EUseColor GetCurrentSkillColor() const {return CurrentSkillColor;}
@@ -329,26 +329,26 @@ public:
 
 	
 private:
-	FSkillInfo* CurrentSkillInfo;
+	TSharedPtr<FSkillInfo> CurrentSkillInfo;
 	
 	//TArray<FPlayerSkillData*> CurrentSkillData;
 	EUseColor CurrentSkillColor = EUseColor::NONE;	// X, 빨, 노, 파
 
-	TArray<FSkillInfo*> CantSkill;
+	TArray<TSharedPtr<FSkillInfo>> CantSkill;
 
-	FSkillInfo* AutoSkill;
+	TSharedPtr<FSkillInfo> AutoSkill;
 	
-	FSkillInfo* RedQSkill;
-	FSkillInfo* RedWSkill;
+	TSharedPtr<FSkillInfo> RedQSkill;
+	TSharedPtr<FSkillInfo> RedWSkill;
 	
-	FSkillInfo* YellowQSkill;
-	FSkillInfo* YellowWSkill;
+	TSharedPtr<FSkillInfo> YellowQSkill;
+	TSharedPtr<FSkillInfo> YellowWSkill;
 	
-	FSkillInfo* BlueQSkill;
-	FSkillInfo* BlueWSkill;
+	TSharedPtr<FSkillInfo> BlueQSkill;
+	TSharedPtr<FSkillInfo> BlueWSkill;
 	
-	FSkillInfo* SwapSkill;
-	FSkillInfo* UltSkill;
+	TSharedPtr<FSkillInfo> SwapSkill;
+	TSharedPtr<FSkillInfo> UltSkill;
 	
 	int32 SkillCount = 4;							// 플레이어 스킬 개수
 	FVector SpawnLocation;
