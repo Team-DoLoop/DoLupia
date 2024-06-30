@@ -133,7 +133,7 @@ void AMonsterSpawnManager::GetAllMonsters()
 	}
 
 	MonsterNum = MonsterArr.Num();
-	UE_LOG( LogTemp , Warning , TEXT( "Monster Count : %d" ) , MonsterNum );
+	//UE_LOG( LogTemp , Warning , TEXT( "Monster Count : %d" ) , MonsterNum );
 
 	/*if(GEngine)
 	{

@@ -208,6 +208,8 @@ public:
 
 	void ActivateInterationObject( bool onoff );
 
+	void ActivateBarrierObject(bool onoff);
+
 	/*---------- Ending Sequencer  --------*/
 public:
 	void PlayOutroSequencer();

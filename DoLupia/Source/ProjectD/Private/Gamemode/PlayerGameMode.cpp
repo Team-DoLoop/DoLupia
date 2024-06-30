@@ -32,6 +32,7 @@
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+#include <Quest/ConcreteBarrier.h>
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -111,12 +112,15 @@ void APlayerGameMode::BeginPlay()
 		LevelIdx = 1;
 		PlayerCameraboom = 1000.0f;
 		CreateLocationTitleWidget( LevelIdx );
+		UE_LOG( LogTemp , Error , TEXT( "GameMode CurLevelName == LevelNames[2]" ) )
 
 		// 재시작 시, 인스턴스에 저장된 퀘스트ID별로 분기
 		// 처음 맵1 시작이면 변경 X, 재시작으로 맵1 시작이면 빨간색
 		if (GI->CompletedQuests.Contains( "1002" ))
 		{
+			UE_LOG( LogTemp , Error , TEXT( "GI->CompletedQuests.Contains"))
 			ApplyAITxtP( 1 );
+			ActivateBarrierObject( false );
 		}
 		if (GI->CompletedQuests.Contains( "1003" )) {
 			ActiveLvTrigger();
@@ -437,6 +441,21 @@ void APlayerGameMode::ActivateInterationObject( bool onoff )
 			UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateInterationObject( bool onoff )" ) );
 			//켜고 끄는 코드
 			InteractionObject->ActiveMapIcon(onoff);
+		}
+	}
+}
+
+void APlayerGameMode::ActivateBarrierObject( bool onoff )
+{
+	for (TActorIterator<AConcreteBarrier> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		AConcreteBarrier* InteractionObject = *ActorItr;
+
+		if (InteractionObject)
+		{
+			UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateBarrierObject( bool onoff )" ) );
+			//켜고 끄는 코드
+			InteractionObject->BarrierRelease( onoff );
 		}
 	}
 }
