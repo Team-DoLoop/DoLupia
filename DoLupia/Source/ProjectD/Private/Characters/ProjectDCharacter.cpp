@@ -50,6 +50,7 @@
 
 #include "MapIconComponent.h"
 #include "MapViewComponent.h"
+#include "UserInterface/PlayerDefaults/PlayerTakeDamageWidget.h"
 #include "UserInterface/Tutorial/TutorialWidget.h"
 
 AProjectDCharacter::AProjectDCharacter()
@@ -134,6 +135,15 @@ AProjectDCharacter::AProjectDCharacter()
 
 	// Tutorial
 	TutorialComp = CreateDefaultSubobject<UPlayerTutorialComp>(TEXT("TutorialComp"));
+
+	// Take Damage
+	// UI 뜰 위치
+	dummyCubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("dummyCubeMesh"));
+	dummyCubeMesh->SetupAttachment(RootComponent);
+	dummyCubeMesh->SetRelativeLocation(FVector(10.0f, 0, 120.0f));
+	dummyCubeMesh->SetRelativeScale3D(FVector(0.2f));
+	dummyCubeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	dummyCubeMesh->bHiddenInGame = true;
 	
 
 	// Activate ticking in order to update the cursor every frame.
@@ -449,6 +459,8 @@ void AProjectDCharacter::TakeDamage(float Damage)
 	// UI 반영
 	if(PlayerBattleWidget)
 		PlayerBattleWidget->GetPlayerHPBar()->SetHPBar(HP, PlayerMaxHP);
+	
+	PlayerTakeDamagedText(Damage);
 	
 	UE_LOG(LogTemp, Log, TEXT("HP : %d"), PlayerStat->GetHP() );
 }
@@ -909,6 +921,31 @@ void AProjectDCharacter::PlayerDoSomeThing(bool bIsStart)
 	PlayerFSM->ChangePlayerState(_state);
 
 }
+
+
+
+// <---------------------- Take Damage ---------------------->
+
+void AProjectDCharacter::PlayerTakeDamagedText(int32 damage)
+{
+	// 항상 HP UI 앞면이 보이고 플레이어 머리위에 떠있게
+	FVector loc = dummyCubeMesh->GetComponentLocation();
+	FVector camLoc = PlayerController->PlayerCameraManager->GetCameraLocation();
+	FRotator LookAtRotation = FRotationMatrix::MakeFromX(camLoc - dummyCubeMesh->GetComponentLocation()).Rotator();
+
+	if(PlayerTakeDamageWidgetFactory)
+	{
+		auto damageTextUI = GetWorld()->SpawnActor<APlayerTakeDamageWidget>(PlayerTakeDamageWidgetFactory, loc + ( dummyCubeMesh->GetRightVector() * -50 ), LookAtRotation);
+		if ( nullptr != damageTextUI )
+		{
+			damageTextUI->SetDamageText(damage);
+		}
+	}
+}
+
+
+
+
 
 /* Quest Decline 기능 삭제
 void AProjectDCharacter::EnableDialogue()

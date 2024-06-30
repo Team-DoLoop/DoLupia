@@ -361,6 +361,23 @@ public:
 	FORCEINLINE UPlayerTutorialComp* GetTutorialComp() const { return TutorialComp; }
 
 
+
+	// <---------------------- Take Damage ---------------------->
+private:
+	UPROPERTY(EditAnywhere, Category = "Character | TakeDamage")
+	class UStaticMeshComponent* dummyCubeMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Character | TakeDamage")
+	TSubclassOf<class APlayerTakeDamageWidget> PlayerTakeDamageWidgetFactory;
+
+
+public:
+	UFUNCTION()
+	void PlayerTakeDamagedText(int32 damage);				// 공격 당하면 데미지 출력하는 함수
+
+	
+	
+
 	// <---------------------- MiniMap ---------------------->
 
 private:
