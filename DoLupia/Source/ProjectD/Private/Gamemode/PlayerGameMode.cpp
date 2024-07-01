@@ -25,11 +25,14 @@
 
 #include "LevelSequencePlayer.h"
 #include "MovieSceneSequencePlayer.h" 
+#include "Characters/Components/PlayerAttackComp.h"
 #include "Monsters/BossMonster.h"
 #include "Monsters/MonsterSpawnManager.h"
+#include "UserInterface/Ending/EndingCreditsWidget.h"
 #include "UserInterface/PlayerDefaults/MainQuickSlotWidget.h"
 #include "UserInterface/PlayerDefaults/PlayerDefaultsWidget.h"
 #include "UserInterface/PlayerDefaults/QuickSlotWidget.h"
+#include <Quest/ConcreteBarrier.h>
 
 APlayerGameMode::APlayerGameMode()
 {
@@ -96,6 +99,7 @@ void APlayerGameMode::BeginPlay()
 	{
 		LevelIdx = 999;
 		IsToToNotInMapStart = true;
+		GI->ClearCompletedQuests();
 		//if (Player)
 		//{
 		//	Player->Destroy();
@@ -113,12 +117,15 @@ void APlayerGameMode::BeginPlay()
 		LevelIdx = 1;
 		PlayerCameraboom = 1000.0f;
 		CreateLocationTitleWidget( LevelIdx );
+		UE_LOG( LogTemp , Error , TEXT( "GameMode CurLevelName == LevelNames[2]" ) )
 
 		// 재시작 시, 인스턴스에 저장된 퀘스트ID별로 분기
 		// 처음 맵1 시작이면 변경 X, 재시작으로 맵1 시작이면 빨간색
 		if (GI->CompletedQuests.Contains( "1002" ))
 		{
+			UE_LOG( LogTemp , Error , TEXT( "GI->CompletedQuests.Contains"))
 			ApplyAITxtP( 1 );
+			ActivateBarrierObject( false );
 		}
 		if (GI->CompletedQuests.Contains( "1003" )) {
 			ActiveLvTrigger();
@@ -466,6 +473,21 @@ void APlayerGameMode::ActivateInterationObject( bool onoff )
 	}
 }
 
+void APlayerGameMode::ActivateBarrierObject( bool onoff )
+{
+	for (TActorIterator<AConcreteBarrier> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
+	{
+		AConcreteBarrier* InteractionObject = *ActorItr;
+
+		if (InteractionObject)
+		{
+			UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateBarrierObject( bool onoff )" ) );
+			//켜고 끄는 코드
+			InteractionObject->BarrierRelease( onoff );
+		}
+	}
+}
+
 void APlayerGameMode::PlayOutroSequencer()
 {
 	UE_LOG( LogTemp , Log , TEXT( "APlayerGameMode::PlayOutroSequencer - Outro Sequencer Play" ) );
@@ -503,6 +525,9 @@ void APlayerGameMode::PlayOutroSequencer()
 		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
 		SoundManager->StopBGM();
 		Lv3SequencePlayer->Play();
+		
+		SoundManager->PlayBGM( OutroBGM , 0.3f );
+		
 	}
 	else
 	{
@@ -517,12 +542,95 @@ void APlayerGameMode::PlayOutroSequencer()
 			bossComp->DestroyComponent( true );
 			Lv3SequencePlayer->Stop();  // 시퀀스 정지
 			SAVE( Player , ESaveType::SAVE_MAIN , "PlayerMainSave" , "PlayerMainSave" , "Opening" , false );
-			UGameplayStatics::OpenLevel( this , TEXT("Opening") );
+			// UGameplayStatics::OpenLevel( this , TEXT("Opening") ); // <- Ending Credits이 끝나면 호출되게 EndingCreditsWidget의 AnimationFinished에서 호출 중
+
+			// Ending Credits
+			if(!EndingCreditsWidget && EndingCreditsFactory)
+			{
+				EndingCreditsWidget = CreateWidget<UEndingCreditsWidget>(GetWorld(), EndingCreditsFactory );
+				EndingCreditsWidget->AddToViewport(static_cast<int32>(ViewPortPriority::Main));
+			}
 		} ,
 		14.0f , // 지연 시간(초)
 		false
 	);
 
+}
+
+void APlayerGameMode::SetPlayerSkillOpen()
+{
+	if(!GI) return;
+	
+	bool bSkillOpen = true;
+	bool bRedOpen = false;
+	bool bYellowOpen = false;
+	bool bBlueOpen = false;
+
+	auto ToToSaveData = GI->GetToToAutoSaveData();
+
+	if(ToToSaveData.IsEmpty())
+	{
+		bSkillOpen = false;
+	}
+	else
+	{
+		switch (LevelIdx)
+		{
+		case 0 :
+			{
+				bSkillOpen = false;
+				GI->InitPlayerSkillLevel();
+				break;
+			}
+		case 1 :
+			{
+				if (ToToSaveData[4000])
+				{
+					// 빨강 열기
+					bRedOpen = true;
+				}
+				else
+				{
+					bSkillOpen = false;
+				}
+				break;
+			}
+		case 2 :
+			{
+				bRedOpen = true;
+				if (ToToSaveData[9500])
+				{
+					// 빨강 + 노랑
+					bYellowOpen = true;
+				}
+			
+				if (ToToSaveData[4200])
+				{
+					// 빨강 + 노랑 + 파랑
+					bBlueOpen = true;
+				}
+
+				break;
+			}
+		case 3:
+			{
+				bRedOpen = true;
+				bYellowOpen = true;
+				bBlueOpen = true;
+				break;
+			}
+		default:
+			{
+				bSkillOpen = false;
+				break;
+			}
+		}
+	}
+
+	Player->GetAttackComp()->SetSkillUseState(bSkillOpen, QUEST);
+	Player->GetAttackComp()->SetColorUseState(EUseColor::RED, bRedOpen);
+	Player->GetAttackComp()->SetColorUseState(EUseColor::YELLOW, bYellowOpen);
+	Player->GetAttackComp()->SetColorUseState(EUseColor::BLUE, bBlueOpen);
 }
 
 

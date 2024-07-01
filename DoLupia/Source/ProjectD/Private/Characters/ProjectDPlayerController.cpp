@@ -14,6 +14,7 @@
 #include "UserInterface/DoLupiaHUD.h"
 #include "UserInterface/MainMenu.h"
 #include "UserInterface/Quest/WidgetQuestLog.h"
+#include "UserInterface/Event/MenuWidget.h"
 #include "Data/WidgetData.h"
 #include "Framework/Application/NavigationConfig.h"
 #include "Framework/Application/SlateApplication.h"
@@ -136,6 +137,9 @@ void AProjectDPlayerController::SetupInputComponent()
 		// Tutorial
 		EnhancedInputComponent->BindAction(ToToAction, ETriggerEvent::Started, this, &AProjectDPlayerController::StartToToStory);							// ToTo
 		EnhancedInputComponent->BindAction(ToToSkipAction, ETriggerEvent::Started, this, &AProjectDPlayerController::ToToSkip);							// ToTo
+
+		//Menu
+		EnhancedInputComponent->BindAction( Menu, ETriggerEvent::Started , this , &AProjectDPlayerController::OpenMenu);
 	}
 	else
 	{
@@ -395,4 +399,39 @@ void AProjectDPlayerController::ToToSkip()
 			toto->TutorialSkip();
 		}
 	}
-}	
+}
+
+// <---------------------- Menu ---------------------->
+void AProjectDPlayerController::OpenMenu()
+{
+	UMenuWidget* MenuWidgetInstance = CreateWidget<UMenuWidget>( GetWorld() , Menu_Widget );
+
+	if (MenuWidgetInstance)
+	{
+		UE_LOG( LogTemp , Log , TEXT( "MenuWidgetInstance created successfully" ) );
+		if (!MenuWidgetInstance->IsInViewport())
+		{
+			MenuWidgetInstance->AddToViewport( static_cast<uint32>(ViewPortPriority::Quest) );
+			UE_LOG( LogTemp , Log , TEXT( "MenuWidgetInstance added to viewport" ) );
+			// Pause the game
+			if (APlayerController* PC = UGameplayStatics::GetPlayerController( GetWorld() , 0 ))
+			{
+				PC->SetPause( true );
+			}
+		}
+		else
+		{
+			MenuWidgetInstance->RemoveFromParent();
+			UE_LOG( LogTemp , Log , TEXT( "MenuWidgetInstance removed from viewport" ) );
+			// Resume the game
+			if (APlayerController* PC = UGameplayStatics::GetPlayerController( GetWorld() , 0 ))
+			{
+				PC->SetPause( false );
+			}
+		}
+	}
+	else
+	{
+		UE_LOG( LogTemp , Error , TEXT( "Failed to create MenuWidgetInstance" ) );
+	}
+}

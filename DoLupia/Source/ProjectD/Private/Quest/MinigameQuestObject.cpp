@@ -17,7 +17,7 @@ AMinigameQuestObject::AMinigameQuestObject()
 	{
         MiniGameClass = minigame.Class;
 	}
-    gm = nullptr;
+    //gm = nullptr;
 
 }
 
@@ -25,28 +25,16 @@ void AMinigameQuestObject::BeginPlay()
 {
 	Super::BeginPlay();
 
-    // FFileHelper 클래스를 이용하여 로그 파일 생성
-    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
-    FFileHelper::SaveStringToFile( L"AMinigameQuestObject::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-        &IFileManager::Get() , ELogVerbosity::Log );
-
-    gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+    //gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
     Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
     
     if(gm)
     {
         gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AMinigameQuestObject::OnNextMiniGameQuestTagReceived );
     }
-    else
-    {
-        FFileHelper::SaveStringToFile( L"AMinigameQuestObject::BeginPlay -> gm nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-			&IFileManager::Get() , ELogVerbosity::Log );
-    }
-
     MapIcon->SetVisibility( false );
 
-    FFileHelper::SaveStringToFile( L"AMinigameQuestObject::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
+    bVisibleInteractUI = false;
 }
 
 FString AMinigameQuestObject::InteractWith()
@@ -75,19 +63,12 @@ FString AMinigameQuestObject::InteractWith()
     return ObjectID;
 }
 
-/*
-FString AMinigameQuestObject::GetOwnQuestID() const
-{
-    return OwnQuestID;
-}
-*/
-
 void AMinigameQuestObject::ChangeMinigameColor(int32 depth)
 {
     if (!bVisibleInteractUI) return;
     MeshComponent->SetRenderCustomDepth( true );
     MeshComponent->SetCustomDepthStencilValue( depth );
-    MapIcon->SetVisibility( true );
+    MapIcon->SetIconVisible( true );
 }
 
 void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
@@ -100,10 +81,8 @@ void AMinigameQuestObject::OnNextMiniGameQuestTagReceived(FString NextQuestTag)
 
 void AMinigameQuestObject::OnNextSpawnerQuestTagCompleted()
 {
-    //MeshComponent->SetRenderCustomDepth( false );
-    // ICON 삭제
-    MapIcon->DestroyComponent( true );
-    bCheckIcon = false;
+    MapIcon->SetIconVisible( false );
+	bCheckIcon = false;
 }
 
 void AMinigameQuestObject::SpawnMiniGame()
@@ -142,7 +121,9 @@ void AMinigameQuestObject::UpdateMiniGameStatus()
             // 태그 값이 일치하면 상태 변경 로직 추가
             UE_LOG( LogTemp , Log , TEXT( "MiniGame with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
 
-            ChangeMinigameColor( 4 );
+            bVisibleInteractUI = true;
+            ChangeMinigameColor( 4 ); 
+            
         }
     	
     }

@@ -61,7 +61,7 @@ ANPCBase::ANPCBase()
 	MapIcon->SetIconVisible( false );
 
 	// Quest Tag
-	CurrentQuestTag = "";
+	CurrentQuestTag = ""; 
 	OwnQuestTag = NAME_None;
 }
 
@@ -70,12 +70,6 @@ void ANPCBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-	// FFileHelper 클래스를 이용하여 로그 파일 생성
-	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
-	FFileHelper::SaveStringToFile( L"ANPCBase::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
-
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 	anim = Cast<UNPCAnim>( this->GetMesh()->GetAnimInstance() );
 
@@ -83,21 +77,6 @@ void ANPCBase::BeginPlay()
 	{
 		// 델리게이트 구독
 		gm->OnNextNPCQuestTagReceived.AddDynamic( this , &ANPCBase::OnNextNPCQuestTagReceived );
-	}
-	else
-	{
-		FFileHelper::SaveStringToFile( L"ANPCBase::BeginPlay -> gm nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-			&IFileManager::Get() , ELogVerbosity::Log );
-	}
-
-	if (MapIcon)
-	{
-		MapIcon->OnIconDestroyed.AddDynamic( this , &ANPCBase::OnDestroyNPCIcon );
-	}
-	else
-	{
-		FFileHelper::SaveStringToFile( L"ANPCBase::BeginPlay -> MapIcon nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-	&IFileManager::Get() , ELogVerbosity::Log );
 	}
 
 	if (PlayerCamCurve)
@@ -110,19 +89,11 @@ void ANPCBase::BeginPlay()
 		TimelineFinishedFunction.BindUFunction( this , FName( "OnTimelineFinished" ) );
 		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
-	else
-	{
-		FFileHelper::SaveStringToFile( L"ANPCBase::BeginPlay -> PlayerCamCurve nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-			&IFileManager::Get() , ELogVerbosity::Log );
-	}
 
 	Target = Cast<AProjectDCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 	OriginalViewTarget = GetWorld()->GetFirstPlayerController()->GetViewTarget();
 
 	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
-
-	FFileHelper::SaveStringToFile( L"ANPCBase::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame
@@ -269,11 +240,6 @@ void ANPCBase::OnNextNPCQuestTagReceived( FString NextQuestTag )
 	}
 }
 
-void ANPCBase::OnDestroyNPCIcon( UMapIconComponent* icon )
-{
-	icon->DestroyComponent(true);
-}
-
 void ANPCBase::UpdateNPCStatus()
 {
 	if( gm && gm->GetNxtQuestTag() != "")
@@ -314,8 +280,7 @@ void ANPCBase::ChangePlayerState()
 
 void ANPCBase::HideNPC()
 {	
-	//this->MapIcon->SetIconVisible( false );
-	MapIcon->OnIconDestroyed.RemoveDynamic( this , &ANPCBase::OnDestroyNPCIcon );
+	MapIcon->SetIconVisible( false );
 
 	if(MapIcon)
 	{
@@ -332,13 +297,6 @@ void ANPCBase::HideNPC()
 FString ANPCBase::GetNxtQuestID() const
 {
 	return NxtQuestID;
-	/*
-	if (QuestGiverComp)
-	{
-		return QuestGiverComp->QuestData.RowName.ToString();
-	}
-	return LexToString(NAME_None); // 유효하지 않은 경우
-	*/
 }
 
 void ANPCBase::SwitchToPlayerCamera()

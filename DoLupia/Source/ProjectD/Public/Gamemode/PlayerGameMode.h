@@ -31,7 +31,8 @@ Character->GetPlayerDefaultsWidget()->GetMainQuickSlot()->GetQuickSlotWidget4()-
 		Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() ) ,	\
 		SaveType , SaveSlotName , UseLocation , UseThread, OpenLevel );							\
 																								
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextNPCQuestTagReceived , FString , NextQuestTag );
+class UEndingCreditsWidget;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNextNPCQuestTagReceived , FString , NextQuestTag);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextMiniGameQuestTagReceived , FString , NextQuestTag );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnNextSpawnerQuestTagReceived , FString , NextQuestTag );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnNextSpawnerQuestTagCompleted );
@@ -91,10 +92,10 @@ public:
 	// 레벨에 대한 BGM을 재생하는 함수
 	void PlayBGMForLevel( int32 LevelIndex );
 
-protected:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite , Category = "BGM" )
 	TMap<int32 , USoundWave*> LvBGMs;
 
+protected:
 	UPROPERTY( Transient )
 	USoundBase* CurrentBGM;
 
@@ -207,6 +208,8 @@ public:
 
 	void ActivateInterationObject( bool onoff );
 
+	void ActivateBarrierObject(bool onoff);
+
 	/*---------- Ending Sequencer  --------*/
 public:
 	void PlayOutroSequencer();
@@ -220,10 +223,23 @@ public:
 	UPROPERTY( BlueprintReadWrite , EditAnywhere )
 	USkeletalMeshComponent* playerComp;
 
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	USoundWave* OutroBGM;
 private:
 	UPROPERTY()
 	class AProjectDCharacter* Target;
 
 	UPROPERTY()
 	AActor* OriginalViewTarget;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UEndingCreditsWidget> EndingCreditsFactory;
+
+	UPROPERTY()
+	UEndingCreditsWidget* EndingCreditsWidget;
+
+
+	/*---------- Player  --------*/
+public:
+	void SetPlayerSkillOpen();
 };

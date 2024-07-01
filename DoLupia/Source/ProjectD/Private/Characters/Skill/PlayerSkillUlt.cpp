@@ -27,10 +27,8 @@ void APlayerSkillUlt::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// FFileHelper 클래스를 이용하여 로그 파일 생성
-	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
-	FFileHelper::SaveStringToFile( L"APlayerSkillUlt::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
+	// 카메라 흔들기
+	if(CSSkill) SkillCameraShake(CSSkill);
 	
 	ApplyDamage(CenterRadius, CenterDamage);
 	
@@ -53,10 +51,6 @@ void APlayerSkillUlt::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle4, [this]() {
 		ApplyDamage(OuterRadius, OuterDamage); // OuterRangeDamage
 	}, 0.2f, false);
-
-	FFileHelper::SaveStringToFile( L"APlayerSkillUlt::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
-
 	
 }
 

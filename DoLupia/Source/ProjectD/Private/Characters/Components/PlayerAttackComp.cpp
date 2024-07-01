@@ -80,18 +80,18 @@ void UPlayerAttackComp::BeginPlay()
 	&IFileManager::Get() , ELogVerbosity::Log );
 
 	CantSkill.SetNum(5);
-	for(int i = 0; i < CantSkill.Num(); i++) CantSkill[i] = new FSkillInfo();
+	for(int i = 0; i < CantSkill.Num(); i++) CantSkill[i] = MakeShareable(new FSkillInfo());
 
-	// 여기 누수나는 코드
-	AutoSkill = new FSkillInfo();
-	RedQSkill = new FSkillInfo();
-	RedWSkill = new FSkillInfo();
-	YellowQSkill = new FSkillInfo();
-	YellowWSkill = new FSkillInfo();
-	BlueQSkill = new FSkillInfo();
-	BlueWSkill = new FSkillInfo();
-	SwapSkill = new FSkillInfo();
-	UltSkill = new FSkillInfo();
+	// 여기 누수나는 코드 (-> 수정함!)
+	AutoSkill = MakeShareable(new FSkillInfo());
+	RedQSkill = MakeShareable(new FSkillInfo());
+	RedWSkill = MakeShareable(new FSkillInfo());
+	YellowQSkill = MakeShareable(new FSkillInfo());
+	YellowWSkill = MakeShareable(new FSkillInfo());
+	BlueQSkill = MakeShareable(new FSkillInfo());
+	BlueWSkill = MakeShareable(new FSkillInfo());
+	SwapSkill = MakeShareable(new FSkillInfo());
+	UltSkill = MakeShareable(new FSkillInfo());
 	
 	if(GI)
 	{
@@ -250,12 +250,19 @@ void UPlayerAttackComp::SetSkillLockUI(int32 SkillKeyIndex, bool IsSkillLock)
 
 // <---------------------- Attack ---------------------->
 
-void UPlayerAttackComp::Attack(FSkillInfo* _TempInfo)
+void UPlayerAttackComp::PlayCameraShake()
+{
+	// 카메라 쉐이크가 있다면
+	if(SkillCameraShake)
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(SkillCameraShake, 1.0f);
+}
+
+void UPlayerAttackComp::Attack(TSharedPtr<FSkillInfo> _TempInfo)
 {
 
 }
 
-void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
+void UPlayerAttackComp::FirstAttack(TSharedPtr<FSkillInfo> _TempInfo, int32 SkillKeyIndex)
 {
 	if(SkillKeyIndex != 3) CurrentSkillInfo = _TempInfo;
 	SetSkillData(_TempInfo);
@@ -279,7 +286,7 @@ void UPlayerAttackComp::FirstAttack(FSkillInfo* _TempInfo, int32 SkillKeyIndex)
 	
 	Player->TurnPlayer();
 	
-	// 공격 애니메이션 실행
+	// 공격 애니메이션 실행`
 	PlayerAnim->PlayAttackAnimation(SkillMontage);
 	PlayerAnim->JumpToAttackMontageSection(CurrentCombo); // CurrentCombo = 1
 	PlayerFSMComp->ChangePlayerState(EPlayerState::ATTACK_ONLY);
@@ -330,10 +337,10 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	if (!Player || !PlayerFSMComp || !PlayerStat) return;
 	if (!(PlayerFSMComp->CanChangeState(EPlayerState::ATTACK_ONLY))) return;
 	
-	FSkillInfo* TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
+	TSharedPtr<FSkillInfo> _TempSkill = GetSkillInfo(CurrentSkillColor, SkillKeyIndex);
 	EPlayerState CurrentState = PlayerFSMComp->GetCurrentState();
 
-	if(!(TempSkill && CanUseSkill(TempSkill)))
+	if(!(_TempSkill && CanUseSkill(_TempSkill)))
 	{
 		if (ASoundManager* SoundManager = ASoundManager::GetInstance(GetWorld()))
 		{
@@ -346,7 +353,7 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	if (CurrentState != EPlayerState::ATTACK_ONLY && CurrentState != EPlayerState::ATTACK_WITH)
 	{
 		UE_LOG(LogTemp, Log, TEXT("First Combo Attack"));
-		FirstAttack(TempSkill, SkillKeyIndex);
+		FirstAttack(_TempSkill, SkillKeyIndex);
 	}
 	// 첫 공격이 아니고 콤보 구간이라면
 	else if(CurrentState == EPlayerState::ATTACK_ONLY)
@@ -367,9 +374,9 @@ void UPlayerAttackComp::PlayerExecuteAttack(int32 SkillKeyIndex)
 	else if(CurrentState == EPlayerState::ATTACK_WITH)
 	{
 		// 원래 스킬은 사용 못하고
-		if(CurrentSkillInfo != TempSkill)
+		if(CurrentSkillInfo != _TempSkill)
 		{
-			FirstAttack(TempSkill, SkillKeyIndex);
+			FirstAttack(_TempSkill, SkillKeyIndex);
 		}
 	}
 		
@@ -553,7 +560,7 @@ void UPlayerAttackComp::ExecuteSwapSkill()
 	CurrentSkillColor = FindSkillColor(CurrentSkillColor);
 	for(int i = 0; i < 2; i++)
 	{
-		FSkillInfo* _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
+		TSharedPtr<FSkillInfo> _TempSkill = GetSkillInfo(CurrentSkillColor, i+1);
 		SetSkillUI(i, _TempSkill);
 	}
 
@@ -593,7 +600,7 @@ void UPlayerAttackComp::ChangePlayerColor(EUseColor _CurrentColor)
 	}
 }
 
-void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkillInfo)
+void UPlayerAttackComp::SetSkillUI(int32 SlotIndex, TSharedPtr<FSkillInfo> PlayerSkillInfo)
 {
 	if (!Player) return;
 	
@@ -665,11 +672,14 @@ void UPlayerAttackComp::PlayerChargingEndSkill()
 
 	else
 	{
-		// 콤보 공격 실행
+		// 차징 공격 실행
 		Player->TurnPlayer();
 		PlayerAnim->PlayAttackAnimation(SkillMontage);
 		PlayerAnim->JumpToAttackMontageSection(2);
 		CanChargingSkill = false;
+
+		// 스킬 쿨타임 돌게
+		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	}
 
 	// 차징 UI 끄기
@@ -698,7 +708,7 @@ float UPlayerAttackComp::GetChargingPercent(float RemainingTime, float _Charging
 
 // <---------------------- Skill Data ---------------------->
 
-FSkillInfo* UPlayerAttackComp::GetSkillInfo(EUseColor _Color, int32 SkillKeyIndex)
+TSharedPtr<FSkillInfo> UPlayerAttackComp::GetSkillInfo(EUseColor _Color, int32 SkillKeyIndex)
 {
 	switch (SkillKeyIndex)
 	{
@@ -731,11 +741,12 @@ FSkillInfo* UPlayerAttackComp::GetSkillInfo(EUseColor _Color, int32 SkillKeyInde
 	return nullptr;
 }
 
-void UPlayerAttackComp::SetSkillData(FSkillInfo* _TempInfo)
+void UPlayerAttackComp::SetSkillData(TSharedPtr<FSkillInfo> _TempInfo)
 {
 	auto _SkillData = _TempInfo->SkillData;
 	
 	SkillMontage = _SkillData->SkillMontage;
+	SkillCameraShake = _SkillData->SkillCameraShake;
 	SkillDamage = _SkillData->SkillDamage;
 	SkillRange = _SkillData->SkillRange;
 	SkillMaxCombo = _SkillData->SkillMaxCombo;
@@ -780,7 +791,7 @@ void UPlayerAttackComp::InitSkillLevel()
 
 void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyIndex)
 {
-	FSkillInfo* _TempSkill = GetSkillInfo(_Color, SkillKeyIndex);
+	TSharedPtr<FSkillInfo> _TempSkill = GetSkillInfo(_Color, SkillKeyIndex);
 		
 	if(_TempSkill)
 	{
@@ -795,7 +806,7 @@ void UPlayerAttackComp::GetSkillUpgradePoint(EUseColor _Color, int32 SkillKeyInd
 	}
 }
 
-void UPlayerAttackComp::UpdateSkillLevel(int32 SkillKeyIndex, FSkillInfo* _TempSkill)
+void UPlayerAttackComp::UpdateSkillLevel(int32 SkillKeyIndex, TSharedPtr<FSkillInfo> _TempSkill)
 {
 	// 스킬 레벨 UI 업데이트
 	Player->GetPlayerDefaultsWidget()->GetPlayerBattleWidget()->GetPlayerSkillUI()->UpdateSkillLevelUI(SkillKeyIndex, _TempSkill->SkillLevel);
@@ -830,7 +841,7 @@ void UPlayerAttackComp::SetSkillCoolDownUI()
 	}
 }
 
-bool UPlayerAttackComp::CanUseSkill(FSkillInfo* _TempSkill)
+bool UPlayerAttackComp::CanUseSkill(TSharedPtr<FSkillInfo> _TempSkill)
 {
 	// 게이지가 100이라면
 	if(_TempSkill != AutoSkill && PlayerStat->GetMP() >= PlayerMaxMP) return false;
@@ -876,7 +887,7 @@ void UPlayerAttackComp::AttackStartComboState()
 void UPlayerAttackComp::AttackEndState()
 {
 	// 쿨다운 시작
-	if(CurrentSkillInfo)
+	if(CurrentSkillInfo && !IsSkillCharging)
 		StartCooldown(CurrentSkillInfo->CooldownTimerHandle, CurrentSkillInfo->SkillData->SkillCoolTime);
 	// MP가 꽉 찼다면
 	if(PlayerStat->GetMP() >= PlayerMaxMP && CurrentSkillInfo != AutoSkill)

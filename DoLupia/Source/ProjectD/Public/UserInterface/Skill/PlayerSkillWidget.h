@@ -34,7 +34,7 @@ private:
 	
 public:
 	void InitSkillSlot();
-	void UpdateSkillUI(int32 SlotIndex, FSkillInfo* PlayerSkilInfo);
+	void UpdateSkillUI(int32 SlotIndex, TSharedPtr<FSkillInfo> _PlayerSkillInfo);
 	void UpdateSkillCoolTimeUI(int32 SlotIndex, float CoolTime);
 	
 	void UpdateSkillLevelUI(int32 SkillKeyIndex, int32 SkillLevel);

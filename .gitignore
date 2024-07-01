@@ -87,6 +87,7 @@ DoLupia/Content/sA_Megapack_v1
 
 #Package
 DoLupia/Windows/*
+DoLupia/Windows.7z
 
 # Include necessary files for lighting build
 !DoLupia/Content/Maps/Alpha/GameLv1_BuiltData.uasset

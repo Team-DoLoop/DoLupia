@@ -7,6 +7,8 @@
 #include "Data/WidgetData.h"
 #include "UserInterface/Quest/NPCInteractionWidget.h"
 #include "MapIconComponent.h"
+#include "Gamemode/PlayerGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AStrangeObject::AStrangeObject()
@@ -24,7 +26,9 @@ AStrangeObject::AStrangeObject()
 	MapIcon->SetIconTexture( LocationIcon.Object );
 	// The icon will rotate to represent the character's rotation
 	MapIcon->SetIconRotates( false );
-	MapIcon->SetVisibility( false );
+	MapIcon->SetIconVisible( false );
+
+	gm = nullptr;
 	
 }
 
@@ -32,11 +36,14 @@ AStrangeObject::AStrangeObject()
 void AStrangeObject::BeginPlay()
 {
 	Super::BeginPlay();
+	NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
 
-	// FFileHelper 클래스를 이용하여 로그 파일 생성
-	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
-	FFileHelper::SaveStringToFile( L"AStrangeObject::BeginPlay -> Start End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
+	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
+
+	if (gm)
+	{
+		gm->OnNextMiniGameQuestTagReceived.AddDynamic( this , &AStrangeObject::OnNextQuestTagReceived );
+	}
 }
 
 // Called every frame
@@ -53,10 +60,6 @@ void AStrangeObject::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (!bVisibleInteractUI) return;
 
 	if(NPCInteractWidget)
-	{
-		NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
-	NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
-	}else
 	{
 		NPCInteractGWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Behind) );
 	}
@@ -90,12 +93,51 @@ FString AStrangeObject::InteractWith()
 	bCheckIcon = true;
 	MeshComponent->SetRenderCustomDepth( false );
 
+	if (gm)
+	{
+		gm->OnNextSpawnerQuestTagCompleted.RemoveDynamic( this , &AStrangeObject::OnNextQuestTagCompleted );
+		gm->OnNextSpawnerQuestTagCompleted.AddDynamic( this, &AStrangeObject::OnNextQuestTagCompleted );
+	}
+
 	//QuestData 에 있는 Objective ID와 같아야함.
 	return ObjectID;
 }
 
 void AStrangeObject::ActiveMapIcon(bool onoff)
 {
-	MapIcon->SetVisibility( onoff );
+	MapIcon->SetIconVisible( onoff );
+}
+
+void AStrangeObject::OnNextQuestTagReceived(FString NextQuestTag)
+{
+	if (TmpQuestTag.ToString() == NextQuestTag)
+	{
+		if (gm && gm->GetNxtQuestTag() != "")
+		{
+			if (TmpQuestTag == FName( gm->GetNxtQuestTag() ))
+			{
+				bVisibleInteractUI = true;
+				ChangeObjectColor( 4 );
+				ActiveMapIcon( true );
+			}
+
+		}
+	}
+}
+
+void AStrangeObject::OnNextQuestTagCompleted()
+{
+	bCheckIcon = false;
+	bVisibleInteractUI = false;
+	MeshComponent->SetRenderCustomDepth( false );
+	ActiveMapIcon( false );
+}
+
+void AStrangeObject::ChangeObjectColor(int32 depth)
+{
+	if (!bVisibleInteractUI) return;
+	MeshComponent->SetRenderCustomDepth( true );
+	MeshComponent->SetCustomDepthStencilValue( depth );
+	MapIcon->SetVisibility( true );
 }
 

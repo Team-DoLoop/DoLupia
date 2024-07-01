@@ -18,6 +18,7 @@
 #include "Monsters/MonsterAnim.h"
 #include "Monsters/MonsterDamageWidget.h"
 #include "Monsters/SpawnMonsterDamage.h"
+#include "Monsters/Test_Spawner.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Spawner/ItemSpawner.h"
 
@@ -343,4 +344,7 @@ bool AMonster::GetRandomPositionInNavMesh( FVector centerLocation , float radius
 	return result;
 
 }
+
+
+
 

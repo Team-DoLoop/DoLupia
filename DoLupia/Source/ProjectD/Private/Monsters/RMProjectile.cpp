@@ -27,17 +27,9 @@ ARMProjectile::ARMProjectile()
 void ARMProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// FFileHelper 클래스를 이용하여 로그 파일 생성
-	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
-	FFileHelper::SaveStringToFile( L"ARMProjectile::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
-
 	CollisionComponent->OnComponentBeginOverlap.AddDynamic( this , &ARMProjectile::OnMyCompBeginOverlap );
 
-
-	FFileHelper::SaveStringToFile( L"ARMProjectile::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
-		&IFileManager::Get() , ELogVerbosity::Log );
+	GetWorldTimerManager().SetTimer( TimerHandle , this , &ARMProjectile::DestroyProjectile , 8.0f , false );
 }
 
 // Called every frame
@@ -74,6 +66,15 @@ void ARMProjectile::OnMyCompBeginOverlap( UPrimitiveComponent* OverlappedCompone
 			this->Destroy();
 			return;
 		}
+	}
+}
+
+void ARMProjectile::DestroyProjectile()
+{
+	if(this)
+	{
+		this->Destroy();
+		
 	}
 }
 

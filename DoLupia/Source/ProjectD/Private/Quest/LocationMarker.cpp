@@ -56,7 +56,7 @@ void ALocationMarker::NotifyActorBeginOverlap( AActor* OtherActor )
 {
     if (OtherActor) {
         AProjectDCharacter* player = Cast<AProjectDCharacter>( OtherActor );
-        if (player) {
+        if (player && bActiveOverlap) {
             player->OnObjectiveIDCalled.Broadcast( ObjectiveID , 1);
 			MapIcon->SetIconVisible( false );
 			Destroy();
@@ -68,6 +68,7 @@ void ALocationMarker::ActiveLocationMarker()
 {
 	locationVFX->SetVisibility( true );
 	MapIcon->SetIconVisible( true );
+    bActiveOverlap = true;
 }
 
 

@@ -219,5 +219,11 @@ void UPlayerTutorialComp::StartTrigger(int32 _TriggerID)
 	{
 		GM->HandleIntrusionEvent();
 	}
+
+	// 마지막 튜토리얼 (엔딩 크레딧 끝나고 나오는)
+	else if(_TriggerID == 3)
+	{
+		UGameplayStatics::OpenLevel( this , TEXT("Opening") );
+	}
 }
 
