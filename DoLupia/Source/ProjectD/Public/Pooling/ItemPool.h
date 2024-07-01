@@ -7,6 +7,8 @@
 #include "ItemPool.generated.h"
 
 class UItemBase;
+struct FItemData;
+
 
 /**
  * 
@@ -27,14 +29,25 @@ public:
 
     // 사용한 아이템을 풀로 반환하기
     void ReturnItem( UItemBase* Item );
-	
+
+protected:
+
+
 private:
     UPROPERTY()
     TArray<UItemBase*> Pool;
 
     UPROPERTY()
     TMap<FString, UItemBase*> ItemManager;
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     UPROPERTY(EditDefaultsOnly, Category = "Item Initialization" )
     UDataTable* ItemDataTable;
+
+
+    UPROPERTY()
+    TArray<FItemData> ItemDataArray;
 };

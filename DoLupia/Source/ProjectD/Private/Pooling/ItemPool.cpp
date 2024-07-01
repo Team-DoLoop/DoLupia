@@ -14,6 +14,20 @@ UItemPool::UItemPool()
 	if (DataTable.Succeeded())
     {
         ItemDataTable = DataTable.Object;
+
+        if (ItemDataTable)
+        {
+            TArray<FItemData*> OutRowArray;
+            ItemDataTable->GetAllRows<FItemData>( TEXT( "Context String" ) , OutRowArray );
+
+            for (FItemData* ItemData : OutRowArray)
+            {
+                if (ItemData)
+                {
+                    ItemDataArray.Add( *ItemData );
+                }
+            }
+        }
     }
 
 
@@ -21,12 +35,46 @@ UItemPool::UItemPool()
 
 void UItemPool::CreateItem(int32 NumberOfCreate)
 {
+<<<<<<< Updated upstream
     //for (int32 i = 0; i < NumberOfCreate; ++i)
     //{
     //    UItemBase* Item = NewObject<UItemBase>( this, UItemBase::StaticClass() );
     //    Pool.Add(Item);
     //}
 
+=======
+
+
+  /*  GetWorld()->GetTimerManager().SetTimerForNextTick( [this]()
+    {*/
+        for (FItemData ItemData : ItemDataArray)
+        {
+            UItemBase* ItemReference = NewObject<UItemBase>( this , UItemBase::StaticClass() );
+
+            ItemReference->SetID( ItemData.ID );
+            ItemReference->SetItemType( ItemData.ItemType );
+            ItemReference->SetItemQuality( ItemData.ItemQuality );
+            ItemReference->SetItemStatistics( ItemData.ItemStatistics );
+            ItemReference->SetTextData( ItemData.TextData );
+            ItemReference->SetNumericData( ItemData.NumericData );
+            ItemReference->SetAssetData( ItemData.AssetData );
+            ItemReference->SetItemSkillColorData( ItemData.ItemSkillColor );
+            ItemReference->SetItemMaterial( ItemData.ItemMaterial );
+
+            // 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
+            FItemNumericData& ItemNumericData = ItemReference->GetNumericData();
+            ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
+
+            ItemManager.Emplace( ItemData.TextData.Name.ToString() , ItemReference );
+        }
+    //} );
+
+    //for (int32 i = 0; i < NumberOfCreate; ++i)
+    //{
+    //    UItemBase* Item = NewObject<UItemBase>( this, UItemBase::StaticClass() );
+    //    Pool.Add(Item);
+    //}
+>>>>>>> Stashed changes
 }
 
 UItemBase* UItemPool::GetItem(const FString& ItemID)
