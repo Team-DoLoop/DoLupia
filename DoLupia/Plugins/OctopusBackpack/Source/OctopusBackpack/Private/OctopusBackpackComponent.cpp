@@ -24,9 +24,18 @@ void UOctopusBackpackComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"UOctopusBackpackComponent::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	maxHandDistanceSquared = FMath::Square(maxHandDistance);
 	nextPointDistanceSquared = FMath::Square(nextPointDistance);
 	breakDistanceSquared = FMath::Square(breakDistance);
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FFileHelper::SaveStringToFile( L"UOctopusBackpackComponent::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 TArray<FHitResult> UOctopusBackpackComponent::TraceBox(const FVector& startTrace, const FVector& endTrace, const FVector& boxSize) const

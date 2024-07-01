@@ -24,7 +24,15 @@ void ALevelManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AGameSaveManager::BeginPlay -> Start " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	InitializeGameSaveManager();
+
+	FFileHelper::SaveStringToFile( L"ALevelManager::BeginPlay -> End " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void ALevelManager::EndPlay(const EEndPlayReason::Type EndPlayReason)

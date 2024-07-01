@@ -48,6 +48,11 @@ void AQuest_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AQuest_Base::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	//겜모에 QuestID 가져오기
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
@@ -61,6 +66,8 @@ void AQuest_Base::BeginPlay()
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (!IsValid( PlayerController ))
 	{
+		FFileHelper::SaveStringToFile( L"AQuest_Base::BeginPlay -> PlayerController" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / PlayerController is not valid." ) );
 		return;
 	}
@@ -68,6 +75,8 @@ void AQuest_Base::BeginPlay()
 	ACharacter* PlayerCharacter = Cast<ACharacter>( PlayerController->GetPawn() );
 	if (!IsValid( PlayerCharacter ))
 	{
+		FFileHelper::SaveStringToFile( L"AQuest_Base::BeginPlay -> PlayerCharacter" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / PlayerCharacter is not valid." ) );
 		return;
 	}
@@ -76,6 +85,9 @@ void AQuest_Base::BeginPlay()
 	ProjectDCharacter = Cast<AProjectDCharacter>( PlayerCharacter );
 	if (!IsValid( ProjectDCharacter ))
 	{
+		FFileHelper::SaveStringToFile( L"AQuest_Base::BeginPlay -> ProjectDCharacter" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / ProjectDCharacter is not valid." ) );
 		return;
 	}
@@ -109,6 +121,9 @@ void AQuest_Base::BeginPlay()
 	//딜레이 0.1초
 	QuestLogComponent->UpdateCurrentActiveQuest.RemoveDynamic( this , &AQuest_Base::CurrentActiveQuest );
 	QuestLogComponent->UpdateCurrentActiveQuest.AddDynamic( this , &AQuest_Base::CurrentActiveQuest);
+
+	FFileHelper::SaveStringToFile( L"AQuest_Base::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 

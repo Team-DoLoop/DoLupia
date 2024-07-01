@@ -12,6 +12,13 @@
 void AFA_Blast_Lightning::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AFA_Blast_Lightning::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	FloorAttackType = EFloorAttackType::BlastLightening;
 
 	TWeakObjectPtr<AFA_Blast_Lightning> WeakThis = this;
@@ -46,8 +53,15 @@ void AFA_Blast_Lightning::BeginPlay()
 
 		GetWorld()->GetTimerManager().SetTimer(Handle2 , TimerDel2, 0.05f, true);
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AFA_Blast_Lightning::BeginPlay -> IsPendingKillPending" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+	}
 
 
+	FFileHelper::SaveStringToFile( L"AFA_Blast_Lightning::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 
 	// UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SpawnSecondEffect, GetActorLocation());
 }

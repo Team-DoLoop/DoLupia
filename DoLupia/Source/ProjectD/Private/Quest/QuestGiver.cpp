@@ -50,6 +50,11 @@ void UQuestGiver::BeginPlay()
 {
 	Super::BeginPlay();
 
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"UQuestGiver::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
 	// ...
     UWorld* World = GetWorld();
     if (!World) return;
@@ -58,6 +63,9 @@ void UQuestGiver::BeginPlay()
     MyPlayerCharacter = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( World , 0 ) );
 
     MyGameMode = Cast<AProjectDGameMode>( UGameplayStatics::GetGameMode( World ) );
+
+    FFileHelper::SaveStringToFile( L"UQuestGiver::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
 
 }
 

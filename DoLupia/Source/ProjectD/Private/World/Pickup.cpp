@@ -22,6 +22,11 @@ void APickup::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APickup::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	InitializePickup(UItemBase::StaticClass(), ItemQuantity);
 
 	if (ItemDataTable)
@@ -31,11 +36,24 @@ void APickup::BeginPlay()
 			PickUpMesh->SetStaticMesh( ItemData->AssetData.Mesh );
 		}
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"APickup::BeginPlay -> ItemDataTable nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
 
 	if(SphereComponent)
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic( this , &APickup::BezierBeginOverlap );
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"APickup::BeginPlay -> SphereComponent nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+	}
+
+	FFileHelper::SaveStringToFile( L"APickup::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+	&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
@@ -63,6 +81,13 @@ void APickup::InitializePickup(const TSubclassOf<UItemBase> BaseClass, const int
 		PickUpMesh->SetStaticMesh(ItemData->AssetData.Mesh);
 
 		UpdateInteractableData();
+	}
+	else
+	{
+		// FFileHelper 클래스를 이용하여 로그 파일 생성
+		FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+		FFileHelper::SaveStringToFile( L"APickup::BeginPlay -> ItemDataTable == nullptr && !DesiredItemID.IsNone()" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 }
 

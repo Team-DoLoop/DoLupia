@@ -54,6 +54,11 @@ void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"ADroppedItem::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 
 	//UBezierMovementLibrary::MoveObjectAlongCurve( this , this , GetActorLocation() , FVector(100.f,100.f,100.f) , 0.77f);
 	OriRotator = ItemMesh->GetRelativeRotation();
@@ -82,6 +87,10 @@ void ADroppedItem::BeginPlay()
 	ActorSpeed = UBezierMovementLibrary::VectorSeed( this );
 
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADroppedItem::OnTouchesGroundBeginOverlap);
+
+
+	FFileHelper::SaveStringToFile( L"ADroppedItem::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

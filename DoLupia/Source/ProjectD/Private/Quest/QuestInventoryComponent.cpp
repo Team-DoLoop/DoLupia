@@ -20,9 +20,16 @@ void UQuestInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"UQuestInventoryComponent::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (!IsValid( PlayerController ))
 	{
+		FFileHelper::SaveStringToFile( L"UQuestInventoryComponent::BeginPlay -> PlayerController nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / PlayerController is not valid." ) );
 		return;
 	}
@@ -30,6 +37,8 @@ void UQuestInventoryComponent::BeginPlay()
 	ACharacter* PlayerCharacter = Cast<ACharacter>( PlayerController->GetPawn() );
 	if (!IsValid( PlayerCharacter ))
 	{
+		FFileHelper::SaveStringToFile( L"UQuestInventoryComponent::BeginPlay -> PlayerCharacter nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+&IFileManager::Get() , ELogVerbosity::Log );
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / PlayerCharacter is not valid." ) );
 		return;
 	}
@@ -38,10 +47,15 @@ void UQuestInventoryComponent::BeginPlay()
 	ProjectDCharacter = Cast<AProjectDCharacter>( PlayerCharacter );
 	if (!IsValid( ProjectDCharacter ))
 	{
+		FFileHelper::SaveStringToFile( L"UQuestInventoryComponent::BeginPlay -> ProjectDCharacter nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+&IFileManager::Get() , ELogVerbosity::Log );
 		UE_LOG( LogTemp , Error , TEXT( "Quest_Base / BeginPlay / ProjectDCharacter is not valid." ) );
 		return;
 	}
-	
+
+
+	FFileHelper::SaveStringToFile( L"UQuestInventoryComponent::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 

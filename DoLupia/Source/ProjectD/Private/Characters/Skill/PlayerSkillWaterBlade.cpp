@@ -25,9 +25,18 @@ APlayerSkillWaterBlade::APlayerSkillWaterBlade()
 void APlayerSkillWaterBlade::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APlayerSkillWaterBlade::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	SetActorRotation(Rot);
 
 	BoxComp->SetHiddenInGame(!bIsShowDebugLine);
+
+	FFileHelper::SaveStringToFile( L"APlayerSkillWaterBlade::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void APlayerSkillWaterBlade::Tick(float DeltaSeconds)
