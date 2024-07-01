@@ -60,6 +60,7 @@ void AAITxtBossAttack::BeginPlay()
     Super::BeginPlay();
 
     AIlib = NewObject<UAIConnectionLibrary>();
+    //GetWorld()->GetTimerManager().SetTimer( DownloadTimerHandle , this , &AAITxtBossAttack::OnDownloadTimeout , 5.0f , false );
 
     // Timeline 진행 중
     FOnTimelineFloat TimelineProgress;
@@ -134,10 +135,16 @@ void AAITxtBossAttack::LoadWebImage()
         DownloadTask->OnSuccess.AddDynamic( this , &AAITxtBossAttack::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAITxtBossAttack::OnImageDownloadFailed );
     }
+    else
+    {
+        OnImageDownloadFailed( nullptr );
+    }
 }
 
 void AAITxtBossAttack::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture )
 {
+    //GetWorld()->GetTimerManager().ClearTimer( DownloadTimerHandle );
+
     if (DownloadedTexture)
     {
         UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
@@ -174,6 +181,8 @@ void AAITxtBossAttack::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTextu
 {
     UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
 
+    //GetWorld()->GetTimerManager().ClearTimer( DownloadTimerHandle );
+
     if (!meshComp1 && !meshComp2 && !meshComp3 && !meshComp4)
     {
         UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
@@ -188,48 +197,25 @@ void AAITxtBossAttack::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTextu
         DynamicMaterial4 = meshComp4->CreateDynamicMaterialInstance( 0 , TxtMaterial );
     }
 
-    // 랜덤으로 텍스처 가져와서
-    int32 RandomIndex = FMath::RandRange( 0 , 2 );
+    // AI 서버 연동 안되어 있을 때, 랜덤으로 텍스처 가져와서 적용
+    int32 RandomIndex = FMath::RandRange( 0 , 9 );
+
+    FString BaseFirePath = "/Game/AI/Texture/T_Boss10";
+    FString BaseElecPath = "/Game/AI/Texture/T_Boss20";
+    FString TextureName;
+    FString FullPath;
 
     if ( Attacktype == "Fire" )
     {
-        switch (RandomIndex)
-        {
-        case 0:
-            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss101.T_Boss101" ) );
-            break;
-        case 1:
-            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss102.T_Boss102" ) );
-            break;
-        case 2:
-            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss103.T_Boss103" ) );
-            break;
-        default:
-            UE_LOG( LogTemp , Warning , TEXT( "Invalid texture index" ) );
-            break;
-        }
-
-        //LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player001.T_Player001" ) );
+        TextureName = FString::Printf( TEXT( "%d.T_Boss10%d" ) , RandomIndex + 1 , RandomIndex + 1 );
+        FullPath = BaseFirePath + TextureName;
+        LocalTexture = LoadObject<UTexture>( nullptr , *FullPath );
     }
     else if (Attacktype == "Electric")
     {
-        switch (RandomIndex)
-        {
-        case 0:
-            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss201.T_Boss201" ) );
-            break;
-        case 1:
-            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss202.T_Boss202" ) );
-            break;
-        case 2:
-            LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Boss203.T_Boss203" ) );
-            break;
-        default:
-            UE_LOG( LogTemp , Warning , TEXT( "Invalid texture index" ) );
-            break;
-        }
-
-        //LocalTexture = LoadObject<UTexture>( nullptr , TEXT( "/Game/AI/Texture/T_Player002.T_Player002" ) );
+        TextureName = FString::Printf( TEXT( "%d.T_Boss20%d" ) , RandomIndex + 1 , RandomIndex + 1 );
+        FullPath = BaseElecPath + TextureName;
+        LocalTexture = LoadObject<UTexture>( nullptr , *FullPath );
     }
 
     if (DynamicMaterial1 && DynamicMaterial2 && DynamicMaterial3 && DynamicMaterial4)
@@ -243,4 +229,5 @@ void AAITxtBossAttack::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTextu
         TimelineComp->PlayFromStart();
     }
 }
+
 
