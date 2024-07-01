@@ -22,6 +22,11 @@ ASpawnMonsterDamage::ASpawnMonsterDamage()
 // Called when the game starts or when spawned
 void ASpawnMonsterDamage::BeginPlay()
 {
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"ASpawnMonsterDamage::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	Super::BeginPlay();
 	monsterDamageWidget = Cast<UMonsterDamageWidget>( damageUI->GetWidget() );
 	
@@ -36,6 +41,9 @@ void ASpawnMonsterDamage::BeginPlay()
 			DestroyActor();
 		}
 	) , 2 , false );
+
+	FFileHelper::SaveStringToFile( L"ASpawnMonsterDamage::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

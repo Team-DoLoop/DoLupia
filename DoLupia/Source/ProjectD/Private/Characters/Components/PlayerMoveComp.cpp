@@ -38,7 +38,11 @@ void UPlayerMoveComp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"UPlayerMoveComp::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 
 	Player = Cast<AProjectDCharacter>(GetOwner());
 	if(!Player) return;
@@ -46,6 +50,9 @@ void UPlayerMoveComp::BeginPlay()
 	PlayerController = Cast<AProjectDPlayerController>(Player->GetController());
 	PlayerFSM = Cast<UPlayerFSMComp>(Player->GetPlayerFSMComp());
 	PlayerAnim = Cast<UPlayerAnimInstance>(Player->GetMesh()->GetAnimInstance());
+
+	FFileHelper::SaveStringToFile( L"UPlayerMoveComp::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 	
 }
 

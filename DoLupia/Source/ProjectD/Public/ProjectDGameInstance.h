@@ -100,10 +100,16 @@ private:
 	// <------------------ Item ------------------>
 public:
 	FItemData* GetItemData(FString ItemID);
+	class UItemBase* GetItem( FString ItemID );
+	void InitItemManaging();
+
 
 private:
 	UPROPERTY()
 	class UDataTable* ItemTable;
+
+	UPROPERTY()
+	TMap<FString, class UItemBase*> ItemManager;
 
 
 	// <------------------ PlayerLocation ------------------>

@@ -1,4 +1,4 @@
-// Copyright 2024 CAS. All Rights Reserved.
+﻿// Copyright 2024 CAS. All Rights Reserved.
 
 
 #include "OctopusBackpackActor.h"
@@ -362,6 +362,11 @@ void AOctopusBackpackActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AOctopusBackpackActor::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	maxBrokenHandDistanceSquared = FMath::Square(maxBrokenHandDistance);
 
 	if (IsValid(GetParentActor()))
@@ -380,6 +385,13 @@ void AOctopusBackpackActor::BeginPlay()
 			}
 		}
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AOctopusBackpackActor::BeginPlay -> End", *FilePath , FFileHelper::EEncodingOptions::AutoDetect, 
+			&IFileManager::Get(), ELogVerbosity::Log );
+	}
+
+	
 }
 
 // Called every frame

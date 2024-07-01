@@ -21,6 +21,11 @@ void AGrid2048::BeginPlay()
 {
     Super::BeginPlay();
 
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"AGrid2048::BeginPlay -> Start " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
     if (GridWidgetClass)
     {
 		for(int32 x = 0; x < 4; ++x)
@@ -37,6 +42,12 @@ void AGrid2048::BeginPlay()
 			}
 		}
     }
+    else
+    {
+
+        FFileHelper::SaveStringToFile( L"AGrid2048::BeginPlay -> GridWidgetClass nullptr " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+            &IFileManager::Get() , ELogVerbosity::Log );
+    }
 
     ExplainWidget = CreateWidget<UUserWidget>( GetWorld() , Explain2048 );
     ExplainWidget->AddToViewport(0);
@@ -46,6 +57,10 @@ void AGrid2048::BeginPlay()
     NewNumber();
     NewNumber();
     Draw();
+
+
+    FFileHelper::SaveStringToFile( L"AGrid2048::BeginPlay -> End " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void AGrid2048::Tick( float DeltaTime )

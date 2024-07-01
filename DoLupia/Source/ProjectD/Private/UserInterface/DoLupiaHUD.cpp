@@ -18,11 +18,21 @@ void ADoLupiaHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"ADoLupiaHUD::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	if(MainMenuFactory && !MainMenuWidget)
 	{
 		MainMenuWidget = CreateWidget<UMainMenu>(GetWorld(), MainMenuFactory);
 		MainMenuWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Inventory));
 		MainMenuWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"ADoLupiaHUD::BeginPlay -> MainMenuFactory && !MainMenuWidget" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 
 	if (InteractionWidgetFactory && !InteractionWidget)
@@ -31,6 +41,11 @@ void ADoLupiaHUD::BeginPlay()
 		InteractionWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Interaction));
 		InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"ADoLupiaHUD::BeginPlay -> InteractionWidgetFactory && !InteractionWidget" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
 
 	if(GameSystemCallFactory && !GameSystemCall)
 	{
@@ -38,6 +53,15 @@ void ADoLupiaHUD::BeginPlay()
 		GameSystemCall->AddToViewport(static_cast<uint32>(ViewPortPriority::Behind));
 		GameSystemCall->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"ADoLupiaHUD::BeginPlay -> GameSystemCallFactory && !GameSystemCall" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
+
+
+	FFileHelper::SaveStringToFile( L"ADoLupiaHUD::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void ADoLupiaHUD::OnSystemCall(const FText& Message) const

@@ -43,6 +43,11 @@ void UPlayerAttackComp::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"UPlayerAttackComp::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	// ...
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
@@ -58,6 +63,9 @@ void UPlayerAttackComp::BeginPlay()
 	{
 		PlayerAnim->OnNextAttackCheck.AddUObject(this, &UPlayerAttackComp::NextAttackCheck);
 	}
+	else
+		FFileHelper::SaveStringToFile( L"UPlayerAttackComp::BeginPlay -> PlayAnim nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+	&IFileManager::Get() , ELogVerbosity::Log );
 	
 	// PlayerMP
 	if (PlayerStat)
@@ -67,6 +75,9 @@ void UPlayerAttackComp::BeginPlay()
 		//MPRegenTime = PlayerStat->GetMPRegenTime();
 		//CurrentRegenTime = 0;
 	}
+	else
+		FFileHelper::SaveStringToFile( L"UPlayerAttackComp::BeginPlay -> PlayerStat nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+	&IFileManager::Get() , ELogVerbosity::Log );
 
 	CantSkill.SetNum(5);
 	for(int i = 0; i < CantSkill.Num(); i++) CantSkill[i] = MakeShareable(new FSkillInfo());
@@ -90,6 +101,10 @@ void UPlayerAttackComp::BeginPlay()
 			CantSkill[i]->SkillData = GI->GetPlayerSkillData(0);
 		}
 
+		if(!AutoSkill || !RedQSkill || !RedWSkill || !YellowQSkill || !YellowWSkill || !BlueQSkill || !BlueWSkill || !SwapSkill || !UltSkill)
+			FFileHelper::SaveStringToFile( L"UPlayerAttackComp::BeginPlay -> Skill(new) nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 		AutoSkill->SkillData = GI->GetPlayerSkillData(1);			// Auto
 		RedQSkill->SkillData = GI->GetPlayerSkillData(2);			// Red
 		RedWSkill->SkillData =GI->GetPlayerSkillData(3);
@@ -100,6 +115,9 @@ void UPlayerAttackComp::BeginPlay()
 		SwapSkill->SkillData = GI->GetPlayerSkillData(8);
 		UltSkill->SkillData = GI->GetPlayerSkillData(9);				// Ult
 	}
+	else
+		FFileHelper::SaveStringToFile( L"UPlayerAttackComp::BeginPlay -> GI nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 
 	InitCanUseColor();
 	InitSkillLevel();
@@ -107,6 +125,9 @@ void UPlayerAttackComp::BeginPlay()
 	IgnoreAttackActors.AddUnique(Player);
 
 	bIsShowDebugLine = Player->GetbIsShowDebugLine();
+
+	FFileHelper::SaveStringToFile( L"UPlayerAttackComp::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void UPlayerAttackComp::InitSkillUI()
