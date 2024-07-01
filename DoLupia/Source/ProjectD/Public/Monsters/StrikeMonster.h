@@ -34,5 +34,6 @@ public:
 
 	virtual void AttackState() override;
 
+	bool IsCollisionEnabled = false;
 
 };

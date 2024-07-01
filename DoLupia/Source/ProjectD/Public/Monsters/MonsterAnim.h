@@ -25,7 +25,13 @@ public:
 	UPROPERTY( EditAnywhere , BlueprintReadWrite )
 	EMonsterType MonsterType;
 
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	virtual void NativeInitializeAnimation() override;
+
+	UPROPERTY()
+	class AStrikeMonster* StrikeMonster;
+
+	UPROPERTY()
+	class ARangedMonster* RangedMonster;
 
 	UPROPERTY( EditDefaultsOnly , BlueprintReadWrite )
 	bool bAttackDelay = false;
@@ -40,9 +46,6 @@ public:
 	void OnEndHitAttackAnimation();
 
 	UFUNCTION( BlueprintCallable )
-	void SetCollision();
-
-	UFUNCTION( BlueprintCallable )
 	void OnDoStrikeDieAnimation();
 
 	UFUNCTION( BlueprintCallable )
@@ -53,4 +56,6 @@ public:
 
 	UFUNCTION( BlueprintCallable )
 	void OnDoRangedDieAnimation();
+
+	
 };

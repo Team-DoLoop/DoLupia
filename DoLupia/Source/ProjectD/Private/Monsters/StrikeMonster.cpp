@@ -77,7 +77,11 @@ void AStrikeMonster::OnMyCompBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 		if (OverlapPlayer->GetController())
 		{
-			OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 10 );
+			if(IsCollisionEnabled)
+			{
+				OverlapPlayer->TakeHit( EAttackType::BASIC , EEffectAttackType::NONE , 10 );
+				IsCollisionEnabled = false;
+			}
 		}
 	}
 }
