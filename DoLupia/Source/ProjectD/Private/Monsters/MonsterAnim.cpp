@@ -8,46 +8,31 @@
 #include "Monsters/RangedMonster.h"
 #include "Monsters/StrikeMonster.h"
 
-void UMonsterAnim::NativeUpdateAnimation(float DeltaSeconds)
+
+void UMonsterAnim::NativeInitializeAnimation()
 {
-	Super::NativeUpdateAnimation(DeltaSeconds);
-
+	Super::NativeInitializeAnimation();
 	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<AMonster>( ownerPawn );
-
-
-	if(!monster->IsAlive)
-	{
-
-	}
-
+	StrikeMonster = Cast<AStrikeMonster>( ownerPawn );
+	RangedMonster = Cast<ARangedMonster>( ownerPawn );
 }
 
 void UMonsterAnim::OnDoHitAttackAnimation()
 {
-	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	//monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Overlap );
+	StrikeMonster->IsCollisionEnabled = true;
 }
 
 void UMonsterAnim::OnEndHitAttackAnimation()
 {
 	bAttackDelay = false;
 	bIsAttackComplete = true;
-}
+	StrikeMonster->IsCollisionEnabled = false;
 
-void UMonsterAnim::SetCollision()
-{
-	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	//monster->GetCapsuleComponent()->SetCollisionResponseToChannel( ECC_GameTraceChannel2 , ECR_Ignore );
 }
 
 void UMonsterAnim::OnDoStrikeDieAnimation()
 {
-	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<AStrikeMonster>( ownerPawn );
-	monster->DestroyMonster();
+	StrikeMonster->DestroyMonster();
 }
 
 void UMonsterAnim::OnEndRangedAttackAnimation()
@@ -58,14 +43,10 @@ void UMonsterAnim::OnEndRangedAttackAnimation()
 
 void UMonsterAnim::OnDoRangedAttackAnimation()
 {
-	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<ARangedMonster>( ownerPawn );
-	monster->RangedAttack();
+	RangedMonster->RangedAttack();
 }
 
 void UMonsterAnim::OnDoRangedDieAnimation()
 {
-	auto ownerPawn = TryGetPawnOwner();
-	auto monster = Cast<ARangedMonster>( ownerPawn );
-	monster->DestroyMonster();
+	RangedMonster->DestroyMonster();
 }
