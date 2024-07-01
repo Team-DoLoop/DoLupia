@@ -88,5 +88,9 @@ public:
 
 	UTexture* LocalTexture;
 
+private:
+	//FTimerHandle DownloadTimerHandle;
+	//void OnDownloadTimeout();
+
 	
 };
