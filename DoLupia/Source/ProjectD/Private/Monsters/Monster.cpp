@@ -37,6 +37,12 @@ AMonster::AMonster()
 void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AMonster::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	int32 yaw = rand() % 360;
 	SetActorRotation( FRotator( 0 , yaw , 0 ) );
 
@@ -76,6 +82,16 @@ void AMonster::BeginPlay()
 				ItemSpawner->CreateItem( elem.ItemName , elem.DropPercentage );
 			}
 		}
+		else
+		{
+			FFileHelper::SaveStringToFile( L"AMonster::BeginPlay -> ItemSpawner is nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+				&IFileManager::Get() , ELogVerbosity::Log );
+		}
+	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AMonster::BeginPlay -> ItemSpawner has been spawned" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 	//
 
@@ -89,6 +105,14 @@ void AMonster::BeginPlay()
 			DynamicDissolveMaterial->SetScalarParameterValue( "Amount (S)" , 1.f );
 		}
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"AMonster::BeginPlay -> GetMesh() -> nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
+
+	FFileHelper::SaveStringToFile( L"AMonster::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

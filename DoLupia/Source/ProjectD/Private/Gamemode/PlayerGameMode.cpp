@@ -84,6 +84,11 @@ void APlayerGameMode::StartPlay()
 void APlayerGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APlayerGameMode::BeginPlay -> Start " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 	
 	GI = Cast<UProjectDGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	Player = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
@@ -95,6 +100,7 @@ void APlayerGameMode::BeginPlay()
 		LevelIdx = 999;
 		IsToToNotInMapStart = true;
 		GI->ClearCompletedQuests();
+		GI->Init();
 		//if (Player)
 		//{
 		//	Player->Destroy();
@@ -179,6 +185,11 @@ void APlayerGameMode::BeginPlay()
 		TimelineFinishedFunction.BindUFunction( this , FName( "OnTimelineFinished" ) );
 		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
+	else
+	{
+		FFileHelper::SaveStringToFile( L"APlayerGameMode::BeginPlay -> PlayerCamCurve nullptr " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
 
 	// Camera Sequencer
 	Target = Cast<AProjectDCharacter>( GetWorld()->GetFirstPlayerController()->GetCharacter() );
@@ -221,6 +232,12 @@ void APlayerGameMode::PlayBGMForLevel(int32 LvIndex)
 			}
 		}
 	}
+	else
+	{
+		FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+		FFileHelper::SaveStringToFile( L"APlayerGameMode::PlayBGMForLevel -> LvBGMs.Contains( LvIndex ) nullptr " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
+	}
 }
 
 void APlayerGameMode::ChangeNextLv(FName LevelName, AProjectDCharacter* Character, ESaveType SaveType, bool OpenLevel)
@@ -238,6 +255,12 @@ void APlayerGameMode::SetPlayerCameraboom(float camboom)
 	{
 		Player = Cast<AProjectDCharacter>( UGameplayStatics::GetPlayerCharacter( GetWorld() , 0 ) );
 		Player->GetCameraBoom()->TargetArmLength = camboom;
+	}
+	else
+	{
+		FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+		FFileHelper::SaveStringToFile( L"APlayerGameMode::SetPlayerCameraboom -> Player nullptr " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 }
 
@@ -375,6 +398,12 @@ void APlayerGameMode::CreateLocationTitleWidget( int32 currentlevel )
 			LocationWidget->AddToViewport( static_cast<uint32>(ViewPortPriority::Default) );
 
 		}
+	}
+	else
+	{
+		FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+		FFileHelper::SaveStringToFile( L"APlayerSkillWaterBlade::CreateLocationTitleWidget -> LocationFactory nullptr " , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+			&IFileManager::Get() , ELogVerbosity::Log );
 	}
 }
 

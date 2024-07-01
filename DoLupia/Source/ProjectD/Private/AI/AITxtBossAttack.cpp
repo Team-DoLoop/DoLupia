@@ -59,6 +59,11 @@ void AAITxtBossAttack::BeginPlay()
 {
     Super::BeginPlay();
 
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"AAITxtBossAttack::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
     AIlib = NewObject<UAIConnectionLibrary>();
     //GetWorld()->GetTimerManager().SetTimer( DownloadTimerHandle , this , &AAITxtBossAttack::OnDownloadTimeout , 5.0f , false );
 
@@ -80,9 +85,15 @@ void AAITxtBossAttack::BeginPlay()
 
     if (!meshComp1 || !meshComp2 || !meshComp3 || !meshComp4)
     {
+        FFileHelper::SaveStringToFile( L"AAITxtBossAttack::BeginPlay -> !meshComp1 || !meshComp2 || !meshComp3 || !meshComp4" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+            &IFileManager::Get() , ELogVerbosity::Log );
+
         UE_LOG( LogTemp , Error , TEXT( "meshComps is nullptr in BeginPlay" ) );
         return;
     }
+
+    FFileHelper::SaveStringToFile( L"AAITxtBossAttack::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
 
 
 }

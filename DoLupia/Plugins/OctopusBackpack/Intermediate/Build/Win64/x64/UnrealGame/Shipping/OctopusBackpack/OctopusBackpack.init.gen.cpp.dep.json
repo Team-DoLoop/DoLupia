@@ -1,0 +1,13 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\projects\\dolupia\\dolupia\\plugins\\octopusbackpack\\intermediate\\build\\win64\\unrealgame\\inc\\octopusbackpack\\uht\\octopusbackpack.init.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\projects\\dolupia\\dolupia\\intermediate\\build\\win64\\x64\\projectd\\shipping\\engine\\sharedpch.engine.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\projects\\dolupia\\dolupia\\plugins\\octopusbackpack\\intermediate\\build\\win64\\x64\\unrealgame\\shipping\\octopusbackpack\\definitions.octopusbackpack.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

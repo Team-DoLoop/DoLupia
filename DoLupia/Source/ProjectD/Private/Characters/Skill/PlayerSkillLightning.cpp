@@ -17,6 +17,11 @@ APlayerSkillLightning::APlayerSkillLightning()
 
 void APlayerSkillLightning::BeginPlay()
 {
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APlayerSkillElecBlast::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	Super::BeginPlay();
 
 	FTimerHandle TimerHandle;
@@ -24,6 +29,9 @@ void APlayerSkillLightning::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
 	ActivateSkill();
 }, 0.8f, false);
+
+	FFileHelper::SaveStringToFile( L"APlayerSkillElecBlast::End -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void APlayerSkillLightning::ActivateSkill()

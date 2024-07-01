@@ -40,6 +40,11 @@ void ATriggerBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"ATriggerBaseActor::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	gm = Cast<APlayerGameMode>( UGameplayStatics::GetGameMode( GetWorld() ) );
 
 	// 레벨 이동 트리거면 레벨 내에서 숨기기
@@ -61,6 +66,9 @@ void ATriggerBaseActor::BeginPlay()
 		TimelineFinishedFunction.BindUFunction( this , FName( "OnTimelineFinished" ) );
 		TimelineComp->SetTimelineFinishedFunc( TimelineFinishedFunction );
 	}
+
+	FFileHelper::SaveStringToFile( L"ATriggerBaseActor::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+	&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

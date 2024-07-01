@@ -1,11 +1,11 @@
-"C:\UnrealProject\OctoSample\Plugins\OctopusBackpack\Source\OctopusBackpack\Private\OctopusBackpackComponent.cpp"
-/FI"C:\UnrealProject\OctoSample\Intermediate\Build\Win64\x64\OctoSampleEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
-/FI"C:\UnrealProject\OctoSample\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\Definitions.OctopusBackpack.h"
-/Yu"C:\UnrealProject\OctoSample\Intermediate\Build\Win64\x64\OctoSampleEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
-/Fp"C:\UnrealProject\OctoSample\Intermediate\Build\Win64\x64\OctoSampleEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.pch"
-/Fo"C:\UnrealProject\OctoSample\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpackComponent.cpp.obj"
-/sourceDependencies "C:\UnrealProject\OctoSample\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpackComponent.cpp.dep.json"
-@"C:\UnrealProject\OctoSample\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpack.Shared.rsp"
+"C:\UnrealProject\OctoGamePlugin\Plugins\OctopusBackpack\Source\OctopusBackpack\Private\OctopusBackpackComponent.cpp"
+/FI"C:\UnrealProject\OctoGamePlugin\Intermediate\Build\Win64\x64\OctoGamePluginEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
+/FI"C:\UnrealProject\OctoGamePlugin\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\Definitions.OctopusBackpack.h"
+/Yu"C:\UnrealProject\OctoGamePlugin\Intermediate\Build\Win64\x64\OctoGamePluginEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
+/Fp"C:\UnrealProject\OctoGamePlugin\Intermediate\Build\Win64\x64\OctoGamePluginEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.pch"
+/Fo"C:\UnrealProject\OctoGamePlugin\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpackComponent.cpp.obj"
+/sourceDependencies "C:\UnrealProject\OctoGamePlugin\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpackComponent.cpp.dep.json"
+@"C:\UnrealProject\OctoGamePlugin\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpack.Shared.rsp"
 /Zc:inline
 /nologo
 /Oi

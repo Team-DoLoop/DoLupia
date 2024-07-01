@@ -54,29 +54,29 @@ FReply UMainMenu::NativeOnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& 
 bool UMainMenu::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	if(const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation))
-	{
-		UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
-		if (PlayerCharacter && ItemBase)
-		{
-			ItemDragDrop->GetInventoryItemSlot()->ResetItemSlot();
+	//if(const UItemDragDropOperation* ItemDragDrop = Cast<UItemDragDropOperation>(InOperation))
+	//{
+	//	UItemBase* ItemBase = ItemDragDrop->GetSourceItem();
+	//	if (PlayerCharacter && ItemBase)
+	//	{
+	//		ItemDragDrop->GetInventoryItemSlot()->ResetItemSlot();
 
-			// 여기서 이제 드래그 앤 드랍되면 초기화 될 수 있도록 설정
-			ItemDragDrop->GetInventoryItemSlot()->SetItemReference( nullptr );
+	//		// 여기서 이제 드래그 앤 드랍되면 초기화 될 수 있도록 설정
+	//		ItemDragDrop->GetInventoryItemSlot()->SetItemReference( nullptr );
 
-			const int32 Quantity = ItemBase->GetNumericData().bIsStackable ? ItemBase->GetQuantity() : 1;
-			PlayerCharacter->DropItem( ItemBase , Quantity );
-			ItemDragDrop->GetSourceInventory()->ReleaseInventory( ItemBase );
+	//		const int32 Quantity = ItemBase->GetNumericData().bIsStackable ? ItemBase->GetQuantity() : 1;
+	//		PlayerCharacter->DropItem( ItemBase , Quantity );
+	//		ItemDragDrop->GetSourceInventory()->ReleaseInventory( ItemBase );
 
-			return true;
-		}
-	}
+	//		return true;
+	//	}
+	//}
 
-	if (const UQuickSlotDragDropOperation* QuickSlotDragDrop = Cast<UQuickSlotDragDropOperation>( InOperation ))
-	{
-		if(UQuickSlotWidget* QuickSlot = QuickSlotDragDrop->GetQuickSlotItem())
-			QuickSlot->ReleaseQuickSlot( QuickSlot );
-	}
+	//if (const UQuickSlotDragDropOperation* QuickSlotDragDrop = Cast<UQuickSlotDragDropOperation>( InOperation ))
+	//{
+	//	if(UQuickSlotWidget* QuickSlot = QuickSlotDragDrop->GetQuickSlotItem())
+	//		QuickSlot->ReleaseQuickSlot( QuickSlot );
+	//}
 
 
 	return false;

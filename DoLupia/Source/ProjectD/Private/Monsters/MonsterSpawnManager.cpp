@@ -22,6 +22,12 @@ AMonsterSpawnManager::AMonsterSpawnManager()
 void AMonsterSpawnManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"AMonsterSpawnManager::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	StartSpawnMonster = false;
 	GetWorld()->GetTimerManager().SetTimer( TimerHandle , this , &AMonsterSpawnManager::GetAllMonsters , 1.0f , true );
 
@@ -34,6 +40,9 @@ void AMonsterSpawnManager::BeginPlay()
 	}
 
 	UE_LOG( LogTemp , Log , TEXT( "MonsterSpawnManager initialized with OwnQuestTag: %s" ) , *OwnQuestTag.ToString() );
+
+	FFileHelper::SaveStringToFile( L"AMonsterSpawnManager::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 // Called every frame

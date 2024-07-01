@@ -48,6 +48,11 @@ void AAIMarterialTestActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"AAIMarterialTestActor::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
     AIlib = NewObject<UAIConnectionLibrary>();
 
     // Bind UpdateAlpha function to the timeline
@@ -78,9 +83,18 @@ void AAIMarterialTestActor::BeginPlay()
             meshComp->SetMaterial( 0 , DynamicMaterial );
         }
     }
+    else
+    {
+        FFileHelper::SaveStringToFile( L"AAIMarterialTestActor::BeginPlay -> InitialMaterial nullptr" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+    }
+
 
     // Start the timeline
     TimelineComponent->PlayFromStart();
+
+    FFileHelper::SaveStringToFile( L"AAIMarterialTestActor::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
 
 }
 

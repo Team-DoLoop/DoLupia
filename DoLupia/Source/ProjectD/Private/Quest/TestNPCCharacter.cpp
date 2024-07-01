@@ -26,8 +26,17 @@ void ATestNPCCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+    // FFileHelper 클래스를 이용하여 로그 파일 생성
+    FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+    FFileHelper::SaveStringToFile( L"ATestNPCCharacter::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+        &IFileManager::Get() , ELogVerbosity::Log );
+
     NPCInteractGWidget = CreateWidget<UNPCInteractionWidget>( GetWorld() , NPCInteractWidget );
     NPCInteractGWidget->SetVisibility( ESlateVisibility::Hidden );
+
+    FFileHelper::SaveStringToFile( L"ATestNPCCharacter::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+    &IFileManager::Get() , ELogVerbosity::Log );
 	
 }
 

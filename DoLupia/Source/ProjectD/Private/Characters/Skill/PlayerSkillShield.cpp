@@ -24,7 +24,15 @@ void APlayerSkillShield::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// FFileHelper 클래스를 이용하여 로그 파일 생성
+	FString FilePath = FPaths::ProjectLogDir() + TEXT( "LogFileName.log" );
+	FFileHelper::SaveStringToFile( L"APlayerSkillShield::BeginPlay -> Start" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
+
 	SphereComp->SetHiddenInGame(!bIsShowDebugLine);
+
+	FFileHelper::SaveStringToFile( L"APlayerSkillShield::BeginPlay -> End" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
+		&IFileManager::Get() , ELogVerbosity::Log );
 }
 
 void APlayerSkillShield::ActivateSkill()
