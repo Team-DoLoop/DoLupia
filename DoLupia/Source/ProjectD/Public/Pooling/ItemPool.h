@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Data/ItemDataStructs.h"
 #include "ItemPool.generated.h"
 
 class UItemBase;
@@ -32,9 +32,9 @@ private:
     UPROPERTY()
     TArray<UItemBase*> Pool;
 
-    UPROPERTY()
-    TMap<FString, UItemBase*> ItemManager;
-
     UPROPERTY(EditDefaultsOnly, Category = "Item Initialization" )
     UDataTable* ItemDataTable;
+
+    TMap<FString, FItemData> ItemManager;
+
 };

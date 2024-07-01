@@ -2,10 +2,7 @@
 
 
 #include "Pooling/ItemPool.h"
-
-#include "ProjectDGameInstance.h"
 #include "Items/ItemBase.h"
-#include "Kismet/GameplayStatics.h"
 
 UItemPool::UItemPool()
 {
@@ -14,6 +11,23 @@ UItemPool::UItemPool()
 	if (DataTable.Succeeded())
     {
         ItemDataTable = DataTable.Object;
+
+		ItemManager.Empty();
+
+		if (ItemDataTable)
+		{
+			TArray<FItemData*> OutRowArray;
+			ItemDataTable->GetAllRows<FItemData>( TEXT( "Context String" ) , OutRowArray );
+
+			for (FItemData* ItemData : OutRowArray)
+			{
+				if (ItemData)
+				{
+
+					ItemManager.Emplace( ItemData->TextData.Name.ToString() , *ItemData );
+				}
+			}
+		}
     }
 
 
@@ -32,9 +46,24 @@ void UItemPool::CreateItem(int32 NumberOfCreate)
 UItemBase* UItemPool::GetItem(const FString& ItemID)
 {
     UItemBase* RetrievedItem = NewObject<UItemBase>( this , UItemBase::StaticClass() );
-    RetrievedItem->CreateItemCopy( Cast<UProjectDGameInstance>( UGameplayStatics::GetGameInstance( GetWorld() ) )->GetItem( ItemID )); 
-    return RetrievedItem; // 풀에서 객체 꺼내기
+	
+	FItemData ItemData = *ItemManager.Find(ItemID);
 
+	RetrievedItem->SetID( ItemData.ID );
+	RetrievedItem->SetItemType( ItemData.ItemType );
+	RetrievedItem->SetItemQuality( ItemData.ItemQuality );
+	RetrievedItem->SetItemStatistics( ItemData.ItemStatistics );
+	RetrievedItem->SetTextData( ItemData.TextData );
+	RetrievedItem->SetNumericData( ItemData.NumericData );
+	RetrievedItem->SetAssetData( ItemData.AssetData );
+	RetrievedItem->SetItemSkillColorData( ItemData.ItemSkillColor );
+	RetrievedItem->SetItemMaterial( ItemData.ItemMaterial );
+
+	// 만약 MaxStacksize 가 1보다 작다면 인벤토리에 쌓이지 않게 한다.
+	FItemNumericData& ItemNumericData = ItemData.NumericData;
+	ItemNumericData.bIsStackable = ItemNumericData.MaxStackSize > 1;
+
+    return RetrievedItem; // 풀에서 객체 꺼내기
 }
 
 void UItemPool::ReturnItem( UItemBase* InItem )
