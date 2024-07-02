@@ -37,10 +37,12 @@ AAITxtBossAttack::AAITxtBossAttack()
     meshComp4 = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "meshComp4" ) );
     meshComp4->SetupAttachment( RootComponent );
 
+    /*
     if (!meshComp1 || !meshComp2 || !meshComp3 || !meshComp4)
     {
         UE_LOG( LogTemp , Error , TEXT( "Failed to create meshComps" ) );
     }
+    */
 
     TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
     TimelineLength = 5.0f; // 재생 시간
@@ -88,7 +90,7 @@ void AAITxtBossAttack::BeginPlay()
         FFileHelper::SaveStringToFile( L"AAITxtBossAttack::BeginPlay -> !meshComp1 || !meshComp2 || !meshComp3 || !meshComp4" , *FilePath , FFileHelper::EEncodingOptions::AutoDetect ,
             &IFileManager::Get() , ELogVerbosity::Log );
 
-        UE_LOG( LogTemp , Error , TEXT( "meshComps is nullptr in BeginPlay" ) );
+        //UE_LOG( LogTemp , Error , TEXT( "meshComps is nullptr in BeginPlay" ) );
         return;
     }
 
@@ -142,7 +144,7 @@ void AAITxtBossAttack::LoadWebImage()
     UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
     if (DownloadTask)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
         DownloadTask->OnSuccess.AddDynamic( this , &AAITxtBossAttack::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAITxtBossAttack::OnImageDownloadFailed );
     }
@@ -158,7 +160,7 @@ void AAITxtBossAttack::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture )
 
     if (DownloadedTexture)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
 
         if (!meshComp1 || !meshComp2 || !meshComp3 || !meshComp4)
@@ -190,13 +192,13 @@ void AAITxtBossAttack::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture )
 
 void AAITxtBossAttack::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture )
 {
-    UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
+    //UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
 
     //GetWorld()->GetTimerManager().ClearTimer( DownloadTimerHandle );
 
     if (!meshComp1 && !meshComp2 && !meshComp3 && !meshComp4)
     {
-        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+        //UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
         return;
     }
 
@@ -235,7 +237,7 @@ void AAITxtBossAttack::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTextu
         DynamicMaterial2->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
         DynamicMaterial3->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
         DynamicMaterial4->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
 
         TimelineComp->PlayFromStart();
     }

@@ -26,10 +26,12 @@ AAITxtHandlerBase::AAITxtHandlerBase()
 	meshComp = CreateDefaultSubobject<USkeletalMeshComponent>( TEXT( "meshComp" ) );
 	meshComp->SetupAttachment( RootComponent );
 
+    /*
     if (!meshComp)
     {
         UE_LOG( LogTemp , Error , TEXT( "Failed to create meshComp" ) );
     }
+    */
 
     TimelineComp = CreateDefaultSubobject<UTimelineComponent>( TEXT( "TimelineComponent" ) );
     TimelineLength = 5.0f; // 재생 시간
@@ -120,7 +122,7 @@ void AAITxtHandlerBase::LoadWebImage()
     UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
     if (DownloadTask)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Downloading..." ) );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Downloading..." ) );
 
         DownloadTask->OnSuccess.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloaded );
         DownloadTask->OnFail.AddDynamic( this , &AAITxtHandlerBase::OnImageDownloadFailed );
@@ -135,12 +137,12 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
 {
     if (DownloadedTexture)
     {
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded" ) );
         // 다운로드된 텍스처를 머티리얼 인스턴스에 적용
 
         if (!meshComp )
         {
-            UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+            //UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
             return;
         }
 
@@ -153,7 +155,7 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
         if (DynamicMaterial)
         {
             DynamicMaterial->SetTextureParameterValue( FName( "A1-2345" ) , NewTexture );
-            UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded - PlayFromStart" ) );
+            //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageDownloaded - PlayFromStart" ) );
 
             TimelineComp->PlayFromStart();
         }
@@ -162,11 +164,11 @@ void AAITxtHandlerBase::OnImageDownloaded( UTexture2DDynamic* DownloadedTexture 
 
 void AAITxtHandlerBase::OnImageDownloadFailed( UTexture2DDynamic* DownloadedTexture )
 {
-    UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
+    //UE_LOG( LogTemp , Log , TEXT( "Failed to download image" ) );
 
     if (!meshComp)
     {
-        UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+        //UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
         return;
     }
 
@@ -193,7 +195,7 @@ void AAITxtHandlerBase::OnImageDownloadFailed( UTexture2DDynamic* DownloadedText
     if (DynamicMaterial)
     {
         DynamicMaterial->SetTextureParameterValue( FName( "A2-3456" ) , LocalTexture );
-        UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
 
         TimelineComp->PlayFromStart();
     }
