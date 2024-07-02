@@ -11,6 +11,7 @@
 // 필요하다면 다른 인클루드 추가
 #include "Components/Button.h" // 버튼 사용
 #include "Characters/ProjectDPlayerController.h" // PlayerController 사용
+#include "Quest/Quest_Base.h"
 
 void UWidgetQuestLog::NativePreConstruct()
 {
