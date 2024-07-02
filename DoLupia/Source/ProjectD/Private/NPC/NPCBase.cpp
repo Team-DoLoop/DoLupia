@@ -50,8 +50,8 @@ ANPCBase::ANPCBase()
 
 	//minimap icon
 	// MapIconComponent makes the character appear on the minimap
-	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/request.request" ) );
-	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/speech-bubble.speech-bubble" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/question-mark.question-mark" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/question-mark.question-mark" ) );
 	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
 	MapIcon->SetupAttachment( GetRootComponent() );
 	// Set the player icon as texture

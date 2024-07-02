@@ -38,8 +38,6 @@
 /NATVIS:"..\Plugins\FX\Niagara\Intermediate\Build\Win64\x64\UnrealEditor\Development\Niagara\Niagara.natvis"
 "D:\Projects\DoLupia\DoLupia\Intermediate\Build\Win64\x64\ProjectDEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
 "D:\Projects\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\Module.OctopusBackpack.cpp.obj"
-"D:\Projects\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpackActor.cpp.obj"
-"D:\Projects\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\OctopusBackpackComponent.cpp.obj"
 "D:\Projects\DoLupia\DoLupia\Plugins\OctopusBackpack\Intermediate\Build\Win64\x64\UnrealEditor\Development\OctopusBackpack\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
