@@ -665,17 +665,21 @@ void ASoundManager::PlayWave(USoundWave* SoundWave, EEffectSound EffectSound, fl
 	{
 
 		UAudioComponent** FindWavePool = SoundWavePool.Find( SoundWave );
+		UAudioComponent* AudioComponent = nullptr;
 
 		if (FindWavePool)
 		{
-			if (*FindWavePool)
-				SetupSound( *FindWavePool , SoundWave , EffectSound , Volume , Pitch );
+			AudioComponent = *FindWavePool;
+
+			if (AudioComponent)
+			{
+				AudioComponent->Stop();
+				SetupSound( AudioComponent , SoundWave , EffectSound , Volume , Pitch );
+				AudioPlay( AudioComponent , SoundWave , Volume , Pitch );
+			}
 		}
 		else
 		{
-
-			UAudioComponent* AudioComponent = nullptr;
-
 
 			IsSound2D
 				? AudioComponent = UGameplayStatics::SpawnSound2D( this , SoundWave , Volume , Pitch )
@@ -697,17 +701,22 @@ void ASoundManager::PlayWave(USoundWave* SoundWave, EPlayerSound PlayerSound, fl
 	{
 
 		UAudioComponent** FindWavePool = SoundWavePool.Find( SoundWave );
+		UAudioComponent* AudioComponent = nullptr;
 
 		if (FindWavePool)
 		{
-			if (*FindWavePool)
-				SetupSound( *FindWavePool , SoundWave , PlayerSound , Volume , Pitch );
+			AudioComponent = *FindWavePool;
+
+			if (AudioComponent)
+			{
+				AudioComponent->Stop();
+				SetupSound( AudioComponent , SoundWave , PlayerSound , Volume , Pitch );
+				AudioPlay( AudioComponent , SoundWave , Volume , Pitch );
+			}
+
 		}
 		else
 		{
-
-			UAudioComponent* AudioComponent = nullptr;
-
 
 			IsSound2D
 				? AudioComponent = UGameplayStatics::SpawnSound2D( this , SoundWave , Volume , Pitch )
@@ -729,17 +738,22 @@ void ASoundManager::PlayWave(USoundWave* SoundWave, EMonsterSound MonsterSound, 
 	{
 
 		UAudioComponent** FindWavePool = SoundWavePool.Find( SoundWave );
+		UAudioComponent* AudioComponent = nullptr;
 
 		if (FindWavePool)
 		{
-			if (*FindWavePool)
-				SetupSound( *FindWavePool , SoundWave , MonsterSound , Volume , Pitch );
+			AudioComponent = *FindWavePool;
+
+			if (AudioComponent)
+			{
+				AudioComponent->Stop();
+				SetupSound( AudioComponent , SoundWave , MonsterSound , Volume , Pitch );
+				AudioPlay( AudioComponent , SoundWave , Volume , Pitch );
+			}
+
 		}
 		else
 		{
-
-			UAudioComponent* AudioComponent = nullptr;
-
 
 			IsSound2D
 				? AudioComponent = UGameplayStatics::SpawnSound2D( this , SoundWave , Volume , Pitch )
@@ -761,18 +775,22 @@ void ASoundManager::PlayWave( USoundWave* SoundWave , ENPCSound NPCSound , float
 	{
 
 		UAudioComponent** FindWavePool = SoundWavePool.Find( SoundWave );
+		UAudioComponent* AudioComponent = nullptr;
 
 		if (FindWavePool)
 		{
-			if(*FindWavePool)
-				SetupSound( *FindWavePool , SoundWave , NPCSound , Volume , Pitch );
+			AudioComponent = *FindWavePool;
+
+			if(AudioComponent)
+			{
+				AudioComponent->Stop();
+				SetupSound( AudioComponent , SoundWave , NPCSound , Volume , Pitch );
+				AudioPlay( AudioComponent, SoundWave, Volume, Pitch);
+			}
+				
 		}
 		else
 		{
-
-			UAudioComponent* AudioComponent = nullptr;
-
-
 			IsSound2D
 				? AudioComponent = UGameplayStatics::SpawnSound2D( this , SoundWave , Volume , Pitch )
 				: AudioComponent = UGameplayStatics::SpawnSoundAtLocation( this , SoundWave , Location , FRotator::ZeroRotator , Volume , Pitch );
