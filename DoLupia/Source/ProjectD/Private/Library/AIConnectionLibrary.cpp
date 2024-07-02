@@ -64,7 +64,7 @@ void UAIConnectionLibrary::LoadImageToMaterial()
 {
 	for (TActorIterator<AAIMarterialTestActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
+		//UE_LOG( LogTemp , Warning , TEXT( "UAITestWidget::ChangeMaterial - Searching Actors..." ) );
 		// Call the function on the actor
 		ActorItr->LoadWebImage();
 
@@ -125,13 +125,13 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 {
 	if (bConnectedSuccessfully && Response.IsValid())
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
+		//UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 		
 		FString result = Response->GetContentAsString();
-		UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *result )
+		//UE_LOG( LogTemp , Warning , TEXT( "result : [%s]" ) , *result )
 		OnWebApiResponseReceived.Broadcast( result );
 
-		UE_LOG( LogTemp , Warning , TEXT( "result - delegate test : [%s]" ) , *result )
+		//UE_LOG( LogTemp , Warning , TEXT( "result - delegate test : [%s]" ) , *result )
 	
 
 	}
@@ -139,7 +139,7 @@ void UAIConnectionLibrary::ResMessage(FHttpRequestPtr Request, FHttpResponsePtr 
 	{
 		if (Request->GetStatus() == EHttpRequestStatus::Succeeded)
 		{
-			UE_LOG( LogTemp , Warning , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
+			UE_LOG( LogTemp , Log , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
 		}
 	}
 
@@ -162,7 +162,7 @@ void UAIConnectionLibrary::ResAIImage(FHttpRequestPtr Request, FHttpResponsePtr 
 {
 	if (bConnectedSuccessfully)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
+		UE_LOG( LogTemp , Log , TEXT( "Response Success... %d" ) , Response->GetResponseCode() );
 
 		// 이미지 저장 로직 저장 X -> 서버에서 생성된 이미지를 띄우는 형식으로 변경
 		/*
@@ -175,7 +175,7 @@ void UAIConnectionLibrary::ResAIImage(FHttpRequestPtr Request, FHttpResponsePtr 
 	{
 		if (Request->GetStatus() == EHttpRequestStatus::Succeeded)
 		{
-			UE_LOG( LogTemp , Warning , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
+			UE_LOG( LogTemp , Log , TEXT( "Response Failed... %d" ) , Response->GetResponseCode() );
 		}
 	}
 }
@@ -184,7 +184,7 @@ void UAIConnectionLibrary::Initialize( UObject* WorldContextObject )
 {
 	if (!WorldContextObject)
 	{
-		UE_LOG( LogTemp , Warning , TEXT( "UAIConnectionLibrary::Initialize - Invalid WorldContextObject" ) );
+		UE_LOG( LogTemp , Log , TEXT( "UAIConnectionLibrary::Initialize - Invalid WorldContextObject" ) );
 		return;
 	}
 

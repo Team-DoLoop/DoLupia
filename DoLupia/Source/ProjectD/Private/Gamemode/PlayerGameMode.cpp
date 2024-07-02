@@ -118,13 +118,13 @@ void APlayerGameMode::BeginPlay()
 		LevelIdx = 1;
 		PlayerCameraboom = 1000.0f;
 		CreateLocationTitleWidget( LevelIdx );
-		UE_LOG( LogTemp , Error , TEXT( "GameMode CurLevelName == LevelNames[2]" ) )
+		//UE_LOG( LogTemp , Error , TEXT( "GameMode CurLevelName == LevelNames[2]" ) )
 
 		// 재시작 시, 인스턴스에 저장된 퀘스트ID별로 분기
 		// 처음 맵1 시작이면 변경 X, 재시작으로 맵1 시작이면 빨간색
 		if (GI->CompletedQuests.Contains( "1002" ))
 		{
-			UE_LOG( LogTemp , Error , TEXT( "GI->CompletedQuests.Contains"))
+			//UE_LOG( LogTemp , Error , TEXT( "GI->CompletedQuests.Contains"))
 			ApplyAITxtP( 1 );
 			ActivateBarrierObject( false );
 		}
@@ -291,7 +291,7 @@ FString APlayerGameMode::GetNxtQuestTag() const
 
 void APlayerGameMode::SetNxtCompleteQuestTag(FString nextquesttag)
 {
-	UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest Tag: %s" ) , *nextquesttag );
+	//UE_LOG( LogTemp , Error , TEXT( "gm - Next Quest Tag: %s" ) , *nextquesttag );
 	NextquestTag = nextquesttag;
 
 	// Quest Complete -> NPC, Spawner Active
@@ -301,7 +301,7 @@ void APlayerGameMode::SetNxtCompleteQuestTag(FString nextquesttag)
 
 void APlayerGameMode::SetNxtReceiveQuestTag(FString nextquesttag)
 {
-	UE_LOG( LogTemp , Error , TEXT( "gm - Next Receive Quest Tag: %s" ) , *nextquesttag );
+	//UE_LOG( LogTemp , Error , TEXT( "gm - Next Receive Quest Tag: %s" ) , *nextquesttag );
 	NextquestTag = nextquesttag;
 
 	// Quest Receive -> MiniGame Active, Spawner Deactive
@@ -411,7 +411,7 @@ void APlayerGameMode::ActiveLvTrigger()
 {
 	for (TActorIterator<ATriggerBaseActor> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
-		// Call the function on the actor
+		// 맵 이동 트리거 활성화
 		ActorItr->ShowTrigger();
 	}
 }
@@ -467,7 +467,7 @@ void APlayerGameMode::ActivateInterationObject( bool onoff )
 
 		if (InteractionObject)
 		{
-			UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateInterationObject( bool onoff )" ) );
+			//UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateInterationObject( bool onoff )" ) );
 			//켜고 끄는 코드
 			InteractionObject->ActiveMapIcon(onoff);
 		}
@@ -482,7 +482,7 @@ void APlayerGameMode::ActivateBarrierObject( bool onoff )
 
 		if (InteractionObject)
 		{
-			UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateBarrierObject( bool onoff )" ) );
+			//UE_LOG( LogTemp , Error , TEXT( "APlayerGameMode::ActivateBarrierObject( bool onoff )" ) );
 			//켜고 끄는 코드
 			InteractionObject->BarrierRelease( onoff );
 		}
@@ -491,21 +491,18 @@ void APlayerGameMode::ActivateBarrierObject( bool onoff )
 
 void APlayerGameMode::PlayOutroSequencer()
 {
-	UE_LOG( LogTemp , Log , TEXT( "APlayerGameMode::PlayOutroSequencer - Outro Sequencer Play" ) );
-
-	// 레벨 내, 플레이어 보스 hidden
+	// 레벨 내, 플레이어, 보스 hidden
 	for (TActorIterator<ABossMonster> ActorItr( GetWorld() ); ActorItr; ++ActorItr)
 	{
 		ABossMonster* boss = *ActorItr;
-		UE_LOG( LogTemp , Error , TEXT( "Boss hidden - false" ) );
 		if(boss)
 		{
 			boss->SetHidden( true );
-			UE_LOG( LogTemp , Error , TEXT( "Boss hidden - true" ) );
 		}
 	}
 	if(Player)
 	{
+		// 플레이어 위치 이동, 상태, inputmode 변경
 		Player->SetActorLocation( (FVector( -3380.0f ,5000.0f, -530.0f )));
 		Player->PlayerDoSomeThing( true );
 		FInputModeUIOnly InputModeUIOnly;
@@ -518,7 +515,7 @@ void APlayerGameMode::PlayOutroSequencer()
 
 	if (Lv3SequencePlayer && OriginalViewTarget)
 	{
-		UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
+		//UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
 		//bossComp->SetVisibility( true );
 		bossComp->SetHiddenInGame( false );
 		playerComp->SetHiddenInGame( false );
@@ -529,10 +526,6 @@ void APlayerGameMode::PlayOutroSequencer()
 		
 		SoundManager->PlayBGM( OutroBGM , 0.3f );
 		
-	}
-	else
-	{
-		UE_LOG( LogTemp , Error , TEXT( "Failed to create Level Sequence Player." ) );
 	}
 
 	FTimerHandle TimerHandle;

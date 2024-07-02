@@ -202,17 +202,9 @@ void UDialogComponent::TriggerQuest()
 			FString QuestID = QuestInterface->InteractWith();
 			player->OnObjectiveIDCalled.Broadcast( QuestID , 1 );
 		}
-		else
-		{
-			UE_LOG( LogTemp , Warning , TEXT( "UQuestComponent not found on NPC" ) );
-		}
 
 		// 퀘스트 받은 npc는 숨기기
 		npc->HideNPC();
-	}
-	else
-	{
-		UE_LOG( LogTemp , Warning , TEXT( "CurrentNPC is null" ) );
 	}
 
 }
