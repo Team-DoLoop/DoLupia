@@ -19,11 +19,11 @@ AStrangeObject::AStrangeObject()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>( TEXT( "MeshComponent" ) );
 	MeshComponent->SetupAttachment( BoxComponent );
 
-	static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/search.search" ) );
+	//static ConstructorHelpers::FObjectFinder<UTexture2D> LocationIcon( TEXT( "/Game/Asset/Widget/MiniMap/search.search" ) );
 	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
 	MapIcon->SetupAttachment( BoxComponent );
 	// Set the player icon as texture
-	MapIcon->SetIconTexture( LocationIcon.Object );
+	//MapIcon->SetIconTexture( LocationIcon.Object );
 	// The icon will rotate to represent the character's rotation
 	MapIcon->SetIconRotates( false );
 	MapIcon->SetIconVisible( false );
