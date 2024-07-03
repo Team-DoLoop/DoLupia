@@ -207,13 +207,13 @@ private:
 public:
 	UPROPERTY( EditAnywhere , BlueprintReadOnly , Category = Input , meta = (AllowPrivateAccess = "true") )
 	UInputAction* QuestTabAction;
-	
-	UPROPERTY( EditAnywhere )
+
+	/*UPROPERTY( EditAnywhere )
 	TSubclassOf<UWidgetQuestLog> QuestLog_Widget;
 
 private:
 	void QuestLogMenu();
-
+*/
 
 	
 	// <---------------------- Tutorial ---------------------->

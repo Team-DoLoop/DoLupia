@@ -119,7 +119,7 @@ void AMinigameQuestObject::UpdateMiniGameStatus()
         if (OwnQuestTag == FName( gm->GetNxtQuestTag() ))
         {
             // 태그 값이 일치하면 상태 변경 로직 추가
-            UE_LOG( LogTemp , Log , TEXT( "MiniGame with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
+            //UE_LOG( LogTemp , Log , TEXT( "MiniGame with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
 
             bVisibleInteractUI = true;
             ChangeMinigameColor( 4 ); 

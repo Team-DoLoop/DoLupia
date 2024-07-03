@@ -50,8 +50,8 @@ ANPCBase::ANPCBase()
 
 	//minimap icon
 	// MapIconComponent makes the character appear on the minimap
-	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/request.request" ) );
-	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/speech-bubble.speech-bubble" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestGiveIcon( TEXT( "/Game/Asset/Widget/MiniMap/question-mark.question-mark" ) );
+	static ConstructorHelpers::FObjectFinder<UTexture2D> QuestRewardsIcon( TEXT( "/Game/Asset/Widget/MiniMap/question-mark.question-mark" ) );
 	MapIcon = CreateDefaultSubobject<UMapIconComponent>( TEXT( "MapIcon" ) );
 	MapIcon->SetupAttachment( GetRootComponent() );
 	// Set the player icon as texture
@@ -200,7 +200,7 @@ FString ANPCBase::InteractWith()
 	// 먼저 QuestGiverComp가 유효한지 확인
 	if (QuestGiverComp == nullptr)
 	{
-		UE_LOG( LogTemp , Error , TEXT( "QuestGiverComp is null." ) );
+		//UE_LOG( LogTemp , Error , TEXT( "QuestGiverComp is null." ) );
 		return FString( TEXT( "QuestGiverComp is null." ) );
 	}
 
@@ -215,7 +215,7 @@ FString ANPCBase::InteractWith()
 
 	if (QuestInterface == nullptr)
 	{
-		UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
+		//UE_LOG( LogTemp , Error , TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 		return FString( TEXT( "Failed to cast QuestGiverComp to IQuestInteractionInterface." ) );
 	}
 
@@ -247,7 +247,7 @@ void ANPCBase::UpdateNPCStatus()
 		if (OwnQuestTag == FName( gm->GetNxtQuestTag() ))
 		{
 			// 태그 값이 일치하면 상태 변경 로직 추가
-			UE_LOG( LogTemp , Log , TEXT( "NPC with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
+			//UE_LOG( LogTemp , Log , TEXT( "NPC with tag %s received matching Quest ID: %s" ) , *OwnQuestTag.ToString() , *CurrentQuestTag );
 			
 			ChangeNPCColor( 4 );
 		} else
@@ -259,7 +259,7 @@ void ANPCBase::UpdateNPCStatus()
 
 void ANPCBase::ChangeNPCColor(int32 depth)
 {
-	UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
+	//UE_LOG( LogTemp , Error , TEXT( "npc - colortest : %d" ), depth );
 	GetMesh()->SetRenderCustomDepth( true );
 	GetMesh()->SetCustomDepthStencilValue( depth );
 

@@ -315,7 +315,7 @@ void AGrid2048::GameClear()
     if (ASoundManager* SoundManager = ASoundManager::GetInstance( GetWorld() ))
     {
         //if (ClearSoundWave) SoundManager->PlaySoundWave2D( ClearSoundWave , EEffectSound::EffectSound3 , 0.4f );
-        SoundManager->PlayBGM( gm->LvBGMs[2], 0.4f);
+        SoundManager->PlayBGM( gm->LvBGMs[2], 0.2f);
     }
 
     //원래 level2 비지엠으로

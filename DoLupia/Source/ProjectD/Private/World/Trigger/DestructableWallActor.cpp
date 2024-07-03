@@ -92,7 +92,7 @@ void ADestructableWallActor::TriggerLvSequencer()
 
 	if (SequencePlayer && OriginalViewTarget)
 	{
-		UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
+		//UE_LOG( LogTemp , Log , TEXT( "Success to create Level Sequence Player." ) );
 		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend( OriginalViewTarget , 1.0f );
 		SequencePlayer->Play();
 	}

@@ -372,7 +372,7 @@ void AProjectDPlayerController::ChargingEndSkill(int32 SkillIndex)
 
 // <---------------------- Quest UI ---------------------->
 
-void AProjectDPlayerController::QuestLogMenu()
+/*void AProjectDPlayerController::QuestLogMenu()
 {
 	UWidgetQuestLog* QuestWidget = CreateWidget<UWidgetQuestLog>( GetWorld() , QuestLog_Widget );
 
@@ -380,7 +380,7 @@ void AProjectDPlayerController::QuestLogMenu()
 	{
 		QuestWidget->AddToViewport(static_cast<uint32>(ViewPortPriority::Quest));
 	}
-}
+}*/
 
 
 // <---------------------- Tutorial ---------------------->

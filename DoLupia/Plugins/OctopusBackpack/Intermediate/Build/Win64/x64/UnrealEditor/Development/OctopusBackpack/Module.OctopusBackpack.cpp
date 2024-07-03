@@ -4,3 +4,5 @@
 #include "D:/Projects/DoLupia/DoLupia/Plugins/OctopusBackpack/Intermediate/Build/Win64/UnrealEditor/Inc/OctopusBackpack/UHT/OctopusBackpackComponent.gen.cpp"
 #include "D:/Projects/DoLupia/DoLupia/Plugins/OctopusBackpack/Intermediate/Build/Win64/UnrealEditor/Inc/OctopusBackpack/UHT/OctopusTypes.gen.cpp"
 #include "D:/Projects/DoLupia/DoLupia/Plugins/OctopusBackpack/Source/OctopusBackpack/Private/OctopusBackpack.cpp"
+#include "D:/Projects/DoLupia/DoLupia/Plugins/OctopusBackpack/Source/OctopusBackpack/Private/OctopusBackpackActor.cpp"
+#include "D:/Projects/DoLupia/DoLupia/Plugins/OctopusBackpack/Source/OctopusBackpack/Private/OctopusBackpackComponent.cpp"
