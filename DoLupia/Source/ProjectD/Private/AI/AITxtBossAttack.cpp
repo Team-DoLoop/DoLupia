@@ -109,8 +109,8 @@ void AAITxtBossAttack::Tick( float DeltaTime )
 
 void AAITxtBossAttack::UpdateActorMaterial( FString _Attacktype )
 {
-    LoadWebImage();
     Attacktype = _Attacktype;
+    LoadWebImage();
 }
 
 void AAITxtBossAttack::UpdateDissolve( float dissolve )
@@ -137,20 +137,50 @@ void AAITxtBossAttack::OnTimelineFinished()
 
 void AAITxtBossAttack::LoadWebImage()
 {
-    // Image Load URL Setting
-    FString ServerURL = AIlib->SetupAITextureURL();
-
-    // Image Downloading..
-    UAsyncTaskDownloadImage* DownloadTask = UAsyncTaskDownloadImage::DownloadImage( ServerURL );
-    if (DownloadTask)
+    if (!meshComp1 && !meshComp2 && !meshComp3 && !meshComp4)
     {
-        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::LoadWebImage - Download" ) );
-        DownloadTask->OnSuccess.AddDynamic( this , &AAITxtBossAttack::OnImageDownloaded );
-        DownloadTask->OnFail.AddDynamic( this , &AAITxtBossAttack::OnImageDownloadFailed );
+        //UE_LOG( LogTemp , Error , TEXT( "meshComp is nullptr - mesh" ) );
+        return;
     }
-    else
+
+    if (meshComp1 && meshComp2 && meshComp3 && meshComp4 && TxtMaterial)
     {
-        OnImageDownloadFailed( nullptr );
+        DynamicMaterial1 = meshComp1->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+        DynamicMaterial2 = meshComp2->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+        DynamicMaterial3 = meshComp3->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+        DynamicMaterial4 = meshComp4->CreateDynamicMaterialInstance( 0 , TxtMaterial );
+    }
+
+    // AI 서버 연동 안되어 있을 때, 랜덤으로 텍스처 가져와서 적용
+    int32 RandomIndex = FMath::RandRange( 0 , 9 );
+
+    FString BaseFirePath = "/Game/AI/Texture/T_Boss10";
+    FString BaseElecPath = "/Game/AI/Texture/T_Boss20";
+    FString TextureName;
+    FString FullPath;
+
+    if (Attacktype == "Fire")
+    {
+        TextureName = FString::Printf( TEXT( "%d.T_Boss10%d" ) , RandomIndex + 1 , RandomIndex + 1 );
+        FullPath = BaseFirePath + TextureName;
+        LocalTexture = LoadObject<UTexture>( nullptr , *FullPath );
+    }
+    else if (Attacktype == "Electric")
+    {
+        TextureName = FString::Printf( TEXT( "%d.T_Boss20%d" ) , RandomIndex + 1 , RandomIndex + 1 );
+        FullPath = BaseElecPath + TextureName;
+        LocalTexture = LoadObject<UTexture>( nullptr , *FullPath );
+    }
+
+    if (DynamicMaterial1 && DynamicMaterial2 && DynamicMaterial3 && DynamicMaterial4)
+    {
+        DynamicMaterial1->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        DynamicMaterial2->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        DynamicMaterial3->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        DynamicMaterial4->SetTextureParameterValue( FName( "A3-4567" ) , LocalTexture );
+        //UE_LOG( LogTemp , Warning , TEXT( "AAIMarterialTestActor::OnImageFailDownloaded" ) );
+
+        TimelineComp->PlayFromStart();
     }
 }
 

@@ -112,6 +112,7 @@ void AAIMarterialTestActor::UpdateActorMaterial()
 
 void AAIMarterialTestActor::LoadWebImage()
 {
+
     // Image Load URL Setting
     FString ServerURL = AIlib->SetupAITextureURL();
 
