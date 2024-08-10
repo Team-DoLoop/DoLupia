@@ -21,7 +21,7 @@
 
  ## 🛠 핵심 기능
  ### AI를 활용한 실시간 환경 텍스처 변화
- - 망토 안에서 모습을 자유롭게 바꿀 수 있는 토토 -> AI 활용해 망토 텍스쳐 실시간 변환
+ - 망토 안에서 모습을 자유롭게 바꿀 수 있는 토토 -> <b>AI 활용해 망토 텍스쳐 실시간 변환</b>
  - 보스 특정 공격 피격 시 맵 바닥 텍스처 실시간 생성
 <img src= "https://github.com/user-attachments/assets/8e556416-b554-4750-a845-b01b26782363" height="200" />
 
@@ -35,7 +35,7 @@
 
  ### Post Processing
  - 흑백 세상 속에서 색을 찾아가는 스토리 = 색을 잃은 듯한 레벨 디자인
- - 흑백 Post Process 코드 + 아웃라인 포스트 프로세스 머티리얼 코드
+ - <b>흑백 Post Process 코드 + 아웃라인 포스트 프로세스 머티리얼 코드</b>
  - scene texture 데이터 사용
 <img src= "https://github.com/user-attachments/assets/072d8467-220b-45b3-a033-1c144d13b5a4" height="250" />
 <img src= "https://github.com/user-attachments/assets/d9b314b6-361e-4bb8-9d7a-fde3ab159293" height="250" />
@@ -53,18 +53,18 @@
  - 파랑
    - Q : 물의 힘을 앞으로 모아서 날리는 차징 공격
    - W : 적의 공격 데미지를 줄이는 방어막 생성
-<img src= "https://github.com/user-attachments/assets/67bbab26-eb1f-48d9-90d0-d1ff6e629e52" height="250" />
-<img src= "https://github.com/user-attachments/assets/0af0472b-f749-4c46-ba16-23904b0a4dd6" height="250" />
+<img src= "https://github.com/user-attachments/assets/67bbab26-eb1f-48d9-90d0-d1ff6e629e52" width="460" height = "250" />
+<img src= "https://github.com/user-attachments/assets/0af0472b-f749-4c46-ba16-23904b0a4dd6" width="460" height = "250" />
 
  ### 미니게임
  - 스토리의 진행을 자연스럽게 연결해주는 역할
- - 간단하면서도 직관적인 규칙을 가진 '2048' 게임
+ - <b>간단하면서도 직관적인 규칙을 가진 '2048' 게임</b>
  - 완료 시 특별한 장비를 보상으로 지급 -> 전투 구간의 난이도 완화
-<img src= "https://github.com/user-attachments/assets/435d2fa4-c388-42e0-a05e-fd973bb2d200" height="250" />
+<img src= "https://github.com/user-attachments/assets/435d2fa4-c388-42e0-a05e-fd973bb2d200" height = "250" />
 
 
  ## 💡 서비스 구성도
-<img src= "https://github.com/user-attachments/assets/c29d547e-6f90-4285-baef-d34d88aa2736" height="400"/>
+<img src= "https://github.com/user-attachments/assets/c29d547e-6f90-4285-baef-d34d88aa2736" width="630" />
 
  ## 📺 시연 영상 (클릭 시 이동)
  <a href="https://www.youtube.com/watch?v=rhvf1A6h_io">
@@ -72,9 +72,9 @@
  </a>
     
  ## 🎈 기타
- - 2024 Metaverse Expo 참가
+ - <b>2024 Metaverse Expo 참가</b>
    : 유저의 피드백을 바탕으로 버그 사항, UI/UX 등 전반적인 게임 수정 진행
- - 2024 GIGDC 출품
+ - <b>2024 GIGDC 출품</b>
 
 
 ## 👩‍💻 Developer
